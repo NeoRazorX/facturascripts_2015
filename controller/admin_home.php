@@ -79,14 +79,27 @@ class admin_home extends fs_controller
       /**
        * Pestaña plugins
        */
-      if( isset($_GET['delete_plugin']) )
+      if( isset($_GET['enable']) )
       {
-         if( $this->delTree('plugins/'.$_GET['delete_plugin']) )
+         $this->enable_plugin($_GET['enable']);
+      }
+      else if( isset($_GET['disable']) )
+      {
+         $this->disable_plugin($_GET['disable']);
+      }
+      else if( isset($_GET['delete_plugin']) )
+      {
+         if( is_writable('plugins/'.$_GET['delete_plugin']) )
          {
-            $this->new_message('Plugin '.$_GET['delete_plugin'].' eliminado correctamente.');
+            if( $this->delTree('plugins/'.$_GET['delete_plugin']) )
+            {
+               $this->new_message('Plugin '.$_GET['delete_plugin'].' eliminado correctamente.');
+            }
+            else
+               $this->new_error_msg('Imposible eliminar el plugin '.$_GET['delete_plugin']);
          }
          else
-            $this->new_error_msg('Imposible eliminar el plugin '.$_GET['delete_plugin']);
+            $this->new_error_msg('No tienes permisos de escritura sobre la carpeta plugins/'.$_GET['delete_plugin']);
       }
       else if( isset($_POST['install']) )
       {
@@ -228,6 +241,11 @@ class admin_home extends fs_controller
    {
       $plugins = array();
       
+      if( !file_exists('tmp/enabled_plugins') )
+      {
+         mkdir('tmp/enabled_plugins');
+      }
+      
       if( file_exists('tmp/enabled_plugins') )
       {
          foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
@@ -235,7 +253,9 @@ class admin_home extends fs_controller
             if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
             {
                if( file_exists('plugins/'.$f) )
+               {
                   $plugins[] = $f;
+               }
                else
                   unlink('tmp/enabled_plugins/'.$f);
             }
@@ -357,16 +377,36 @@ class admin_home extends fs_controller
                 'name' => $f,
                 'description' => 'Sin descripción.',
                 'compatible' => FALSE,
-                'enabled' => FALSE
+                'enabled' => FALSE,
+                'version' => 0,
+                'require' => '',
+                'update_url' => ''
             );
             
-            if( file_exists('plugins/'.$f.'/facturascript') )
+            if( file_exists('plugins/'.$f.'/facturascripts.ini') )
             {
+               $plugin['compatible'] = TRUE;
                $plugin['enabled'] = file_exists('tmp/enabled_plugins/'.$f);
                
                if( file_exists('plugins/'.$f.'/description') )
                {
                   $plugin['description'] = file_get_contents('plugins/'.$f.'/description');
+               }
+               
+               $ini_file = parse_ini_file('plugins/'.$f.'/facturascripts.ini');
+               if( isset($ini_file['version']) )
+               {
+                  $plugin['version'] = $ini_file['version'];
+               }
+               
+               if( isset($ini_file['require']) )
+               {
+                  $plugin['require'] = $ini_file['require'];
+               }
+               
+               if( isset($ini_file['update_url']) )
+               {
+                  $plugin['update_url'] = $ini_file['update_url'];
                }
             }
             
@@ -385,5 +425,112 @@ class admin_home extends fs_controller
          (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
       }
       return rmdir($dir);
+   }
+   
+   private function enable_plugin($name)
+   {
+      if( !file_exists('tmp/enabled_plugins/'.$name) )
+      {
+         if( touch('tmp/enabled_plugins/'.$name) )
+         {
+            $GLOBALS['plugins'][] = $name;
+            
+            if( file_exists(getcwd().'/plugins/'.$name.'/controller') )
+            {
+               /// activamos las páginas del plugin
+               $page_list = array();
+               foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
+               {
+                  if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+                  {
+                     $page_name = substr($f, 0, -4);
+                     $page_list[] = $page_name;
+                     
+                     require_once 'plugins/'.$name.'/controller/'.$f;
+                     $new_fsc = new $page_name();
+                     
+                     if( !$new_fsc->page->save() )
+                        $this->new_error_msg("Imposible guardar la página ".$page_name);
+                     
+                     unset($new_fsc);
+                  }
+               }
+               
+               $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
+            }
+            
+            $this->new_message('Plugin <b>'.$name.'</b> activado correctamente.');
+            $this->load_menu(TRUE);
+            
+            /// limpiamos la caché
+            $this->cache->clean();
+         }
+         else
+            $this->new_error_msg('Imposible activar el plugin <b>'.$name.'</b>.');
+      }
+   }
+   
+   private function disable_plugin($name)
+   {
+      if( file_exists('tmp/enabled_plugins/'.$name) )
+      {
+         if( unlink('tmp/enabled_plugins/'.$name) )
+         {
+            $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
+            
+            foreach($GLOBALS['plugins'] as $i => $value)
+            {
+               if($value == $name)
+               {
+                  unset($GLOBALS['plugins'][$i]);
+                  break;
+               }
+            }
+         }
+         else
+            $this->new_error_msg('Imposible desactivar el plugin <b>'.$name.'</b>.');
+         
+         /*
+          * Desactivamos las páginas que ya no existen
+          */
+         foreach($this->page->all() as $p)
+         {
+            $encontrada = FALSE;
+            
+            if( file_exists(getcwd().'/controller/'.$p->name.'.php') )
+            {
+               $encontrada = TRUE;
+            }
+            else
+            {
+               foreach($GLOBALS['plugins'] as $plugin)
+               {
+                  if( file_exists(getcwd().'/plugins/'.$plugin.'/controller/'.$p->name.'.php') AND $name != $plugin)
+                  {
+                     $encontrada = TRUE;
+                     break;
+                  }
+               }
+            }
+            
+            if( !$encontrada )
+            {
+               if( $p->delete() )
+               {
+                  $this->new_message('Se ha eliminado automáticamente la página '.$p->name);
+               }
+            }
+         }
+         
+         /// borramos los archivos temporales del motor de plantillas
+         foreach( scandir(getcwd().'/tmp') as $f)
+         {
+            if( substr($f, -4) == '.php' )
+               unlink('tmp/'.$f);
+         }
+         
+         /// limpiamos la caché
+         $this->cache->clean();
+      }
    }
 }

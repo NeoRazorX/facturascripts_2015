@@ -168,7 +168,7 @@
             <div class="row">
                {loop="$fsc->plugin_advanced_list()"}
                <div class="col-md-6">
-                  <div class="panel {if="$value->compatible"}panel-default{else}panel-danger{/if}">
+                  <div class="panel {if="$value['compatible']"}panel-default{else}panel-danger{/if}">
                      <div class="panel-heading">
                         <h3 class="panel-title">{$value['name']}</h3>
                      </div>
@@ -197,6 +197,17 @@
                         </div>
                         <p>{$value['description']}</p>
                      </div>
+                     {if="$value['compatible']"}
+                     <div class="panel-footer small">
+                        Version: {$value['version']}
+                        {if="$value['require']!=''"}
+                        &nbsp; Requiere: <i>{$value['require']}</i>
+                        {/if}
+                        {if="$value['update_url']!=''"}
+                        &nbsp; <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Actualizable
+                        {/if}
+                     </div>
+                     {/if}
                   </div>
                </div>
                {/loop}
@@ -336,7 +347,7 @@
                <div class="form-group">
                   <input type="file" name="fplugin" accept="application/zip"/>
                </div>
-               <button type="submit" class="btn btn-default">
+               <button type="submit" class="btn btn-primary">
                   <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir
                </button>
             </form>

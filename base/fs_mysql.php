@@ -318,7 +318,12 @@ class fs_mysql extends fs_db
    
    public function escape_string($s)
    {
-      return self::$link->escape_string($s);
+      if(self::$link)
+      {
+         return self::$link->escape_string($s);
+      }
+      else
+         return $s;
    }
    
    public function date_style()
