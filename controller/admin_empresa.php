@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,7 +22,6 @@ require_model('cuenta_banco.php');
 require_model('divisa.php');
 require_model('ejercicio.php');
 require_model('forma_pago.php');
-require_model('fs_var.php');
 require_model('serie.php');
 require_model('pais.php');
 

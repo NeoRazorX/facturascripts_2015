@@ -17,7 +17,7 @@
    <script type="text/javascript">
       function show_precio(precio)
       {
-         {if condition="FS_POS_DIVISA=='right'"}
+         {if="FS_POS_DIVISA=='right'"}
          return number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}')+' {$fsc->simbolo_divisa()}';
          {else}
          return '{$fsc->simbolo_divisa()}'+number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}');
@@ -29,7 +29,7 @@
       }
    </script>
    {loop="$fsc->extensions"}
-      {if condition="$value->type=='head'"}{$value->text}{/if}
+      {if="$value->type=='head'"}{$value->text}{/if}
    {/loop}
 </head>
 <body>
@@ -42,9 +42,9 @@
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
-            {if condition="FS_DEMO"}
+            {if="FS_DEMO"}
             <a class="navbar-brand" href="index.php">DEMO</a>
-            {elseif condition="$fsc->empresa->nombrecorto"}
+            {elseif="$fsc->empresa->nombrecorto"}
             <a class="navbar-brand" href="index.php">{$fsc->empresa->nombrecorto}</a>
             {else}
             <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
@@ -54,11 +54,11 @@
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
-               <li class="dropdown{if condition="$value1==$fsc->page->folder"} active{/if}">
+               <li class="dropdown{if="$value1==$fsc->page->folder"} active{/if}">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="text-transform: capitalize;">{$value1}</a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->pages($value1)"}
-                     <li{if condition="$value2->showing()"} class="active"{/if}><a href="{$value2->url()}">{$value2->title}</a></li>
+                     <li{if="$value2->showing()"} class="active"{/if}><a href="{$value2->url()}">{$value2->title}</a></li>
                      {/loop}
                   </ul>
                </li>
@@ -66,7 +66,7 @@
             </ul>
             
             <ul class="nav navbar-nav navbar-right">
-               {if condition="$fsc->get_last_changes()"}
+               {if="$fsc->get_last_changes()"}
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                      <span class="glyphicon glyphicon-time hidden-xs"></span>
@@ -74,9 +74,9 @@
                   </a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->get_last_changes()"}
-                        <li title="{if condition="$value['nuevo']"}creado{else}modificado{/if} el {$value['cambio']}">
+                        <li title="{if="$value['nuevo']"}creado{else}modificado{/if} el {$value['cambio']}">
                            <a href="{$value['url']}">
-                              {if condition="$value['nuevo']"}
+                              {if="$value['nuevo']"}
                               <span class="glyphicon glyphicon-file"></span> &nbsp;
                               {else}
                               <span class="glyphicon glyphicon-edit"></span> &nbsp;
@@ -86,6 +86,15 @@
                         </li>
                      {/loop}
                   </ul>
+               </li>
+               {/if}
+               
+               {if="$fsc->check_for_updates()"}
+               <li>
+                  <a href="updater.php" target="_blank" class="bg-primary" title="Hay actualizaciones disponibles">
+                     <span class="glyphicon glyphicon-download hidden-xs"></span>
+                     <span class="visible-xs">Historial</span>
+                  </a>
                </li>
                {/if}
                
@@ -124,17 +133,17 @@
       </div>
    </nav>
    
-   {if condition="$fsc->get_errors()"}
+   {if="$fsc->get_errors()"}
    <div class="alert alert-danger hidden-print">
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
-   {if condition="$fsc->get_messages()"}
+   {if="$fsc->get_messages()"}
    <div class="alert alert-success hidden-print">
       <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
-   {if condition="$fsc->get_advices()"}
+   {if="$fsc->get_advices()"}
    <div class="alert alert-info hidden-print">
       <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
    </div>

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2014  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -36,6 +36,7 @@ require_model('fs_page.php');
 require_model('fs_user.php');
 require_model('fs_extension.php');
 require_model('fs_log.php');
+require_model('fs_var.php');
 
 /**
  * La clase principal de la que deben heredar todos los controladores
@@ -1087,5 +1088,30 @@ class fs_controller
       }
       
       return $this->last_changes;
+   }
+   
+   public function check_for_updates()
+   {
+      if( !defined('FS_NO_UPDATE') )
+      {
+         $fsvar = new fs_var();
+         
+         if( mt_rand(0,9) == 0 )
+         {
+            if( file_get_contents('VERSION') != file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts/master/VERSION') )
+            {
+               $fsvar->simple_save('updates', 'true');
+               return TRUE;
+            }
+            else
+            {
+               $fsvar->name = 'updates';
+               $fsvar->delete();
+               return FALSE;
+            }
+         }
+         else
+            return $fsvar->simple_get('updates');
+      }
    }
 }
