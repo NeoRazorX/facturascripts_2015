@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /base/
+Disallow: /controller/
+Disallow: /extras/
+Disallow: /model/
+Disallow: /nbproject/
+Disallow: /plugins/
+Disallow: /raintpl/
+Disallow: /tmp/
+Disallow: /view/

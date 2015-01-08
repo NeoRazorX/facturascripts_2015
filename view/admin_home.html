@@ -1,0 +1,348 @@
+{include="header"}
+
+{if condition="!$fsc->step"}
+<div class="jumbotron">
+  <h1>¡Bienvenido a FacturaScripts!</h1>
+  <p>
+     FacturaScripts tiene un desarrollo muy acelerado y en muchas direcciones distintas,
+     por eso estamos dividiendo el código en <b>plugins</b>, para que puedas activar solo aquello
+     que necesitas.
+  </p>
+  <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
+     <span class="glyphicon glyphicon-ok"></span> &nbsp; Continuar
+  </a>
+</div>
+{elseif="$fsc->step=='1'"}
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('#tab_panel_control a[href="#plugins"]').tab('show');
+   });
+</script>
+{/if}
+
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $('#f_enable_pages input:checkbox').prop('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $('#f_enable_pages input:checkbox').prop('checked', false);
+   }
+   function eliminar(name)
+   {
+      if( confirm("¿Realmente desea eliminar este plugin?") )
+      {
+         window.location.href = '{$fsc->url()}&delete_plugin='+name;
+      }
+   }
+   $(document).ready(function() {
+      if(window.location.hash.substring(1) == 'avanzado')
+      {
+         $('#tab_panel_control a[href="#avanzado"]').tab('show');
+      }
+   });
+</script>
+
+<div id="tab_panel_control" role="tabpanel">
+   <ul class="nav nav-tabs" role="tablist">
+      <li>
+         <a href="{$fsc->url()}" title="Recargar la página">
+            <span class="glyphicon glyphicon-refresh"></span>
+         </a>
+      </li>
+      <li role="presentation" class="active">
+         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Páginas</a>
+      </li>
+      <li role="presentation">
+         <a href="#plugins" aria-controls="plugins" role="tab" data-toggle="tab">Plugins</a>
+      </li>
+      <li role="presentation">
+         <a href="#avanzado" aria-controls="avanzado" role="tab" data-toggle="tab">Avanzado</a>
+      </li>
+   </ul>
+   <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="home">
+         <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
+            <input type="hidden" name="modpages" value="TRUE"/>
+            <div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+               <div class="row">
+                  <div class="col-md-6 col-sm-6 col-xs-6">
+                     <div class="btn-group">
+                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                           <span class="glyphicon glyphicon-check"></span>
+                        </button>
+                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                           <span class="glyphicon glyphicon-unchecked"></span>
+                        </button>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                     </button>
+                  </div>
+               </div>
+            </div>
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th class="text-left">Página</th>
+                        <th class="text-left">Menú</th>
+                        <th class="text-left">Versión</th>
+                        <th>Importante</th>
+                        <th>Existe</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->paginas"}
+                  <tr{if condition="!$value->exists"} class="bg-danger"{/if}>
+                     <td>
+                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if condition="$value->enabled"} checked="checked"{/if}/>
+                        &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
+                     </td>
+                     <td>
+                        {if condition="$value->show_on_menu"}
+                        <span class="text-capitalize">{$value->folder}</span> » {$value->title}
+                        {else}
+                        -
+                        {/if}
+                     </td>
+                     <td>{$value->version}</td>
+                     <td class="text-center">{if condition="$value->important"}<span class="glyphicon glyphicon-ok"></span>{/if}</td>
+                     <td class="text-center">{if condition="$value->exists"}<span class="glyphicon glyphicon-ok"></span>{/if}</td>
+                  </tr>
+                  {/loop}
+               </table>
+            </div>
+            {if="count($fsc->paginas)>10"}
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-md-10 col-sm-10">
+                     <div class="btn-group">
+                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                           <span class="glyphicon glyphicon-check"></span>
+                        </button>
+                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                           <span class="glyphicon glyphicon-unchecked"></span>
+                        </button>
+                     </div>
+                  </div>
+                  <div class="col-md-2 col-sm-2 text-right">
+                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                     </button>
+                  </div>
+               </div>
+            </div>
+            {/if}
+         </form>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="plugins">
+         <div class="container-fluid">
+            <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+               <div class="col-md-9">
+                  <div class="btn-group">
+                     <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> &nbsp; Añadir...
+                     </a>
+                     <a href="https://www.facturascripts.com/store/" target="_blank" class="btn btn-sm btn-default">
+                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Tienda de plugins
+                     </a>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <form class="form" action="https://www.facturascripts.com/store/" target="_blank">
+                     <input type="hidden" name="post_type" value="product"/>
+                     <div class="input-group">
+                        <input type="text" name="s" class="form-control">
+                        <span class="input-group-btn">
+                           <button class="btn btn-primary" type="button">
+                              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                           </button>
+                        </span>
+                     </div>
+                  </form>
+               </div>
+            </div>
+            <div class="row">
+               {loop="$fsc->plugin_advanced_list()"}
+               <div class="col-md-6">
+                  <div class="panel {if="$value->compatible"}panel-default{else}panel-danger{/if}">
+                     <div class="panel-heading">
+                        <h3 class="panel-title">{$value['name']}</h3>
+                     </div>
+                     <div class="panel-body">
+                        <div class="pull-right">
+                           {if condition="$value['enabled']"}
+                           <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}">
+                              <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
+                           </a>
+                           {else}
+                           <div class="btn-group">
+                              {if condition="$value['compatible']"}
+                              <a class="btn btn-sm btn-default" href="{$fsc->url()}&enable={$value['name']}">
+                                 <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
+                              </a>
+                              {else}
+                              <a class="btn btn-sm btn-default" href="#">
+                                 <span class="glyphicon glyphicon-remove"></span> &nbsp; Incompatible
+                              </a>
+                              {/if}
+                              <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
+                                 <span class="glyphicon glyphicon-trash"></span>
+                              </a>
+                           </div>
+                           {/if}
+                        </div>
+                        <p>{$value['description']}</p>
+                     </div>
+                  </div>
+               </div>
+               {/loop}
+            </div>
+         </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="avanzado">
+         <form class="form" action="{$fsc->url()}" method="post">
+            <div class="container-fluid" style="margin-top: 10px;">
+               <div class="row">
+                  <div class="col-md-3 col-sm-4">
+                     <div class="form-group">
+                        Zona horaria:
+                        <select class="form-control" name="zona_horaria">
+                        {loop="$fsc->get_timezone_list()"}
+                           {if condition="isset($GLOBALS['config2']['zona_horaria'])"}
+                           <option value="{$value['zone']}"{if condition="$value['zone']==$GLOBALS['config2']['zona_horaria']"} selected="selected"{/if}>
+                              {$value['diff_from_GMT']} - {$value['zone']}
+                           </option>
+                           {else}
+                           <option value="{$value['zone']}">{$value['diff_from_GMT']} - {$value['zone']}</option>
+                           {/if}
+                        {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="form-group col-md-3 col-sm-3">
+                     Decimales:
+                     <select name="nf0" class="form-control">
+                     {loop="$fsc->nf0()"}
+                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected="selected"{/if}>{$value}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group col-md-3 col-sm-3">
+                     Separador para los Decimales:
+                     <select name="nf1" class="form-control">
+                     {loop="$fsc->nf1()"}
+                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected="selected"{/if}>{$value}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group col-md-3 col-sm-3">
+                     Separador para los Millares:
+                     <select name="nf2" class="form-control">
+                        <option value="">(Ninguno)</option>
+                        {loop="$fsc->nf1()"}
+                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected="selected"{/if}>{$value}</option>
+                        {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group col-md-3 col-sm-3">
+                     Símbolo Divisa:
+                     <select name="pos_divisa" class="form-control">
+                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected="selected"{/if}>A la Derecha del Número</option>
+                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected="selected"{/if}>A la Izquierda del Número</option>
+                     </select>
+                  </div>
+                  <div class="col-md-3 col-sm-4">
+                     <div class="form-group">
+                         Nº de la primera factura de venta:
+                        <input class="form-control" type="number" name="nfactura_cli" value="{$GLOBALS['config2']['nfactura_cli']}"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                     <h2>Traducciones:</h2>
+                  </div>
+               </div>
+               <div class="row">
+                  {loop="$fsc->claves()"}
+                  <div class="col-md-2 col-sm-3">
+                     <div class="form-group">
+                        <span class="text-capitalize">{$value['nombre']}:</span>
+                        <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}"/>
+                     </div>
+                  </div>
+                  {/loop}      
+               </div>
+               <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                     <h2>Cálculo de precios:</h2>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Aplicar el margen:
+                        <select name="margin_method" class="form-control">
+                           <option value="PVP"{if condition="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>sobre el precio de venta</option>
+                           <option value="CST"{if condition="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>sobre el precio de coste</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Precio de coste:
+                        <select name="cost_is_average" class="form-control">
+                           <option value="1"{if condition="$GLOBALS['config2']['cost_is_average']=='1'"} selected='selected'{/if}>Calculado</option>
+                           <option value="0"{if condition="$GLOBALS['config2']['cost_is_average']=='0'"} selected='selected'{/if}>Editable</option>
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="row" style="margin-top: 20px;">
+                  <div class="col-md-6 col-sm-6">
+                     <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{$fsc->url()}&reset=TRUE'">
+                        <span class="glyphicon glyphicon-trash"></span> &nbsp; Reiniciar
+                     </button>
+                  </div>
+                  <div class="col-md-6 col-sm-6 text-right">
+                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="modal_add_plugin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Añadir un plugin</h4>
+         </div>
+         <div class="modal-body">
+            <p>Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.</p>
+            <form class="form" action="{$fsc->url()}" enctype="multipart/form-data" method="post">
+               <input type="hidden" name="install" value="TRUE"/>
+               <div class="form-group">
+                  <input type="file" name="fplugin" accept="application/zip"/>
+               </div>
+               <button type="submit" class="btn btn-default">
+                  <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
+{include="footer"}
