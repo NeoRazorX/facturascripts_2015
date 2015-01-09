@@ -19,8 +19,9 @@
 
 class admin_home extends fs_controller
 {
-   public $paginas;
    public $demo_warnign_showed;
+   public $download_list;
+   public $paginas;
    public $step;
    
    public function __construct()
@@ -30,14 +31,29 @@ class admin_home extends fs_controller
    
    protected function process()
    {
+      $this->download_list = array(
+          'facturacion_base' => array(
+              'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
+              'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
+          )
+      );
       $this->demo_warnign_showed = FALSE;
       $fsvar = new fs_var();
       $this->step = $fsvar->simple_get('install_step');
       
-      
       /**
-       * Pestaña páginas
+       * Pestaña avanzado
        */
+      $guardar = FALSE;
+      foreach($GLOBALS['config2'] as $i => $value)
+      {
+         if( isset($_POST[$i]) )
+         {
+            $GLOBALS['config2'][$i] = $_POST[$i];
+            $guardar = TRUE;
+         }
+      }
+      
       if( isset($_POST['modpages']) )
       {
          if(!$this->step)
@@ -72,12 +88,7 @@ class admin_home extends fs_controller
          
          $this->new_message('Datos guardados correctamente.');
       }
-      
-      
-      /**
-       * Pestaña plugins
-       */
-      if( isset($_GET['enable']) )
+      else if( isset($_GET['enable']) )
       {
          $this->enable_plugin($_GET['enable']);
       }
@@ -114,23 +125,35 @@ class admin_home extends fs_controller
                $this->new_error_msg('Archivo no encontrado.');
          }
       }
-      
-      
-      /**
-       * Pestaña avanzado
-       */
-      $guardar = FALSE;
-      foreach($GLOBALS['config2'] as $i => $value)
+      else if( isset($_GET['download']) )
       {
-         if( isset($_POST[$i]) )
+         if( isset($this->download_list[$_GET['download']]) )
          {
-            $GLOBALS['config2'][$i] = $_POST[$i];
-            $guardar = TRUE;
+            $this->new_message('Descargando el plugin '.$_GET['download']);
+            
+            if( file_put_contents('download.zip', file_get_contents($this->download_list[$_GET['download']]['url']) ) )
+            {
+               $zip = new ZipArchive();
+               if( $zip->open('download.zip') )
+               {
+                  $zip->extractTo('plugins/');
+                  $zip->close();
+                  
+                  /// renombramos el directorio
+                  rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
+                  
+                  $this->new_message('Plugin añadido correctamente. Ya puedes activarlo.');
+               }
+               else
+                  $this->new_error_msg('Archivo no encontrado.');
+            }
+            else
+               $this->new_error_msg('Error al descargar.');
          }
+         else
+            $this->new_error_msg('Descarga no encontrada.');
       }
-      
-      
-      if( isset($_GET['reset']) )
+      else if( isset($_GET['reset']) )
       {
          if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
          {
