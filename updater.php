@@ -60,7 +60,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
    }
    else if( isset($_GET['update']) OR isset($_GET['reinstall']) )
    {
-      if( file_put_contents('update.zip', file_get_contents('https://github.com/NeoRazorX/facturascripts/archive/master.zip')) )
+      if( file_put_contents('update.zip', file_get_contents('https://github.com/NeoRazorX/facturascripts_2015/archive/master.zip')) )
       {
          $zip = new ZipArchive();
          if( $zip->open('update.zip') )
@@ -76,8 +76,8 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             delTree('view/');
             
             /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
-            recurse_copy('facturascripts-master/', '.');
-            delTree('facturascripts-master/');
+            recurse_copy('facturascripts_2015-master/', '.');
+            delTree('facturascripts_2015-master/');
             
             $mensajes = 'Actualizado correctamente. <a href="index.php">Que lo disfrutes</a>.';
          }
@@ -90,7 +90,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
    
    $actualizar = FALSE;
    $version_actual = file_get_contents('VERSION');
-   $nueva_version = file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts/master/VERSION');
+   $nueva_version = file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
    if( $version_actual != $nueva_version )
    {
       $actualizar = TRUE;
