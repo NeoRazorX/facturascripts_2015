@@ -14,7 +14,7 @@
       $("#b_eliminar_usuario").click(function(event) {
          event.preventDefault();
          if( confirm("¿Realmente desea eliminar el usuario?") )
-            window.location.href = '{$fsc->ppage->url()}&delete={$fsc->suser->nick}';
+            window.location.href = 'index.php?page=admin_users&delete={$fsc->suser->nick}';
       });
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
@@ -31,7 +31,7 @@
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
-            <a class="btn btn-sm btn-default" href="{$fsc->ppage->url()}">
+            <a class="btn btn-sm btn-default" href="index.php?page=admin_users">
                <span class="glyphicon glyphicon-list"></span> &nbsp; Usuarios
             </a>
          </div>

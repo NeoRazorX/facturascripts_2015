@@ -69,10 +69,9 @@ class fs_controller
    public $page;
    
    /**
-    * La página previa (si está definida)
+    * Contiene el menú de FacturaScripts
     * @var type 
     */
-   public $ppage;
    protected $menu;
    
    /**
@@ -122,8 +121,6 @@ class fs_controller
       $this->advices = array();
       $this->simbolo_divisas = array();
       $this->extensions = array();
-      
-      $this->ppage = FALSE;
       
       if(strtolower(FS_DB_TYPE) == 'mysql')
       {

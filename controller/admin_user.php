@@ -33,7 +33,6 @@ class admin_user extends fs_controller
    
    public function process()
    {
-      $this->ppage = $this->page->get('admin_users');
       $this->agente = new agente();
       $this->ejercicio = new ejercicio();
       $user_no_more_admin = FALSE;
