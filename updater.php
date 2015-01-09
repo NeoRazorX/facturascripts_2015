@@ -50,11 +50,7 @@ function delTree($dir)
    return rmdir($dir);
 }
 
-if( defined('FS_NO_UPDATE') )
-{
-   echo "Las actualizaciones est&aacute;n desactivadas.";
-}
-else if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
+if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
 {
    $mensajes = '';
    $errores = '';
