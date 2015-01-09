@@ -34,6 +34,14 @@
             <a class="btn btn-sm btn-default" href="index.php?page=admin_users">
                <span class="glyphicon glyphicon-list"></span> &nbsp; Usuarios
             </a>
+            
+            <div class="btn-group">
+            {loop="$fsc->extensions"}
+               {if condition="$value->type=='button'"}
+               <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
+               {/if}
+            {/loop}
+            </div>
          </div>
          <div class="col-md-4 text-right">
             <div class="btn-group">
