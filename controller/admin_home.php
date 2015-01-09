@@ -25,7 +25,7 @@ class admin_home extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE, TRUE);
    }
    
    protected function process()
@@ -315,14 +315,17 @@ class admin_home extends fs_controller
       }
    }
    
-   public function claves()
+   public function traducciones()
    {
       $clist = array();
-      $exclude = array('zona_horaria', 'nfactura_cli', 'margin_method', 'cost_is_average', 'nf0', 'nf1', 'nf2', 'pos_divisa');
+      $include = array(
+          'albaran','albaranes','cifnif','pedido','pedidos',
+          'presupuesto','presupuestos','provincia','apartado'
+      );
       
       foreach($GLOBALS['config2'] as $i => $value)
       {
-         if( !in_array($i, $exclude) )
+         if( in_array($i, $include) )
             $clist[] = array('nombre' => $i, 'valor' => $value);
       }
       

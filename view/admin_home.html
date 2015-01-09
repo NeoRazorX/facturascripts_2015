@@ -37,7 +37,15 @@
       }
    }
    $(document).ready(function() {
-      if(window.location.hash.substring(1) == 'avanzado')
+      if(window.location.hash.substring(1) == 'paginas')
+      {
+         $('#tab_panel_control a[href="#paginas"]').tab('show');
+      }
+      else if(window.location.hash.substring(1) == 'plugins')
+      {
+         $('#tab_panel_control a[href="#plugins"]').tab('show');
+      }
+      else if(window.location.hash.substring(1) == 'avanzado')
       {
          $('#tab_panel_control a[href="#avanzado"]').tab('show');
       }
@@ -52,7 +60,7 @@
          </a>
       </li>
       <li role="presentation" class="active">
-         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Páginas</a>
+         <a href="#paginas" aria-controls="paginas" role="tab" data-toggle="tab">Páginas</a>
       </li>
       <li role="presentation">
          <a href="#plugins" aria-controls="plugins" role="tab" data-toggle="tab">Plugins</a>
@@ -62,8 +70,8 @@
       </li>
    </ul>
    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="home">
-         <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
+      <div role="tabpanel" class="tab-pane active" id="paginas">
+         <form id="f_enable_pages" action="{$fsc->url()}#paginas" method="post" class="form">
             <input type="hidden" name="modpages" value="TRUE"/>
             <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
                <div class="row">
@@ -215,7 +223,7 @@
          </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="avanzado">
-         <form class="form" action="{$fsc->url()}" method="post">
+         <form class="form" action="{$fsc->url()}#avanzado" method="post">
             <div class="container-fluid" style="margin-top: 10px;">
                <div class="row">
                   <div class="col-md-3 col-sm-4">
@@ -233,6 +241,14 @@
                         {/loop}
                         </select>
                      </div>
+                  </div>
+                  <div class="form-group col-md-3 col-sm-3">
+                     Portada:
+                     <select name="homepage" class="form-control">
+                        {loop="$fsc->paginas"}
+                        <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected="selected"{/if}>{$value->name}</option>
+                        {/loop}
+                     </select>
                   </div>
                   <div class="form-group col-md-3 col-sm-3">
                      Decimales:
@@ -279,7 +295,7 @@
                   </div>
                </div>
                <div class="row">
-                  {loop="$fsc->claves()"}
+                  {loop="$fsc->traducciones()"}
                   <div class="col-md-2 col-sm-3">
                      <div class="form-group">
                         <span class="text-capitalize">{$value['nombre']}:</span>

@@ -209,6 +209,7 @@ class fs_controller
          else if( !$this->log_in() )
          {
             $this->template = 'login/default';
+            $this->public_core();
          }
          else if( $this->user->have_access_to($this->page->name) )
          {
@@ -228,7 +229,7 @@ class fs_controller
                   $this->query = $_REQUEST['query'];
                }
                
-               $this->process();
+               $this->private_core();
             }
          }
          else if($name == '')
@@ -657,8 +658,23 @@ class fs_controller
    }
    
    /**
-    * Esta es la función que se ejecuta en el constructor si, y sólo si,
-    * el usuario realmente tiene acceso a la página
+    * Función que se ejecuta si el usuario no ha hecho login
+    */
+   protected function public_core()
+   {
+      
+   }
+   
+   /**
+    * Esta es la función principal que se ejecuta cuando el usuario ha hecho login
+    */
+   protected function private_core()
+   {
+      $this->process();
+   }
+   
+   /**
+    * Obsoleto
     */
    protected function process()
    {
@@ -674,11 +690,10 @@ class fs_controller
       {
          if( $this->user->logged_on )
          {
-            $url = FALSE;
-            
+            $page = '';
             if( is_null($this->user->fs_page) )
             {
-               $url = 'index.php?page=admin_pages';
+               $page = 'admin_home';
                
                /*
                 * Cuando un usuario no tiene asignada una página por defecto,
@@ -686,19 +701,21 @@ class fs_controller
                 */
                foreach($this->menu as $p)
                {
+                  if($p->show_on_menu)
+                  {
+                     $page = $p->name;
+                  }
+                  
                   if($p->important)
                   {
-                     $url = $p->url();
                      break;
                   }
-                  else if($p->show_on_menu)
-                     $url = $p->url();
                }
             }
             else
-               $url = 'index.php?page=' . $this->user->fs_page;
+               $page = $this->user->fs_page;
             
-            Header('location: '.$url);
+            header('Location: index.php?page='.$page);
          }
       }
    }

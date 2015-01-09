@@ -54,6 +54,11 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['nf2'] = ' ';
       $GLOBALS['config2']['pos_divisa'] = 'right';
    }
+   
+   if( !isset($GLOBALS['config2']['homepage']) )
+   {
+      $GLOBALS['config2']['homepage'] = 'admin_home';
+   }
 }
 else
 {
@@ -63,6 +68,7 @@ else
        'nf1' => '.',
        'nf2' => ' ',
        'pos_divisa' => 'right',
+       'nfactura_cli' => '1',
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
        'cifnif' => 'CIF/NIF',
@@ -70,11 +76,11 @@ else
        'pedidos' => 'pedidos',
        'presupuesto' => 'presupuesto',
        'presupuestos' => 'presupuestos',
-       'nfactura_cli' => '1',
        'provincia' => 'provincia',
        'apartado' => 'apartado',
        'margin_method' => 'PVP',
-       'cost_is_average' => '1'
+       'cost_is_average' => '1',
+       'homepage' => 'admin_home'
    );
 }
 

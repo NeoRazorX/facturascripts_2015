@@ -17,11 +17,13 @@
                      <span class="glyphicon glyphicon-question-sign"></span>
                      y <b>notifícame el error</b>.
                   </li>
+                  {if="isset($_GET['page'])"}
                   <li>
                      <b>Si eres programador</b> y estas intentando hacer un plugin, entonces te comento que
                      lo que ha pasado es que no encuentro el archivo <b>{$_GET['page']}.php</b>,
                      que debería estar en el directorio controller de tu plugin.
                   </li>
+                  {/if}
                </ul>
             </div>
             <div class="col-lg-7 col-md-7 col-sm-7" style="text-align: right;">

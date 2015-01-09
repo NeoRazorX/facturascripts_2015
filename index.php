@@ -21,6 +21,7 @@
 
 if( !file_exists('config.php') )
 {
+   /// si no hay config.php redirigimos al instalador
    header('Location: install.php');
 }
 else
@@ -51,35 +52,49 @@ else
    }
    
    /// ¿Qué controlador usar?
+   $pagename = '';
    if( isset($_GET['page']) )
+   {
+      $pagename = $_GET['page'];
+   }
+   else if( defined('FS_HOMEPAGE') )
+   {
+      $pagename = FS_HOMEPAGE;
+   }
+   
+   if($pagename != '')
    {
       /// primero buscamos en los plugins
       $found = FALSE;
       foreach($GLOBALS['plugins'] as $plugin)
       {
-         if( file_exists('plugins/'.$plugin.'/controller/'.$_GET['page'].'.php') )
+         if( file_exists('plugins/'.$plugin.'/controller/'.$pagename.'.php') )
          {
-            require_once 'plugins/'.$plugin.'/controller/'.$_GET['page'].'.php';
-            $fsc = new $_GET['page']();
+            require_once 'plugins/'.$plugin.'/controller/'.$pagename.'.php';
+            $fsc = new $pagename();
             $found = TRUE;
             break;
          }
       }
       
+      /// si no está en los plugins, buscamos en controller/
       if( !$found )
       {
-         if( file_exists('controller/'.$_GET['page'].'.php') )
+         if( file_exists('controller/'.$pagename.'.php') )
          {
-            require_once 'controller/'.$_GET['page'].'.php';
-            $fsc = new $_GET['page']();
+            require_once 'controller/'.$pagename.'.php';
+            $fsc = new $pagename();
          }
          else
             $fsc = new fs_controller();
       }
    }
    else
-   {
       $fsc = new fs_controller();
+   
+   if( !isset($_GET['page']) )
+   {
+      /// redireccionamos a la página definida por el usuario
       $fsc->select_default_page();
    }
    
