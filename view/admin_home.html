@@ -57,7 +57,7 @@
      Además, toda la facturación y contabilida básica ha sido movida al plugin <mark>facturacion_base</mark>,
      que lo tienes disponible en la sección descargas.
   </p>
-  <a href="{$fsc->url()}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
+  <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
      <span class="glyphicon glyphicon-download"></span> &nbsp; Descargar facturacion_base
   </a>
 </div>
@@ -112,7 +112,7 @@
    </ul>
    <div class="tab-content">
       <div role="tabpanel" class="tab-pane active" id="paginas">
-         <form id="f_enable_pages" action="{$fsc->url()}#paginas" method="post" class="form">
+         <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
             <input type="hidden" name="modpages" value="TRUE"/>
             {if="count($fsc->paginas)>10"}
             <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
@@ -288,7 +288,7 @@
                   <td>{$key}</td>
                   <td>{$value['description']}</td>
                   <td class="text-right">
-                     <a href="{$fsc->url()}&download={$key}" class="btn btn-xs btn-primary">
+                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> &nbsp; Descargar
                      </a>
                   </td>
