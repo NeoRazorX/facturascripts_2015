@@ -13,7 +13,7 @@
    {
       if( confirm("¿Realmente desea eliminar este plugin?") )
       {
-         window.location.href = '{$fsc->url()}&delete_plugin='+name;
+         window.location.href = '{$fsc->url()}&delete_plugin='+name+'#plugins';
       }
    }
    $(document).ready(function() {
@@ -34,7 +34,7 @@
 
 {if condition="!$fsc->step"}
 <div class="jumbotron">
-  <h1>¡Bienvenido a FacturaScripts!</h1>
+  <h1>¡Bienvenido a FacturaScripts {$fsc->version()}!</h1>
   <p>
      FacturaScripts tiene un desarrollo muy acelerado y en muchas direcciones distintas,
      por eso estamos dividiendo el código en <b>plugins</b>, para que puedas activar solo aquello
@@ -42,6 +42,23 @@
   </p>
   <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
      <span class="glyphicon glyphicon-ok"></span> &nbsp; Continuar
+  </a>
+</div>
+{elseif="$fsc->step=='1'"}
+<div class="jumbotron">
+  <h1>Plugins</h1>
+  <p>
+     En esta nueva versión hemos decidido que cada plugin sea un desarrollo independiente,
+     esto nos permitirá tener tiempos de desarrollo distintos en cada plugin,
+     sin tener que lanzar una actualización completa solo porque se ha solucionado el fallo
+     en un plugin.
+  </p>
+  <p>
+     Además, toda la facturación y contabilida básica ha sido movida al plugin <mark>facturacion_base</mark>,
+     que lo tienes disponible en la sección descargas.
+  </p>
+  <a href="{$fsc->url()}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
+     <span class="glyphicon glyphicon-download"></span> &nbsp; Descargar facturacion_base
   </a>
 </div>
 {else}
@@ -207,13 +224,13 @@
                      <div class="panel-body">
                         <div class="pull-right">
                            {if condition="$value['enabled']"}
-                           <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}">
+                           <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}#plugins">
                               <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
                            </a>
                            {else}
                            <div class="btn-group">
                               {if condition="$value['compatible']"}
-                              <a class="btn btn-sm btn-default" href="{$fsc->url()}&enable={$value['name']}">
+                              <a class="btn btn-sm btn-default" href="{$fsc->url()}&enable={$value['name']}#plugins">
                                  <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
                               </a>
                               {else}
@@ -272,7 +289,7 @@
                   <td>{$value['description']}</td>
                   <td class="text-right">
                      <a href="{$fsc->url()}&download={$key}" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-download" aria-hidden="true"></span> &nbsp; Descargar
+                        <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> &nbsp; Descargar
                      </a>
                   </td>
                </tr>

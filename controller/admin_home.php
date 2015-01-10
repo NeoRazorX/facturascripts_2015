@@ -143,6 +143,12 @@ class admin_home extends fs_controller
                   rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
                   
                   $this->new_message('Plugin añadido correctamente. Ya puedes activarlo.');
+                  
+                  if($this->step == '1')
+                  {
+                     $this->step = '2';
+                     $fsvar->simple_save('install_step', $this->step);
+                  }
                }
                else
                   $this->new_error_msg('Archivo no encontrado.');

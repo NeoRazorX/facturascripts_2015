@@ -303,7 +303,7 @@ $system_info = str_replace('"', "'", $system_info);
    <div class="container">
       <div class="row">
          <div class="col-lg-12 text-center" style="margin-top: 20px; margin-bottom: 20px;">
-            <h1>Bienvenido al instalador de FacturaScripts</h1>
+            <h1>Bienvenido al instalador de FacturaScripts <?php echo file_get_contents('VERSION'); ?></h1>
          </div>
       </div>
       

@@ -50,13 +50,49 @@ function delTree($dir)
    return rmdir($dir);
 }
 
+function __getAllSubDirectories($directory, $directory_seperator=DIRECTORY_SEPARATOR)
+{
+   $dirs = array_map( function($item)use($directory_seperator){ return $item . $directory_seperator;}, array_filter( glob( $directory . '*' ), 'is_dir') );
+   
+   foreach($dirs AS $dir)
+	{
+      if( strcmp($dir, "..".$directory_seperator) != 0 )
+      {
+         $dirs = array_merge($dirs, __getAllSubDirectories($dir, $directory_seperator) );
+      }
+   }
+   
+   return $dirs;
+}
+
+function __areWritable($dirlist)
+{
+   $notwritable = array();
+   
+   foreach($dirlist as $dir)
+   {
+      if( !is_writable($dir) && strcmp ($dir, "../") != 0)
+      {
+         $notwritable[] = $dir;
+      }
+	}
+   
+   return $notwritable;
+}
+
 if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
 {
    $mensajes = '';
    $errores = '';
-   if( !is_writable('.') )
+   
+   foreach(__areWritable(__getAllSubDirectories('.')) as $dir)
    {
-      $errores = 'No tienes permisos de escritura sobre la carpeta de FacturaScripts.';
+      $errores .= 'No se puede escribir sobre el directorio '.$dir.'<br/>';
+   }
+   
+   if($errores != '')
+   {
+      $errores .= 'Tienes que corregir estos errores antes de continuar.';
    }
    else if( isset($_GET['update']) OR isset($_GET['reinstall']) )
    {
@@ -74,6 +110,15 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             delTree('controller/');
             delTree('model/');
             delTree('view/');
+            
+            /// borramos los archivos temporales del motor de plantillas
+            foreach( scandir($path.'/tmp') as $f )
+				{
+               if( substr($f, -4) == '.php' )
+               {
+                  unlink($path.'/tmp/'.$f);
+               }
+				}
             
             /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
             recurse_copy('facturascripts_2015-master/', '.');
@@ -112,11 +157,11 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
    <?php
    if($errores != '')
    {
-      echo '<div class="alert alert-danger">'.$errores.'</div>';
+      echo '<div class="alert alert-danger" style="margin-bottom: 0px;">'.$errores.'</div>';
    }
    else if($mensajes != '')
    {
-      echo '<div class="alert alert-info">'.$mensajes.'</div>';
+      echo '<div class="alert alert-info" style="margin-bottom: 0px;">'.$mensajes.'</div>';
    }
    ?>
    <div class="jumbotron">
@@ -140,7 +185,9 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
          else
          {
             ?>
-            <a class="btn btn-primary btn-lg" href="updater.php?reinstall=TRUE" role="button">Reinstalar</a>
+            <a class="btn btn-primary btn-lg" href="updater.php?reinstall=TRUE" role="button">
+               <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> &nbsp; Reinstalar
+            </a>
             <?php
          }
          ?>
