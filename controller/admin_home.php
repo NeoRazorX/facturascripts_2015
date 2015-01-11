@@ -418,7 +418,8 @@ class admin_home extends fs_controller
                 'enabled' => FALSE,
                 'version' => 0,
                 'require' => '',
-                'update_url' => ''
+                'update_url' => '',
+                'version_url' => ''
             );
             
             if( file_exists('plugins/'.$f.'/facturascripts.ini') )
@@ -445,6 +446,11 @@ class admin_home extends fs_controller
                if( isset($ini_file['update_url']) )
                {
                   $plugin['update_url'] = $ini_file['update_url'];
+               }
+               
+               if( isset($ini_file['version_url']) )
+               {
+                  $plugin['version_url'] = $ini_file['version_url'];
                }
             }
             
@@ -570,5 +576,46 @@ class admin_home extends fs_controller
          /// limpiamos la caché
          $this->cache->clean();
       }
+   }
+   
+   public function check_for_updates()
+   {
+      $fsvar = new fs_var();
+      
+      if( $fsvar->simple_get('updates') )
+      {
+         return TRUE;
+      }
+      else if( mt_rand(0,2) == 0 )
+      {
+         $updates = FALSE;
+         
+         foreach($this->plugin_advanced_list() as $plugin)
+         {
+            if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
+            {
+               $internet_ini = parse_ini_string( file_get_contents($plugin['version_url']) );
+               if($plugin['version'] != $internet_ini['version'])
+               {
+                  $updates = TRUE;
+                  break;
+               }
+            }
+         }
+         
+         if($updates)
+         {
+            $fsvar->simple_save('updates', 'true');
+            return TRUE;
+         }
+         else
+         {
+            $fsvar->name = 'updates';
+            $fsvar->delete();
+            return FALSE;
+         }
+      }
+      else
+         return FALSE;
    }
 }

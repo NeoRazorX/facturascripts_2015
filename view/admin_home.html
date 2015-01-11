@@ -252,8 +252,8 @@
                         {if="$value['require']!=''"}
                         &nbsp; Requiere: <i>{$value['require']}</i>
                         {/if}
-                        {if="$value['update_url']!=''"}
-                        &nbsp; <span class="glyphicon glyphicon-download" aria-hidden="true"></span> Actualizable
+                        {if="$value['update_url']!='' AND $value['version_url']!=''"}
+                        &nbsp; <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualizable
                         {/if}
                      </div>
                      {/if}
@@ -294,7 +294,7 @@
                      </a>
                      {else}
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}#plugins" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> &nbsp; Descargar
+                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Descargar
                      </a>
                      {/if}
                   </td>

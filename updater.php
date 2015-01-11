@@ -71,7 +71,7 @@ function __areWritable($dirlist)
    
    foreach($dirlist as $dir)
    {
-      if( !is_writable($dir) && strcmp ($dir, "../") != 0)
+      if( !is_writable($dir) && strcmp($dir, "../") != 0)
       {
          $notwritable[] = $dir;
       }
@@ -80,14 +80,84 @@ function __areWritable($dirlist)
    return $notwritable;
 }
 
+function check_for_plugin_updates()
+{
+   $plugins = array();
+   
+   foreach( scandir(getcwd().'/plugins') as $f)
+   {
+      if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+      {
+         $plugin = array(
+             'name' => $f,
+             'description' => 'Sin descripción.',
+             'compatible' => FALSE,
+             'enabled' => FALSE,
+             'version' => 0,
+             'require' => '',
+             'update_url' => '',
+             'version_url' => '',
+             'new_version' => 0
+         );
+         
+         if( file_exists('plugins/'.$f.'/facturascripts.ini') )
+         {
+            $plugin['compatible'] = TRUE;
+            $plugin['enabled'] = file_exists('tmp/enabled_plugins/'.$f);
+            
+            if( file_exists('plugins/'.$f.'/description') )
+            {
+               $plugin['description'] = file_get_contents('plugins/'.$f.'/description');
+            }
+            
+            $ini_file = parse_ini_file('plugins/'.$f.'/facturascripts.ini');
+            if( isset($ini_file['version']) )
+            {
+               $plugin['version'] = $ini_file['version'];
+            }
+            
+            if( isset($ini_file['require']) )
+            {
+               $plugin['require'] = $ini_file['require'];
+            }
+            
+            if( isset($ini_file['update_url']) )
+            {
+               $plugin['update_url'] = $ini_file['update_url'];
+            }
+            
+            if( isset($ini_file['version_url']) )
+            {
+               $plugin['version_url'] = $ini_file['version_url'];
+            }
+            
+            if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
+            {
+               $internet_ini = parse_ini_string( file_get_contents($plugin['version_url']) );
+               if($plugin['version'] != $internet_ini['version'])
+               {
+                  $plugin['new_version'] = $internet_ini['version'];
+                  $plugins[] = $plugin;
+               }
+            }
+         }
+      }
+   }
+   
+   return $plugins;
+}
+
 if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
 {
    $mensajes = '';
    $errores = '';
    
-   foreach(__areWritable(__getAllSubDirectories('.')) as $dir)
+   if( !isset($_GET['update']) AND !isset($_GET['reinstall']) AND !isset($_GET['plugin']) )
    {
-      $errores .= 'No se puede escribir sobre el directorio '.$dir.'<br/>';
+      foreach(__areWritable(__getAllSubDirectories('.')) as $dir)
+      {
+         $errores .= 'No se puede escribir sobre el directorio '.$dir.'<br/>';
+      }
    }
    
    if($errores != '')
@@ -108,15 +178,17 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             /// eliminamos archivos antiguos
             delTree('base/');
             delTree('controller/');
+            delTree('extras/');
             delTree('model/');
+            delTree('raintpl/');
             delTree('view/');
             
             /// borramos los archivos temporales del motor de plantillas
-            foreach( scandir($path.'/tmp') as $f )
+            foreach( scandir(getcwd().'/tmp') as $f )
 				{
                if( substr($f, -4) == '.php' )
                {
-                  unlink($path.'/tmp/'.$f);
+                  unlink('tmp/'.$f);
                }
 				}
             
@@ -131,6 +203,47 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       }
       else
          $errores = 'Error al descargar el archivo zip.';
+   }
+   else if( isset($_GET['plugin']) )
+   {
+      /// leemos el ini del plugin
+      $plugin_ini = parse_ini_file('plugins/'.$_GET['plugin'].'/facturascripts.ini');
+      if($plugin_ini)
+      {
+         /// descargamos el zip
+         if( file_put_contents('update.zip', file_get_contents($plugin_ini['update_url'])) )
+         {
+            $zip = new ZipArchive();
+            if( $zip->open('update.zip') )
+            {
+               /// eliminamos los archivos antiguos
+               delTree('plugins/'.$_GET['plugin']);
+               
+               /// descomprimimos
+               $zip->extractTo('plugins/');
+               $zip->close();
+               unlink('update.zip');
+               
+               /// renombramos el directorio
+               rename('plugins/'.$_GET['plugin'].'-master', 'plugins/'.$_GET['plugin']);
+               
+               /// borramos los archivos temporales del motor de plantillas
+               foreach( scandir(getcwd().'/tmp') as $f )
+         		{
+                  if( substr($f, -4) == '.php' )
+                  {
+                     unlink('tmp/'.$f);
+                  }
+      			}
+               
+               $mensajes = 'Plugin actualizado correctamente. <a href="index.php">Que lo disfrutes</a>.';
+            }
+            else
+               $errores = 'Archivo update.zip no encontrado.';
+         }
+         else
+            $errores = 'Error al descargar el archivo zip.';
+      }
    }
    
    $actualizar = FALSE;
@@ -176,10 +289,16 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       </p>
       <p>
          <?php
-         if($actualizar)
+         if($errores != '')
+         {
+            
+         }
+         else if($actualizar)
          {
             ?>
-            <a class="btn btn-primary btn-lg" href="updater.php?update=TRUE" role="button">Actualizar</a>
+            <a class="btn btn-primary btn-lg" href="updater.php?update=TRUE" role="button">
+               <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Actualizar
+            </a>
             <?php
          }
          else
@@ -192,6 +311,40 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
          }
          ?>
       </p>
+   </div>
+   <ul class="nav nav-tabs">
+      <li role="presentation" class="active"><a href="#">Plugins</a></li>
+   </ul>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">Nombre</th>
+               <th class="text-left">Descripción</th>
+               <th class="text-right">Versión</th>
+               <th class="text-right">Nueva versión</th>
+               <th></th>
+            </tr>
+         </thead>
+         <?php
+         if($errores == '')
+         {
+            $plugins_for_update = FALSE;
+            foreach(check_for_plugin_updates() as $plugin)
+            {
+               echo '<tr><td>'.$plugin['name'].'</td><td>'.$plugin['description'].'</td>'
+                       . '<td class="text-right">'.$plugin['version'].'</td><td class="text-right">'.$plugin['new_version'].'</td>'
+                       . '<td class="text-right"><a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">Actualizar</a></td></tr>';
+               $plugins_for_update = TRUE;
+            }
+            
+            if(!$plugins_for_update)
+            {
+               echo '<tr class="bg-info"><td colspan="5">No hay actualizaciones de plugins.</td></tr>';
+            }
+         }
+         ?>
+      </table>
    </div>
    <div class="text-center" style="margin-bottom: 20px;">
       <hr/>
