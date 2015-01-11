@@ -217,7 +217,7 @@
             <div class="row">
                {loop="$fsc->plugin_advanced_list()"}
                <div class="col-md-6">
-                  <div class="panel {if="$value['compatible']"}panel-default{else}panel-danger{/if}">
+                  <div class="panel {if="!$value['compatible']"}panel-danger{elseif="$value['enabled']"}panel-success{else}panel-default{/if}">
                      <div class="panel-heading">
                         <h3 class="panel-title">{$value['name']}</h3>
                      </div>

@@ -33,24 +33,6 @@ else
    require_once 'base/fs_controller.php';
    require_once 'raintpl/rain.tpl.class.php';
    
-   /// Cargamos la lista de plugins activos
-   $GLOBALS['plugins'] = array();
-   if( file_exists('tmp/enabled_plugins') )
-   {
-      foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
-      {
-         if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
-         {
-            if( file_exists('plugins/'.$f) )
-            {
-               $GLOBALS['plugins'][] = $f;
-            }
-            else
-               unlink('tmp/enabled_plugins/'.$f);
-         }
-      }
-   }
-   
    /// ¿Qué controlador usar?
    $pagename = '';
    if( isset($_GET['page']) )

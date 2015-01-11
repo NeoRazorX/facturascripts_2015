@@ -37,27 +37,6 @@ require_once 'base/fs_default_items.php';
  */
 function require_model($name)
 {
-   if( !isset($GLOBALS['plugins']) )
-   {
-      /// Cargamos la lista de plugins activos
-      $GLOBALS['plugins'] = array();
-      if( file_exists('tmp/enabled_plugins') )
-      {
-         foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
-         {
-            if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
-            {
-               if( file_exists('plugins/'.$f) )
-               {
-                  $GLOBALS['plugins'][] = $f;
-               }
-               else
-                  unlink('tmp/enabled_plugins/'.$f);
-            }
-         }
-      }
-   }
-   
    if( !isset($GLOBALS['models']) )
    {
       $GLOBALS['models'] = array();

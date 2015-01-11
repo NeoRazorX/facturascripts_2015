@@ -43,6 +43,10 @@ class admin_home extends fs_controller
           'presupuestos_y_pedidos_compras' => array(
               'url' => 'https://github.com/shawe/presupuestos_y_pedidos_compras/archive/master.zip',
               'description' => 'Incluye soporte para pedidos y presupuestos de proveedores, es decir, de compras. <b>Todavía en desarrollo</b>'
+          ),
+          'dashboard' => array(
+              'url' => 'https://github.com/shawe/dashboard/archive/master.zip',
+              'description' => 'Pantalla de información resumida para FacturaScripts'
           )
       );
       $this->demo_warnign_showed = FALSE;
@@ -274,30 +278,7 @@ class admin_home extends fs_controller
    
    private function plugins()
    {
-      $plugins = array();
-      
-      if( !file_exists('tmp/enabled_plugins') )
-      {
-         mkdir('tmp/enabled_plugins');
-      }
-      
-      if( file_exists('tmp/enabled_plugins') )
-      {
-         foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
-         {
-            if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
-            {
-               if( file_exists('plugins/'.$f) )
-               {
-                  $plugins[] = $f;
-               }
-               else
-                  unlink('tmp/enabled_plugins/'.$f);
-            }
-         }
-      }
-      
-      return $plugins;
+      return $GLOBALS['plugins'];
    }
    
    private function enable_page($page)
@@ -425,7 +406,7 @@ class admin_home extends fs_controller
             if( file_exists('plugins/'.$f.'/facturascripts.ini') )
             {
                $plugin['compatible'] = TRUE;
-               $plugin['enabled'] = file_exists('tmp/enabled_plugins/'.$f);
+               $plugin['enabled'] = in_array($f, $this->plugins());
                
                if( file_exists('plugins/'.$f.'/description') )
                {
@@ -473,12 +454,12 @@ class admin_home extends fs_controller
    
    private function enable_plugin($name)
    {
-      if( !file_exists('tmp/enabled_plugins/'.$name) )
+      if( !in_array($name, $this->plugins()) )
       {
-         if( touch('tmp/enabled_plugins/'.$name) )
+         $GLOBALS['plugins'][] = $name;
+         
+         if( file_put_contents('tmp/enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
          {
-            $GLOBALS['plugins'][] = $name;
-            
             if( file_exists(getcwd().'/plugins/'.$name.'/controller') )
             {
                /// activamos las páginas del plugin
@@ -516,23 +497,35 @@ class admin_home extends fs_controller
    
    private function disable_plugin($name)
    {
-      if( file_exists('tmp/enabled_plugins/'.$name) )
+      if( file_exists('tmp/enabled_plugins.list') )
       {
-         if( unlink('tmp/enabled_plugins/'.$name) )
+         if( in_array($name, $this->plugins()) )
          {
-            $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
-            
-            foreach($GLOBALS['plugins'] as $i => $value)
+            if($GLOBALS['plugins'][0] == $name)
             {
-               if($value == $name)
+               $GLOBALS['plugins'] = array();
+               unlink('tmp/enabled_plugins.list');
+            }
+            else
+            {
+               foreach($GLOBALS['plugins'] as $i => $value)
                {
-                  unset($GLOBALS['plugins'][$i]);
-                  break;
+                  if($value == $name)
+                  {
+                     unset($GLOBALS['plugins'][$i]);
+                     break;
+                  }
                }
+               
+               if( file_put_contents('tmp/enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
+               {
+                  $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
+               }
+               else
+                  $this->new_error_msg('Imposible desactivar el plugin <b>'.$name.'</b>.');
             }
          }
-         else
-            $this->new_error_msg('Imposible desactivar el plugin <b>'.$name.'</b>.');
+         
          
          /*
           * Desactivamos las páginas que ya no existen
@@ -582,14 +575,17 @@ class admin_home extends fs_controller
    {
       $fsvar = new fs_var();
       
-      if( $fsvar->simple_get('updates') )
+      if(!$this->user->admin)
+      {
+         return FALSE;
+      }
+      else if( $fsvar->simple_get('updates') )
       {
          return TRUE;
       }
       else if( mt_rand(0,2) == 0 )
       {
          $updates = FALSE;
-         
          foreach($this->plugin_advanced_list() as $plugin)
          {
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')

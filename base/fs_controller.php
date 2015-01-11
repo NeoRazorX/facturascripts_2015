@@ -1106,23 +1106,27 @@ class fs_controller
    
    public function check_for_updates()
    {
-      $fsvar = new fs_var();
-      
-      if( mt_rand(0,9) == 0 )
+      if($this->user->admin)
       {
-         if( file_get_contents('VERSION') != file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
+         $fsvar = new fs_var();
+         if( mt_rand(0,9) == 0 )
          {
-            $fsvar->simple_save('updates', 'true');
-            return TRUE;
+            if( file_get_contents('VERSION') != file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
+            {
+               $fsvar->simple_save('updates', 'true');
+               return TRUE;
+            }
+            else
+            {
+               $fsvar->name = 'updates';
+               $fsvar->delete();
+               return FALSE;
+            }
          }
          else
-         {
-            $fsvar->name = 'updates';
-            $fsvar->delete();
-            return FALSE;
-         }
+            return $fsvar->simple_get('updates');
       }
       else
-         return $fsvar->simple_get('updates');
+         return FALSE;
    }
 }

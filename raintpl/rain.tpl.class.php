@@ -244,12 +244,8 @@ class RainTPL
          
          $tpl_dir = self::$tpl_dir.$tpl_basedir;
          
-         /// buscamos la plantilla en el directorio de plantillas de PDF
-         if( file_exists('tmp/'.FS_TMP_NAME.'pdf_templates/'.$tpl_name.'.'.self::$tpl_ext) )
-         {
-            $tpl_dir = 'tmp/'.FS_TMP_NAME.'pdf_templates/'.$tpl_basedir;
-         }
-         else if( isset($GLOBALS['plugins']) ) /// buscamos la plantilla en los plugins activos
+         /// buscamos la plantilla en los plugins activos
+         if( isset($GLOBALS['plugins']) )
          {
             foreach($GLOBALS['plugins'] as $plugin_dir)
             {

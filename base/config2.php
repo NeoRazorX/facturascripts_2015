@@ -106,3 +106,20 @@ if( !file_exists('plugins') )
 {
    mkdir('plugins');
 }
+
+/// Cargamos la lista de plugins activos
+$GLOBALS['plugins'] = array();
+if( file_exists('tmp/enabled_plugins.list') )
+{
+   $list = explode(',', file_get_contents('tmp/enabled_plugins.list'));
+   if($list)
+   {
+      foreach( array_reverse($list) as $f )
+      {
+         if( file_exists('plugins/'.$f) )
+         {
+            $GLOBALS['plugins'][] = $f;
+         }
+      }
+   }
+}
