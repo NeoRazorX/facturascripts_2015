@@ -288,9 +288,15 @@
                   <td>{$key}</td>
                   <td>{$value['description']}</td>
                   <td class="text-right">
-                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}" class="btn btn-xs btn-primary">
+                     {if="file_exists('plugins/'.$key)"}
+                     <a href="#plugins" class="btn btn-xs btn-success">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Descargado
+                     </a>
+                     {else}
+                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}#plugins" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span> &nbsp; Descargar
                      </a>
+                     {/if}
                   </td>
                </tr>
                {/loop}
@@ -404,9 +410,29 @@
                      </div>
                   </div>
                </div>
+               <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                     <h2>En desarrollo:</h2>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Comprobaciones en la base de datos:
+                        <select name="check_db_types" class="form-control">
+                           <option value="true"{if condition="$GLOBALS['config2']['check_db_types']=='true'"} selected='selected'{/if}>
+                              comprobar los tipos de las columnas de las tablas
+                           </option>
+                           <option value="false"{if condition="$GLOBALS['config2']['check_db_types']=='false'"} selected='selected'{/if}>
+                              no comprobar los tipos
+                           </option>
+                        </select>
+                     </div>
+                  </div>
+               </div>
                <div class="row" style="margin-top: 20px;">
                   <div class="col-md-6 col-sm-6">
-                     <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{$fsc->url()}&reset=TRUE'">
+                     <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{$fsc->url()}&caca={$fsc->random_string(4)}&reset=TRUE#avanzado'">
                         <span class="glyphicon glyphicon-trash"></span> &nbsp; Reiniciar
                      </button>
                   </div>

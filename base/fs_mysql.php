@@ -436,9 +436,19 @@ class fs_mysql extends fs_db
       return $consulta;
    }
    
+   /**
+    * Compara los tipos de de datos de una columna. Devuelve TRUE si son distintos.
+    * @param type $v1
+    * @param type $v2
+    * @return boolean
+    */
    private function compare_data_types($v1, $v2)
    {
-      if( strtolower($v2) == 'serial')
+      if(FS_CHECK_DB_TYPES == 'false')
+      {
+         return FALSE;
+      }
+      else if( strtolower($v2) == 'serial')
       {
          return FALSE;
       }

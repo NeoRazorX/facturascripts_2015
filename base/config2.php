@@ -59,6 +59,11 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    {
       $GLOBALS['config2']['homepage'] = 'admin_home';
    }
+   
+   if( !isset($GLOBALS['config2']['check_db_types']) )
+   {
+      $GLOBALS['config2']['check_db_types'] = 'false';
+   }
 }
 else
 {
@@ -80,7 +85,8 @@ else
        'apartado' => 'apartado',
        'margin_method' => 'PVP',
        'cost_is_average' => '1',
-       'homepage' => 'admin_home'
+       'homepage' => 'admin_home',
+       'check_db_types' => 'false'
    );
 }
 

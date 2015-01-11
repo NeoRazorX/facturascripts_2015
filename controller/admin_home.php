@@ -35,6 +35,14 @@ class admin_home extends fs_controller
           'facturacion_base' => array(
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
               'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
+          ),
+          'presupuestos_y_pedidos' => array(
+              'url' => 'https://github.com/shawe/presupuestos_y_pedidos/archive/master.zip',
+              'description' => 'Añade soporte para pedidos y presupuestos a clientes.'
+          ),
+          'presupuestos_y_pedidos_compras' => array(
+              'url' => 'https://github.com/shawe/presupuestos_y_pedidos_compras/archive/master.zip',
+              'description' => 'Incluye soporte para pedidos y presupuestos de proveedores, es decir, de compras. <b>Todavía en desarrollo</b>'
           )
       );
       $this->demo_warnign_showed = FALSE;
@@ -164,7 +172,7 @@ class admin_home extends fs_controller
          if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
          {
             unlink('tmp/'.FS_TMP_NAME.'config2.ini');
-            $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'">aquí</a> para continuar.');
+            $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'#avanzado">aquí</a> para continuar.');
          }
       }
       else if($guardar AND FS_DEMO)
