@@ -304,7 +304,7 @@
          </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="avanzado">
-         <form class="form" action="{$fsc->url()}#avanzado" method="post">
+         <form class="form" action="{$fsc->url()}&caca={$fsc->random_string(4)}#avanzado" method="post">
             <div class="container-fluid" style="margin-top: 10px;">
                <div class="row">
                   <div class="col-md-3 col-sm-4">
@@ -395,8 +395,8 @@
                      <div class="form-group">
                         Aplicar el margen:
                         <select name="margin_method" class="form-control">
-                           <option value="PVP"{if condition="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>sobre el precio de venta</option>
-                           <option value="CST"{if condition="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>sobre el precio de coste</option>
+                           <option value="PVP"{if="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>sobre el precio de venta</option>
+                           <option value="CST"{if="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>sobre el precio de coste</option>
                         </select>
                      </div>
                   </div>
@@ -404,8 +404,8 @@
                      <div class="form-group">
                         Precio de coste:
                         <select name="cost_is_average" class="form-control">
-                           <option value="1"{if condition="$GLOBALS['config2']['cost_is_average']=='1'"} selected='selected'{/if}>Calculado</option>
-                           <option value="0"{if condition="$GLOBALS['config2']['cost_is_average']=='0'"} selected='selected'{/if}>Editable</option>
+                           <option value="1"{if="$GLOBALS['config2']['cost_is_average']==1"} selected='selected'{/if}>Calculado</option>
+                           <option value="0"{if="$GLOBALS['config2']['cost_is_average']==0"} selected='selected'{/if}>Editable</option>
                         </select>
                      </div>
                   </div>
@@ -420,10 +420,10 @@
                      <div class="form-group">
                         Comprobaciones en la base de datos:
                         <select name="check_db_types" class="form-control">
-                           <option value="true"{if condition="$GLOBALS['config2']['check_db_types']=='true'"} selected='selected'{/if}>
+                           <option value="true"{if="$GLOBALS['config2']['check_db_types']=='true'"} selected='selected'{/if}>
                               comprobar los tipos de las columnas de las tablas
                            </option>
-                           <option value="false"{if condition="$GLOBALS['config2']['check_db_types']=='false'"} selected='selected'{/if}>
+                           <option value="false"{if="$GLOBALS['config2']['check_db_types']=='false'"} selected='selected'{/if}>
                               no comprobar los tipos
                            </option>
                         </select>

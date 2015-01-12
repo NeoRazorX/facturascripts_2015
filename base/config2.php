@@ -73,7 +73,7 @@ else
        'nf1' => '.',
        'nf2' => ' ',
        'pos_divisa' => 'right',
-       'nfactura_cli' => '1',
+       'nfactura_cli' => 1,
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
        'cifnif' => 'CIF/NIF',
@@ -84,7 +84,7 @@ else
        'provincia' => 'provincia',
        'apartado' => 'apartado',
        'margin_method' => 'PVP',
-       'cost_is_average' => '1',
+       'cost_is_average' => 1,
        'homepage' => 'admin_home',
        'check_db_types' => 'false'
    );

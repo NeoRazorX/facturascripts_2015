@@ -46,7 +46,7 @@ class admin_home extends fs_controller
           ),
           'dashboard' => array(
               'url' => 'https://github.com/shawe/dashboard/archive/master.zip',
-              'description' => 'Pantalla de información resumida para FacturaScripts'
+              'description' => 'Pantalla de información resumida para FacturaScripts. <b>Todavía en desarrollo</b>'
           )
       );
       $this->demo_warnign_showed = FALSE;
@@ -190,7 +190,14 @@ class admin_home extends fs_controller
          {
             foreach($GLOBALS['config2'] as $i => $value)
             {
-               fwrite($file, $i.' = '.$value.";\n");
+               if( is_numeric($value) )
+               {
+                  fwrite($file, $i." = ".$value.";\n");
+               }
+               else
+               {
+                  fwrite($file, $i." = '".$value."';\n");
+               }
             }
             
             fclose($file);

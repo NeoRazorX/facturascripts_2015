@@ -452,10 +452,6 @@ class fs_mysql extends fs_db
       {
          return FALSE;
       }
-      else if( substr($v1, 0, 7) == 'varchar' AND substr($v2, 0, 17) == 'character varying' )
-      {
-         return FALSE;
-      }
       else if($v1 == 'tinyint(1)' AND $v2 == 'boolean')
       {
          return FALSE;
