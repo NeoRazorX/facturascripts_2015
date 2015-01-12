@@ -113,7 +113,7 @@ function check_for_plugin_updates()
             $ini_file = parse_ini_file('plugins/'.$f.'/facturascripts.ini');
             if( isset($ini_file['version']) )
             {
-               $plugin['version'] = $ini_file['version'];
+               $plugin['version'] = intval($ini_file['version']);
             }
             
             if( isset($ini_file['require']) )
@@ -134,9 +134,9 @@ function check_for_plugin_updates()
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
                $internet_ini = parse_ini_string( file_get_contents($plugin['version_url']) );
-               if($plugin['version'] != $internet_ini['version'])
+               if( $plugin['version'] < intval($internet_ini['version']) )
                {
-                  $plugin['new_version'] = $internet_ini['version'];
+                  $plugin['new_version'] = intval($internet_ini['version']);
                   $plugins[] = $plugin;
                }
             }

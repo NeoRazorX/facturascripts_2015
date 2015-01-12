@@ -416,7 +416,7 @@ class admin_home extends fs_controller
                $ini_file = parse_ini_file('plugins/'.$f.'/facturascripts.ini');
                if( isset($ini_file['version']) )
                {
-                  $plugin['version'] = $ini_file['version'];
+                  $plugin['version'] = intval($ini_file['version']);
                }
                
                if( isset($ini_file['require']) )
@@ -583,7 +583,7 @@ class admin_home extends fs_controller
       {
          return TRUE;
       }
-      else if( mt_rand(0,2) == 0 )
+      else if( mt_rand(0,4) == 0 )
       {
          $updates = FALSE;
          foreach($this->plugin_advanced_list() as $plugin)
@@ -591,7 +591,7 @@ class admin_home extends fs_controller
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
                $internet_ini = parse_ini_string( file_get_contents($plugin['version_url']) );
-               if($plugin['version'] != $internet_ini['version'])
+               if( $plugin['version'] < intval($internet_ini['version']) )
                {
                   $updates = TRUE;
                   break;
