@@ -508,10 +508,12 @@ class admin_home extends fs_controller
       {
          if( in_array($name, $this->plugins()) )
          {
-            if($GLOBALS['plugins'][0] == $name)
+            if( count($GLOBALS['plugins']) == 1 AND $GLOBALS['plugins'][0] == $name )
             {
                $GLOBALS['plugins'] = array();
                unlink('tmp/enabled_plugins.list');
+               
+               $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
             }
             else
             {
