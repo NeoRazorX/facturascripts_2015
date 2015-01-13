@@ -19,15 +19,15 @@
    $(document).ready(function() {
       if(window.location.hash.substring(1) == 'paginas')
       {
-         $('#tab_panel_control a[href="#paginas"]').tab('show');
+         $('#tab_panel_control a[href="#t_paginas"]').tab('show');
       }
       else if(window.location.hash.substring(1) == 'plugins')
       {
-         $('#tab_panel_control a[href="#plugins"]').tab('show');
+         $('#tab_panel_control a[href="#t_plugins"]').tab('show');
       }
       else if(window.location.hash.substring(1) == 'avanzado')
       {
-         $('#tab_panel_control a[href="#avanzado"]').tab('show');
+         $('#tab_panel_control a[href="#t_avanzado"]').tab('show');
       }
    });
 </script>
@@ -58,7 +58,7 @@
      que lo tienes disponible en la sección descargas.
   </p>
   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
-     <span class="glyphicon glyphicon-download"></span> &nbsp; Descargar facturacion_base
+     <span class="glyphicon glyphicon-upload"></span> &nbsp; Descargar facturacion_base
   </a>
 </div>
 {else}
@@ -98,20 +98,20 @@
 <div id="tab_panel_control" role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
-         <a href="#paginas" aria-controls="paginas" role="tab" data-toggle="tab">Páginas</a>
+         <a href="#t_paginas" aria-controls="t_paginas" role="tab" data-toggle="tab">Páginas</a>
       </li>
       <li role="presentation">
-         <a href="#plugins" aria-controls="plugins" role="tab" data-toggle="tab">Plugins</a>
+         <a href="#t_plugins" aria-controls="t_plugins" role="tab" data-toggle="tab">Plugins</a>
       </li>
       <li role="presentation">
-         <a href="#descargas" aria-controls="descargas" role="tab" data-toggle="tab">Descargas</a>
+         <a href="#t_descargas" aria-controls="t_descargas" role="tab" data-toggle="tab">Descargas</a>
       </li>
       <li role="presentation">
-         <a href="#avanzado" aria-controls="avanzado" role="tab" data-toggle="tab">Avanzado</a>
+         <a href="#t_avanzado" aria-controls="t_avanzado" role="tab" data-toggle="tab">Avanzado</a>
       </li>
    </ul>
    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="paginas">
+      <div role="tabpanel" class="tab-pane active" id="t_paginas">
          <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
             <input type="hidden" name="modpages" value="TRUE"/>
             {if="count($fsc->paginas)>10"}
@@ -187,7 +187,7 @@
             </div>
          </form>
       </div>
-      <div role="tabpanel" class="tab-pane" id="plugins">
+      <div role="tabpanel" class="tab-pane" id="t_plugins">
          <div class="container-fluid">
             <div class="row" style="margin-top: 15px; margin-bottom: 20px;">
                <div class="col-md-9">
@@ -214,66 +214,60 @@
                   </form>
                </div>
             </div>
-            <div class="row">
+         </div>
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-left">Plugin</th>
+                     <th class="text-left">Descripción</th>
+                     <th class="text-right">Versión</th>
+                     <th width="130"></th>
+                     <th class="text-right" width="190">Acciones</th>
+                  </tr>
+               </thead>
                {loop="$fsc->plugin_advanced_list()"}
-               <div class="col-md-6">
-                  <div class="panel {if="!$value['compatible']"}panel-danger{elseif="$value['enabled']"}panel-success{else}panel-default{/if}">
-                     <div class="panel-heading">
-                        <h3 class="panel-title">{$value['name']}</h3>
-                     </div>
-                     <div class="panel-body">
-                        <div class="pull-right">
-                           {if condition="$value['enabled']"}
-                           <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}#plugins">
-                              <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
-                           </a>
-                           {else}
-                           <div class="btn-group">
-                              {if condition="$value['compatible']"}
-                              <a class="btn btn-sm btn-default" href="{$fsc->url()}&enable={$value['name']}#plugins">
-                                 <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
-                              </a>
-                              {else}
-                              <a class="btn btn-sm btn-default" href="#">
-                                 <span class="glyphicon glyphicon-remove"></span> &nbsp; Incompatible
-                              </a>
-                              {/if}
-                              <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
-                                 <span class="glyphicon glyphicon-trash"></span>
-                              </a>
-                           </div>
-                           {/if}
-                        </div>
-                        <p>{$value['description']}</p>
-                     </div>
-                     {if="$value['compatible']"}
-                     <div class="panel-footer small">
-                        Version: {$value['version']}
-                        {if="$value['require']!=''"}
-                        &nbsp; Requiere: <i>{$value['require']}</i>
+               <tr{if="!$value['compatible']"} class="bg-danger"{elseif="$value['enabled']"} class="bg-success"{/if}>
+                  <td>{$value['name']}</td>
+                  <td>{$value['description']}</td>
+                  <td class="text-right">{$value['version']}</td>
+                  <td class="text-center">
+                     {if="$value['update_url']!='' AND $value['version_url']!=''"}
+                     <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualizable
+                     {/if}
+                  </td>
+                  <td class="text-right">
+                     {if condition="$value['enabled']"}
+                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}#plugins">
+                        <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
+                     </a>
+                     {else}
+                     <div class="btn-group">
+                        {if condition="$value['compatible']"}
+                        <a class="btn btn-sm btn-default" href="{$fsc->url()}&enable={$value['name']}#plugins">
+                           <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
+                        </a>
+                        {else}
+                        <a class="btn btn-sm btn-default" href="#">
+                           <span class="glyphicon glyphicon-remove"></span> &nbsp; Incompatible
+                        </a>
                         {/if}
-                        {if="$value['update_url']!='' AND $value['version_url']!=''"}
-                        &nbsp; <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualizable
-                        {/if}
+                        <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
+                           <span class="glyphicon glyphicon-trash"></span>
+                        </a>
                      </div>
                      {/if}
-                  </div>
-               </div>
+                  </td>
+               </tr>
                {else}
-               <div class="col-md-12">
-                  <div class="jumbotron">
-                     <h1>Ya casi lo tienes!</h1>
-                     <p>
-                        Es el momento de añadir los plugins que necesites. En la pestaña <mark>Descargas</mark>
-                        encontrarás unos cuantos.
-                     </p>
-                  </div>
-               </div>
+               <tr class="bg-warning">
+                  <td colspan="5">No tienes plugin instalados. Mira en la pestaña <b>Descargas</b>.</td>
+               </tr>
                {/loop}
-            </div>
+            </table>
          </div>
       </div>
-      <div role="tabpanel" class="tab-pane" id="descargas">
+      <div role="tabpanel" class="tab-pane" id="t_descargas">
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -303,7 +297,7 @@
             </table>
          </div>
       </div>
-      <div role="tabpanel" class="tab-pane" id="avanzado">
+      <div role="tabpanel" class="tab-pane" id="t_avanzado">
          <form class="form" action="{$fsc->url()}&caca={$fsc->random_string(4)}#avanzado" method="post">
             <div class="container-fluid" style="margin-top: 10px;">
                <div class="row">

@@ -40,6 +40,10 @@ class admin_home extends fs_controller
               'url' => 'https://github.com/shawe/presupuestos_y_pedidos/archive/master.zip',
               'description' => 'Añade soporte para pedidos y presupuestos a clientes.'
           ),
+          'SAT' => array(
+              'url' => 'https://github.com/NeoRazorX/SAT/archive/master.zip',
+              'description' => 'Permite gestionar el Servicio de Asistencia Tecnica, centrado en el área informática.'
+          ),
           'presupuestos_y_pedidos_compras' => array(
               'url' => 'https://github.com/shawe/presupuestos_y_pedidos_compras/archive/master.zip',
               'description' => 'Incluye soporte para pedidos y presupuestos de proveedores, es decir, de compras. <b>Todavía en desarrollo</b>'
