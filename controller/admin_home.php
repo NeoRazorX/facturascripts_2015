@@ -107,6 +107,12 @@ class admin_home extends fs_controller
       else if( isset($_GET['enable']) )
       {
          $this->enable_plugin($_GET['enable']);
+         
+         if($this->step == '1')
+         {
+            $this->step = '2';
+            $fsvar->simple_save('install_step', $this->step);
+         }
       }
       else if( isset($_GET['disable']) )
       {
