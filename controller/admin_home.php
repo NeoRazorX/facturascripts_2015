@@ -181,6 +181,12 @@ class admin_home extends fs_controller
          else
             $this->new_error_msg('Descarga no encontrada.');
       }
+      else if( isset($_GET['updated']) )
+      {
+         /// el sistema ya se ha actualizado
+         $fsvar->name = 'updates';
+         $fsvar->delete();
+      }
       else if( isset($_GET['reset']) )
       {
          if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
@@ -602,7 +608,7 @@ class admin_home extends fs_controller
       {
          return TRUE;
       }
-      else if( mt_rand(0,4) == 0 )
+      else if( mt_rand(0,9) == 0 )
       {
          $updates = FALSE;
          foreach($this->plugin_advanced_list() as $plugin)
@@ -631,6 +637,6 @@ class admin_home extends fs_controller
          }
       }
       else
-         return FALSE;
+         return parent::check_for_updates();
    }
 }

@@ -196,7 +196,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             recurse_copy('facturascripts_2015-master/', '.');
             delTree('facturascripts_2015-master/');
             
-            $mensajes = 'Actualizado correctamente. <a href="index.php">Que lo disfrutes</a>.';
+            $mensajes = 'Actualizado correctamente. <a href="index.php?page=admin_home&updated=TRUE">Que lo disfrutes</a>.';
          }
          else
             $errores = 'Archivo update.zip no encontrado.';
@@ -236,7 +236,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
                   }
       			}
                
-               $mensajes = 'Plugin actualizado correctamente. <a href="index.php">Que lo disfrutes</a>.';
+               $mensajes = 'Plugin actualizado correctamente. <a href="index.php?page=admin_home&updated=TRUE">Que lo disfrutes</a>.';
             }
             else
                $errores = 'Archivo update.zip no encontrado.';
@@ -277,17 +277,26 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       echo '<div class="alert alert-info" style="margin-bottom: 0px;">'.$mensajes.'</div>';
    }
    ?>
-   <div class="jumbotron">
-      <h1>¡Bienvenido al actualizador de FacturaScripts!</h1>
-      <p>
-         Siéntate y ponte cómodo mientras este software de alta tecnolgía arruina el trabajo
-         de decenas de empresas de software ancladas en los años 80.
-      </p>
-      <p>
-         Tienes instalada la versión <mark><?php echo $version_actual; ?></mark>
-         y en Internet está disponible la versión <mark><?php echo $nueva_version; ?></mark>
-      </p>
-      <p>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-md-12">
+            <div class="page-header">
+               <h1>¡Bienvenido al actualizador de FacturaScripts!</h1>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-md-9">
+            <p>
+               Siéntate y ponte cómodo mientras este software de alta tecnolgía arruina el trabajo
+               de decenas de empresas de software ancladas en los años 80.
+            </p>
+            <p>
+               Tienes instalada la versión <mark><?php echo $version_actual; ?></mark>
+               y en Internet está disponible la versión <mark><?php echo $nueva_version; ?></mark>
+            </p>
+         </div>
+         <div class="col-md-3 text-right">
          <?php
          if($errores != '')
          {
@@ -310,45 +319,46 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             <?php
          }
          ?>
-      </p>
-   </div>
-   <ul class="nav nav-tabs">
-      <li role="presentation" class="active"><a href="#">Plugins</a></li>
-   </ul>
-   <div class="table-responsive">
-      <table class="table table-hover">
-         <thead>
-            <tr>
-               <th class="text-left">Nombre</th>
-               <th class="text-left">Descripción</th>
-               <th class="text-right">Versión</th>
-               <th class="text-right">Nueva versión</th>
-               <th></th>
-            </tr>
-         </thead>
-         <?php
-         if($errores == '')
-         {
-            $plugins_for_update = FALSE;
-            foreach(check_for_plugin_updates() as $plugin)
-            {
-               echo '<tr><td>'.$plugin['name'].'</td><td>'.$plugin['description'].'</td>'
-                       . '<td class="text-right">'.$plugin['version'].'</td><td class="text-right">'.$plugin['new_version'].'</td>'
-                       . '<td class="text-right"><a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">Actualizar</a></td></tr>';
-               $plugins_for_update = TRUE;
-            }
-            
-            if(!$plugins_for_update)
-            {
-               echo '<tr class="bg-info"><td colspan="5">No hay actualizaciones de plugins.</td></tr>';
-            }
-         }
-         ?>
-      </table>
-   </div>
-   <div class="text-center" style="margin-bottom: 20px;">
-      <hr/>
-      <small>Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a></small>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-md-12">
+            <ul class="nav nav-tabs">
+               <li role="presentation" class="active"><a href="#">Plugins</a></li>
+            </ul>
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th class="text-left">Nombre</th>
+                        <th class="text-left">Descripción</th>
+                        <th class="text-right">Versión</th>
+                        <th class="text-right">Nueva versión</th>
+                        <th></th>
+                     </tr>
+                  </thead>
+                  <?php
+                  if($errores == '')
+                  {
+                     $plugins_for_update = FALSE;
+                     foreach(check_for_plugin_updates() as $plugin)
+                     {
+                        echo '<tr><td>'.$plugin['name'].'</td><td>'.$plugin['description'].'</td>'
+                                . '<td class="text-right">'.$plugin['version'].'</td><td class="text-right">'.$plugin['new_version'].'</td>'
+                                . '<td class="text-right"><a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">Actualizar</a></td></tr>';
+                        $plugins_for_update = TRUE;
+                     }
+                     
+                     if(!$plugins_for_update)
+                     {
+                        echo '<tr class="bg-success"><td colspan="5">No hay actualizaciones de plugins.</td></tr>';
+                     }
+                  }
+                  ?>
+               </table>
+            </div>
+         </div>
+      </div>
    </div>
 </body>
 </html>
