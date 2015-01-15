@@ -300,7 +300,11 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
          <?php
          if($errores != '')
          {
-            
+            ?>
+            <a class="btn btn-warning btn-lg" href="updater.php" role="button">
+               <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+            </a>
+            <?php
          }
          else if($actualizar)
          {
@@ -353,6 +357,10 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
                      {
                         echo '<tr class="bg-success"><td colspan="5">No hay actualizaciones de plugins.</td></tr>';
                      }
+                  }
+                  else
+                  {
+                     echo '<tr class="bg-warning"><td colspan="5">Aplazada la comprobación de plugins hasta que resuelvas los problemas.</td></tr>';
                   }
                   ?>
                </table>
