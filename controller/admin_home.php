@@ -164,7 +164,8 @@ class admin_home extends fs_controller
                   /// renombramos el directorio
                   rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
                   
-                  $this->new_message('Plugin añadido correctamente. Ya puedes activarlo.');
+                  $this->new_message('Plugin añadido correctamente.');
+                  $this->enable_plugin($_GET['download']);
                   
                   if($this->step == '1')
                   {
@@ -176,7 +177,11 @@ class admin_home extends fs_controller
                   $this->new_error_msg('Archivo no encontrado.');
             }
             else
-               $this->new_error_msg('Error al descargar.');
+            {
+               $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
+                       . '<a href="'.$this->download_list[$_GET['download']]['url'].'" target="_blank">aquí</a> '
+                       . 'y añadirlo desde la pestaña <b>plugins</b>.');
+            }
          }
          else
             $this->new_error_msg('Descarga no encontrada.');
