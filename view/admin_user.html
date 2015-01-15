@@ -19,6 +19,7 @@
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_agente").modal('show');
+         document.f_nuevo_agente.nnombre.focus();
       });
    });
 </script>
@@ -27,7 +28,7 @@
    <input type="hidden" name="modupages" value="TRUE"/>
    <div class="container-fluid">
       <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
-         <div class="col-md-8">
+         <div class="col-sm-8">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
@@ -43,7 +44,7 @@
             {/loop}
             </div>
          </div>
-         <div class="col-md-4 text-right">
+         <div class="col-sm-4 text-right">
             <div class="btn-group">
                {if condition="$fsc->user->nick != $fsc->suser->nick"}
                <a href="#" id="b_eliminar_usuario" class="btn btn-sm btn-danger">
@@ -57,57 +58,67 @@
          </div>
       </div>
       <div class="row">
-         <div class="form-group col-lg-2 col-md-2 col-sm-2">
-            Nick:
-            <input class="form-control" type="text" name="snick" value="{$fsc->suser->nick}" disabled="disabled"/>
-            <div class="checkbox">
-               <label>
-                  <input type="checkbox" name="sadmin" value="TRUE"{if condition="$fsc->suser->admin"} checked="checked"{/if}/>
-                  Administrador
-               </label>
+         <div class="col-sm-2">
+            <div class="form-group">
+               Nick:
+               <input class="form-control" type="text" name="snick" value="{$fsc->suser->nick}" disabled="disabled"/>
+               <div class="checkbox">
+                  <label>
+                     <input type="checkbox" name="sadmin" value="TRUE"{if condition="$fsc->suser->admin"} checked="checked"{/if}/>
+                     Administrador
+                  </label>
+               </div>
             </div>
          </div>
-         <div class="form-group col-lg-2 col-md-2 col-sm-2">
-            Contraseña:
-            <input class="form-control" type="password" name="spassword" placeholder="nueva contraseña"/>
+         <div class="col-sm-2">
+            <div class="form-group">
+               Contraseña:
+               <input class="form-control" type="password" name="spassword" placeholder="nueva contraseña"/>
+            </div>
          </div>
-         <div class="form-group col-lg-3 col-md-3 col-sm-3">
-            <a href="{$fsc->agente->url()}">Empleado</a>
-            <select name="scodagente" class="form-control">
-               <option value="">Ninguno</option>
-               {loop="$fsc->agente->all()"}
-               <option value="{$value->codagente}"{if condition="$fsc->suser->codagente == $value->codagente"} selected="selected"{/if}>{$value->get_fullname()}</option>
-               {/loop}
-            </select>
-            <p class="help-block">
-               <a id="b_nuevo_agente" href="#">Crear un nuevo empleado y asignarlo a este usuario</a>
-            </p>
+         <div class="col-sm-3">
+            <div class="form-group">
+               <a href="{$fsc->agente->url()}">Empleado</a>
+               <select name="scodagente" class="form-control">
+                  <option value="">Ninguno</option>
+                  {loop="$fsc->agente->all()"}
+                  <option value="{$value->codagente}"{if condition="$fsc->suser->codagente == $value->codagente"} selected="selected"{/if}>{$value->get_fullname()}</option>
+                  {/loop}
+               </select>
+               <p class="help-block">
+                  <a id="b_nuevo_agente" href="#">Crear un nuevo empleado y asignarlo a este usuario</a>
+               </p>
+            </div>
          </div>
-         <div class="form-group col-lg-3 col-md-3 col-sm-3">
-            Página de inicio
-            <select name="udpage" class="form-control">
-            {loop="$fsc->suser->get_menu()"}
-               {if condition="$value->show_on_menu"}
-                  {if condition="$value->name==$fsc->suser->fs_page"}
-                  <option value="{$value->name}" selected='selected'>{$value->folder} - {$value->title}</option>
-                  {else}
-                  <option value="{$value->name}">{$value->folder} - {$value->title}</option>
+         <div class="col-sm-3">
+            <div class="form-group">
+               Página de inicio
+               <select name="udpage" class="form-control">
+               {loop="$fsc->suser->get_menu()"}
+                  {if condition="$value->show_on_menu"}
+                     {if condition="$value->name==$fsc->suser->fs_page"}
+                     <option value="{$value->name}" selected='selected'>{$value->folder} - {$value->title}</option>
+                     {else}
+                     <option value="{$value->name}">{$value->folder} - {$value->title}</option>
+                     {/if}
                   {/if}
-               {/if}
-            {/loop}
-            </select>
+               {/loop}
+               </select>
+            </div>
          </div>
-         <div class="form-group col-lg-2 col-md-2 col-sm-2">
-            Ejercicio
-            <select name="ejercicio" class="form-control">
-            {loop="$fsc->ejercicio->all_abiertos()"}
-               {if condition="$value->codejercicio==$fsc->suser->codejercicio"}
-               <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
-               {else}
-               <option value="{$value->codejercicio}">{$value->nombre}</option>
-               {/if}
-            {/loop}
-            </select>
+         <div class="col-sm-2">
+            <div class="form-group">
+               Ejercicio
+               <select name="ejercicio" class="form-control">
+               {loop="$fsc->ejercicio->all_abiertos()"}
+                  {if condition="$value->codejercicio==$fsc->suser->codejercicio"}
+                  <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
+                  {else}
+                  <option value="{$value->codejercicio}">{$value->nombre}</option>
+                  {/if}
+               {/loop}
+               </select>
+            </div>
          </div>
       </div>
    </div>
@@ -208,6 +219,10 @@
                      <td>{$value->ip}</td>
                      <td class="text-right">{$value->fecha}</td>
                   </tr>
+                  {else}
+                  <tr class="bg-warning">
+                     <td colspan="4">Sin resultados.</td>
+                  </tr>
                   {/loop}
                </table>
             </div>
@@ -217,7 +232,7 @@
 </form>
 
 <form class="form-horizontal" role="form" name="f_nuevo_agente" action="{$fsc->url()}" method="post">
-   <div class="modal fade" id="modal_nuevo_agente">
+   <div class="modal" id="modal_nuevo_agente">
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header">
@@ -226,15 +241,9 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <label for="ncodagente" class="col-lg-2 col-md-2 col-sm-2 control-label">Código</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="ncodagente" value="{$fsc->agente->get_new_codigo()}" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="form-group">
                   <label for="nnombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
                   <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="nnombre" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="nnombre" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">

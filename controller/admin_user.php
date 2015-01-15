@@ -47,10 +47,10 @@ class admin_user extends fs_controller
       {
          $this->page->title = $this->suser->nick;
          
-         if( isset($_POST['ncodagente']) )
+         if( isset($_POST['nnombre']) )
          {
             $age0 = new agente();
-            $age0->codagente = $_POST['ncodagente'];
+            $age0->codagente = $age0->get_new_codigo();
             $age0->nombre = $_POST['nnombre'];
             $age0->apellidos = $_POST['napellidos'];
             $age0->dnicif = $_POST['ndnicif'];
@@ -59,7 +59,7 @@ class admin_user extends fs_controller
             if( $age0->save() )
             {
                $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
-               $this->suser->codagente = $_POST['ncodagente'];
+               $this->suser->codagente = $age0->codagente;
                
                if( $this->suser->save() )
                {
