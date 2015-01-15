@@ -36,6 +36,22 @@ class admin_home extends fs_controller
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
               'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
           ),
+          'login_anonimo' => array(
+              'url' => 'https://github.com/NeoRazorX/login_anonimo/archive/master.zip',
+              'description' => 'Oculta el nombre de la empresa y la lista de usuarios en la pantalla de login.'
+          ),
+          'megafacturador' => array(
+              'url' => 'https://github.com/NeoRazorX/megafacturador/archive/master.zip',
+              'description' => 'Permite convertir múltiples albaranes de compras o ventas en facturas.'
+          ),
+          'modelo_347' => array(
+              'url' => 'https://github.com/NeoRazorX/modelo_347/archive/master.zip',
+              'description' => 'El Modelo 347 es una declaración anual informativa de operaciones con terceras personas.
+Los empresarios y profesionales están obligados a la presentación del Modelo 347 siempre
+que hayan realizado operaciones con terceros por importe superior a 3.005,06 € durante
+el año natural (se puede cambiar la cantidad), computando de forma separada las entregas
+y las adquisiciones de bienes y servicios.'
+          ),
           'presupuestos_y_pedidos' => array(
               'url' => 'https://github.com/shawe/presupuestos_y_pedidos/archive/master.zip',
               'description' => 'Añade soporte para pedidos y presupuestos a clientes.'
@@ -43,6 +59,14 @@ class admin_home extends fs_controller
           'SAT' => array(
               'url' => 'https://github.com/NeoRazorX/SAT/archive/master.zip',
               'description' => 'Permite gestionar el Servicio de Asistencia Tecnica, centrado en el área informática.'
+          ),
+          'supermercado_solidario' => array(
+              'url' => 'https://github.com/NeoRazorX/supermercado_solidario/archive/master.zip',
+              'description' => 'Permite administrar un supermercado solidario. Incluye un TPV específico.'
+          ),
+          'xml_import_export' => array(
+              'url' => 'https://github.com/NeoRazorX/xml_import_export/archive/master.zip',
+              'description' => 'Permite importar/exportar información de FacturaScripts a partir de archivos XML.'
           ),
           'presupuestos_y_pedidos_compras' => array(
               'url' => 'https://github.com/shawe/presupuestos_y_pedidos_compras/archive/master.zip',
