@@ -43,7 +43,7 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    
    if( !isset($GLOBALS['config2']['margin_method']) )
    {
-      $GLOBALS['config2']['margin_method'] = 'PVP';
+      $GLOBALS['config2']['margin_method'] = 'CST';
       $GLOBALS['config2']['cost_is_average'] = '1';
    }
    
@@ -83,7 +83,7 @@ else
        'presupuestos' => 'presupuestos',
        'provincia' => 'provincia',
        'apartado' => 'apartado',
-       'margin_method' => 'PVP',
+       'margin_method' => 'CST',
        'cost_is_average' => 1,
        'homepage' => 'admin_home',
        'check_db_types' => 'false'

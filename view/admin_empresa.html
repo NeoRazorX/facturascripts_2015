@@ -65,7 +65,7 @@
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
-            {if condition="$fsc->page->is_default()"}
+            {if="$fsc->page->is_default()"}
             <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
                <span class="glyphicon glyphicon-home"></span>
             </a>
@@ -78,7 +78,7 @@
          
          <div class="btn-group">
             {loop="$fsc->extensions"}
-               {if condition="$value->type=='button'"}
+               {if="$value->type=='button'"}
                <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
                {/if}
             {/loop}
@@ -104,7 +104,7 @@
                <span class="glyphicon glyphicon-print"></span> &nbsp; Impresión
             </a>
             {loop="$fsc->extensions"}
-               {if condition="$value->type=='button'"}
+               {if="$value->type=='button'"}
                <a id="b_{$value->from}" href="index.php?page={$value->from}&codagente={$fsc->agente->codagente}" class="list-group-item">
                   <span class="glyphicon glyphicon-list"></span> &nbsp; {$value->text}
                </a>
@@ -140,7 +140,7 @@
                      <a href="{$fsc->pais->url()}">País</a>:
                      <select name="codpais" class="form-control">
                         {loop="$fsc->pais->all()"}
-                        <option value="{$value->codpais}"{if condition="$fsc->empresa->codpais == $value->codpais"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codpais}"{if="$fsc->empresa->codpais == $value->codpais"} selected="selected"{/if}>{$value->nombre}</option>
                         {/loop}
                      </select>
                   </div>
@@ -222,7 +222,7 @@
                      <label>Encriptación:</label>
                      <select name="mail_enc" class="form-control">
                         <option value="ssl">SSL</option>
-                        <option value="tls"{if condition="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
+                        <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
                      </select>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
@@ -250,7 +250,7 @@
                      <a href="{$fsc->divisa->url()}">Divisa</a>:
                      <select name="coddivisa" class="form-control">
                      {loop="$fsc->divisa->all()"}
-                        <option value="{$value->coddivisa}"{if condition="$fsc->empresa->coddivisa == $value->coddivisa"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->coddivisa}"{if="$fsc->empresa->coddivisa == $value->coddivisa"} selected="selected"{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                      <p class="help-block">
@@ -261,7 +261,7 @@
                      <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="codejercicio" class="form-control" autofocus >
                      {loop="$fsc->ejercicio->all()"}
-                        <option value="{$value->codejercicio}"{if condition="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codejercicio}"{if="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
                      {/loop}
                      </select>
                      <p class="help-block">Sólo sirve para inicializar algunos campos.</p>
@@ -270,20 +270,20 @@
                      <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
-                        <option value="{$value->codserie}"{if condition="$fsc->empresa->codserie == $value->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->codserie}"{if="$fsc->empresa->codserie == $value->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                      <p class="help-block">El IRPF se define en la serie.</p>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>
-                        <input type="checkbox" name="recequivalencia" value="TRUE"{if condition="$fsc->empresa->recequivalencia"} checked="checked"{/if}/>
+                        <input type="checkbox" name="recequivalencia" value="TRUE"{if="$fsc->empresa->recequivalencia"} checked="checked"{/if}/>
                         Aplicar recargo de equivalencia
                      </label>
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-6">
                      <label>
-                        <input type="checkbox" name="contintegrada" value="TRUE"{if condition="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
+                        <input type="checkbox" name="contintegrada" value="TRUE"{if="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
                         Contabilidad integrada
                      </label>
                   </div>
@@ -291,7 +291,7 @@
                      <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
                      <select name="codpago" class="form-control">
                      {loop="$fsc->forma_pago->all()"}
-                        <option value="{$value->codpago}"{if condition="$fsc->empresa->codpago == $value->codpago"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->codpago}"{if="$fsc->empresa->codpago == $value->codpago"} selected="selected"{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                   </div>
@@ -299,7 +299,7 @@
                      <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}
-                        <option value="{$value->codalmacen}"{if condition="$fsc->empresa->codalmacen == $value->codalmacen"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codalmacen}"{if="$fsc->empresa->codalmacen == $value->codalmacen"} selected="selected"{/if}>{$value->nombre}</option>
                      {/loop}
                      </select>
                   </div>
@@ -322,7 +322,7 @@
                         Añadir / Cambiar logotipo a las facturas
                      </button>
                   </div>
-                  {if condition="$fsc->logo"}
+                  {if="$fsc->logo"}
                   <div style="max-width: 33%;" class="thumbnail">
                      <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
                   </div>
@@ -405,7 +405,7 @@
             <div class="modal-body">
                <div style="text-align: center;">
                   <div class="thumbnail">
-                     {if condition="$fsc->logo"}
+                     {if="$fsc->logo"}
                      <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
                      {else}
                      <div class="caption">
@@ -419,7 +419,7 @@
                </div>
             </div>
             <div class="modal-footer">
-               {if condition="$fsc->logo"}
+               {if="$fsc->logo"}
                <a class="btn btn-sm btn-danger" type="button" href="{$fsc->url()}&delete_logo=TRUE#impresion">
                   <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
                </a>

@@ -12,7 +12,7 @@
    <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="view/js/jquery.ui.shake.js"></script>
    <script type="text/javascript">
-      {if condition="FS_DEMO"}
+      {if="FS_DEMO"}
          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -21,11 +21,11 @@
          ga('send', 'pageview');
       {/if}
       $(document).ready(function() {
-         {if condition="$fsc->get_errors()"}
+         {if="$fsc->get_errors()"}
          $("#box_login").shake();
          {/if}
          
-         {if condition="FS_DEMO"}
+         {if="FS_DEMO"}
          document.f_login.user.focus();
          {else}
          document.f_login.password.focus();
@@ -54,9 +54,9 @@
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
-            {if condition="FS_DEMO"}
+            {if="FS_DEMO"}
             <a class="navbar-brand" href="index.php">DEMO</a>
-            {elseif condition="$fsc->empresa->nombrecorto"}
+            {elseif="$fsc->empresa->nombrecorto"}
             <a class="navbar-brand" href="index.php">{$fsc->empresa->nombrecorto}</a>
             {else}
             <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
@@ -84,17 +84,17 @@
       </div>
    </nav>
    
-   {if condition="$fsc->get_errors()"}
+   {if="$fsc->get_errors()"}
    <div class="alert alert-danger">
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
-   {if condition="$fsc->get_messages()"}
+   {if="$fsc->get_messages()"}
    <div class="alert alert-success">
       <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
-   {if condition="$fsc->get_advices()"}
+   {if="$fsc->get_advices()"}
    <div class="alert alert-info">
       <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
    </div>
@@ -107,7 +107,7 @@
          <div class="col-md-6 col-md-offset-3">
             <div class="well well-lg" id="box_login" style="background-color: #F3F6FB;">
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
-                  {if condition="FS_DEMO"}
+                  {if="FS_DEMO"}
                   <h1>Demo</h1>
                   <input type="hidden" name="password" value="demo"/>
                   <div class="form-group">
@@ -119,7 +119,7 @@
                      <span class="glyphicon glyphicon-user"></span> Usuario:
                      <select name="user" class="form-control" onchange="document.f_login.password.focus()">
                      {loop name="$fsc->user->all()"}
-                        {if condition="$value->nick == $nlogin"}
+                        {if="$value->nick == $nlogin"}
                         <option value="{$value->nick}" selected>{$value->nick}</option>
                         {else}
                         <option value="{$value->nick}">{$value->nick}</option>
@@ -162,7 +162,7 @@
                      <label>Usuario</label>
                      <select name="user" class="form-control">
                      {loop name="$fsc->user->all()"}
-                        {if condition="$value->nick == $nlogin"}
+                        {if="$value->nick == $nlogin"}
                         <option value="{$value->nick}" selected>{$value->nick}</option>
                         {else}
                         <option value="{$value->nick}">{$value->nick}</option>
@@ -194,7 +194,7 @@
    
    <div class="container-fluid" style="margin-bottom: 10px;">
       <div class="row">
-         {if condition="FS_DB_HISTORY"}
+         {if="FS_DB_HISTORY"}
          <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="panel panel-default">
                <div class="panel-heading">

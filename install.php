@@ -30,6 +30,12 @@ function guarda_config($nombre_archivo)
    fwrite($archivo, "define('FS_DB_NAME', '".$_REQUEST['db_name']."');\n");
    fwrite($archivo, "define('FS_DB_USER', '".$_REQUEST['db_user']."'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
    fwrite($archivo, "define('FS_DB_PASS', '".$_REQUEST['db_pass']."');\n");
+   
+   if($_REQUEST['db_type'] == 'MYSQL' AND $_POST['mysql_socket'] != '')
+   {
+      fwrite($archivo, "ini_set('mysqli.default_socket', '".$_POST['mysql_socket']."');\n");
+   }
+   
    fwrite($archivo, "\n");
    fwrite($archivo, "/*\n");
    fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
@@ -111,6 +117,11 @@ else if( isset($_REQUEST['db_type']) )
    {
       if( class_exists('mysqli') )
       {
+         if($_POST['mysql_socket'] != '')
+         {
+            ini_set('mysqli.default_socket', $_POST['mysql_socket']);
+         }
+         
          $connection = new mysqli($_REQUEST['db_host'], $_REQUEST['db_user'], $_REQUEST['db_pass'], $_REQUEST['db_name'], intval($_REQUEST['db_port']));
          if($connection->connect_error)
          {
@@ -253,9 +264,13 @@ $system_info = str_replace('"', "'", $system_info);
          if(document.f_configuracion_inicial.db_type.value == 'POSTGRESQL')
          {
             document.f_configuracion_inicial.db_port.value = '5432';
+            $("#mysql_socket").hide();
          }
          else
+         {
             document.f_configuracion_inicial.db_port.value = '3306';
+            $("#mysql_socket").show();
+         }
       }
       $(document).ready(function() {
          $("#f_configuracion_inicial").validate({
@@ -497,6 +512,10 @@ $system_info = str_replace('"', "'", $system_info);
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Contraseña:
                         <input class="form-control" type="password" name="db_pass" value="" autocomplete="off"/>
+                     </div>
+                     <div id="mysql_socket" class="form-group col-lg-4 col-md-4 col-sm-4">
+                        Socket (opcional):
+                        <input class="form-control" type="text" name="mysql_socket" value="" autocomplete="off"/>
                      </div>
                   </div>
                </div>

@@ -466,7 +466,6 @@ class fs_controller
                $user = new fs_user();
                $user->nick = $_POST['user'];
                $user->set_password('demo');
-               $user->admin = TRUE;
                
                /// creamos un agente para asociarlo
                $agente = new agente();

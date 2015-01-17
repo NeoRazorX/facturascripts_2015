@@ -52,18 +52,21 @@ class fs_user extends fs_model
          $this->nick = $a['nick'];
          $this->password = $a['password'];
          $this->log_key = $a['log_key'];
-         $this->codagente = intval($a['codagente']);
          
+         $this->codagente = intval($a['codagente']);
          if($this->codagente < 1)
+         {
             $this->codagente = NULL;
+         }
          
          $this->admin = $this->str2bool($a['admin']);
          $this->last_login = Date('d-m-Y', strtotime($a['last_login']));
          
-         if( is_null($a['last_login_time']) )
-            $this->last_login_time = '00:00:00';
-         else
+         $this->last_login_time = '00:00:00';
+         if( !is_null($a['last_login_time']) )
+         {
             $this->last_login_time = $a['last_login_time'];
+         }
          
          $this->last_ip = $a['last_ip'];
          $this->last_browser = $a['last_browser'];
@@ -84,6 +87,7 @@ class fs_user extends fs_model
          $this->fs_page = NULL;
          $this->codejercicio = NULL;
       }
+      
       $this->logged_on = FALSE;
       $this->agente = NULL;
    }
@@ -177,7 +181,7 @@ class fs_user extends fs_model
          $this->menu = array();
          $page = new fs_page();
          
-         if( $this->admin )
+         if($this->admin OR FS_DEMO)
          {
             $this->menu = $page->all();
          }
@@ -203,7 +207,7 @@ class fs_user extends fs_model
    
    public function have_access_to($page_name)
    {
-      if( $this->admin )
+      if($this->admin OR FS_DEMO)
       {
          $status = TRUE;
       }
@@ -267,7 +271,9 @@ class fs_user extends fs_model
    public function new_logkey()
    {
       if( is_null($this->log_key) OR !FS_DEMO )
+      {
          $this->log_key = sha1( strval(rand()) );
+      }
       
       $this->logged_on = TRUE;
       $this->last_login = Date('d-m-Y');

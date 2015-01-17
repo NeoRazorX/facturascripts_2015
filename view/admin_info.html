@@ -7,7 +7,7 @@
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
-            {if condition="$fsc->page->is_default()"}
+            {if="$fsc->page->is_default()"}
             <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
                <span class="glyphicon glyphicon-home"></span>
             </a>
@@ -77,7 +77,7 @@
                </div>
                <div id="collapse_so" class="panel-collapse collapse in">
                   <div class="panel-body">{$fsc->uname()}</div>
-                  {if condition="$fsc->linux()"}
+                  {if="$fsc->linux()"}
                   <div class="panel-footer">
                      <b>Uptime:</b> {$fsc->sys_uptime()}
                   </div>
@@ -85,7 +85,7 @@
                </div>
             </div>
 
-            {if condition="$fsc->linux()"}
+            {if="$fsc->linux()"}
             <div class="panel panel-default">
                <div class="panel-heading">
                   <h3 class="panel-title">
@@ -122,7 +122,7 @@
                   </tr>
                </thead>
                {loop="$fsc->get_fs_log()"}
-               <tr{if condition="$value->alerta"} class="bg-danger"{/if}>
+               <tr{if="$value->alerta"} class="bg-danger"{/if}>
                   <td><a href="index.php?page=admin_user&snick={$value->usuario}">{$value->usuario}</a></td>
                   <td>{$value->detalle}</td>
                   <td>{$value->ip}</td>

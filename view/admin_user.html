@@ -1,6 +1,6 @@
 {include="header"}
 
-{if condition="$fsc->suser"}
+{if="$fsc->suser"}
 <script type="text/javascript">
    function fs_marcar_todo()
    {
@@ -38,7 +38,7 @@
             
             <div class="btn-group">
             {loop="$fsc->extensions"}
-               {if condition="$value->type=='button'"}
+               {if="$value->type=='button'"}
                <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
                {/if}
             {/loop}
@@ -46,7 +46,7 @@
          </div>
          <div class="col-sm-4 text-right">
             <div class="btn-group">
-               {if condition="$fsc->user->nick != $fsc->suser->nick"}
+               {if="$fsc->user->nick != $fsc->suser->nick"}
                <a href="#" id="b_eliminar_usuario" class="btn btn-sm btn-danger">
                   <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
                </a>
@@ -64,7 +64,7 @@
                <input class="form-control" type="text" name="snick" value="{$fsc->suser->nick}" disabled="disabled"/>
                <div class="checkbox">
                   <label>
-                     <input type="checkbox" name="sadmin" value="TRUE"{if condition="$fsc->suser->admin"} checked="checked"{/if}/>
+                     <input type="checkbox" name="sadmin" value="TRUE"{if="$fsc->suser->admin"} checked="checked"{/if}/>
                      Administrador
                   </label>
                </div>
@@ -82,7 +82,7 @@
                <select name="scodagente" class="form-control">
                   <option value="">Ninguno</option>
                   {loop="$fsc->agente->all()"}
-                  <option value="{$value->codagente}"{if condition="$fsc->suser->codagente == $value->codagente"} selected="selected"{/if}>{$value->get_fullname()}</option>
+                  <option value="{$value->codagente}"{if="$fsc->suser->codagente == $value->codagente"} selected="selected"{/if}>{$value->get_fullname()}</option>
                   {/loop}
                </select>
                <p class="help-block">
@@ -95,8 +95,8 @@
                Página de inicio
                <select name="udpage" class="form-control">
                {loop="$fsc->suser->get_menu()"}
-                  {if condition="$value->show_on_menu"}
-                     {if condition="$value->name==$fsc->suser->fs_page"}
+                  {if="$value->show_on_menu"}
+                     {if="$value->name==$fsc->suser->fs_page"}
                      <option value="{$value->name}" selected='selected'>{$value->folder} - {$value->title}</option>
                      {else}
                      <option value="{$value->name}">{$value->folder} - {$value->title}</option>
@@ -111,7 +111,7 @@
                Ejercicio
                <select name="ejercicio" class="form-control">
                {loop="$fsc->ejercicio->all_abiertos()"}
-                  {if condition="$value->codejercicio==$fsc->suser->codejercicio"}
+                  {if="$value->codejercicio==$fsc->suser->codejercicio"}
                   <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
                   {else}
                   <option value="{$value->codejercicio}">{$value->nombre}</option>
@@ -160,11 +160,11 @@
                         <th class="text-left">Menú</th>
                      </tr>
                   </thead>
-                  {if condition="!$fsc->suser->admin"}
+                  {if="!$fsc->suser->admin"}
                      {loop="$fsc->all_pages()"}
                      <tr>
                         <td class="text-center">
-                           <input type="checkbox" name="enabled[]" value="{$value->name}"{if condition="$value->enabled"} checked="checked"{/if}/>
+                           <input type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked="checked"{/if}/>
                         </td>
                         <td>{$value->name}</td>
                         <td>{$value->folder} » {$value->title}</td>
@@ -179,7 +179,7 @@
                   {/if}
                </table>
             </div>
-            {if condition="!$fsc->suser->admin"}
+            {if="!$fsc->suser->admin"}
             <div class="container-fluid">
                <div class="row">
                   <div class="col-lg-6 col-md-6 col-sm-6">
@@ -213,7 +213,7 @@
                      </tr>
                   </thead>
                   {loop="$fsc->user_log"}
-                  <tr{if condition="$value->alerta"} class="bg-danger"{/if}>
+                  <tr{if="$value->alerta"} class="bg-danger"{/if}>
                      <td>{$value->tipo}</td>
                      <td>{$value->detalle}</td>
                      <td>{$value->ip}</td>

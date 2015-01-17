@@ -94,7 +94,11 @@ y las adquisiciones de bienes y servicios.'
          }
       }
       
-      if( isset($_POST['modpages']) )
+      if( !$this->user->admin )
+      {
+         $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
+      }
+      else if( isset($_POST['modpages']) )
       {
          if(!$this->step)
          {
@@ -184,6 +188,7 @@ y las adquisiciones de bienes y servicios.'
                {
                   $zip->extractTo('plugins/');
                   $zip->close();
+                  unlink('download.zip');
                   
                   /// renombramos el directorio
                   rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
@@ -223,10 +228,6 @@ y las adquisiciones de bienes y servicios.'
             unlink('tmp/'.FS_TMP_NAME.'config2.ini');
             $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'#avanzado">aquí</a> para continuar.');
          }
-      }
-      else if($guardar AND FS_DEMO)
-      {
-         $this->new_error_msg('En el modo demo no se pueden hacer cambios aquí para no molestar a los demás usuarios.');
       }
       else if($guardar)
       {
@@ -367,15 +368,7 @@ y las adquisiciones de bienes y servicios.'
    
    private function disable_page($page)
    {
-      if(FS_DEMO)
-      {
-         if( !$this->demo_warnign_showed )
-         {
-            $this->new_error_msg('En el modo <b>demo</b> no se pueden desactivar páginas.');
-            $this->demo_warnign_showed = TRUE;
-         }
-      }
-      else if($page->name == $this->page->name)
+      if($page->name == $this->page->name)
       {
          $this->new_error_msg("No puedes desactivar esta página (".$page->name.").");
       }

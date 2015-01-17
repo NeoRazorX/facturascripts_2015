@@ -21,19 +21,19 @@
       </script>
    </head>
    <body>
-      {if condition="$fsc->get_errors()"}
+      {if="$fsc->get_errors()"}
       <div class="alert alert-danger hidden-print">
          <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
       </div>
       {/if}
       
-      {if condition="$fsc->get_messages()"}
+      {if="$fsc->get_messages()"}
       <div class="alert alert-success hidden-print">
          <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
       </div>
       {/if}
       
-      {if condition="$fsc->get_advices()"}
+      {if="$fsc->get_advices()"}
       <div class="alert alert-info hidden-print">
          <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
       </div>
