@@ -395,19 +395,19 @@
                <div class="row">
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
-                        Aplicar el margen:
-                        <select name="margin_method" class="form-control">
-                           <option value="PVP"{if="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>sobre el precio de venta</option>
-                           <option value="CST"{if="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>sobre el precio de coste</option>
+                        Precio de coste:
+                        <select name="cost_is_average" class="form-control">
+                           <option value="1"{if="$GLOBALS['config2']['cost_is_average']==1"} selected='selected'{/if}>Calculado</option>
+                           <option value="0"{if="$GLOBALS['config2']['cost_is_average']==0"} selected='selected'{/if}>Editable</option>
                         </select>
                      </div>
                   </div>
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
-                        Precio de coste:
-                        <select name="cost_is_average" class="form-control">
-                           <option value="1"{if="$GLOBALS['config2']['cost_is_average']==1"} selected='selected'{/if}>Calculado</option>
-                           <option value="0"{if="$GLOBALS['config2']['cost_is_average']==0"} selected='selected'{/if}>Editable</option>
+                        Aplicar el margen:
+                        <select name="margin_method" class="form-control">
+                           <option value="PVP"{if="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>sobre el precio de venta</option>
+                           <option value="CST"{if="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>sobre el precio de coste</option>
                         </select>
                      </div>
                   </div>

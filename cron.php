@@ -82,28 +82,15 @@ if( $db->connect() )
       /*
        * Ahora ejecutamos el cron de cada plugin que tenga cron y esté activado
        */
-      if( file_exists('tmp/enabled_plugins') )
+      foreach($GLOBALS['plugins'] as $plugin)
       {
-         foreach( scandir(getcwd().'/tmp/enabled_plugins') as $f)
+         if( file_exists('plugins/'.$plugin.'/cron.php') )
          {
-            if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
-            {
-               if( file_exists('plugins/'.$f) )
-               {
-                  if( file_exists('plugins/'.$f.'/cron.php') )
-                  {
-                     echo "\n\n***********************\nEjecutamos el cron.php del plugin ".$f."\n";
-                     
-                     include 'plugins/'.$f.'/cron.php';
-                     
-                     echo "\n***********************\n";
-                  }
-               }
-               else
-               {
-                  unlink('tmp/enabled_plugins/'.$f);
-               }
-            }
+            echo "\n***********************\n\nEjecutamos el cron.php del plugin ".$plugin."\n";
+            
+            include 'plugins/'.$plugin.'/cron.php';
+            
+            echo "\n***********************\n";
          }
       }
       
