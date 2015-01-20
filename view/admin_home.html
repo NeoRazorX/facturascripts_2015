@@ -461,7 +461,7 @@
          </div>
          <div class="modal-body">
             <p>Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.</p>
-            <form class="form" action="{$fsc->url()}" enctype="multipart/form-data" method="post">
+            <form class="form" action="{$fsc->url()}#plugins" enctype="multipart/form-data" method="post">
                <input type="hidden" name="install" value="TRUE"/>
                <div class="form-group">
                   <input type="file" name="fplugin" accept="application/zip"/>

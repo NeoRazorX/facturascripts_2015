@@ -181,7 +181,7 @@ y las adquisiciones de bienes y servicios.'
          {
             $this->new_message('Descargando el plugin '.$_GET['download']);
             
-            if( file_put_contents('download.zip', file_get_contents($this->download_list[$_GET['download']]['url']) ) )
+            if( @file_put_contents('download.zip', @file_get_contents($this->download_list[$_GET['download']]['url']) ) )
             {
                $zip = new ZipArchive();
                if( $zip->open('download.zip') )
@@ -499,6 +499,13 @@ y las adquisiciones de bienes y servicios.'
    
    private function enable_plugin($name)
    {
+      if( substr($name, -7) == '-master' )
+      {
+         /// renombramos el directorio
+         $name = substr($name, 0, -7);
+         rename('plugins/'.$name.'-master', 'plugins/'.$name);
+      }
+      
       if( !in_array($name, $this->plugins()) )
       {
          $GLOBALS['plugins'][] = $name;
@@ -637,11 +644,14 @@ y las adquisiciones de bienes y servicios.'
          {
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
-               $internet_ini = parse_ini_string( file_get_contents($plugin['version_url']) );
-               if( $plugin['version'] < intval($internet_ini['version']) )
+               $internet_ini = @parse_ini_string( @file_get_contents($plugin['version_url']) );
+               if($internet_ini)
                {
-                  $updates = TRUE;
-                  break;
+                  if( $plugin['version'] < intval($internet_ini['version']) )
+                  {
+                     $updates = TRUE;
+                     break;
+                  }
                }
             }
          }

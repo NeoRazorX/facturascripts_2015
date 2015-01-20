@@ -1110,7 +1110,7 @@ class fs_controller
          $fsvar = new fs_var();
          if( mt_rand(0,19) == 0 )
          {
-            if( file_get_contents('VERSION') != file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
+            if( @file_get_contents('VERSION') != @file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
             {
                $fsvar->simple_save('updates', 'true');
                return TRUE;
