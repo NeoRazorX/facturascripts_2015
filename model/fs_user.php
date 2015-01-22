@@ -17,11 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
 require_model('agente.php');
 require_model('ejercicio.php');
-require_once 'model/fs_access.php';
-require_once 'model/fs_page.php';
+require_model('fs_access.php');
+require_model('fs_page.php');
 
 /**
  * Usuario de facturaScripts. Puede estar asociado a un agente.
@@ -41,6 +40,7 @@ class fs_user extends fs_model
    public $last_browser;
    public $fs_page;
    public $codejercicio;
+   public $css;
    
    private $menu;
    
@@ -72,6 +72,12 @@ class fs_user extends fs_model
          $this->last_browser = $a['last_browser'];
          $this->fs_page = $a['fs_page'];
          $this->codejercicio = $a['codejercicio'];
+         
+         $this->css = 'view/css/bootstrap-yeti.min.css';
+         if( isset($a['css']) )
+         {
+            $this->css = $a['css'];
+         }
       }
       else
       {
@@ -86,6 +92,7 @@ class fs_user extends fs_model
          $this->last_browser = NULL;
          $this->fs_page = NULL;
          $this->codejercicio = NULL;
+         $this->css = 'view/css/bootstrap-yeti.min.css';
       }
       
       $this->logged_on = FALSE;
@@ -335,19 +342,19 @@ class fs_user extends fs_model
                admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
                last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
                last_login_time = ".$this->var2str($this->last_login_time).",
-               fs_page = ".$this->var2str($this->fs_page).", codejercicio = ".$this->var2str($this->codejercicio)."
-               WHERE nick = ".$this->var2str($this->nick).";";
+               fs_page = ".$this->var2str($this->fs_page).", codejercicio = ".$this->var2str($this->codejercicio).",
+               css = ".$this->var2str($this->css)." WHERE nick = ".$this->var2str($this->nick).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,
-               last_login,last_login_time,last_ip,last_browser,fs_page,codejercicio) VALUES
+               last_login,last_login_time,last_ip,last_browser,fs_page,codejercicio,css) VALUES
                (".$this->var2str($this->nick).",".$this->var2str($this->password).",
                ".$this->var2str($this->log_key).",".$this->var2str($this->codagente).",
                ".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
                ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",
                ".$this->var2str($this->last_browser).",".$this->var2str($this->fs_page).",
-               ".$this->var2str($this->codejercicio).");";
+               ".$this->var2str($this->codejercicio).",".$this->var2str($this->css).");";
          }
          return $this->db->exec($sql);
       }
@@ -366,7 +373,9 @@ class fs_user extends fs_model
       $this->cache->delete('m_fs_user_all');
       
       if($full)
+      {
          $this->clean_checked_tables();
+      }
    }
    
    public function all()

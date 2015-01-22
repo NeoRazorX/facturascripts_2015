@@ -33,6 +33,8 @@ class admin_user extends fs_controller
    
    public function process()
    {
+      $this->share_extensions();
+      
       $this->agente = new agente();
       $this->ejercicio = new ejercicio();
       $user_no_more_admin = FALSE;
@@ -80,12 +82,11 @@ class admin_user extends fs_controller
             
             if( isset($_POST['scodagente']) )
             {
-               if($_POST['scodagente'] == '')
+               $this->suser->codagente = NULL;
+               if($_POST['scodagente'] != '')
                {
-                  $this->suser->codagente = NULL;
-               }
-               else
                   $this->suser->codagente = $_POST['scodagente'];
+               }
             }
             
             /*
@@ -109,6 +110,11 @@ class admin_user extends fs_controller
             if( isset($_POST['udpage']) )
             {
                $this->suser->fs_page = $_POST['udpage'];
+            }
+            
+            if( isset($_POST['css']) )
+            {
+               $this->suser->css = $_POST['css'];
             }
             
             $this->suser->codejercicio = NULL;
@@ -154,6 +160,12 @@ class admin_user extends fs_controller
             }
             else
                $this->new_error_msg("¡Imposible modificar los datos!");
+         }
+         
+         /// ¿Estamos modificando nuestro usuario?
+         if($this->suser->nick == $this->user->nick)
+         {
+            $this->user = $this->suser;
          }
          
          /// si el usuario no tiene acceso a ninguna página, entonces hay que informar del problema.
@@ -219,5 +231,72 @@ class admin_user extends fs_controller
          }
       }
       return $returnlist;
+   }
+   
+   private function share_extensions()
+   {
+      $extensions = array(
+          array(
+              'name' => 'bootstrap',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'cosmo',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-cosmo.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'darkly',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-darkly.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'flatly',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-flatly.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'sandstone',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-sandstone.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'united',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-united.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'yeti',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-yeti.min.css',
+              'params' => ''
+          ),
+      );
+      foreach($extensions as $ext)
+      {
+         $fsext = new fs_extension($ext);
+         $fsext->save();
+      }
    }
 }

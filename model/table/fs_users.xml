@@ -57,6 +57,11 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>css</nombre>
+      <tipo>character varying(255)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>codejercicio</nombre>
       <tipo>character varying(4)</tipo>
       <nulo>YES</nulo>

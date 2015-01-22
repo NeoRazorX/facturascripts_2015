@@ -76,11 +76,12 @@
                <input class="form-control" type="password" name="spassword" placeholder="nueva contraseña"/>
             </div>
          </div>
-         <div class="col-sm-3">
+         <div class="col-sm-2">
             <div class="form-group">
-               <a href="{$fsc->agente->url()}">Empleado</a>
+               <a href="{$fsc->agente->url()}">Empleado</a>:
                <select name="scodagente" class="form-control">
                   <option value="">Ninguno</option>
+                  <option value="">------</option>
                   {loop="$fsc->agente->all()"}
                   <option value="{$value->codagente}"{if="$fsc->suser->codagente == $value->codagente"} selected="selected"{/if}>{$value->get_fullname()}</option>
                   {/loop}
@@ -90,14 +91,14 @@
                </p>
             </div>
          </div>
-         <div class="col-sm-3">
+         <div class="col-sm-2">
             <div class="form-group">
-               Página de inicio
+               Página de inicio:
                <select name="udpage" class="form-control">
                {loop="$fsc->suser->get_menu()"}
                   {if="$value->show_on_menu"}
                      {if="$value->name==$fsc->suser->fs_page"}
-                     <option value="{$value->name}" selected='selected'>{$value->folder} - {$value->title}</option>
+                     <option value="{$value->name}" selected="selected">{$value->folder} - {$value->title}</option>
                      {else}
                      <option value="{$value->name}">{$value->folder} - {$value->title}</option>
                      {/if}
@@ -108,11 +109,25 @@
          </div>
          <div class="col-sm-2">
             <div class="form-group">
-               Ejercicio
+               Plantilla CSS:
+               <select name="css" class="form-control">
+                  {loop="$fsc->extensions"}
+                     {if="$value->type=='css'"}
+                     <option value="{$value->text}"{if="$value->text==$fsc->suser->css"} selected="selected"{/if}>{$value->name}</option>
+                     {/if}
+                  {else}
+                  <option value="view/css/bootstrap-yeti.min.css">yeti</option>
+                  {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-sm-2">
+            <div class="form-group">
+               Ejercicio:
                <select name="ejercicio" class="form-control">
                {loop="$fsc->ejercicio->all_abiertos()"}
                   {if="$value->codejercicio==$fsc->suser->codejercicio"}
-                  <option value="{$value->codejercicio}" selected='selected'>{$value->nombre}</option>
+                  <option value="{$value->codejercicio}" selected="selected">{$value->nombre}</option>
                   {else}
                   <option value="{$value->codejercicio}">{$value->nombre}</option>
                   {/if}

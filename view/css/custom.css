@@ -16,10 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-body {
-   background-color: white;
-}
-
 ul.dropdown-menu li a:first-letter {
    text-transform: uppercase;
 }
