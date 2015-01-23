@@ -389,7 +389,7 @@
                </div>
                <div class="row">
                   <div class="col-md-12 col-sm-12">
-                     <h2>Cálculo de precios:</h2>
+                     <h2>Artículos:</h2>
                   </div>
                </div>
                <div class="row">
@@ -404,10 +404,19 @@
                   </div>
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
-                        Aplicar el margen:
-                        <select name="margin_method" class="form-control">
-                           <option value="PVP"{if="$GLOBALS['config2']['margin_method']=='PVP'"} selected='selected'{/if}>sobre el precio de venta</option>
-                           <option value="CST"{if="$GLOBALS['config2']['margin_method']=='CST'"} selected='selected'{/if}>sobre el precio de coste</option>
+                        Permitir stock negativo:
+                        <select name="stock_negativo" class="form-control">
+                           <option value="1"{if="$GLOBALS['config2']['stock_negativo']==1"} selected='selected'{/if}>Si</option>
+                           <option value="0"{if="$GLOBALS['config2']['stock_negativo']==0"} selected='selected'{/if}>No</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Permitir ventas sin stock:
+                        <select name="ventas_sin_stock" class="form-control">
+                           <option value="1"{if="$GLOBALS['config2']['ventas_sin_stock']==1"} selected='selected'{/if}>Si</option>
+                           <option value="0"{if="$GLOBALS['config2']['ventas_sin_stock']==0"} selected='selected'{/if}>No</option>
                         </select>
                      </div>
                   </div>

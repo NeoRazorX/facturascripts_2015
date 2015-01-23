@@ -41,9 +41,8 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
 {
    $GLOBALS['config2'] = parse_ini_file('tmp/'.FS_TMP_NAME.'config2.ini');
    
-   if( !isset($GLOBALS['config2']['margin_method']) )
+   if( !isset($GLOBALS['config2']['cost_is_average']) )
    {
-      $GLOBALS['config2']['margin_method'] = 'CST';
       $GLOBALS['config2']['cost_is_average'] = '1';
    }
    
@@ -64,6 +63,12 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    {
       $GLOBALS['config2']['check_db_types'] = 'false';
    }
+   
+   if( !isset($GLOBALS['config2']['stock_negativo']) )
+   {
+      $GLOBALS['config2']['stock_negativo'] = 0;
+      $GLOBALS['config2']['ventas_sin_stock'] = 1;
+   }
 }
 else
 {
@@ -83,10 +88,11 @@ else
        'presupuestos' => 'presupuestos',
        'provincia' => 'provincia',
        'apartado' => 'apartado',
-       'margin_method' => 'CST',
        'cost_is_average' => 1,
        'homepage' => 'admin_home',
-       'check_db_types' => 'false'
+       'check_db_types' => 'false',
+       'stock_negativo' => 0,
+       'ventas_sin_stock' => 1
    );
 }
 
