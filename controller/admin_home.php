@@ -220,6 +220,8 @@ y las adquisiciones de bienes y servicios.'
          /// el sistema ya se ha actualizado
          $fsvar->name = 'updates';
          $fsvar->delete();
+         
+         $this->cache->clean();
       }
       else if( isset($_GET['reset']) )
       {
