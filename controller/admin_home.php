@@ -220,8 +220,6 @@ y las adquisiciones de bienes y servicios.'
          /// el sistema ya se ha actualizado
          $fsvar->name = 'updates';
          $fsvar->delete();
-         
-         $this->cache->clean();
       }
       else if( isset($_GET['reset']) )
       {
@@ -586,6 +584,7 @@ y las adquisiciones de bienes y servicios.'
          /*
           * Desactivamos las páginas que ya no existen
           */
+         $eliminadas = array();
          foreach($this->page->all() as $p)
          {
             $encontrada = FALSE;
@@ -610,9 +609,13 @@ y las adquisiciones de bienes y servicios.'
             {
                if( $p->delete() )
                {
-                  $this->new_message('Se ha eliminado automáticamente la página '.$p->name);
+                  $eliminadas[] = $p->name;
                }
             }
+         }
+         if($eliminadas)
+         {
+            $this->new_message('Se han eliminado automáticamente las siguientes páginas: '.join(', ', $eliminadas));
          }
          
          /// borramos los archivos temporales del motor de plantillas

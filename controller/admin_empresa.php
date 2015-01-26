@@ -105,6 +105,14 @@ class admin_empresa extends fs_controller
          if( $this->empresa->save() )
          {
             $this->new_message('Datos guardados correctamente.');
+            
+            $step = $fsvar->simple_get('install_step');
+            if($step == 2)
+            {
+               $fsvar->simple_save('install_step', 3);
+               $this->new_message('Y por último tienes que <a href="index.php?page=contabilidad_ejercicio&cod='.
+                       $this->empresa->codejercicio.'">importar los datos del ejercicio</a>.');
+            }
          }
          else
             $this->new_error_msg ('Error al guardar los datos.');
@@ -144,7 +152,6 @@ class admin_empresa extends fs_controller
          }
       }
 
-      // Bank account stuff STARTS
       else if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
       {
          $cuenta = $this->cuenta_banco->get($_GET['delete_cuenta']);
@@ -186,7 +193,6 @@ class admin_empresa extends fs_controller
          else
             $this->new_error_msg('Imposible guardar la cuenta bancaria.');
       }
-      // Bank account stuff ENDS
       
       $this->logo = file_exists('tmp/'.FS_TMP_NAME.'logo.png');
    }

@@ -61,6 +61,16 @@
      <span class="glyphicon glyphicon-upload"></span> &nbsp; Descargar facturacion_base
   </a>
 </div>
+{elseif="$fsc->step=='2'"}
+<div class="jumbotron">
+  <h1>Tu empresa</h1>
+  <p>
+     Ya falta poco. Ahora tienes que escribir el nombre de la empresa, la dirección, etc...
+  </p>
+  <a href="index.php?page=admin_empresa" class="btn btn-sm btn-info">
+     <span class="glyphicon glyphicon-info-sign"></span> &nbsp; Datos de la empresa
+  </a>
+</div>
 {else}
 <div class="container-fluid" style="margin-top: 10px;">
    <div class="row">

@@ -17,7 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+if( !file_exists('config.php') )
+{
+   die('Archivo config.php no encontrado. No puedes actualizar sin instalar.');
+}
+
 require_once 'config.php';
+require_once 'base/fs_cache.php';
 
 function recurse_copy($src, $dst)
 {
@@ -147,6 +153,21 @@ function check_for_plugin_updates()
    return $plugins;
 }
 
+function clean_cache()
+{
+   $cache = new fs_cache();
+   $cache->clean();
+   
+   /// borramos los archivos temporales del motor de plantillas
+   foreach( scandir(getcwd().'/tmp') as $f )
+   {
+      if( substr($f, -4) == '.php' )
+      {
+         unlink('tmp/'.$f);
+      }
+   }
+}
+
 if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
 {
    $mensajes = '';
@@ -183,18 +204,12 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             delTree('raintpl/');
             delTree('view/');
             
-            /// borramos los archivos temporales del motor de plantillas
-            foreach( scandir(getcwd().'/tmp') as $f )
-				{
-               if( substr($f, -4) == '.php' )
-               {
-                  unlink('tmp/'.$f);
-               }
-				}
-            
             /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
             recurse_copy('facturascripts_2015-master/', '.');
             delTree('facturascripts_2015-master/');
+            
+            /// limpiamos la caché
+            clean_cache();
             
             $mensajes = 'Actualizado correctamente. <a href="index.php?page=admin_home&updated=TRUE">Que lo disfrutes</a>.';
          }
@@ -227,14 +242,8 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
                /// renombramos el directorio
                rename('plugins/'.$_GET['plugin'].'-master', 'plugins/'.$_GET['plugin']);
                
-               /// borramos los archivos temporales del motor de plantillas
-               foreach( scandir(getcwd().'/tmp') as $f )
-         		{
-                  if( substr($f, -4) == '.php' )
-                  {
-                     unlink('tmp/'.$f);
-                  }
-      			}
+               /// limpiamos la caché
+               clean_cache();
                
                $mensajes = 'Plugin actualizado correctamente. <a href="index.php?page=admin_home&updated=TRUE">Que lo disfrutes</a>.';
             }
