@@ -502,7 +502,10 @@ class fs_controller
                      $this->load_menu();
                   }
                   else
+                  {
                      $this->new_error_msg('Imposible guardar los datos de usuario.');
+                     $this->cache->clean();
+                  }
                   
                   $fslog = new fs_log();
                   $fslog->usuario = $user->nick;

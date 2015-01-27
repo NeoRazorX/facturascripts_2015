@@ -56,19 +56,23 @@ function delTree($dir)
    return rmdir($dir);
 }
 
-function __getAllSubDirectories($directory, $directory_seperator=DIRECTORY_SEPARATOR)
+function __getAllSubDirectories($base_dir)
 {
-   $dirs = array_map( function($item)use($directory_seperator){ return $item . $directory_seperator;}, array_filter( glob( $directory . '*' ), 'is_dir') );
+   $directories = array();
    
-   foreach($dirs AS $dir)
-	{
-      if( strcmp($dir, "..".$directory_seperator) != 0 )
+   foreach(scandir($base_dir) as $file)
+   {
+      if($file == '.' || $file == '..') continue;
+      
+      $dir = $base_dir.DIRECTORY_SEPARATOR.$file;
+      if( is_dir($dir) )
       {
-         $dirs = array_merge($dirs, __getAllSubDirectories($dir, $directory_seperator) );
+         $directories[] = $dir;
+         $directories = array_merge($directories, __getAllSubDirectories($dir));
       }
    }
    
-   return $dirs;
+   return $directories;
 }
 
 function __areWritable($dirlist)
@@ -77,7 +81,7 @@ function __areWritable($dirlist)
    
    foreach($dirlist as $dir)
    {
-      if( !is_writable($dir) && strcmp($dir, "../") != 0)
+      if( !is_writable($dir) )
       {
          $notwritable[] = $dir;
       }
