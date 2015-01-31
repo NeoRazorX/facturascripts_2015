@@ -32,6 +32,10 @@ class admin_home extends fs_controller
    protected function process()
    {
       $this->download_list = array(
+          'documentos_facturas' => array(
+              'url' => 'https://github.com/NeoRazorX/documentos_facturas/archive/master.zip',
+              'description' => 'Permite adjuntar archivos a facturas de compra o venta.'
+          ),
           'facturacion_base' => array(
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
               'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
