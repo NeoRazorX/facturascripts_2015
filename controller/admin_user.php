@@ -235,6 +235,14 @@ class admin_user extends fs_controller
    
    private function share_extensions()
    {
+      foreach($this->extensions as $ext)
+      {
+         if( !file_exists($ext->text) )
+         {
+            $ext->delete();
+         }
+      }
+      
       $extensions = array(
           array(
               'name' => 'bootstrap',
@@ -290,14 +298,6 @@ class admin_user extends fs_controller
               'page_to' => __CLASS__,
               'type' => 'css',
               'text' => 'view/css/bootstrap-yeti.min.css',
-              'params' => ''
-          ),
-          array(
-              'name' => 'bootstrap-theme',
-              'page_from' => __CLASS__,
-              'page_to' => __CLASS__,
-              'type' => 'css',
-              'text' => 'view/css/bootstrap-theme.css',
               'params' => ''
           ),
           array(

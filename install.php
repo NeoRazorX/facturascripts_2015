@@ -188,7 +188,7 @@ $system_info = str_replace('"', "'", $system_info);
    <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
    <link rel="stylesheet" href="view/css/datepicker.css" />
    <link rel="stylesheet" href="view/css/custom.css" />
-   <script type="text/javascript" src="view/js/jquery-2.1.1.min.js"></script>
+   <script type="text/javascript" src="view/js/jquery.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
    <script type="text/javascript" src="view/js/jquery.autocomplete.min.js"></script>

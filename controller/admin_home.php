@@ -652,10 +652,6 @@ y las adquisiciones de bienes y servicios.'
       {
          return FALSE;
       }
-      else if( $fsvar->simple_get('updates') )
-      {
-         return TRUE;
-      }
       else if( mt_rand(0,9) == 0 )
       {
          /// comprobamos actualizaciones en los plugins
@@ -681,6 +677,12 @@ y las adquisiciones de bienes y servicios.'
             $fsvar->simple_save('updates', 'true');
             return TRUE;
          }
+         else
+         {
+            $fsvar->name = 'updates';
+            $fsvar->delete();
+            return FALSE;
+         }
       }
       else if( mt_rand(0,9) == 0 )
       {
@@ -690,8 +692,14 @@ y las adquisiciones de bienes y servicios.'
             $fsvar->simple_save('updates', 'true');
             return TRUE;
          }
+         else
+         {
+            $fsvar->name = 'updates';
+            $fsvar->delete();
+            return FALSE;
+         }
       }
       else
-         return FALSE;
+         return $fsvar->simple_get('updates');
    }
 }

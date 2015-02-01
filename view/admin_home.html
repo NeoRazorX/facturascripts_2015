@@ -33,7 +33,7 @@
 </script>
 
 {if="!$fsc->step"}
-<div class="jumbotron">
+<div class="jumbotron" style="padding-left: 10px; padding-right: 10px;">
   <h1>¡Bienvenido a FacturaScripts {$fsc->version()}!</h1>
   <p>
      FacturaScripts tiene un desarrollo muy acelerado y en muchas direcciones distintas,
@@ -45,7 +45,7 @@
   </a>
 </div>
 {elseif="$fsc->step=='1'"}
-<div class="jumbotron">
+<div class="jumbotron" style="padding-left: 10px; padding-right: 10px;">
   <h1>Plugins</h1>
   <p>
      En esta nueva versión hemos decidido que cada plugin sea un desarrollo independiente,
@@ -62,7 +62,7 @@
   </a>
 </div>
 {elseif="$fsc->step=='2'"}
-<div class="jumbotron">
+<div class="jumbotron" style="padding-left: 10px; padding-right: 10px;">
   <h1>Tu empresa</h1>
   <p>
      Ya falta poco. Ahora tienes que escribir el nombre de la empresa, la dirección, etc...
@@ -152,8 +152,8 @@
                         <th class="text-left">Página</th>
                         <th class="text-left">Menú</th>
                         <th class="text-left">Versión</th>
-                        <th>Importante</th>
-                        <th>Existe</th>
+                        <th class="text-center">Importante</th>
+                        <th class="text-center">Existe</th>
                      </tr>
                   </thead>
                   {loop="$fsc->paginas"}
