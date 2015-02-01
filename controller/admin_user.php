@@ -292,6 +292,22 @@ class admin_user extends fs_controller
               'text' => 'view/css/bootstrap-yeti.min.css',
               'params' => ''
           ),
+          array(
+              'name' => 'bootstrap-theme',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-theme.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'bootstrap-theme_dark',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-theme_dark_navbar.css',
+              'params' => ''
+          ),
       );
       foreach($extensions as $ext)
       {
