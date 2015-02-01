@@ -98,7 +98,17 @@ y las adquisiciones de bienes y servicios.'
          }
       }
       
-      if( !$this->user->admin )
+      if( isset($_GET['check4updates']) )
+      {
+         $this->template = FALSE;
+         if( $this->check_for_updates() )
+         {
+            echo 'Hay actualizaciones disponibles.';
+         }
+         else
+            echo 'No hay actualizaciones.';
+      }
+      else if( !$this->user->admin )
       {
          $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
       }
@@ -638,7 +648,7 @@ y las adquisiciones de bienes y servicios.'
    {
       $fsvar = new fs_var();
       
-      if(!$this->user->admin)
+      if( !$this->user->admin )
       {
          return FALSE;
       }
@@ -648,6 +658,7 @@ y las adquisiciones de bienes y servicios.'
       }
       else if( mt_rand(0,9) == 0 )
       {
+         /// comprobamos actualizaciones en los plugins
          $updates = FALSE;
          foreach($this->plugin_advanced_list() as $plugin)
          {
@@ -670,14 +681,17 @@ y las adquisiciones de bienes y servicios.'
             $fsvar->simple_save('updates', 'true');
             return TRUE;
          }
-         else
+      }
+      else if( mt_rand(0,9) == 0 )
+      {
+         /// comprobamos actualizaciones del núcleo
+         if( @file_get_contents('VERSION') != @file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
          {
-            $fsvar->name = 'updates';
-            $fsvar->delete();
-            return FALSE;
+            $fsvar->simple_save('updates', 'true');
+            return TRUE;
          }
       }
       else
-         return parent::check_for_updates();
+         return FALSE;
    }
 }

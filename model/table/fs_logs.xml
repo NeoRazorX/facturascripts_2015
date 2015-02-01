@@ -18,7 +18,7 @@
    </columna>
    <columna>
       <nombre>detalle</nombre>
-      <tipo>character varying(128)</tipo>
+      <tipo>text</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>

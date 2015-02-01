@@ -1111,22 +1111,7 @@ class fs_controller
       if($this->user->admin)
       {
          $fsvar = new fs_var();
-         if( mt_rand(0,19) == 0 )
-         {
-            if( @file_get_contents('VERSION') != @file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
-            {
-               $fsvar->simple_save('updates', 'true');
-               return TRUE;
-            }
-            else
-            {
-               $fsvar->name = 'updates';
-               $fsvar->delete();
-               return FALSE;
-            }
-         }
-         else
-            return $fsvar->simple_get('updates');
+         return $fsvar->simple_get('updates');
       }
       else
          return FALSE;
