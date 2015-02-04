@@ -36,6 +36,10 @@ class admin_home extends fs_controller
               'url' => 'https://github.com/NeoRazorX/documentos_facturas/archive/master.zip',
               'description' => 'Permite adjuntar archivos a facturas de compra o venta.'
           ),
+          'factura_detallada' => array(
+              'url' => 'https://github.com/NeoRazorX/factura_detallada.git',
+              'description' => 'Añade un nuevo formato de impresión de facturas de cliente a FacturaScripts.'
+          ),
           'facturacion_base' => array(
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
               'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
@@ -339,6 +343,20 @@ y las adquisiciones de bienes y servicios.'
             $pages[] = $p;
          }
       }
+      
+      /// ordenamos
+      usort($pages, function($a,$b){
+         if($a->name == $b->name)
+         {
+            return 0;
+         }
+         else if($a->name > $b->name)
+         {
+            return 1;
+         }
+         else
+            return -1;
+      });
       
       return $pages;
    }

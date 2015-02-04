@@ -144,10 +144,13 @@ function check_for_plugin_updates()
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
                $internet_ini = @parse_ini_string( @file_get_contents($plugin['version_url']) );
-               if( $plugin['version'] < intval($internet_ini['version']) )
+               if($internet_ini)
                {
-                  $plugin['new_version'] = intval($internet_ini['version']);
-                  $plugins[] = $plugin;
+                  if( $plugin['version'] < intval($internet_ini['version']) )
+                  {
+                     $plugin['new_version'] = intval($internet_ini['version']);
+                     $plugins[] = $plugin;
+                  }
                }
             }
          }
@@ -215,7 +218,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             /// limpiamos la caché
             clean_cache();
             
-            $mensajes = 'Actualizado correctamente. <a href="index.php?page=admin_home&updated=TRUE">Que lo disfrutes</a>.';
+            $mensajes = 'Actualizado correctamente.';
          }
          else
             $errores = 'Archivo update.zip no encontrado.';
@@ -249,7 +252,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
                /// limpiamos la caché
                clean_cache();
                
-               $mensajes = 'Plugin actualizado correctamente. <a href="index.php?page=admin_home&updated=TRUE">Que lo disfrutes</a>.';
+               $mensajes = 'Plugin actualizado correctamente.';
             }
             else
                $errores = 'Archivo update.zip no encontrado.';
@@ -287,7 +290,16 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
    }
    else if($mensajes != '')
    {
-      echo '<div class="alert alert-info" style="margin-bottom: 0px;">'.$mensajes.'</div>';
+      echo '<div class="container-fluid">'
+         . '<div class="row">'
+              . '<div class="col-sm-10"><div class="alert alert-info" style="margin-bottom: 0px;">'.$mensajes.'</div></div>'
+              . '<div class="col-sm-2">'
+                  . '<a href="index.php?page=admin_home&updated=TRUE" class="btn btn-block btn-default">'
+                     . '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Finalizar'
+                  . '</a>'
+              . '</div>'
+         . '</div>'
+      . '</div>';
    }
    ?>
    <div class="container-fluid">
@@ -301,8 +313,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       <div class="row">
          <div class="col-md-9">
             <p>
-               Siéntate y ponte cómodo mientras este software de alta tecnolgía arruina el trabajo
-               de decenas de empresas de software ancladas en los años 80.
+               Este actualizador permite actualizar tanto el núcleo de FacturaScripts como sus plugins.
             </p>
             <p>
                Tienes instalada la versión <mark><?php echo $version_actual; ?></mark>
@@ -330,7 +341,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
          else
          {
             ?>
-            <a class="btn btn-primary btn-lg" href="updater.php?reinstall=TRUE" role="button">
+            <a class="btn btn-default btn-lg" href="updater.php?reinstall=TRUE" role="button">
                <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> &nbsp; Reinstalar
             </a>
             <?php
