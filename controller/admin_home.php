@@ -37,7 +37,7 @@ class admin_home extends fs_controller
               'description' => 'Permite adjuntar archivos a facturas de compra o venta.'
           ),
           'factura_detallada' => array(
-              'url' => 'https://github.com/NeoRazorX/factura_detallada.git',
+              'url' => 'https://github.com/NeoRazorX/factura_detallada/archive/master.zip',
               'description' => 'Añade un nuevo formato de impresión de facturas de cliente a FacturaScripts.'
           ),
           'facturacion_base' => array(
