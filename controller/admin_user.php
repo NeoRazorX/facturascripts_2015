@@ -22,6 +22,7 @@ require_model('ejercicio.php');
 class admin_user extends fs_controller
 {
    public $agente;
+   public $allow_delete;
    public $ejercicio;
    public $user_log;
    public $suser;
@@ -34,6 +35,9 @@ class admin_user extends fs_controller
    public function process()
    {
       $this->share_extensions();
+      
+      /// ¿El usuario tiene permiso para eliminar en esta página?
+      $this->allow_delete = $this->user->allow_delete_on(__CLASS__);
       
       $this->agente = new agente();
       $this->ejercicio = new ejercicio();
@@ -75,9 +79,19 @@ class admin_user extends fs_controller
          }
          else if( isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin']) )
          {
+            $error = FALSE;
+            
             if($_POST['spassword'] != '')
             {
-               $this->suser->set_password($_POST['spassword']);
+               if($_POST['spassword'] == $_POST['spassword2'])
+               {
+                  $this->suser->set_password($_POST['spassword']);
+               }
+               else
+               {
+                  $this->new_error_msg('Las contraseñas no coinciden.');
+                  $error = TRUE;
+               }
             }
             
             if( isset($_POST['scodagente']) )
@@ -128,35 +142,59 @@ class admin_user extends fs_controller
                $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
                   Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
                $this->suser = $this->user->get($_GET['snick']);
+               $error = TRUE;
             }
             else if( $this->suser->save() )
             {
                if( !$this->suser->admin )
                {
+                  /// para cada página, comprobamos si hay que darle acceso o no
                   foreach($this->all_pages() as $p)
                   {
-                     $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$p->name) );
-                     
-                     if( $user_no_more_admin )
+                     /**
+                      * Creamos un objeto fs_access con los datos del usuario y la página.
+                      * Si tiene acceso guardamos, sino eliminamos. Así no tenemos que comprobar uno a uno
+                      * si ya estaba en la base de datos. Eso lo hace el modelo.
+                      */
+                     $a = new fs_access( array('fs_user'=> $this->suser->nick, 'fs_page'=>$p->name, 'allow_delete'=>FALSE) );
+                     if( isset($_POST['allow_delete']) )
                      {
+                        $a->allow_delete = in_array($p->name, $_POST['allow_delete']);
+                     }
+                     
+                     if($user_no_more_admin)
+                     {
+                        /*
+                         * Si un usuario es administrador y deja de serlo, hay que darle acceso
+                         * a algunas páginas, en caso contrario no podrá continuar.
+                         */
                         $a->save();
                      }
                      else if( !isset($_POST['enabled']) )
                      {
+                        /**
+                         * No se ha marcado ningún checkbox de autorizado, así que eliminamos el acceso
+                         * a todas las páginas. Una a una.
+                         */
                         $a->delete();
                      }
-                     else if( !$p->enabled AND in_array($p->name, $_POST['enabled']) )
+                     else if( in_array($p->name, $_POST['enabled']) )
                      {
+                        /// la página ha sido marcada como autorizada.
                         $a->save();
                      }
-                     else if( $p->enabled AND !in_array($p->name, $_POST['enabled']) )
+                     else
                      {
+                        /// la página no está marcada como autorizada.
                         $a->delete();
                      }
                   }
                }
                
-               $this->new_message("Datos modificados correctamente.");
+               if(!$error)
+               {
+                  $this->new_message("Datos modificados correctamente.");
+               }
             }
             else
                $this->new_error_msg("¡Imposible modificar los datos!");
@@ -184,7 +222,7 @@ class admin_user extends fs_controller
             {
                $this->new_advice('No has autorizado a este usuario a acceder a ninguna'
                   . ' página y por tanto no podrá hacer nada. Puedes darle acceso a alguna página'
-                  . ' desde el panel de más abajo.');
+                  . ' desde la pestaña autorizar.');
             }
          }
          
@@ -212,12 +250,16 @@ class admin_user extends fs_controller
    public function all_pages()
    {
       $returnlist = array();
+      
+      /// Obtenemos la lista de páginas. Todas
       foreach($this->menu as $m)
       {
          $m->enabled = FALSE;
+         $m->allow_delete = FALSE;
          $returnlist[] = $m;
       }
       
+      /// Completamos con la lista de accesos del usuario
       $access = $this->suser->get_accesses();
       foreach($returnlist as $i => $value)
       {
@@ -226,10 +268,12 @@ class admin_user extends fs_controller
             if($value->name == $a->fs_page)
             {
                $returnlist[$i]->enabled = TRUE;
+               $returnlist[$i]->allow_delete = $a->allow_delete;
                break;
             }
          }
       }
+      
       return $returnlist;
    }
    

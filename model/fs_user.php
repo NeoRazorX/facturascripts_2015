@@ -99,6 +99,10 @@ class fs_user extends fs_model
       $this->agente = NULL;
    }
    
+   /**
+    * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
+    * @return type
+    */
    protected function install()
    {
       $this->clean_cache(TRUE);
@@ -181,6 +185,11 @@ class fs_user extends fs_model
          return '#';
    }
    
+   /**
+    * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
+    * @param type $reload
+    * @return type
+    */
    public function get_menu($reload=FALSE)
    {
       if( !isset($this->menu) OR $reload)
@@ -212,6 +221,11 @@ class fs_user extends fs_model
       return $this->menu;
    }
    
+   /**
+    * Devuelve TRUE si el usuario tiene acceso a la página solicitada.
+    * @param type $page_name
+    * @return boolean
+    */
    public function have_access_to($page_name)
    {
       if($this->admin OR FS_DEMO)
@@ -226,6 +240,33 @@ class fs_user extends fs_model
             if($m->name == $page_name)
             {
                $status = TRUE;
+               break;
+            }
+         }
+      }
+      
+      return $status;
+   }
+   
+   /**
+    * Devuelve TRUE si el usuario tiene permiso para eliminar elementos en la página solicitada.
+    * @param type $page_name
+    * @return type
+    */
+   public function allow_delete_on($page_name)
+   {
+      if($this->admin OR FS_DEMO)
+      {
+         $status = TRUE;
+      }
+      else
+      {
+         $status = FALSE;
+         foreach($this->get_accesses() as $a)
+         {
+            if($a->fs_page == $page_name)
+            {
+               $status = $a->allow_delete;
                break;
             }
          }
@@ -275,6 +316,10 @@ class fs_user extends fs_model
       }
    }
    
+   /**
+    * Genera una nueva clave de login, para usar en lugar de la contraseña (via cookie),
+    * esto impide que dos o más personas utilicen el mismo usuario al mismo tiempo.
+    */
    public function new_logkey()
    {
       if( is_null($this->log_key) OR !FS_DEMO )

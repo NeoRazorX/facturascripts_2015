@@ -27,6 +27,12 @@ class fs_access extends fs_model
    public $fs_user;
    public $fs_page;
    
+   /**
+    * Otorga permisos al usuario a eliminar elementos en la página.
+    * @var type 
+    */
+   public $allow_delete;
+   
    public function __construct($a=FALSE)
    {
       parent::__construct('fs_access');
@@ -34,11 +40,18 @@ class fs_access extends fs_model
       {
          $this->fs_user = $a['fs_user'];
          $this->fs_page = $a['fs_page'];
+         
+         $this->allow_delete = TRUE;
+         if( isset($a['allow_delete']) )
+         {
+            $this->allow_delete = $this->str2bool($a['allow_delete']);
+         }
       }
       else
       {
          $this->fs_user = NULL;
          $this->fs_page = NULL;
+         $this->allow_delete = FALSE;
       }
    }
    
@@ -50,10 +63,11 @@ class fs_access extends fs_model
    public function exists()
    {
       if( is_null($this->fs_page) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE fs_user = ".$this->var2str($this->fs_user).
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = ".$this->var2str($this->fs_user).
                  " AND fs_page = ".$this->var2str($this->fs_page).";");
    }
    
@@ -66,13 +80,16 @@ class fs_access extends fs_model
    {
       if( $this->exists() )
       {
-         return TRUE;
+         $sql = "UPDATE ".$this->table_name." SET allow_delete = ".$this->var2str($this->allow_delete)."
+            WHERE fs_user = ".$this->var2str($this->fs_user)." AND fs_page = ".$this->var2str($this->fs_page).";";
       }
       else
       {
-         return $this->db->exec("INSERT INTO ".$this->table_name." (fs_user,fs_page) VALUES
-            (".$this->var2str($this->fs_user).",".$this->var2str($this->fs_page).");");
+         $sql = "INSERT INTO ".$this->table_name." (fs_user,fs_page,allow_delete) VALUES
+            (".$this->var2str($this->fs_user).",".$this->var2str($this->fs_page).",".$this->var2str($this->allow_delete).");";
       }
+      
+      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -84,12 +101,14 @@ class fs_access extends fs_model
    public function all_from_nick($n='')
    {
       $accesslist = array();
+      
       $access = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = ".$this->var2str($n).";");
       if($access)
       {
          foreach($access as $a)
             $accesslist[] = new fs_access($a);
       }
+      
       return $accesslist;
    }
 }
