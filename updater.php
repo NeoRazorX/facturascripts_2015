@@ -366,7 +366,11 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
                      </tr>
                   </thead>
                   <?php
-                  if($errores == '')
+                  if($actualizar)
+                  {
+                     echo '<tr class="bg-warning"><td colspan="5">Tienes que actualizar FacturaScripts antes de actualizar los plugins.</td></tr>';
+                  }
+                  else if($errores == '')
                   {
                      $plugins_for_update = FALSE;
                      foreach(check_for_plugin_updates() as $plugin)

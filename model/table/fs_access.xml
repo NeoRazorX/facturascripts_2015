@@ -21,7 +21,7 @@
       <nombre>allow_delete</nombre>
       <tipo>boolean</tipo>
       <nulo>NO</nulo>
-      <defecto>false</defecto>
+      <defecto>true</defecto>
    </columna>
    <restriccion>
       <nombre>fs_access_pkey</nombre>

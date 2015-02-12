@@ -274,16 +274,17 @@ class fs_controller
     * Muestra al usuario un mensaje de error
     * @param type $msg el mensaje a mostrar
     */
-   public function new_error_msg($msg=FALSE)
+   public function new_error_msg($msg = FALSE, $tipo = 'error', $alerta = FALSE)
    {
       if($msg)
       {
          $this->errors[] = str_replace("\n", ' ', $msg);
          
          $fslog = new fs_log();
-         $fslog->tipo = 'error';
+         $fslog->tipo = $tipo;
          $fslog->detalle = $msg;
          $fslog->ip = $_SERVER['REMOTE_ADDR'];
+         $fslog->alerta = $alerta;
          
          if($this->user)
          {
@@ -385,22 +386,6 @@ class fs_controller
                   if($linea[0] == $_SERVER['REMOTE_ADDR'] AND intval($linea[1]) > 5)
                   {
                      $baneada = TRUE;
-                     
-                     if( intval($linea[1]) == 6 )
-                     {
-                        $fslog = new fs_log();
-                        
-                        if( isset($_POST['user']) )
-                        {
-                           $fslog->usuario = $_POST['user'];
-                        }
-                        
-                        $fslog->tipo = 'login';
-                        $fslog->detalle = 'IP baneada';
-                        $fslog->ip = $_SERVER['REMOTE_ADDR'];
-                        $fslog->alerta = TRUE;
-                        $fslog->save();
-                     }
                   }
                   
                   $ips[] = $linea;
@@ -437,9 +422,29 @@ class fs_controller
          }
          
          if(!$encontrada)
+         {
             fwrite( $file, $_SERVER['REMOTE_ADDR'].';1;'.( time()+600 ) );
+         }
          
          fclose($file);
+      }
+   }
+   
+   /**
+    * Devuelve TRUE si la IP proporcionada está en la lista de IPs permitidas.
+    * La lista de IPs permitidas están en Admin > Panel de control > Avanzado.
+    * @param type $ip
+    */
+   private function ip_in_whitelist($ip)
+   {
+      if(FS_IP_WHITELIST == '*')
+      {
+         return TRUE;
+      }
+      else
+      {
+         $aux = explode(',', FS_IP_WHITELIST);
+         return in_array($ip, $aux);
       }
    }
    
@@ -454,7 +459,7 @@ class fs_controller
       if( $this->ip_baneada($ips) )
       {
          $this->banear_ip($ips);
-         $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
+         $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.', 'login', TRUE);
       }
       else if( isset($_POST['user']) AND isset($_POST['password']) )
       {
@@ -473,7 +478,9 @@ class fs_controller
                $agente->nombre = $_POST['user'];
                $agente->apellidos = 'Demo';
                if( $agente->save() )
+               {
                   $user->codagente = $agente->codagente;
+               }
             }
             
             $user->new_logkey();
@@ -494,25 +501,31 @@ class fs_controller
                if( $user->password == sha1($password) )
                {
                   $user->new_logkey();
-                  if( $user->save() )
+                  
+                  if( !$user->admin AND !$this->ip_in_whitelist($user->last_ip) )
+                  {
+                     $this->new_error_msg('No puedes acceder desde esta IP.', 'login', TRUE);
+                  }
+                  else if( $user->save() )
                   {
                      setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
                      setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
                      $this->user = $user;
                      $this->load_menu();
+                     
+                     /// añadimos el mensaje al log
+                     $fslog = new fs_log();
+                     $fslog->usuario = $user->nick;
+                     $fslog->tipo = 'login';
+                     $fslog->detalle = 'Login correcto.';
+                     $fslog->ip = $user->last_ip;
+                     $fslog->save();
                   }
                   else
                   {
                      $this->new_error_msg('Imposible guardar los datos de usuario.');
                      $this->cache->clean();
                   }
-                  
-                  $fslog = new fs_log();
-                  $fslog->usuario = $user->nick;
-                  $fslog->tipo = 'login';
-                  $fslog->detalle = 'Login correcto.';
-                  $fslog->ip = $user->last_ip;
-                  $fslog->save();
                }
                else
                {

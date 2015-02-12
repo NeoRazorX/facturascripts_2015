@@ -19,7 +19,6 @@
 
 class admin_home extends fs_controller
 {
-   public $demo_warnign_showed;
    public $download_list;
    public $paginas;
    public $step;
@@ -85,7 +84,6 @@ y las adquisiciones de bienes y servicios.'
               'description' => 'Pantalla de información resumida para FacturaScripts. <b>Todavía en desarrollo</b>'
           )
       );
-      $this->demo_warnign_showed = FALSE;
       $fsvar = new fs_var();
       $this->step = $fsvar->simple_get('install_step');
       
@@ -115,6 +113,10 @@ y las adquisiciones de bienes y servicios.'
       else if( !$this->user->admin )
       {
          $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
+      }
+      else if(FS_DEMO)
+      {
+         $this->new_error_msg('En el modo demo no se pueden hacer cambios en esta página.');
       }
       else if( isset($_POST['modpages']) )
       {
@@ -540,7 +542,7 @@ y las adquisiciones de bienes y servicios.'
       
       if( !in_array($name, $this->plugins()) )
       {
-         $GLOBALS['plugins'][] = $name;
+         array_unshift($GLOBALS['plugins'], $name);
          
          if( file_put_contents('tmp/enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
          {

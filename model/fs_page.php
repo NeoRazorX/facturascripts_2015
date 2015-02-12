@@ -126,11 +126,6 @@ class fs_page extends fs_model
          return FALSE;
    }
    
-   public function test()
-   {
-      return TRUE;
-   }
-   
    public function save()
    {
       $this->clean_cache();

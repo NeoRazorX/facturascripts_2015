@@ -10,16 +10,12 @@
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <label for="feedback_textarea">Detalla tu duda o problema:</label>
-                  <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6">{if="$fsc->empresa"}{$fsc->empresa->email_firma}{/if}</textarea>
+                  Detalla tu duda o problema:
+                  <textarea class="form-control" name="feedback_text" rows="6">{if="$fsc->empresa"}{$fsc->empresa->email_firma}{/if}</textarea>
                </div>
                <div class="form-group">
-                  <label for="exampleInputEmail1">Tu email</label>
-                  {if="$fsc->empresa"}
-                  <input type="email" class="form-control" id="exampleInputEmail1" name="feedback_email" placeholder="Introduce tu email" value="{$fsc->empresa->email}"/>
-                  {else}
-                  <input type="email" class="form-control" id="exampleInputEmail1" name="feedback_email" placeholder="Introduce tu email"/>
-                  {/if}
+                  Tu email:
+                  <input type="email" class="form-control" name="feedback_email" placeholder="Tu email"{if="$fsc->empresa"} value="{$fsc->empresa->email}"{/if}/>
                </div>
             </div>
             <div class="modal-footer">

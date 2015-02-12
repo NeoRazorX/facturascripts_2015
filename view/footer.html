@@ -1,9 +1,29 @@
    <hr style="margin-top: 50px;" class="hidden-print"/>
    
    <div class="container-fluid hidden-print" style="margin-bottom: 10px;">
+      {if="FS_DEMO"}
+      <div class="row" style="margin-bottom: 20px;">
+         <div class="col-sm-4">
+            <a href="https://www.facturascripts.com/store/?product=1h-de-desarrollo" target="_blank" class="btn btn-block btn-success">
+               <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; 1h de desarrollo
+            </a>
+         </div>
+         <div class="col-sm-4">
+            <a href="https://www.facturascripts.com/store" target="_blank" class="btn btn-block btn-info">
+               <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Tienda de plugins
+            </a>
+         </div>
+         <div class="col-sm-4">
+            <a href="http://youtu.be/bQVqo0YXo4w" target="_blank" class="btn btn-block btn-danger">
+               <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> &nbsp; Curso en Youtube
+            </a>
+         </div>
+      </div>
+      {/if}
+      
       {if="FS_DB_HISTORY"}
       <div class="row">
-         <div class="col-lg-12 col-md-12 col-sm-12">
+         <div class="col-sm-12">
             <div class="panel panel-default hidden-print">
                <div class="panel-heading">
                   <h3 class="panel-title">Consultas SQL:</h3>
@@ -19,16 +39,16 @@
       {/if}
       
       <div class="row">
-         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+         <div class="col-sm-4 col-xs-6">
             <small>
                Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>.
             </small>
          </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs text-center">
+         <div class="col-sm-4 hidden-xs text-center">
             <span class="label label-default">Consultas: {$fsc->selects()}</span>
             <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
          </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 text-right">
+         <div class="col-sm-4 col-xs-6 text-right">
             <span class="label label-default">Procesado en: {$fsc->duration()}</span>
          </div>
       </div>

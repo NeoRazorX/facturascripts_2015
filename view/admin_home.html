@@ -91,11 +91,14 @@
          </div>
          
          <div class="btn-group">
-         {loop="$fsc->extensions"}
-            {if="$value->type=='button'"}
-            <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
-            {/if}
-         {/loop}
+            <a class="btn btn-sm btn-default" href="updater.php">
+               <span class="glyphicon glyphicon-upload"></span> &nbsp; Actualizador
+            </a>
+            {loop="$fsc->extensions"}
+               {if="$value->type=='button'"}
+               <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
+               {/if}
+            {/loop}
          </div>
       </div>
       <div class="col-sm-6 text-right">
@@ -414,6 +417,15 @@
                   </div>
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
+                        Al comprar, añadir con:
+                        <select name="precio_compra" class="form-control">
+                           <option value="coste"{if="$GLOBALS['config2']['precio_compra']=='coste'"} selected='selected'{/if}>Precio de coste</option>
+                           <option value="pvp"{if="$GLOBALS['config2']['precio_compra']=='pvp'"} selected='selected'{/if}>PVP</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
                         Permitir stock negativo:
                         <select name="stock_negativo" class="form-control">
                            <option value="1"{if="$GLOBALS['config2']['stock_negativo']==1"} selected='selected'{/if}>Si</option>
@@ -442,12 +454,19 @@
                         Comprobaciones en la base de datos:
                         <select name="check_db_types" class="form-control">
                            <option value="true"{if="$GLOBALS['config2']['check_db_types']=='true'"} selected='selected'{/if}>
-                              comprobar los tipos de las columnas de las tablas
+                              Comprobar los tipos de las columnas de las tablas
                            </option>
                            <option value="false"{if="$GLOBALS['config2']['check_db_types']=='false'"} selected='selected'{/if}>
-                              no comprobar los tipos
+                              No comprobar los tipos
                            </option>
                         </select>
+                     </div>
+                  </div>
+                  <div class="col-md-4 col-sm-4">
+                     <div class="form-group">
+                        Permitir acceso desde estas IPs:
+                        <input class="form-control" type="text" name="ip_whitelist" value="{$GLOBALS['config2']['ip_whitelist']}"/>
+                        <p class="help-block">Los admninistradores pueden acceder desde cualquier IP.</p>
                      </div>
                   </div>
                </div>

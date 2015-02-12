@@ -40,12 +40,7 @@ class fs_access extends fs_model
       {
          $this->fs_user = $a['fs_user'];
          $this->fs_page = $a['fs_page'];
-         
-         $this->allow_delete = TRUE;
-         if( isset($a['allow_delete']) )
-         {
-            $this->allow_delete = $this->str2bool($a['allow_delete']);
-         }
+         $this->allow_delete = $this->str2bool($a['allow_delete']);
       }
       else
       {
@@ -69,11 +64,6 @@ class fs_access extends fs_model
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = ".$this->var2str($this->fs_user).
                  " AND fs_page = ".$this->var2str($this->fs_page).";");
-   }
-   
-   public function test()
-   {
-      return TRUE;
    }
    
    public function save()
