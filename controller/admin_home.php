@@ -667,12 +667,13 @@ y las adquisiciones de bienes y servicios.'
    public function check_for_updates()
    {
       $fsvar = new fs_var();
+      $dado = mt_rand(0,5);
       
       if( !$this->user->admin )
       {
          return FALSE;
       }
-      else if( mt_rand(0,9) == 0 )
+      else if($dado == 0)
       {
          /// comprobamos actualizaciones en los plugins
          $updates = FALSE;
@@ -704,7 +705,7 @@ y las adquisiciones de bienes y servicios.'
             return FALSE;
          }
       }
-      else if( mt_rand(0,9) == 0 )
+      else if($dado == 1)
       {
          /// comprobamos actualizaciones del núcleo
          if( @file_get_contents('VERSION') != @file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
