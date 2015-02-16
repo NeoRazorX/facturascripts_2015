@@ -60,7 +60,7 @@ el año natural (se puede cambiar la cantidad), computando de forma separada las
 y las adquisiciones de bienes y servicios.'
           ),
           'presupuestos_y_pedidos' => array(
-              'url' => 'https://github.com/shawe/presupuestos_y_pedidos/archive/master.zip',
+              'url' => 'https://github.com/neorazorx/presupuestos_y_pedidos/archive/master.zip',
               'description' => 'Añade soporte para pedidos y presupuestos a clientes.'
           ),
           'SAT' => array(
@@ -82,6 +82,10 @@ y las adquisiciones de bienes y servicios.'
           'dashboard' => array(
               'url' => 'https://github.com/shawe/dashboard/archive/master.zip',
               'description' => 'Pantalla de información resumida para FacturaScripts. <b>Todavía en desarrollo</b>'
+          ),
+          'backups' => array(
+              'url' => 'https://github.com/shawe/backups/archive/master.zip',
+              'description' => 'Plugin para añadir soporte para backups de la base de datos de FacturaScripts.'
           )
       );
       $fsvar = new fs_var();
@@ -103,12 +107,18 @@ y las adquisiciones de bienes y servicios.'
       if( isset($_GET['check4updates']) )
       {
          $this->template = FALSE;
-         if( $this->check_for_updates() )
+         if( $this->check_for_updates2() )
          {
             echo 'Hay actualizaciones disponibles.';
          }
          else
             echo 'No hay actualizaciones.';
+      }
+      else if( isset($_GET['updated']) )
+      {
+         /// el sistema ya se ha actualizado
+         $fsvar->name = 'updates';
+         $fsvar->delete();
       }
       else if( !$this->user->admin )
       {
@@ -201,7 +211,7 @@ y las adquisiciones de bienes y servicios.'
          {
             $this->new_message('Descargando el plugin '.$_GET['download']);
             
-            if( @file_put_contents('download.zip', @file_get_contents($this->download_list[$_GET['download']]['url']) ) )
+            if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
             {
                $zip = new ZipArchive();
                if( $zip->open('download.zip') )
@@ -234,12 +244,6 @@ y las adquisiciones de bienes y servicios.'
          }
          else
             $this->new_error_msg('Descarga no encontrada.');
-      }
-      else if( isset($_GET['updated']) )
-      {
-         /// el sistema ya se ha actualizado
-         $fsvar->name = 'updates';
-         $fsvar->delete();
       }
       else if( isset($_GET['reset']) )
       {
@@ -664,24 +668,23 @@ y las adquisiciones de bienes y servicios.'
       }
    }
    
-   public function check_for_updates()
+   public function check_for_updates2()
    {
-      $fsvar = new fs_var();
-      $dado = mt_rand(0,5);
-      
       if( !$this->user->admin )
       {
          return FALSE;
       }
-      else if($dado == 0)
+      else
       {
+         $fsvar = new fs_var();
+         
          /// comprobamos actualizaciones en los plugins
          $updates = FALSE;
          foreach($this->plugin_advanced_list() as $plugin)
          {
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
-               $internet_ini = @parse_ini_string( @file_get_contents($plugin['version_url']) );
+               $internet_ini = @parse_ini_string( $this->curl_get_contents($plugin['version_url']) );
                if($internet_ini)
                {
                   if( $plugin['version'] < intval($internet_ini['version']) )
@@ -691,6 +694,14 @@ y las adquisiciones de bienes y servicios.'
                   }
                }
             }
+         }
+         
+         /// comprobamos actualizaciones del núcleo
+         $version = file_get_contents('VERSION');
+         $internet_version = $this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
+         if( floatval($version) < floatval($internet_version) )
+         {
+            $updates = TRUE;
          }
          
          if($updates)
@@ -705,22 +716,21 @@ y las adquisiciones de bienes y servicios.'
             return FALSE;
          }
       }
-      else if($dado == 1)
+   }
+   
+   private function curl_get_contents($url)
+   {
+      if( function_exists('curl_init') )
       {
-         /// comprobamos actualizaciones del núcleo
-         if( @file_get_contents('VERSION') != @file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION') )
-         {
-            $fsvar->simple_save('updates', 'true');
-            return TRUE;
-         }
-         else
-         {
-            $fsvar->name = 'updates';
-            $fsvar->delete();
-            return FALSE;
-         }
+         $ch = curl_init();
+         curl_setopt($ch, CURLOPT_URL, $url);
+         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+         $data = curl_exec($ch);
+         curl_close($ch);
+         return $data;
       }
       else
-         return $fsvar->simple_get('updates');
+         return file_get_contents($url);
    }
 }

@@ -90,6 +90,22 @@ function __areWritable($dirlist)
    return $notwritable;
 }
 
+function curl_get_contents($url)
+{
+   if( function_exists('curl_init') )
+   {
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $url);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+      $data = curl_exec($ch);
+      curl_close($ch);
+      return $data;
+   }
+   else
+      return file_get_contents($url);
+}
+
 function check_for_plugin_updates()
 {
    $plugins = array();
@@ -143,7 +159,7 @@ function check_for_plugin_updates()
             
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
-               $internet_ini = @parse_ini_string( @file_get_contents($plugin['version_url']) );
+               $internet_ini = @parse_ini_string( curl_get_contents($plugin['version_url']) );
                if($internet_ini)
                {
                   if( $plugin['version'] < intval($internet_ini['version']) )
@@ -194,7 +210,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
    }
    else if( isset($_GET['update']) OR isset($_GET['reinstall']) )
    {
-      if( @file_put_contents('update.zip', @file_get_contents('https://github.com/NeoRazorX/facturascripts_2015/archive/master.zip')) )
+      if( @file_put_contents('update.zip', curl_get_contents('https://github.com/NeoRazorX/facturascripts_2015/archive/master.zip')) )
       {
          $zip = new ZipArchive();
          if( $zip->open('update.zip') )
@@ -233,7 +249,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       if($plugin_ini)
       {
          /// descargamos el zip
-         if( @file_put_contents('update.zip', @file_get_contents($plugin_ini['update_url'])) )
+         if( @file_put_contents('update.zip', curl_get_contents($plugin_ini['update_url'])) )
          {
             $zip = new ZipArchive();
             if( $zip->open('update.zip') )
@@ -264,8 +280,8 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
    
    $actualizar = FALSE;
    $version_actual = file_get_contents('VERSION');
-   $nueva_version = @file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
-   if( $version_actual != $nueva_version )
+   $nueva_version = @curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
+   if( floatval($version_actual) < floatval($nueva_version) )
    {
       $actualizar = TRUE;
    }
