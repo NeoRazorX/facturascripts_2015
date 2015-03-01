@@ -41,7 +41,8 @@
      que necesitas.
   </p>
   <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
-     <span class="glyphicon glyphicon-ok"></span> &nbsp; Continuar
+     <span class="glyphicon glyphicon-ok"></span>
+     <span class="hidden-xs"> &nbsp; Continuar</span>
   </a>
 </div>
 {elseif="$fsc->step=='1'"}
@@ -74,7 +75,7 @@
 {else}
 <div class="container-fluid" style="margin-top: 10px;">
    <div class="row">
-      <div class="col-sm-6">
+      <div class="col-sm-6 col-xs-6">
          <div class="btn-group">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
@@ -101,7 +102,7 @@
             {/loop}
          </div>
       </div>
-      <div class="col-sm-6 text-right">
+      <div class="col-sm-6 col-xs-6 text-right">
          <h2 style="margin-top: 0px;">Panel de control</h2>
       </div>
    </div>
@@ -111,16 +112,28 @@
 <div id="tab_panel_control" role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
-         <a href="#t_paginas" aria-controls="t_paginas" role="tab" data-toggle="tab">Páginas</a>
+         <a href="#t_paginas" aria-controls="t_paginas" role="tab" data-toggle="tab" title="Páginas">
+            <span class="glyphicon glyphicon-file"></span>
+            <span class="hidden-xs"> &nbsp; Páginas</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#t_plugins" aria-controls="t_plugins" role="tab" data-toggle="tab">Plugins</a>
+         <a href="#t_plugins" aria-controls="t_plugins" role="tab" data-toggle="tab" title="Plugins">
+            <span class="glyphicon glyphicon-level-up"></span>
+            <span class="hidden-xs"> &nbsp; Plugins</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#t_descargas" aria-controls="t_descargas" role="tab" data-toggle="tab">Descargas</a>
+         <a href="#t_descargas" aria-controls="t_descargas" role="tab" data-toggle="tab" title="Descargas">
+            <span class="glyphicon glyphicon-download-alt"></span>
+            <span class="hidden-xs"> &nbsp; Descargas</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#t_avanzado" aria-controls="t_avanzado" role="tab" data-toggle="tab">Avanzado</a>
+         <a href="#t_avanzado" aria-controls="t_avanzado" role="tab" data-toggle="tab" title="Avanzado">
+            <span class="glyphicon glyphicon-wrench"></span>
+            <span class="hidden-xs"> &nbsp; Avanzado</span>
+         </a>
       </li>
    </ul>
    <div class="tab-content">
@@ -142,7 +155,8 @@
                   </div>
                   <div class="col-md-6 col-sm-6 col-xs-6 text-right">
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        <span class="hidden-xs"> &nbsp; Guardar</span>
                      </button>
                   </div>
                </div>
@@ -181,7 +195,7 @@
             </div>
             <div class="container-fluid">
                <div class="row">
-                  <div class="col-md-10 col-sm-10">
+                  <div class="col-md-10 col-sm-10  col-xs-10">
                      <div class="btn-group">
                         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
                            <span class="glyphicon glyphicon-check"></span>
@@ -191,9 +205,10 @@
                         </button>
                      </div>
                   </div>
-                  <div class="col-md-2 col-sm-2 text-right">
+                  <div class="col-md-2 col-sm-2  col-xs-2 text-right">
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        <span class="hidden-xs"> &nbsp; Guardar</span>
                      </button>
                   </div>
                </div>
@@ -203,17 +218,19 @@
       <div role="tabpanel" class="tab-pane" id="t_plugins">
          <div class="container-fluid">
             <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
-               <div class="col-sm-9">
+               <div class="col-sm-9 col-xs-6">
                   <div class="btn-group">
                      <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> &nbsp; Añadir...
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <span class="hidden-xs"> &nbsp; Añadir...</span>
                      </a>
                      <a href="https://www.facturascripts.com/store/" target="_blank" class="btn btn-sm btn-default">
-                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Tienda de plugins
+                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+                        <span class="hidden-xs"> &nbsp; Tienda de plugins</span>
                      </a>
                   </div>
                </div>
-               <div class="col-sm-3">
+               <div class="col-sm-3 col-xs-6">
                   <form class="form" action="https://www.facturascripts.com/store/" target="_blank">
                      <input type="hidden" name="post_type" value="product"/>
                      <div class="input-group">
@@ -252,17 +269,20 @@
                   <td class="text-right">
                      {if="$value['enabled']"}
                      <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}#plugins">
-                        <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
+                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="hidden-xs"> &nbsp; Desactivar</span>
                      </a>
                      {else}
                      <div class="btn-group">
                         {if="$value['compatible']"}
                         <a class="btn btn-sm btn-default" href="{$fsc->url()}&enable={$value['name']}#plugins">
-                           <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
+                           <span class="glyphicon glyphicon-ok"></span>
+                           <span class="hidden-xs"> &nbsp; Activar</span>
                         </a>
                         {else}
                         <a class="btn btn-sm btn-default" href="#">
-                           <span class="glyphicon glyphicon-remove"></span> &nbsp; Incompatible
+                           <span class="glyphicon glyphicon-remove"></span>
+                           <span class="hidden-xs"> &nbsp; Incompatible</span>
                         </a>
                         {/if}
                         <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
@@ -297,11 +317,13 @@
                   <td class="text-right">
                      {if="file_exists('plugins/'.$key)"}
                      <a href="#plugins" class="btn btn-xs btn-success">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Descargado
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        <span class="hidden-xs"> &nbsp; Descargado</span>
                      </a>
                      {else}
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}#plugins" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Descargar
+                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+                        <span class="hidden-xs"> &nbsp; Descargar</span>
                      </a>
                      {/if}
                   </td>
@@ -311,7 +333,8 @@
                   <td colspan="2">Más en la tienda de plugins.</td>
                   <td class="text-right">
                      <a href="https://www.facturascripts.com/store/" target="_blank" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Tienda
+                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+                        <span class="hidden-xs"> &nbsp; Tienda</span>
                      </a>
                   </td>
                </tr>
@@ -473,12 +496,14 @@
                <div class="row" style="margin-top: 20px;">
                   <div class="col-md-6 col-sm-6">
                      <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{$fsc->url()}&caca={$fsc->random_string(4)}&reset=TRUE#avanzado'">
-                        <span class="glyphicon glyphicon-trash"></span> &nbsp; Reiniciar
+                        <span class="glyphicon glyphicon-trash"></span>
+                        <span class="hidden-xs"> &nbsp; Reiniciar</span>
                      </button>
                   </div>
                   <div class="col-md-6 col-sm-6 text-right">
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        <span class="hidden-xs"> &nbsp; Guardar</span>
                      </button>
                   </div>
                </div>
@@ -505,7 +530,8 @@
                   <input type="file" name="fplugin" accept="application/zip"/>
                </div>
                <button type="submit" class="btn btn-primary">
-                  <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir
+                  <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
+                  <span class="hidden-xs"> &nbsp; Añadir</span>
                </button>
             </form>
          </div>

@@ -23,7 +23,8 @@
       </div>
       <div class="col-sm-3 text-right">
          <a class="btn btn-sm btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
-            <span class="glyphicon glyphicon-trash"></span> &nbsp; Limpiar la cache
+            <span class="glyphicon glyphicon-trash"></span>
+            <span class="hidden-xs"> &nbsp; Limpiar la cache</span>
          </a>
       </div>
    </div>
@@ -32,18 +33,27 @@
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
-         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
+         <a href="#home" aria-controls="home" role="tab" data-toggle="tab" title="Dashboard">
             <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
          </a>
       </li>
       <li role="presentation">
-         <a href="#history" aria-controls="history" role="tab" data-toggle="tab">Historial</a>
+         <a href="#history" aria-controls="history" role="tab" data-toggle="tab" title="Historial">
+            <span class="glyphicon glyphicon-console" aria-hidden="true"></span>
+            <span class="hidden-xs"> &nbsp; Historial</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#tablas" aria-controls="tablas" role="tab" data-toggle="tab">Tablas</a>
+         <a href="#tablas" aria-controls="tablas" role="tab" data-toggle="tab" title="Tablas">
+            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+            <span class="hidden-xs"> &nbsp; Tablas</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#bloqueos" aria-controls="bloqueos" role="tab" data-toggle="tab">Bloqueos</a>
+         <a href="#bloqueos" aria-controls="bloqueos" role="tab" data-toggle="tab" title="Bloqueos">
+            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+            <span class="hidden-xs"> &nbsp; Bloqueos</span>
+         </a>
       </li>
    </ul>
    <div class="tab-content">

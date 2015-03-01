@@ -698,7 +698,7 @@ y las adquisiciones de bienes y servicios.'
          
          /// comprobamos actualizaciones del núcleo
          $version = file_get_contents('VERSION');
-         $internet_version = $this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
+         $internet_version = $this->curl_get_contents('https://raw.githubusercontent.com/shawe/facturascripts_2015/master/VERSION');
          if( floatval($version) < floatval($internet_version) )
          {
             $updates = TRUE;
