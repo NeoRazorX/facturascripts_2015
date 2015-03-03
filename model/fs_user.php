@@ -27,19 +27,61 @@ require_model('fs_page.php');
  */
 class fs_user extends fs_model
 {
+   /**
+    * Clave primaria. Varchar (12).
+    * @var type 
+    */
    public $nick;
    public $password;
+   
+   /**
+    * Clave de sesión. El cliente se la guarda en una cookie,
+    * sirve para no tener que guardar la contraseña.
+    * Se regenera cada vez que el cliente inicia sesión. Así se
+    * impide que dos personas accedan con el mismo usuario.
+    * @var type 
+    */
    public $log_key;
    public $logged_on;
+   
+   /**
+    * Código del agente asignado.
+    * @var type 
+    */
    public $codagente;
+   
+   /**
+    * El objeto agente asignado. Hay que llamar previamente la función get_agente().
+    * @var type 
+    */
    public $agente;
    public $admin;
+   
+   /**
+    * Fecha del último login.
+    * @var type 
+    */
    public $last_login;
+   
+   /**
+    * Hora del último login.
+    * @var type 
+    */
    public $last_login_time;
    public $last_ip;
    public $last_browser;
+   
+   /**
+    * Página de inicio.
+    * @var type 
+    */
    public $fs_page;
    public $codejercicio;
+   
+   /**
+    * Plantilla CSS predeterminada.
+    * @var type 
+    */
    public $css;
    
    private $menu;
@@ -275,6 +317,10 @@ class fs_user extends fs_model
       return $status;
    }
    
+   /**
+    * Devuelve la lista de accesos permitidos del cliente.
+    * @return type
+    */
    public function get_accesses()
    {
       $access = new fs_access();

@@ -33,43 +33,48 @@
 </script>
 
 {if="!$fsc->step"}
-<div class="jumbotron" style="padding-left: 10px; padding-right: 10px;">
-  <h1>¡Bienvenido a FacturaScripts {$fsc->version()}!</h1>
-  <p>
-     FacturaScripts tiene un desarrollo muy acelerado y en muchas direcciones distintas,
-     por eso estamos dividiendo el código en <b>plugins</b>, para que puedas activar solo aquello
-     que necesitas.
-  </p>
-  <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
-     <span class="glyphicon glyphicon-ok"></span> &nbsp; Continuar
-  </a>
+<div class="well">
+   <div class="page-header" style="margin-top: 0px;">
+      <h1>¡Bienvenido a FacturaScripts {$fsc->version()}!</h1>
+   </div>
+   <p>
+      FacturaScripts tiene un desarrollo muy acelerado y en muchas direcciones distintas,
+      por eso estamos dividiendo el código en <b>plugins</b>, para que puedas activar solo aquello
+      que necesitas.
+   </p>
+   <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
+      <span class="glyphicon glyphicon-ok"></span> &nbsp; Continuar
+   </a>
 </div>
 {elseif="$fsc->step=='1'"}
-<div class="jumbotron" style="padding-left: 10px; padding-right: 10px;">
-  <h1>Plugins</h1>
-  <p>
-     En esta nueva versión hemos decidido que cada plugin sea un desarrollo independiente,
-     esto nos permitirá tener tiempos de desarrollo distintos en cada plugin,
-     sin tener que lanzar una actualización completa solo porque se ha solucionado el fallo
-     en un plugin.
-  </p>
-  <p>
-     Además, toda la facturación y contabilida básica ha sido movida al plugin <mark>facturacion_base</mark>,
-     que lo tienes disponible en la sección descargas.
-  </p>
-  <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
-     <span class="glyphicon glyphicon-upload"></span> &nbsp; Descargar facturacion_base
-  </a>
+<div class="well">
+   <div class="page-header" style="margin-top: 0px;">
+      <h1>Plugins</h1>
+   </div>
+   <p>
+      En esta nueva versión hemos decidido que cada plugin sea un desarrollo independiente,
+      esto nos permitirá tener tiempos de desarrollo distintos en cada plugin,
+      sin tener que lanzar una actualización completa solo porque se ha solucionado un fallo
+      en un plugin.
+   </p>
+   <p>
+      Además, toda la facturación y contabilida básica ha sido movida al plugin <mark>facturacion_base</mark>.
+   </p>
+   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
+      <span class="glyphicon glyphicon-upload"></span> &nbsp; Descargar facturacion_base
+   </a>
 </div>
 {elseif="$fsc->step=='2'"}
-<div class="jumbotron" style="padding-left: 10px; padding-right: 10px;">
-  <h1>Tu empresa</h1>
-  <p>
-     Ya falta poco. Ahora tienes que escribir el nombre de la empresa, la dirección, etc...
-  </p>
-  <a href="index.php?page=admin_empresa" class="btn btn-sm btn-info">
-     <span class="glyphicon glyphicon-edit"></span> &nbsp; Datos de la empresa
-  </a>
+<div class="well">
+   <div class="page-header" style="margin-top: 0px;">
+      <h1>Tu empresa</h1>
+   </div>
+   <p>
+      Ya falta poco. Ahora tienes que escribir el nombre de la empresa, la dirección, etc...
+   </p>
+   <a href="index.php?page=admin_empresa" class="btn btn-sm btn-info">
+      <span class="glyphicon glyphicon-edit"></span> &nbsp; Datos de la empresa
+   </a>
 </div>
 {else}
 <div class="container-fluid" style="margin-top: 10px;">
@@ -91,12 +96,12 @@
          </div>
          
          <div class="btn-group">
-            <a class="btn btn-sm btn-default" href="updater.php">
+            <a class="btn btn-sm {if="$fsc->check_for_updates()"}btn-info{else}btn-default{/if}" href="updater.php">
                <span class="glyphicon glyphicon-upload"></span> &nbsp; Actualizador
             </a>
             {loop="$fsc->extensions"}
                {if="$value->type=='button'"}
-               <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
+               <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
                {/if}
             {/loop}
          </div>
@@ -203,7 +208,7 @@
       <div role="tabpanel" class="tab-pane" id="t_plugins">
          <div class="container-fluid">
             <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
-               <div class="col-sm-9">
+               <div class="col-sm-10">
                   <div class="btn-group">
                      <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> &nbsp; Añadir...
@@ -213,7 +218,7 @@
                      </a>
                   </div>
                </div>
-               <div class="col-sm-3">
+               <div class="col-sm-2">
                   <form class="form" action="https://www.facturascripts.com/store/" target="_blank">
                      <input type="hidden" name="post_type" value="product"/>
                      <div class="input-group">

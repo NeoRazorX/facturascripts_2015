@@ -24,7 +24,16 @@ require_once 'base/fs_model.php';
  */
 class fs_var extends fs_model
 {
-   public $name; /// pkey
+   /**
+    * Clave primaria. Varchar(35).
+    * @var type 
+    */
+   public $name;
+   
+   /**
+    * Valor almacenado. Varchar(255).
+    * @var type 
+    */
    public $varchar;
    
    public function __construct($f=FALSE)
@@ -98,6 +107,11 @@ class fs_var extends fs_model
       return $vlist;
    }
    
+   /**
+    * Devuelve el valor de una clave dada.
+    * @param type $name
+    * @return boolean
+    */
    public function simple_get($name)
    {
       $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";");
@@ -109,6 +123,12 @@ class fs_var extends fs_model
          return FALSE;
    }
    
+   /**
+    * Almacena el par clave/valor proporcionado.
+    * @param type $name
+    * @param type $value
+    * @return type
+    */
    public function simple_save($name, $value)
    {
       $comillas = '';

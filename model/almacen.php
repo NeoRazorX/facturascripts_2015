@@ -24,6 +24,10 @@ require_once 'base/fs_model.php';
  */
 class almacen extends fs_model
 {
+   /**
+    * Todavía sin uso.
+    * @var type 
+    */
    public $observaciones;
    public $contacto;
    public $fax;
@@ -35,7 +39,12 @@ class almacen extends fs_model
    public $codpostal;
    public $direccion;
    public $nombre;
-   public $codalmacen; /// pkey
+   
+   /**
+    * Clave primaria. Varchar (4).
+    * @var type 
+    */
+   public $codalmacen;
    
    public function __construct($a = FALSE)
    {

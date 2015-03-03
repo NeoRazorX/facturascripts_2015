@@ -25,18 +25,58 @@ require_model('agente.php');
  */
 class caja extends fs_model
 {
+   /**
+    * Clave primaria.
+    * @var type 
+    */
    public $id;
+   
+   /**
+    * Identificador de caja de FacturaScripts.
+    * Se define en la constante FS_ID del archivo config.php.
+    * Sera sustituido muy pronto.
+    * @var type 
+    */
    public $fs_id;
+   
+   /**
+    * Codigo del agente que abre y usa la caja.
+    * El agente asociado al usuario.
+    * @var type 
+    */
    public $codagente;
+   
+   /**
+    * Fecha de apertura (inicio) de la caja.
+    * @var type 
+    */
    public $fecha_inicial;
    public $dinero_inicial;
    public $fecha_fin;
    public $dinero_fin;
+   
+   /**
+    * Numero de tickets emitidos en esta caja.
+    * @var type 
+    */
    public $tickets;
+   
+   /**
+    * Ultima IP del usuario de la caja.
+    * @var type 
+    */
    public $ip;
    
+   /**
+    * El objeto agente asignado.
+    * @var type 
+    */
    public $agente;
    
+   /**
+    * UN array con todos los agentes utilizados, para agilizar la carga.
+    * @var type 
+    */
    private static $agentes;
    
    public function __construct($c=FALSE)
@@ -54,7 +94,9 @@ class caja extends fs_model
          $this->dinero_inicial = floatval($c['d_inicio']);
          
          if( is_null($c['f_fin']) )
+         {
             $this->fecha_fin = NULL;
+         }
          else
             $this->fecha_fin = Date('d-m-Y H:i:s', strtotime($c['f_fin']));
          
@@ -147,6 +189,10 @@ class caja extends fs_model
          return FALSE;
    }
    
+   /**
+    * Devuelve la ultima caja abierta de este servidor.
+    * @return boolean|\caja
+    */
    public function get_last_from_this_server()
    {
       $caja = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_id = ".$this->var2str(FS_ID)." AND f_fin IS NULL;");
@@ -156,11 +202,6 @@ class caja extends fs_model
       }
       else
          return FALSE;
-   }
-   
-   public function test()
-   {
-      return TRUE;
    }
    
    public function save()
@@ -201,18 +242,21 @@ class caja extends fs_model
    public function all($offset=0, $limit=FS_ITEM_LIMIT)
    {
       $cajalist = array();
+      
       $cajas = $this->db->select_limit("SELECT * FROM ".$this->table_name." ORDER BY id DESC", $limit, $offset);
       if($cajas)
       {
          foreach($cajas as $c)
             $cajalist[] = new caja($c);
       }
+      
       return $cajalist;
    }
    
    public function all_by_agente($codagente, $offset=0, $limit=FS_ITEM_LIMIT)
    {
       $cajalist = array();
+      
       $cajas = $this->db->select_limit("SELECT * FROM ".$this->table_name." WHERE codagente = ".
               $this->var2str($codagente)." ORDER BY id DESC", $limit, $offset);
       if($cajas)
@@ -220,6 +264,7 @@ class caja extends fs_model
          foreach($cajas as $c)
             $cajalist[] = new caja($c);
       }
+      
       return $cajalist;
    }
 }

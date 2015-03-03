@@ -25,7 +25,7 @@ require_once 'base/fs_model.php';
 class pais extends fs_model
 {
    /**
-    * Clave primaria.
+    * Clave primaria. Varchar(3).
     * @var type Código alfa-3 del país.
     * http://es.wikipedia.org/wiki/ISO_3166-1
     */

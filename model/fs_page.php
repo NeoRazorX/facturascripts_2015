@@ -24,14 +24,29 @@ require_once 'base/fs_model.php';
  */
 class fs_page extends fs_model
 {
+   /**
+    * Clave primaria. Varchar (30).
+    * Nombre de la página (controlador).
+    * @var type 
+    */
    public $name;
    public $title;
+   
+   /**
+    * Nombre del menú donde queremos colocar el acceso.
+    * @var type 
+    */
    public $folder;
    public $version;
+   
+   /**
+    * FALSE -> ocultar en el menú.
+    * @var type 
+    */
    public $show_on_menu;
+   
    public $exists;
    public $enabled;
-   
    public $extra_url;
    
    /**
@@ -112,7 +127,9 @@ class fs_page extends fs_model
    public function exists()
    {
       if( is_null($this->name) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
    }
@@ -121,7 +138,9 @@ class fs_page extends fs_model
    {
       $p = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";");
       if($p)
+      {
          return new fs_page($p[0]);
+      }
       else
          return FALSE;
    }

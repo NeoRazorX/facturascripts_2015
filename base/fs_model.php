@@ -65,6 +65,78 @@ function require_model($name)
    }
 }
 
+/**
+ * Alternativa a bccomp()
+ * @param type $Num1
+ * @param type $Num2
+ * @param type $Scale
+ * @return type
+ */
+function bccomp2($Num1,$Num2,$Scale=null)
+{
+   // check if they're valid positive numbers, extract the whole numbers and decimals
+   if(!preg_match("/^\+?(\d+)(\.\d+)?$/",$Num1,$Tmp1) || !preg_match("/^\+?(\d+)(\.\d+)?$/",$Num2,$Tmp2))
+   {
+      return 0;
+   }
+   
+   // remove leading zeroes from whole numbers
+   $Num1 = ltrim($Tmp1[1],'0');
+   $Num2 = ltrim($Tmp2[1],'0');
+   
+   // first, we can just check the lengths of the numbers, this can help save processing time
+   // if $Num1 is longer than $Num2, return 1.. vice versa with the next step.
+   if(strlen($Num1)>strlen($Num2))
+   {
+      return 1;
+   }
+   else
+   {
+      if(strlen($Num1)<strlen($Num2))
+      {
+         return -1;
+      }
+      else
+      {
+         // if the two numbers are of equal length, we check digit-by-digit
+         
+         // remove ending zeroes from decimals and remove point
+         $Dec1 = isset($Tmp1[2]) ? rtrim(substr($Tmp1[2],1),'0') : '';
+         $Dec2 = isset($Tmp2[2]) ? rtrim(substr($Tmp2[2],1),'0'):'';
+         
+         // if the user defined $Scale, then make sure we use that only
+         if($Scale!=null)
+         {
+            $Dec1 = substr($Dec1,0,$Scale);
+            $Dec2 = substr($Dec2,0,$Scale);
+         }
+         
+         // calculate the longest length of decimals
+         $DLen = max(strlen($Dec1),strlen($Dec2));
+         
+         // append the padded decimals onto the end of the whole numbers
+         $Num1 .= str_pad($Dec1,$DLen,'0');
+         $Num2 .= str_pad($Dec2,$DLen,'0');
+         
+         // check digit-by-digit, if they have a difference, return 1 or -1 (greater/lower than)
+         for($i=0; $i<strlen($Num1); $i++)
+         {
+            if((int)$Num1{$i}>(int)$Num2{$i})
+            {
+               return 1;
+            }
+            else if((int)$Num1{$i}<(int)$Num2{$i})
+            {
+               return -1;
+            }
+         }
+         
+         // if the two numbers have no difference (they're the same).. return 0
+         return 0;
+      }
+   }
+}
+
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
@@ -295,7 +367,7 @@ abstract class fs_model
          return( abs($f1-$f2) < 6/pow(10,$precision+1) );
       }
       else
-         return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
+         return( bccomp2( (string)$f1, (string)$f2, $precision ) == 0 );
    }
    
    /**
@@ -316,51 +388,6 @@ abstract class fs_model
       }
       else
          return FALSE;
-   }
-   
-   /**
-    * functión auxiliar para facilitar el uso de fechas
-    * @param type $v
-    * @return string
-    */
-   protected function var2timesince($v)
-   {
-      if( isset($v) )
-      {
-         $v = strtotime($v);
-         $time = time() - $v;
-         
-         if($time <= 60)
-         {
-            return 'hace '.round($time/60,0).' segundos';
-         }
-         else if(60 < $time && $time <= 3600)
-         {
-            return 'hace '.round($time/60,0).' minutos';
-         }
-         else if(3600 < $time && $time <= 86400)
-         {
-            return 'hace '.round($time/3600,0).' horas';
-         }
-         else if(86400 < $time && $time <= 604800)
-         {
-            return 'hace '.round($time/86400,0).' dias';
-         }
-         else if(604800 < $time && $time <= 2592000)
-         {
-            return 'hace '.round($time/604800,0).' semanas';
-         }
-         else if(2592000 < $time && $time <= 29030400)
-         {
-            return 'hace '.round($time/2592000,0).' meses';
-         }
-         else if($time > 29030400)
-         {
-            return 'hace más de un año';
-         }
-      }
-      else
-         return 'fecha desconocida';
    }
    
    protected function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y' )

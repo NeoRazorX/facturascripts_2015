@@ -20,11 +20,15 @@
 require_once 'base/fs_model.php';
 
 /**
- * Una cuenta bancaria de un cliente.
+ * Una cuenta bancaria de un cliente., proveedor o de la propia empresa.
  */
 class cuenta_banco extends fs_model
 {
-   public $codcuenta; /// pkey
+   /**
+    * Clave primaria. Varchar (6).
+    * @var type 
+    */
+   public $codcuenta;
    public $descripcion;
    public $iban;
    

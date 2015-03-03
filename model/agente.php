@@ -20,12 +20,16 @@
 require_once 'base/fs_model.php';
 
 /**
- * El agente es el que se asocia a un albarán, factura o caja.
+ * El agente/empleado es el que se asocia a un albarán, factura o caja.
  * Cada usuario puede estar asociado a un agente, y un agente puede
  * estar asociado a varios usuarios.
  */
 class agente extends fs_model
 {
+   /**
+    * Todavía sin uso.
+    * @var type 
+    */
    public $coddepartamento;
    public $email;
    public $fax;
@@ -35,12 +39,27 @@ class agente extends fs_model
    public $provincia;
    public $ciudad;
    public $direccion;
+   
+   /**
+    * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, alabaranes y facturas.
+    * @var type 
+    */
    public $porcomision;
+   
+   /**
+    * Todavía sin uso.
+    * @var type 
+    */
    public $irpf;
    public $dnicif;
    public $nombre;
    public $apellidos;
-   public $codagente; /// pkey
+   
+   /**
+    * Clave primaria. Varchar (10).
+    * @var type
+    */
+   public $codagente;
    
    public function __construct($a=FALSE)
    {

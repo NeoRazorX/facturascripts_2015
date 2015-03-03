@@ -20,14 +20,46 @@
 /**
  * Permite que un plugin añada elementos a una vista existente,
  * sin necesidad de un reemplazo completo.
+ * Los tipos soportados depende de cada página, pero suelen ser:
+ * head, css, button y tab.
  */
 class fs_extension extends fs_model
 {
+   /**
+    * Identificador de la extensión para poder buscarlo fácilemnte.
+    * No es la clave primaria. La clave primaria es name+from.
+    * @var type 
+    */
    public $name;
+   
+   /**
+    * Nombre de la página (controlador) que ofrece la extensión.
+    * @var type 
+    */
    public $from;
+   
+   /**
+    * Nombre de la página (controlador) que recibe la extensión.
+    * @var type 
+    */
    public $to;
+   
+   /**
+    * Tipo de extensión: head, css, button, tab...
+    * @var type 
+    */
    public $type;
+   
+   /**
+    * Texto del botón, del tab...
+    * @var type 
+    */
    public $text;
+   
+   /**
+    * Parámetros extra para la URL. Debes añadir el &
+    * @var type 
+    */
    public $params;
    
    public function __construct($e = FALSE)

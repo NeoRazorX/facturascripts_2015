@@ -24,6 +24,10 @@ require_once 'base/fs_model.php';
  */
 class divisa extends fs_model
 {
+   /**
+    * Clave primaria. Varchar (3).
+    * @var type 
+    */
    public $coddivisa;
    public $descripcion;
    
@@ -88,11 +92,6 @@ class divisa extends fs_model
          VALUES ('VEF','BOLÍVARES','38.17','937','Bs');";
    }
    
-   public function show_tasa()
-   {
-      return number_format($this->tasaconv, 3);
-   }
-   
    public function url()
    {
       return 'index.php?page=admin_divisas';
@@ -105,10 +104,11 @@ class divisa extends fs_model
    
    public function get($cod)
    {
-      $divisa = $this->db->select("SELECT * FROM ".$this->table_name.
-              " WHERE coddivisa = ".$this->var2str($cod).";");
+      $divisa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($cod).";");
       if($divisa)
+      {
          return new divisa($divisa[0]);
+      }
       else
          return FALSE;
    }
@@ -116,10 +116,11 @@ class divisa extends fs_model
    public function exists()
    {
       if( is_null($this->coddivisa) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
    public function test()
@@ -128,11 +129,15 @@ class divisa extends fs_model
       $this->descripcion = $this->no_html($this->descripcion);
       
       if( !preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa) )
+      {
          $this->new_error_msg("Código de almacén no válido.");
+      }
       else if( isset($this->codiso) AND !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso) )
+      {
          $this->new_error_msg("Código ISO no válido.");
+      }
       else
-         return TRUE;
+         $status = TRUE;
       
       return $status;
    }

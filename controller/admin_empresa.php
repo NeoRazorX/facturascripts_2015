@@ -107,7 +107,7 @@ class admin_empresa extends fs_controller
             $this->new_message('Datos guardados correctamente.');
             
             $step = $fsvar->simple_get('install_step');
-            if($step == 2)
+            if( $step == 2 AND in_array('facturacion_base', $GLOBALS['plugins']) )
             {
                $fsvar->simple_save('install_step', 3);
                $this->new_message('Y por último tienes que <a href="index.php?page=contabilidad_ejercicio&cod='.

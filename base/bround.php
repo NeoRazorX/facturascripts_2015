@@ -79,5 +79,3 @@ function bround($dVal, $iDec=2)
    
    return $iSign*((floor($dVal*pow(10.0,$iDec))+$iRoundup)/pow(10.0,$iDec));
 }
-
-?>

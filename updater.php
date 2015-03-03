@@ -287,6 +287,7 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
    {
       $actualizar = TRUE;
    }
+   $plugins_for_update = FALSE;
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
@@ -390,7 +391,6 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
                   }
                   else if($errores == '')
                   {
-                     $plugins_for_update = FALSE;
                      foreach(check_for_plugin_updates() as $plugin)
                      {
                         echo '<tr><td>'.$plugin['name'].'</td><td>'.$plugin['description'].'</td>'
@@ -413,6 +413,23 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
             </div>
          </div>
       </div>
+      <?php
+      if($errores == '' AND !$actualizar AND !$plugins_for_update)
+      {
+      ?>
+      <div class="row">
+         <div class="col-md-12 text-center">
+            <h2>¿Otra actualización correcta?</h2>
+            <p>Pues siéntete libre de regalarnos una mención en twitter ;-)</p>
+            <div>
+               <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.facturascripts.com" data-text="El WordPress de la contabilidad y facturación" data-via="neorazorx" data-size="large" data-hashtags="facturascripts">Tweet</a>
+               <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </div>
+         </div>
+      </div>
+      <?php
+      }
+      ?>
    </div>
 </body>
 </html>

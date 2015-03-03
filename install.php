@@ -103,10 +103,6 @@ else if( !function_exists('mb_substr') )
 {
    $errors[] = "mb_substr";
 }
-else if( !function_exists('bccomp') )
-{
-   $errors[] = "bccomp";
-}
 else if( !is_writable( getcwd() ) )
 {
    $errors[] = "permisos";
@@ -381,31 +377,6 @@ $system_info = str_replace('"', "'", $system_info);
                   </p>
                   <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (en Linux):</h4>
                   <p>Instala el paquete php-mbstring.</p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
-                  <p>
-                     Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
-                     Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
-                     Si lo deseas, <a href="//www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
-                     te podemos ofrecer una versión de FacturaScripts ya instalada y funcionando</a>.
-                  </p>
-               </div>
-            </div>
-                  <?php
-               }
-               else if($err == 'bccomp')
-               {
-                  ?>
-            <div class="panel panel-danger">
-               <div class="panel-heading">
-                  No se encuentra la función bccomp():
-               </div>
-               <div class="panel-body">
-                  <p>
-                     FacturaScripts necesita la extensión BC Math para poder comparar grandes números decimales.
-                     Aunque es posible que pronto se sustituya por una función más compatible.
-                  </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (en Linux):</h4>
-                  <p>Instala el paquete php-bcmath.</p>
                   <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
                   <p>
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.

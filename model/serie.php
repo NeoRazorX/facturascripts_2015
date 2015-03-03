@@ -25,10 +25,29 @@ require_once 'base/fs_model.php';
  */
 class serie extends fs_model
 {
-   public $codserie; /// pkey
+   /**
+    * Clave primaria. Varchar (2).
+    * @var type 
+    */
+   public $codserie;
    public $descripcion;
+   
+   /**
+    * TRUE -> las facturas asociadas no encluyen IVA.
+    * @var type 
+    */
    public $siniva;
+   
+   /**
+    * % de retención IRPF de las facturas asociadas.
+    * @var type 
+    */
    public $irpf;
+   
+   /**
+    * Sin uso.
+    * @var type 
+    */
    public $idcuenta;
 
    public function __construct($s=FALSE)
@@ -61,7 +80,9 @@ class serie extends fs_model
    public function url()
    {
       if( is_null($this->codserie) )
+      {
          return 'index.php?page=contabilidad_series';
+      }
       else
          return 'index.php?page=contabilidad_series#'.$this->codserie;
    }
@@ -75,7 +96,9 @@ class serie extends fs_model
    {
       $serie = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = ".$this->var2str($cod).";");
       if($serie)
+      {
          return new serie($serie[0]);
+      }
       else
          return FALSE;
    }
@@ -83,10 +106,11 @@ class serie extends fs_model
    public function exists()
    {
       if( is_null($this->codserie) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE codserie = ".$this->var2str($this->codserie).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = ".$this->var2str($this->codserie).";");
    }
    
    public function test()

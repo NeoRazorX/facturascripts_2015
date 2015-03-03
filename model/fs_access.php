@@ -20,11 +20,21 @@
 require_once 'base/fs_model.php';
 
 /**
- * Define que un usuario tiene acceso a una página concreta.
+ * Define que un usuario tiene acceso a una página concreta
+ * y si tiene permisos de eliminación en esa página.
  */
 class fs_access extends fs_model
 {
+   /**
+    * Nick del usuario.
+    * @var type 
+    */
    public $fs_user;
+   
+   /**
+    * Nombre de la página (nombre del controlador).
+    * @var type 
+    */
    public $fs_page;
    
    /**

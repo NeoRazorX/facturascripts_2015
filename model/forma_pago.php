@@ -24,8 +24,17 @@ require_once 'base/fs_model.php';
  */
 class forma_pago extends fs_model
 {
+   /**
+    * Clave primaria. Varchar (10).
+    * @var type 
+    */
    public $codpago;
    public $descripcion;
+   
+   /**
+    * PAGADOS -> marca las facturas generadas como pagadas.
+    * @var type 
+    */
    public $genrecibos;
    public $codcuenta;
    public $domiciliado;
@@ -71,7 +80,9 @@ class forma_pago extends fs_model
    {
       $pago = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = ".$this->var2str($cod).";");
       if($pago)
+      {
          return new forma_pago($pago[0]);
+      }
       else
          return FALSE;
    }
@@ -79,41 +90,33 @@ class forma_pago extends fs_model
    public function exists()
    {
       if( is_null($this->codpago) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = ".$this->var2str($this->codpago).";");
    }
    
-   public function test()
-   {
-      $this->descripcion = $this->no_html($this->descripcion);
-      return TRUE;
-   }
-   
    public function save()
    {
-      if( $this->test() )
+      $this->descripcion = $this->no_html($this->descripcion);
+      $this->clean_cache();
+      
+      if( $this->exists() )
       {
-         $this->clean_cache();
-         
-         if( $this->exists() )
-         {
-            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-               genrecibos = ".$this->var2str($this->genrecibos).", codcuenta = ".$this->var2str($this->codcuenta).",
-               domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = ".$this->var2str($this->codpago).";";
-         }
-         else
-         {
-            $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
-               (".$this->var2str($this->codpago).",".$this->var2str($this->descripcion).",
-               ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
-               ".$this->var2str($this->domiciliado).");";
-         }
-         
-         return $this->db->exec($sql);
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+            genrecibos = ".$this->var2str($this->genrecibos).", codcuenta = ".$this->var2str($this->codcuenta).",
+            domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = ".$this->var2str($this->codpago).";";
       }
       else
-         return FALSE;
+      {
+         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
+            (".$this->var2str($this->codpago).",".$this->var2str($this->descripcion).",
+            ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
+            ".$this->var2str($this->domiciliado).");";
+      }
+      
+      return $this->db->exec($sql);
    }
    
    public function delete()

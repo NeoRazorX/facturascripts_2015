@@ -24,12 +24,31 @@
  */
 class fs_log extends fs_model
 {
+   /**
+    * Clave primaria.
+    * @var type 
+    */
    public $id;
    public $tipo;
+   
+   /**
+    * Texto del log. Sin longitud máxima.
+    * @var type text
+    */
    public $detalle;
    public $fecha;
+   
+   /**
+    * Nick del usuario.
+    * @var type 
+    */
    public $usuario;
    public $ip;
+   
+   /**
+    * TRUE -> resaltar en el listado.
+    * @var type 
+    */
    public $alerta;
 
    public function __construct($l = FALSE)

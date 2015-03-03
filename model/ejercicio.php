@@ -22,19 +22,55 @@ require_model('asiento.php');
 require_model('subcuenta.php');
 
 /**
- * Ejercicio contable.
+ * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
  */
 class ejercicio extends fs_model
 {
+   /**
+    * ID del asiento de cierre del ejercicio.
+    * @var type 
+    */
    public $idasientocierre;
+   
+   /**
+    * ID del asiento de pérdidas y ganancias.
+    * @var type 
+    */
    public $idasientopyg;
+   
+   /**
+    * ID del asiento de apertura.
+    * @var type 
+    */
    public $idasientoapertura;
+   
+   /**
+    * Identifica el plan contable utilizado. Esto solamente es necesario
+    * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
+    * @var type 
+    */
    public $plancontable;
+   
+   /**
+    * Longitud de caracteres de las subcuentas asignadas. Esto solamente es necesario
+    * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
+    * @var type 
+    */
    public $longsubcuenta;
+   
+   /**
+    * Estado del ejercicio: ABIERTO|CERRADO
+    * @var type 
+    */
    public $estado;
    public $fechafin;
    public $fechainicio;
    public $nombre;
+   
+   /**
+    * Clave primaria. Varchar(4).
+    * @var type 
+    */
    public $codejercicio;
 
    public function __construct($e = FALSE)
@@ -91,7 +127,9 @@ class ejercicio extends fs_model
    {
       $cod = $this->db->select("SELECT MAX(".$this->db->sql_to_int('codejercicio').") as cod FROM ".$this->table_name.";");
       if($cod)
+      {
          return sprintf('%04s', (1 + intval($cod[0]['cod'])));
+      }
       else
          return '0001';
    }
@@ -99,7 +137,9 @@ class ejercicio extends fs_model
    public function url()
    {
       if( is_null($this->codejercicio) )
+      {
          return 'index.php?page=contabilidad_ejercicios';
+      }
       else
          return 'index.php?page=contabilidad_ejercicio&cod='.$this->codejercicio;
    }
@@ -117,20 +157,26 @@ class ejercicio extends fs_model
       $fecha2 = strtotime( $fecha );
       
       if( $fecha2 >= strtotime( $this->fechainicio ) AND $fecha2 <= strtotime( $this->fechafin ) )
+      {
          return $fecha;
+      }
       else if( $fecha2 > strtotime( $this->fechainicio ) )
       {
          if($show_error)
+         {
             $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
                Se ha seleccionado una mejor.');
+         }
          
          return $this->fechafin;
       }
       else
       {
          if($show_error)
+         {
             $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
                Se ha seleccionado una mejor.');
+         }
          
          return $this->fechainicio;
       }
@@ -140,7 +186,9 @@ class ejercicio extends fs_model
    {
       $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($cod).";");
       if($ejercicio)
+      {
          return new ejercicio($ejercicio[0]);
+      }
       else
          return FALSE;
    }
@@ -157,7 +205,9 @@ class ejercicio extends fs_model
       {
          $eje = new ejercicio($ejercicio[0]);
          if( $eje->abierto() OR !$solo_abierto )
+         {
             return $eje;
+         }
          else
             return FALSE;
       }
@@ -169,7 +219,9 @@ class ejercicio extends fs_model
          $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
          $eje->fechafin = Date('31-12-Y', strtotime($fecha));
          if( $eje->save() )
+         {
             return $eje;
+         }
          else
             return FALSE;
       }
@@ -180,7 +232,9 @@ class ejercicio extends fs_model
    public function exists()
    {
       if( is_null($this->codejercicio) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name."
             WHERE codejercicio = ".$this->var2str($this->codejercicio).";");

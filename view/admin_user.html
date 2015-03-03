@@ -52,7 +52,7 @@
             <div class="btn-group">
             {loop="$fsc->extensions"}
                {if="$value->type=='button'"}
-               <a href="index.php?page={$value->from}" class="btn btn-sm btn-default">{$value->text}</a>
+               <a href="index.php?page={$value->from}&snick={$fsc->suser->nick}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
                {/if}
             {/loop}
             </div>
@@ -328,7 +328,7 @@
    </div>
 </form>
 {else}
-<div class="text-center">
+<div class="thumbnail">
    <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
 </div>
 {/if}

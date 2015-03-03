@@ -20,13 +20,29 @@
 require_once 'base/fs_model.php';
 
 /**
- * La empresa.
+ * Esta clase almacena los principales datos de la empresa.
  */
 class empresa extends fs_model
 {
-   public $id; /// pkey
+   /**
+    * Clave primaria.
+    * @var type 
+    */
+   public $id;
+   
    public $stockpedidos;
+   
+   /**
+    * TRUE -> activa la contabilidad integrada. Se genera el asiento correspondiente
+    * cada vez que se crea/modifica una factura.
+    * @var type 
+    */
    public $contintegrada;
+   
+   /**
+    * TRUE -> activa el uso de recargo de equivalencia en los albaranes y facturas de compra.
+    * @var type 
+    */
    public $recequivalencia;
    public $codserie;
    public $codalmacen;
@@ -46,6 +62,11 @@ class empresa extends fs_model
    public $codpostal;
    public $direccion;
    public $administrador;
+   
+   /**
+    * Actualmente sin uso.
+    * @var type 
+    */
    public $codedi;
    public $cifnif;
    public $nombre;
@@ -120,20 +141,25 @@ class empresa extends fs_model
    public function can_send_mail()
    {
       if( !isset($this->email) OR !isset($this->email_password) )
+      {
          return FALSE;
+      }
       else if( $this->email_password != '' )
+      {
          return TRUE;
+      }
       else
          return FALSE;
    }
    
    public function exists()
    {
-      if(is_null($this->id) )
+      if( is_null($this->id) )
+      {
          return FALSE;
+      }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name.
-                 " WHERE id=".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id=".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -160,9 +186,13 @@ class empresa extends fs_model
       $this->web = $this->no_html($this->web);
       
       if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
+      {
          $this->new_error_msg("Nombre de empresa no válido.");
+      }
       else if( strlen($this->nombre) < strlen($this->nombrecorto) )
+      {
          $this->new_error_msg("El Nombre Corto debe ser más corto que el Nombre.");
+      }
       else
          $status = TRUE;
       
