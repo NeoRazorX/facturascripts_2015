@@ -86,11 +86,11 @@ if( $db->connect() )
       {
          if( file_exists('plugins/'.$plugin.'/cron.php') )
          {
-            echo "\n***********************\n\nEjecutamos el cron.php del plugin ".$plugin."\n";
+            echo "\n***********************\nEjecutamos el cron.php del plugin ".$plugin."\n";
             
             include 'plugins/'.$plugin.'/cron.php';
             
-            echo "\n***********************\n";
+            echo "\n***********************";
          }
       }
       
