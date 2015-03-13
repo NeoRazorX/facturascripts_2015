@@ -212,10 +212,10 @@ $system_info = str_replace('"', "'", $system_info);
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="//www.facturascripts.com/community/questions.php" target="_blank">Preguntas</a></li>
-                     <li><a href="//www.facturascripts.com/community/errors.php" target="_blank">Errores</a></li>
-                     <li><a href="//www.facturascripts.com/community/ideas.php" target="_blank">Sugerencias</a></li>
-                     <li><a href="//www.facturascripts.com/community/all.php" target="_blank">Todo</a></li>
+                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_questions" target="_blank">Preguntas</a></li>
+                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_errors" target="_blank">Errores</a></li>
+                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
+                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_all" target="_blank">Todo</a></li>
                      <li class="divider"></li>
                      <li><a href="#" id="b_feedback">Informar...</a></li>
                   </ul>
@@ -225,7 +225,7 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
    </nav>
    
-   <form name="f_feedback" action="//www.facturascripts.com/community/feedback.php" method="post" target="_blank" class="form" role="form">
+   <form name="f_feedback" action="//www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <input type="hidden" name="feedback_type" value="error"/>
       <div class="modal" id="modal_feedback">
@@ -381,8 +381,6 @@ $system_info = str_replace('"', "'", $system_info);
                   <p>
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                      Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
-                     Si lo deseas, <a href="//www.facturascripts.com/community/premium.php#hosting" target="_blank">nosotros
-                     te podemos ofrecer una versión de FacturaScripts ya instalada y funcionando</a>.
                   </p>
                </div>
             </div>

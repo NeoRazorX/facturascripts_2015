@@ -75,10 +75,6 @@ y las adquisiciones de bienes y servicios.'
               'url' => 'https://github.com/NeoRazorX/xml_import_export/archive/master.zip',
               'description' => 'Permite importar/exportar información de FacturaScripts a partir de archivos XML.'
           ),
-          'presupuestos_y_pedidos_compras' => array(
-              'url' => 'https://github.com/shawe/presupuestos_y_pedidos_compras/archive/master.zip',
-              'description' => 'Incluye soporte para pedidos y presupuestos de proveedores, es decir, de compras. <b>Todavía en desarrollo</b>'
-          ),
           'dashboard' => array(
               'url' => 'https://github.com/shawe/dashboard/archive/master.zip',
               'description' => 'Pantalla de información resumida para FacturaScripts. <b>Todavía en desarrollo</b>'
@@ -421,7 +417,8 @@ y las adquisiciones de bienes y servicios.'
       $clist = array();
       $include = array(
           'albaran','albaranes','cifnif','pedido','pedidos',
-          'presupuesto','presupuestos','provincia','apartado'
+          'presupuesto','presupuestos','provincia','apartado',
+          'iva', 'irpf'
       );
       
       foreach($GLOBALS['config2'] as $i => $value)

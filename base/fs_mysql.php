@@ -244,12 +244,17 @@ class fs_mysql extends fs_db
          }
          
          if( self::$link->errno )
-            self::$errors[] =  'Error al ejecutar la consulta '.$i.': '.self::$link->error;
+         {
+            self::$errors[] =  'Error al ejecutar la consulta '.$i.': '.self::$link->error.
+                    '. La secuencia ocupa la posición '.count(self::$history);
+         }
          else
             $resultado = TRUE;
          
          if($resultado)
+         {
             self::$link->commit();
+         }
          else
             self::$link->rollback();
          
@@ -453,10 +458,6 @@ class fs_mysql extends fs_db
          return FALSE;
       }
       else if($v1 == 'tinyint(1)' AND $v2 == 'boolean')
-      {
-         return FALSE;
-      }
-      else if( substr($v1, 0, 3) == 'int' AND $v2 == 'integer')
       {
          return FALSE;
       }

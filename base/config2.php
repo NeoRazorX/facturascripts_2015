@@ -75,6 +75,12 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['precio_compra'] = 'coste';
       $GLOBALS['config2']['ip_whitelist'] = '*';
    }
+   
+   if( !isset($GLOBALS['config2']['iva']) )
+   {
+      $GLOBALS['config2']['iva'] = 'IVA';
+      $GLOBALS['config2']['irpf'] = 'IRPF';
+   }
 }
 else
 {
@@ -100,7 +106,9 @@ else
        'check_db_types' => 'false',
        'stock_negativo' => 0,
        'ventas_sin_stock' => 1,
-       'ip_whitelist' => '*'
+       'ip_whitelist' => '*',
+       'iva' => 'IVA',
+       'irpf' => 'IRPF'
    );
 }
 

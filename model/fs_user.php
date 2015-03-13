@@ -358,6 +358,8 @@ class fs_user extends fs_model
       {
          $this->last_login = Date('d-m-Y');
          $this->last_login_time = Date('H:i:s');
+         $this->last_ip = $_SERVER['REMOTE_ADDR'];
+         $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
          $this->save();
       }
    }
@@ -377,13 +379,7 @@ class fs_user extends fs_model
       $this->last_login = Date('d-m-Y');
       $this->last_login_time = Date('H:i:s');
       $this->last_ip = $_SERVER['REMOTE_ADDR'];
-      
-      try {
-         $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
-      }
-      catch (Exception $e) {
-         $this->last_browser = $e;
-      }
+      $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
    }
    
    public function get($n = '')
@@ -410,6 +406,7 @@ class fs_user extends fs_model
    public function test()
    {
       $this->nick = trim($this->nick);
+      $this->last_browser = $this->no_html($this->last_browser);
       
       if( !preg_match("/^[A-Z0-9_]{3,12}$/i", $this->nick) )
       {

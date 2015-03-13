@@ -96,9 +96,9 @@ else
       {
          echo '<center>'
          . '<h1>No se puede escribir sobre la carpeta tmp de FacturaScripts</h1>'
-         . '<p>Consulta la <a target="_blank" href="http://www.facturascripts.com/community/item.php?id=5215f20918c088832df79fe9">documentaci&oacute;n</a>.</p>'
+         . '<p>Consulta la <a target="_blank" href="//www.facturascripts.com/comm3/index.php?page=community_item&id=351">documentaci&oacute;n</a>.</p>'
          . '</center>';
-         die('<center><iframe src="http://www.facturascripts.com/community/item.php?id=5215f20918c088832df79fe9" width="90%" height="800"></iframe></center>');
+         die('<center><iframe src="//www.facturascripts.com/comm3/index.php?page=community_item&id=351" width="90%" height="800"></iframe></center>');
       }
       
       $tpl = new RainTPL();
