@@ -67,6 +67,10 @@ y las adquisiciones de bienes y servicios.'
               'url' => 'https://github.com/NeoRazorX/SAT/archive/master.zip',
               'description' => 'Permite gestionar el Servicio de Asistencia Tecnica, centrado en el área informática.'
           ),
+          'sql_editor' => array(
+              'url' => 'https://github.com/NeoRazorX/sql_editor/archive/master.zip',
+              'description' => 'Sencillo, pero potente editor de SQL.'
+          ),
           'supermercado_solidario' => array(
               'url' => 'https://github.com/NeoRazorX/supermercado_solidario/archive/master.zip',
               'description' => 'Permite administrar un supermercado solidario. Incluye un TPV específico.'
@@ -480,7 +484,8 @@ y las adquisiciones de bienes y servicios.'
                 'version' => 0,
                 'require' => '',
                 'update_url' => '',
-                'version_url' => ''
+                'version_url' => '',
+                'prioridad' => '-'
             );
             
             if( file_exists('plugins/'.$f.'/facturascripts.ini') )
@@ -512,6 +517,18 @@ y las adquisiciones de bienes y servicios.'
                if( isset($ini_file['version_url']) )
                {
                   $plugin['version_url'] = $ini_file['version_url'];
+               }
+               
+               if($plugin['enabled'])
+               {
+                  foreach( array_reverse($this->plugins()) as $i => $value)
+                  {
+                     if($value == $f)
+                     {
+                        $plugin['prioridad'] = $i;
+                        break;
+                     }
+                  }
                }
             }
             

@@ -241,6 +241,9 @@
                      <th class="text-left">Descripción</th>
                      <th class="text-right">Versión</th>
                      <th width="130"></th>
+                     <th class="text-right">
+                        <span class="glyphicon glyphicon-flash" aria-hidden="true" title="Prioridad"></span>
+                     </th>
                      <th class="text-right" width="190">Acciones</th>
                   </tr>
                </thead>
@@ -254,6 +257,7 @@
                      <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualizable
                      {/if}
                   </td>
+                  <td class="text-right">{$value['prioridad']}</td>
                   <td class="text-right">
                      {if="$value['enabled']"}
                      <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}#plugins">
@@ -279,7 +283,7 @@
                </tr>
                {else}
                <tr class="bg-warning">
-                  <td colspan="5">No tienes plugin instalados. Mira en la pestaña <b>Descargas</b>.</td>
+                  <td colspan="6">No tienes plugin instalados. Mira en la pestaña <b>Descargas</b>.</td>
                </tr>
                {/loop}
             </table>

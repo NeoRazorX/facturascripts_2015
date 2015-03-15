@@ -352,9 +352,14 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
          else if($actualizar)
          {
             ?>
-            <a class="btn btn-primary btn-lg" href="updater.php?update=TRUE" role="button">
-               <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Actualizar
-            </a>
+            <div class="btn-group">
+               <a class="btn btn-default btn-lg" href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version=<?php echo $nueva_version; ?>" target="_blank" role="button" title="Ver la lista de novedades">
+                  <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+               </a>
+               <a class="btn btn-primary btn-lg" href="updater.php?update=TRUE" role="button">
+                  <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Actualizar
+               </a>
+            </div>
             <?php
          }
          else
@@ -395,7 +400,14 @@ if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
                      {
                         echo '<tr><td>'.$plugin['name'].'</td><td>'.$plugin['description'].'</td>'
                                 . '<td class="text-right">'.$plugin['version'].'</td><td class="text-right">'.$plugin['new_version'].'</td>'
-                                . '<td class="text-right"><a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">Actualizar</a></td></tr>';
+                                . '<td class="text-right">'
+                                . '<div class="btn-group">'
+                                . '<a class="btn btn-default btn-xs" href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='.$plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank" role="button" title="Ver la lista de novedades">
+                                   <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                                   </a>'
+                                . '<a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">Actualizar</a>'
+                                . '</div>'
+                                . '</td></tr>';
                         $plugins_for_update = TRUE;
                      }
                      
