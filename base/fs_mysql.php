@@ -104,7 +104,8 @@ class fs_mysql extends fs_db
                'data_type' => $a['Type'],
                'column_default' => $a['Default'],
                'is_nullable' => $a['Null'],
-               'extra' => $a['Extra']
+               'extra' => $a['Extra'],
+               'key' => $a['Key']
             );
          }
          return $columnas;

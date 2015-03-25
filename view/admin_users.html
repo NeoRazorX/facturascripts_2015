@@ -12,7 +12,7 @@
 
 <div class="container-fluid" style="margin-top: 10px; margin-bottom: 5px;">
    <div class="row">
-      <div class="col-sm-6">
+      <div class="col-sm-6 col-xs-7">
          <div class="btn-group">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
@@ -30,7 +30,8 @@
          
          <div class="btn-group">
             <a id="b_nuevo_usuario" class="btn btn-sm btn-success" href="#">
-               <span class="glyphicon glyphicon-plus"></span> &nbsp; Nuevo
+               <span class="glyphicon glyphicon-plus"></span>
+               <span class="hidden-xs">&nbsp; Nuevo</span>
             </a>
             {loop="$fsc->extensions"}
                {if="$value->type=='button'"}
@@ -39,7 +40,7 @@
             {/loop}
          </div>
       </div>
-      <div class="col-sm-6 text-right">
+      <div class="col-sm-6 col-xs-5 text-right">
          <h2 style="margin-top: 0px;">Usuarios</h2>
       </div>
    </div>
@@ -48,10 +49,16 @@
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
-         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Usuarios</a>
+         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+            <span class="hidden-xs">&nbsp; Usuarios</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Historial</a>
+         <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+            <span class="hidden-xs">&nbsp; Historial</span>
+         </a>
       </li>
    </ul>
    <div class="tab-content">

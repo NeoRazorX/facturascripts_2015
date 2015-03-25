@@ -2,8 +2,8 @@
 
 <div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
    <div class="row">
-      <div class="col-sm-2">
-         <div class="btn-group">
+      <div class="col-sm-2 col-xs-1">
+         <div class="btn-group hidden-xs">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
@@ -18,12 +18,13 @@
             {/if}
          </div>
       </div>
-      <div class="col-sm-7 text-center">
+      <div class="col-sm-7 col-xs-9 text-center">
          <h3 style="margin-top: 0px;">{$fsc->page->title}</h3>
       </div>
-      <div class="col-sm-3 text-right">
+      <div class="col-sm-3 col-xs-2 text-right">
          <a class="btn btn-sm btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
-            <span class="glyphicon glyphicon-trash"></span> &nbsp; Limpiar la cache
+            <span class="glyphicon glyphicon-trash"></span>
+            <span class="hidden-xs">&nbsp; Limpiar la cache</span>
          </a>
       </div>
    </div>
@@ -37,13 +38,22 @@
          </a>
       </li>
       <li role="presentation">
-         <a href="#history" aria-controls="history" role="tab" data-toggle="tab">Historial</a>
+         <a href="#history" aria-controls="history" role="tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+            <span class="hidden-xs">&nbsp; Historial</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#tablas" aria-controls="tablas" role="tab" data-toggle="tab">Tablas</a>
+         <a href="#tablas" aria-controls="tablas" role="tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+            <span class="hidden-xs">&nbsp; Tablas</span>
+         </a>
       </li>
       <li role="presentation">
-         <a href="#bloqueos" aria-controls="bloqueos" role="tab" data-toggle="tab">Bloqueos</a>
+         <a href="#bloqueos" aria-controls="bloqueos" role="tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="hidden-xs">&nbsp; Bloqueos</span>
+         </a>
       </li>
    </ul>
    <div class="tab-content">

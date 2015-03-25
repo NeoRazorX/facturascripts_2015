@@ -60,7 +60,7 @@
 
 <div class="container-fluid" style="margin-top: 10px;">
    <div class="row">
-      <div class="col-sm-6">
+      <div class="col-sm-6 col-xs-6">
          <div class="btn-group hidden-xs">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
@@ -75,7 +75,6 @@
             </a>
             {/if}
          </div>
-         
          <div class="btn-group">
             {loop="$fsc->extensions"}
                {if="$value->type=='button'"}
@@ -84,7 +83,7 @@
             {/loop}
          </div>
       </div>
-      <div class="col-sm-6 text-right">
+      <div class="col-sm-6 col-xs-6 text-right">
          <h2 style="margin-top: 0px;">Empresa</h2>
       </div>
    </div>
@@ -95,10 +94,10 @@
                <span class="glyphicon glyphicon-dashboard"></span> &nbsp; Datos generales
             </a>
             <a id="b_facturacion" href="#facturacion" class="list-group-item">
-               <span class="glyphicon glyphicon-euro"></span> &nbsp; Facturación
+               <span class="glyphicon glyphicon-usd"></span> &nbsp; Facturación
             </a>
             <a id="b_email" href="#email" class="list-group-item">
-               <span class="glyphicon glyphicon-inbox"></span> &nbsp; Email
+               <span class="glyphicon glyphicon-envelope"></span> &nbsp; Email
             </a>
             <a id="b_impresion" href="#impresion" class="list-group-item">
                <span class="glyphicon glyphicon-print"></span> &nbsp; Impresión

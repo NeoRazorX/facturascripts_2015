@@ -31,6 +31,10 @@ class admin_home extends fs_controller
    protected function process()
    {
       $this->download_list = array(
+          'colombia' => array(
+              'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
+          ),
           'documentos_facturas' => array(
               'url' => 'https://github.com/NeoRazorX/documentos_facturas/archive/master.zip',
               'description' => 'Permite adjuntar archivos a facturas de compra o venta.'
@@ -743,8 +747,15 @@ y las adquisiciones de bienes y servicios.'
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
          $data = curl_exec($ch);
+         $info = curl_getinfo($ch);
          curl_close($ch);
-         return $data;
+         
+         if($info['http_code'] == 302)
+         {
+            return file_get_contents($url);
+         }
+         else
+            return $data;
       }
       else
          return file_get_contents($url);

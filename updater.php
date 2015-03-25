@@ -101,8 +101,15 @@ function curl_get_contents($url)
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
       $data = curl_exec($ch);
+      $info = curl_getinfo($ch);
       curl_close($ch);
-      return $data;
+      
+      if($info['http_code'] == 302)
+      {
+         return file_get_contents($url);
+      }
+      else
+         return $data;
    }
    else
       return file_get_contents($url);
