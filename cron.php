@@ -49,7 +49,7 @@ if( $db->connect() )
    if($cron_vars['cron_lock'])
    {
       echo "ERROR: Ya hay un cron en ejecución. Si crees que es un error,"
-      . " elimina la entrada cron_lock en la tabla fs_vars de la base de datos.";
+      . " ve a Admin > Información del sistema para solucionar el problema.";
       
       /// marcamos el error en el cron
       $cron_vars['cron_error'] = 'TRUE';

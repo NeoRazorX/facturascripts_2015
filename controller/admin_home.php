@@ -63,6 +63,10 @@ que hayan realizado operaciones con terceros por importe superior a 3.005,06 €
 el año natural (se puede cambiar la cantidad), computando de forma separada las entregas
 y las adquisiciones de bienes y servicios.'
           ),
+          'pagos' => array(
+              'url' => 'https://github.com/NeoRazorX/pagos/archive/master.zip',
+              'description' => 'Permite la gestión de pagos de pedidos, albaranes y facturas de venta.'
+          ),
           'presupuestos_y_pedidos' => array(
               'url' => 'https://github.com/neorazorx/presupuestos_y_pedidos/archive/master.zip',
               'description' => 'Añade soporte para pedidos y presupuestos a clientes.'
