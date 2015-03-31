@@ -26,7 +26,10 @@ if(FS_TMP_NAME != '' AND !file_exists('tmp/'.FS_TMP_NAME) )
 {
    if( !file_exists('tmp') )
    {
-      mkdir('tmp');
+      if( mkdir('tmp') )
+      {
+         file_put_contents('tmp/index.php', "<?php\necho 'No me toques los cojones!!!';");
+      }
    }
    
    mkdir('tmp/'.FS_TMP_NAME);

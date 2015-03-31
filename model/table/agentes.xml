@@ -47,7 +47,7 @@
    </columna>
    <columna>
       <nombre>email</nombre>
-      <tipo>character varying(50)</tipo>
+      <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>

@@ -100,24 +100,29 @@
    </div>
    {/if}
    
-   <div class="visible-md visible-lg" style="margin-bottom: 100px;"></div>
+   <div class="visible-md visible-lg" style="padding-bottom: 50px;"></div>
    
-   <div class="container">
+   <div id="box_login" class="container" style="margin-top: 50px;">
       <div class="row">
-         <div class="col-md-6 col-md-offset-3">
-            <div class="well well-lg" id="box_login" style="background-color: #F3F6FB;">
+         <div class="col-md-3 col-md-offset-2">
+            <div class="thumbnail hidden-sm hidden-xs">
+               <img src="view/img/logo.png" alt="logo"/>
+            </div>
+         </div>
+         <div class="col-md-4">
+            <div>
                <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
                   {if="FS_DEMO"}
                   <h1>Demo</h1>
                   <input type="hidden" name="password" value="demo"/>
                   <div class="form-group">
                      Escribe tu nombre:
-                     <input type="text" class="form-control" name="user" maxlength="12" placeholder="Escribe tu nombre" autocomplete="off"/>
+                     <input type="text" class="form-control input-lg" name="user" maxlength="12" placeholder="Escribe tu nombre" autocomplete="off"/>
                   </div>
                   {else}
                   <div class="form-group">
                      <span class="glyphicon glyphicon-user"></span> Usuario:
-                     <select name="user" class="form-control" onchange="document.f_login.password.focus()">
+                     <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
                      {loop name="$fsc->user->all()"}
                         {if="$value->nick == $nlogin"}
                         <option value="{$value->nick}" selected>{$value->nick}</option>
@@ -128,14 +133,14 @@
                      </select>
                   </div>
                   <div class="form-group">
-                     <input type="password" class="form-control" name="password" maxlength="20" placeholder="Contraseña"/>
+                     <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
                      <p class="help-block">
                         <a href="#" id="b_new_password">¿Has olvidado la contraseña?</a>
                      </p>
                   </div>
                   {/if}
                   <div class="text-right">
-                     <button class="btn btn-sm btn-primary" type="submit" id="login" onclick="this.disabled=true;this.form.submit();">
+                     <button class="btn btn-block btn-primary" type="submit" id="login" onclick="this.disabled=true;this.form.submit();">
                         <span class="glyphicon glyphicon-log-in"></span> &nbsp; Iniciar sesión
                      </button>
                   </div>

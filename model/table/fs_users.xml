@@ -71,15 +71,7 @@
       <consulta>PRIMARY KEY (nick)</consulta>
    </restriccion>
    <restriccion>
-      <nombre>ca_fs_users_agentes2</nombre>
-      <consulta>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-   </restriccion>
-   <restriccion>
-      <nombre>ca_fs_users_pages2</nombre>
+      <nombre>ca_fs_users_pages</nombre>
       <consulta>FOREIGN KEY (fs_page) REFERENCES fs_pages (name) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-   </restriccion>
-   <restriccion>
-      <nombre>ca_fs_users_ejercicios2</nombre>
-      <consulta>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
    </restriccion>
 </tabla>

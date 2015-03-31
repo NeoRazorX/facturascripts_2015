@@ -83,7 +83,7 @@
                   <td class="text-center">
                      {if="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}
                   </td>
-                  <td>{$value->last_ip}</td>
+                  <td>{if="FS_DEMO"}XX.XX.XX.XX{else}{$value->last_ip}{/if}</td>
                   <td>{$value->fs_page}</td>
                   <td>{$value->codejercicio}</td>
                   <td class="text-right">{$value->show_last_login()}</td>
