@@ -46,7 +46,7 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    
    if( !isset($GLOBALS['config2']['cost_is_average']) )
    {
-      $GLOBALS['config2']['cost_is_average'] = '1';
+      $GLOBALS['config2']['cost_is_average'] = 1;
    }
    
    if( !isset($GLOBALS['config2']['nf0']) )
@@ -84,6 +84,11 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['iva'] = 'IVA';
       $GLOBALS['config2']['irpf'] = 'IRPF';
    }
+   
+   if( !isset($GLOBALS['config2']['libros_contables']) )
+   {
+      $GLOBALS['config2']['libros_contables'] = 1;
+   }
 }
 else
 {
@@ -111,7 +116,8 @@ else
        'ventas_sin_stock' => 1,
        'ip_whitelist' => '*',
        'iva' => 'IVA',
-       'irpf' => 'IRPF'
+       'irpf' => 'IRPF',
+       'libros_contables' => 1
    );
 }
 

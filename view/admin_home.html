@@ -272,7 +272,9 @@
                      {/if}
                   </td>
                   <td class="text-right">
-                     <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&plugin={$value['name']}&version={$value['version']}">{$value['version']}</a>
+                     <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&plugin={$value['name']}&version={$value['version']}" target="_blank">
+                        {$value['version']}
+                     </a>
                   </td>
                   <td class="text-right">{$value['prioridad']}</td>
                   <td class="text-right">
@@ -493,6 +495,15 @@
                         Permitir acceso desde estas IPs:
                         <input class="form-control" type="text" name="ip_whitelist" value="{$GLOBALS['config2']['ip_whitelist']}"/>
                         <p class="help-block">Los admninistradores pueden acceder desde cualquier IP.</p>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Generar los libros contables:
+                        <select name="libros_contables" class="form-control">
+                           <option value="1"{if="$GLOBALS['config2']['libros_contables']==1"} selected='selected'{/if}>Si</option>
+                           <option value="0"{if="$GLOBALS['config2']['libros_contables']==0"} selected='selected'{/if}>No</option>
+                        </select>
                      </div>
                   </div>
                </div>

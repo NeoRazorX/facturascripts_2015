@@ -70,7 +70,9 @@
                   </tr>
                </thead>
                <tr>
-                  <td>{$fsc->version()}</td>
+                  <td>
+                     <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&version={$fsc->version()}" target="_blank">{$fsc->version()}</a>
+                  </td>
                   <td class="text-center">{$fsc->php_version()}</td>
                   <td class="text-center">{$fsc->fs_db_name()}</td>
                   <td class="text-center">{$fsc->fs_db_version()}</td>
