@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Una cuenta bancaria de un cliente., proveedor o de la propia empresa.
  */
@@ -59,7 +57,9 @@ class cuenta_banco extends fs_model
    {
       $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcuenta = ".$this->var2str($cod).";");
       if($data)
+      {
          return new cuenta_banco($data[0]);
+      }
       else
          return FALSE;
    }
@@ -69,7 +69,9 @@ class cuenta_banco extends fs_model
       $sql = "SELECT MAX(".$this->db->sql_to_int('codcuenta').") as cod FROM ".$this->table_name.";";
       $cod = $this->db->select($sql);
       if($cod)
+      {
          return 1 + intval($cod[0]['cod']);
+      }
       else
          return 1;
    }
@@ -77,39 +79,30 @@ class cuenta_banco extends fs_model
    public function exists()
    {
       if( is_null($this->codcuenta) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcuenta = ".$this->var2str($this->codcuenta).";");
    }
    
-   public function test()
-   {
-      $this->descripcion = $this->no_html($this->descripcion);
-      return TRUE;
-   }
-   
    public function save()
    {
-      if( $this->test() )
+      $this->descripcion = $this->no_html($this->descripcion);
+      
+      if( $this->exists() )
       {
-         if( $this->exists() )
-         {
-            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).", "
-               . "iban = ".$this->var2str($this->iban)." WHERE codcuenta = ".$this->var2str($this->codcuenta)
-               ." ;";
-         }
-         else
-         {
-            $this->codcuenta = $this->get_new_codigo();
-            
-            $sql = "INSERT INTO ".$this->table_name." (codcuenta,descripcion,iban) VALUES "
-               . "(".$this->var2str($this->codcuenta).","
-               . "".$this->var2str($this->descripcion).",".$this->var2str($this->iban).");";
-         }
-         return $this->db->exec($sql);
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+            iban = ".$this->var2str($this->iban)." WHERE codcuenta = ".$this->var2str($this->codcuenta).";";
       }
       else
-         return FALSE;
+      {
+         $this->codcuenta = $this->get_new_codigo();
+         $sql = "INSERT INTO ".$this->table_name." (codcuenta,descripcion,iban) VALUES
+            (".$this->var2str($this->codcuenta).",".$this->var2str($this->descripcion).",".$this->var2str($this->iban).");";
+      }
+      
+      return $this->db->exec($sql);
    }
    
    public function delete()
@@ -129,5 +122,24 @@ class cuenta_banco extends fs_model
       }
       
       return $clist;
+   }
+   
+   public function calcular_iban($ccc)
+   {
+      $codpais = substr($this->empresa->codpais, 0, 2);
+      
+      $pesos = array('A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
+          'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
+          'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
+          'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35'
+      );
+      
+      $dividendo = $ccc.$pesos[substr($codpais, 0 , 1)].$pesos[substr($codpais, 1 , 1)].'00';   
+      $digitoControl =  98 - bcmod($dividendo, '97');
+      
+      if( strlen($digitoControl) == 1 )
+         $digitoControl = '0'.$digitoControl;
+      
+      return $codpais.$digitoControl.$ccc;
    }
 }

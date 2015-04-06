@@ -47,12 +47,20 @@ class fs_mysql extends fs_db
             self::$link->set_charset('utf8');
             $connected = TRUE;
             
-            /// comprobamos el soporte para InnoDB
-            $data = $this->select("SHOW TABLE STATUS WHERE Name = 'fs_pages';");
-            if($data)
+            if(FS_FOREIGN_KEYS)
             {
-               if($data[0]['Engine'] != 'InnoDB')
-                  self::$errors[] = 'FacturaScripts necesita usar el motor InnoDB en MySQL, y tú estás usando el motor '.$data[0]['Engine'].'.';
+               /// comprobamos el soporte para InnoDB
+               $data = $this->select("SHOW TABLE STATUS WHERE Name = 'fs_pages';");
+               if($data)
+               {
+                  if($data[0]['Engine'] != 'InnoDB')
+                     self::$errors[] = 'FacturaScripts necesita usar el motor InnoDB en MySQL, y tú estás usando el motor '.$data[0]['Engine'].'.';
+               }
+            }
+            else
+            {
+               /// desactivamos las claves ajenas
+               $this->exec("SET foreign_key_checks = 0;");
             }
          }
       }

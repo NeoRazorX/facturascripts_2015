@@ -185,7 +185,7 @@ class admin_empresa extends fs_controller
          
          if($_POST['ciban'] != '')
          {
-            $cuentab->iban = $this->calcular_iban($_POST['ciban']);
+            $cuentab->iban = $cuentab->calcular_iban($_POST['ciban']);
          }
          else
             $cuentab->iban = $_POST['iban'];
@@ -199,25 +199,5 @@ class admin_empresa extends fs_controller
       }
       
       $this->logo = file_exists('tmp/'.FS_TMP_NAME.'logo.png');
-   }
-
-   
-   private function calcular_iban($ccc)
-   {
-      $codpais = substr($this->empresa->codpais, 0, 2);
-      
-      $pesos = array('A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
-          'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
-          'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
-          'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35'
-      );
-      
-      $dividendo = $ccc.$pesos[substr($codpais, 0 , 1)].$pesos[substr($codpais, 1 , 1)].'00';   
-      $digitoControl =  98 - bcmod($dividendo, '97');
-      
-      if( strlen($digitoControl) == 1 )
-         $digitoControl = '0'.$digitoControl;
-      
-      return $codpais.$digitoControl.$ccc;
    }
 }

@@ -7,11 +7,12 @@
       $("#panel_email").hide();
       $("#panel_email2").hide();
       $("#panel_facturacion").hide();
-      $("#panel_cuentas").hide();
+      $("#panel_cuentasb").hide();
       $("#panel_impresion").hide();
       $("#b_generales").removeClass('active');
       $("#b_email").removeClass('active');
       $("#b_facturacion").removeClass('active');
+      $("#b_cuentasb").removeClass('active');
       $("#b_impresion").removeClass('active');
       
       if(window.location.hash.substring(1) == 'email')
@@ -24,9 +25,13 @@
       else if(window.location.hash.substring(1) == 'facturacion')
       {
          $("#panel_facturacion").show();
-         $("#panel_cuentas").show();
          $("#b_facturacion").addClass('active');
          document.f_empresa.coddivisa.focus();
+      }
+      else if(window.location.hash.substring(1) == 'cuentasb')
+      {
+         $("#panel_cuentasb").show();
+         $("#b_cuentasb").addClass('active');
       }
       else if(window.location.hash.substring(1) == 'impresion')
       {
@@ -93,11 +98,14 @@
             <a id="b_generales" href="#generales" class="list-group-item active">
                <span class="glyphicon glyphicon-dashboard"></span> &nbsp; Datos generales
             </a>
+            <a id="b_email" href="#email" class="list-group-item">
+               <span class="glyphicon glyphicon-envelope"></span> &nbsp; Email
+            </a>
             <a id="b_facturacion" href="#facturacion" class="list-group-item">
                <span class="glyphicon glyphicon-usd"></span> &nbsp; Facturación
             </a>
-            <a id="b_email" href="#email" class="list-group-item">
-               <span class="glyphicon glyphicon-envelope"></span> &nbsp; Email
+            <a id="b_cuentasb" href="#cuentasb" class="list-group-item">
+               <span class="glyphicon glyphicon-credit-card"></span> &nbsp; Cuentas bancarias
             </a>
             <a id="b_impresion" href="#impresion" class="list-group-item">
                <span class="glyphicon glyphicon-print"></span> &nbsp; Impresión
@@ -302,9 +310,9 @@
                   </div>
                </div>
                <div class="panel-footer" style="text-align: right;">
-              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion';this.form.submit();">
-                 <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
-              </button>
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion';this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                  </button>
                </div>
             </div>
             
@@ -345,7 +353,7 @@
             </div>
          </form>
          
-         <div class="panel-group" id="panel_cuentas">
+         <div id="panel_cuentasb">
             {loop="$fsc->cuenta_banco->all_from_empresa()"}
             <form action="{$fsc->url()}#facturacion" method="post" class="form">
                <input type="hidden" name="codcuenta" value="{$value->codcuenta}"/>

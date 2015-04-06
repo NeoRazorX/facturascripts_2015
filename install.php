@@ -4,6 +4,11 @@ $nombre_archivo = "config.php";
 error_reporting(E_ALL);
 $errors = array();
 $errors2 = array();
+$db_type = 'MYSQL';
+$db_host = 'localhost';
+$db_port = '3306';
+$db_name = 'facturascripts';
+$db_user = '';
 
 function random_string($length = 10)
 {
@@ -155,6 +160,12 @@ else if( isset($_REQUEST['db_type']) )
          $errors2[] = 'No tienes instalada la extensión de PHP para PostgreSQL.';
       }
    }
+   
+   $db_type = $_REQUEST['db_type'];
+   $db_host = $_REQUEST['db_host'];
+   $db_port = $_REQUEST['db_port'];
+   $db_name = $_REQUEST['db_name'];
+   $db_user = $_REQUEST['db_user'];
 }
 
 $system_info = 'facturascripts: '.file_get_contents('VERSION')."\n";
@@ -458,25 +469,25 @@ $system_info = str_replace('"', "'", $system_info);
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Tipo de servidor SQL:
                         <select name="db_type" class="form-control" onchange="change_db_type()">
-                           <option value="MYSQL" selected="selected">MySQL</option>
-                           <option value="POSTGRESQL">PostgreSQL</option>
+                           <option value="MYSQL"<?php if($db_type=='MYSQL') { echo ' selected="selected"'; } ?>>MySQL</option>
+                           <option value="POSTGRESQL"<?php if($db_type=='POSTGRESQL') { echo ' selected="selected"'; } ?>>PostgreSQL</option>
                         </select>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Servidor:
-                        <input class="form-control" type="text" name="db_host" value="localhost" autocomplete="off"/>
+                        <input class="form-control" type="text" name="db_host" value="<?php echo $db_host; ?>" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Puerto:
-                        <input class="form-control" type="number" name="db_port" value="3306" autocomplete="off"/>
+                        <input class="form-control" type="number" name="db_port" value="<?php echo $db_port; ?>" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Nombre base de datos:
-                        <input class="form-control" type="text" name="db_name" value="facturascripts" autocomplete="off"/>
+                        <input class="form-control" type="text" name="db_name" value="<?php echo $db_name; ?>" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Usuario:
-                        <input class="form-control" type="text" name="db_user" value="" autocomplete="off"/>
+                        <input class="form-control" type="text" name="db_user" value="<?php echo $db_user; ?>" autocomplete="off"/>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Contraseña:

@@ -1,1 +1,5 @@
 Options -Indexes
+
+<IfModule mod_php5.c>
+   php_value max_input_vars 5000
+</IfModule>

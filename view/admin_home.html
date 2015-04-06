@@ -25,6 +25,10 @@
       {
          $('#tab_panel_control a[href="#t_plugins"]').tab('show');
       }
+      else if(window.location.hash.substring(1) == 'descargas')
+      {
+         $('#tab_panel_control a[href="#t_descargas"]').tab('show');
+      }
       else if(window.location.hash.substring(1) == 'avanzado')
       {
          $('#tab_panel_control a[href="#t_avanzado"]').tab('show');
@@ -488,6 +492,16 @@
                               No comprobar los tipos
                            </option>
                         </select>
+                     </div>
+                  </div>
+                  <div class="col-md-2 col-sm-2">
+                     <div class="form-group">
+                        Comprobar claves ajenas:
+                        <select name="foreign_keys" class="form-control">
+                           <option value="1"{if="$GLOBALS['config2']['foreign_keys']==1"} selected='selected'{/if}>Si</option>
+                           <option value="0"{if="$GLOBALS['config2']['foreign_keys']==0"} selected='selected'{/if}>No</option>
+                        </select>
+                        <p class="help-block">Sólo se puede desactivar en MySQL.</p>
                      </div>
                   </div>
                   <div class="col-md-4 col-sm-4">

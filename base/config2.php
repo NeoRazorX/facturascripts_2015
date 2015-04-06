@@ -88,6 +88,7 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    if( !isset($GLOBALS['config2']['libros_contables']) )
    {
       $GLOBALS['config2']['libros_contables'] = 1;
+      $GLOBALS['config2']['foreign_keys'] = 1;
    }
 }
 else
@@ -117,7 +118,8 @@ else
        'ip_whitelist' => '*',
        'iva' => 'IVA',
        'irpf' => 'IRPF',
-       'libros_contables' => 1
+       'libros_contables' => 1,
+       'foreign_keys' => 1
    );
 }
 
