@@ -171,6 +171,21 @@ class fs_cache
          return FALSE;
    }
    
+   public function delete_multi($keys)
+   {
+      if(self::$connected)
+      {
+         foreach($keys as $i => $value)
+         {
+            $keys[$i] = FS_CACHE_PREFIX.$value;
+         }
+         
+         return self::$memcache->deleteMulti($keys);
+      }
+      else
+         return FALSE;
+   }
+   
    public function clean()
    {
       if(self::$connected)

@@ -63,8 +63,8 @@
    });
 </script>
 
-<div class="container-fluid" style="margin-top: 10px;">
-   <div class="row">
+<div class="container-fluid">
+   <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
       <div class="col-sm-6 col-xs-6">
          <div class="btn-group hidden-xs">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
@@ -346,16 +346,16 @@
                   </div>
                </div>
                <div class="panel-footer" style="text-align: right;">
-              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#impresion';this.form.submit();">
-                 <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
-              </button>
+                  <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#impresion';this.form.submit();">
+                     <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                  </button>
                </div>
             </div>
          </form>
          
          <div id="panel_cuentasb">
             {loop="$fsc->cuenta_banco->all_from_empresa()"}
-            <form action="{$fsc->url()}#facturacion" method="post" class="form">
+            <form action="{$fsc->url()}#cuentasb" method="post" class="form">
                <input type="hidden" name="codcuenta" value="{$value->codcuenta}"/>
                <div class="panel panel-info">
                   <div class="panel-heading">
@@ -376,11 +376,11 @@
                      </div>
                   </div>
                   <div class="panel-footer text-right">
-                     <a class="btn btn-sm btn-danger pull-left" type="button" onclick="return confirm('¿Realmente desea eliminar esta Cuenta bancaria?');" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#facturacion">
-                         <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+                     <a class="btn btn-sm btn-danger pull-left" type="button" onclick="return confirm('¿Realmente desea eliminar esta Cuenta bancaria?');" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#cuentasb">
+                        <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
                      </a>
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion;this.form.submit();">
-                         <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                      </button>
                   </div>
                </div>
@@ -438,7 +438,7 @@
    </div>
 </form>
 
-<form name="f_nueva_cuenta" action="{$fsc->url()}#facturacion" method="post" class="form">
+<form name="f_nueva_cuenta" action="{$fsc->url()}#cuentasb" method="post" class="form">
    <div class="modal" id="modal_nueva_cuenta">
       <div class="modal-dialog">
          <div class="modal-content">
