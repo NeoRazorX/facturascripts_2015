@@ -24,7 +24,10 @@ require_once 'base/fs_db.php';
  */
 class fs_postgresql extends fs_db
 {
-   /// conecta con la base de datos
+   /**
+    * Conecta a la base de datos.
+    * @return boolean
+    */
    public function connect()
    {
       $connected = FALSE;
@@ -51,7 +54,10 @@ class fs_postgresql extends fs_db
       return $connected;
    }
    
-   /// desconecta de la base de datos
+   /**
+    * Desconecta de la base de datos.
+    * @return boolean
+    */
    public function close()
    {
       if(self::$link)
@@ -64,7 +70,10 @@ class fs_postgresql extends fs_db
          return TRUE;
    }
    
-   /// devuelve un array con los nombres de las tablas de la base de datos
+   /**
+    * Devuelve un array con los nombres de las tablas de la base de datos.
+    * @return type
+    */
    public function list_tables()
    {
       $sql = "SELECT a.relname AS Name FROM pg_class a, pg_user b
@@ -74,12 +83,18 @@ class fs_postgresql extends fs_db
          ORDER BY a.relname ASC;";
       $resultado = $this->select($sql);
       if($resultado)
+      {
          return $resultado;
+      }
       else
          return array();
    }
    
-   /// devuelve un array con las columnas de una tabla dada
+   /**
+    * Devuelve un array con las columnas de una tabla dada.
+    * @param type $table
+    * @return type
+    */
    public function get_columns($table)
    {
       $sql = "SELECT column_name, data_type, character_maximum_length, column_default, is_nullable
@@ -89,7 +104,12 @@ class fs_postgresql extends fs_db
       return $this->select($sql);
    }
    
-   /// devuelve una array con las restricciones de una tabla dada
+   /**
+    * Devuelve una array con las restricciones de una tabla dada:
+    * clave primaria, claves ajenas, etc.
+    * @param type $table
+    * @return type
+    */
    public function get_constraints($table)
    {
       $sql = "SELECT c.conname as \"restriccion\", c.contype as \"tipo\"
@@ -99,14 +119,21 @@ class fs_postgresql extends fs_db
       return $this->select($sql);
    }
    
-   /// devuelve una array con los indices de una tabla dada
+   /**
+    * Devuelve una array con los indices de una tabla dada.
+    * @param type $table
+    * @return type
+    */
    public function get_indexes($table)
    {
       return $this->select("SELECT indexname as name FROM pg_indexes
          WHERE tablename = '".$table."';");
    }
    
-   /// devuelve un array con los datos de bloqueos
+   /**
+    * Devuelve un array con los datos de bloqueos en la base de datos.
+    * @return type
+    */
    public function get_locks()
    {
       return $this->select("SELECT relname,pg_locks.* FROM pg_class,pg_locks
@@ -124,7 +151,12 @@ class fs_postgresql extends fs_db
          return FALSE;
    }
    
-   /// ejecuta un select
+   /**
+    * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
+    * o false en caso de fallo.
+    * @param type $sql
+    * @return type
+    */
    public function select($sql)
    {
       $resultado = FALSE;
@@ -145,7 +177,17 @@ class fs_postgresql extends fs_db
       return $resultado;
    }
    
-   /// ejecuta un select parcial
+   /**
+    * Ejecuta una sentencia SQL de tipo select, pero con paginación,
+    * y devuelve un array con los resultados,
+    * o false en caso de fallo.
+    * Limit es el número de elementos que quieres que devuelve.
+    * Offset es el número de resultado desde el que quieres que empiece.
+    * @param string $sql
+    * @param type $limit
+    * @param type $offset
+    * @return type
+    */
    public function select_limit($sql, $limit, $offset)
    {
       $resultado = FALSE;
@@ -167,25 +209,49 @@ class fs_postgresql extends fs_db
       return $resultado;
    }
    
-   /// ejecuta una consulta sobre la base de datos
-   public function exec($sql)
+   /**
+    * Ejecuta consultas SQL sobre la base de datos (inserts, updates o deletes).
+    * Para hacer selects, mejor usar select() o selec_limit().
+    * Por defecto se inicia una transacción, se ejecutan las consultas, y si todo
+    * sale bien, se guarda, sino se deshace.
+    * Se puede evitar este modo de transacción si se pone false
+    * en el parametro transaccion.
+    * @param type $sql
+    * @param type $transaccion
+    * @return boolean
+    */
+   public function exec($sql, $transaccion=TRUE)
    {
       $resultado = FALSE;
       if(self::$link)
       {
          self::$history[] = $sql;
-         pg_query(self::$link, 'BEGIN TRANSACTION;');
+         
+         if($transaccion)
+         {
+            pg_query(self::$link, 'BEGIN TRANSACTION;');
+         }
+         
          $aux = pg_query(self::$link, $sql);
          if($aux)
          {
             pg_free_result($aux);
-            pg_query(self::$link, 'COMMIT;');
+            
+            if($transaccion)
+            {
+               pg_query(self::$link, 'COMMIT;');
+            }
+            
             $resultado = TRUE;
          }
          else
          {
             self::$errors[] = pg_last_error(self::$link);
-            pg_query(self::$link, 'ROLLBACK;');
+            
+            if($transaccion)
+            {
+               pg_query(self::$link, 'ROLLBACK;');
+            }
          }
          
          self::$t_transactions++;
@@ -193,12 +259,45 @@ class fs_postgresql extends fs_db
       return $resultado;
    }
    
+   public function begin_transaction()
+   {
+      if(self::$link)
+      {
+         pg_query(self::$link, 'BEGIN TRANSACTION;');
+      }
+   }
+   
+   public function commit()
+   {
+      if(self::$link)
+      {
+         pg_query(self::$link, 'COMMIT;');
+      }
+   }
+   
+   public function rollback()
+   {
+      if(self::$link)
+      {
+         pg_query(self::$link, 'ROLLBACK;');
+      }
+   }
+   
+   /**
+    * Devuelve TRUE si la secuancia solicitada existe.
+    * @param type $seq
+    * @return type
+    */
    public function sequence_exists($seq)
    {
       return $this->select("SELECT * FROM pg_class where relname = '".$seq."';");
    }
    
-   /// devuleve el siguiente valor de una secuencia
+   /**
+    * Devuleve el siguiente valor de una secuencia.
+    * @param type $seq
+    * @return boolean
+    */
    public function nextval($seq)
    {
       $aux = $this->select("SELECT nextval('".$seq."') as num;");
@@ -208,12 +307,17 @@ class fs_postgresql extends fs_db
          return FALSE;
    }
    
-   /// devuleve el último ID asignado
+   /**
+    * Devuleve el último ID asignado.
+    * @return boolean
+    */
    public function lastval()
    {
       $aux = $this->select('SELECT lastval() as num;');
       if($aux)
+      {
          return $aux[0]['num'];
+      }
       else
          return FALSE;
    }
@@ -233,9 +337,13 @@ class fs_postgresql extends fs_db
       return $col.'::integer';
    }
    
-   /*
-    * Compara dos arrays de columnas, devuelve una sentencia sql
+   /**
+    * Compara dos arrays de columnas, devuelve una sentencia SQL
     * en caso de encontrar diferencias.
+    * @param type $table_name
+    * @param type $xml_cols
+    * @param type $columnas
+    * @return string
     */
    public function compare_columns($table_name, $xml_cols, $columnas)
    {
@@ -334,11 +442,14 @@ class fs_postgresql extends fs_db
       }
    }
    
-   /*
+   /**
     * A partir del campo default del xml de una tabla
     * comprueba si se refiere a una secuencia, y si es así
     * comprueba la existencia de la secuencia. Si no la encuentra
     * la crea.
+    * @param type $table_name
+    * @param type $default
+    * @param type $colname
     */
    private function default2check_sequence($table_name, $default, $colname)
    {
@@ -362,9 +473,13 @@ class fs_postgresql extends fs_db
       }
    }
    
-   /*
-    * Compara dos arrays de restricciones, devuelve una sentencia sql
+   /**
+    * Compara dos arrays de restricciones, devuelve una sentencia SQL
     * en caso de encontrar diferencias.
+    * @param type $table_name
+    * @param type $c_nuevas
+    * @param type $c_old
+    * @return string
     */
    public function compare_constraints($table_name, $c_nuevas, $c_old)
    {
@@ -429,7 +544,13 @@ class fs_postgresql extends fs_db
       return $consulta;
    }
    
-   /// devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
+   /**
+    * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+    * @param type $table_name
+    * @param type $xml_columnas
+    * @param type $xml_restricciones
+    * @return type
+    */
    public function generate_table($table_name, $xml_columnas, $xml_restricciones)
    {
       $consulta = 'CREATE TABLE '.$table_name.' (';
@@ -455,5 +576,3 @@ class fs_postgresql extends fs_db
       return $consulta.' ); '.$this->compare_constraints($table_name, $xml_restricciones, FALSE);
    }
 }
-
-?>

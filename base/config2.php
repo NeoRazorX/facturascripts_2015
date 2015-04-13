@@ -157,3 +157,12 @@ if( file_exists('tmp/enabled_plugins.list') )
       }
    }
 }
+
+/// cargamos las funciones de los plugins
+foreach($GLOBALS['plugins'] as $plug)
+{
+   if( file_exists('plugins/'.$plug.'/functions.php') )
+   {
+      include 'plugins/'.$plug.'/functions.php';
+   }
+}

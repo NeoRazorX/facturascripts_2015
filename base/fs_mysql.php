@@ -24,7 +24,10 @@ require_once 'base/fs_db.php';
  */
 class fs_mysql extends fs_db
 {
-   /// conecta con la base de datos
+   /**
+    * Conecta a la base de datos.
+    * @return boolean
+    */
    public function connect()
    {
       $connected = FALSE;
@@ -72,7 +75,10 @@ class fs_mysql extends fs_db
       return $connected;
    }
    
-   /// desconecta de la base de datos
+   /**
+    * Desconecta de la base de datos.
+    * @return boolean
+    */
    public function close()
    {
       if(self::$link)
@@ -85,26 +91,36 @@ class fs_mysql extends fs_db
          return TRUE;
    }
    
+   /**
+    * Devuelve un array con los nombres de las tablas de la base de datos.
+    * @return type
+    */
    public function list_tables()
    {
+      $tables = array();
+      
       $aux = $this->select("SHOW TABLES;");
       if($aux)
       {
-         $tables = array();
          foreach($aux as $a)
             $tables[] = array('name' => $a['Tables_in_'.FS_DB_NAME]);
-         return $tables;
       }
-      else
-         return array();
+      
+      return $tables;
    }
    
+   /**
+    * Devuelve un array con las columnas de una tabla dada.
+    * @param type $table
+    * @return type
+    */
    public function get_columns($table)
    {
+      $columnas = array();
+      
       $aux = $this->select("SHOW COLUMNS FROM ".$table.";");
       if($aux)
       {
-         $columnas = array();
          foreach($aux as $a)
          {
             $columnas[] = array(
@@ -116,19 +132,25 @@ class fs_mysql extends fs_db
                'key' => $a['Key']
             );
          }
-         return $columnas;
       }
-      else
-         return array();
+      
+      return $columnas;
    }
    
+   /**
+    * Devuelve una array con las restricciones de una tabla dada:
+    * clave primaria, claves ajenas, etc.
+    * @param type $table
+    * @return type
+    */
    public function get_constraints($table)
    {
+      $constraints = array();
+      
       $aux = $this->select("SELECT * FROM information_schema.table_constraints
          WHERE table_schema = schema() AND table_name = '".$table."';");
       if($aux)
       {
-         $constraints = array();
          foreach($aux as $a)
          {
             $constraints[] = array(
@@ -136,24 +158,29 @@ class fs_mysql extends fs_db
                 'tipo' => $a['CONSTRAINT_TYPE']
             );
          }
-         return $constraints;
       }
-      else
-         return array();
+      
+      return $constraints;
    }
    
+   /**
+    * Devuelve una array con los indices de una tabla dada.
+    * @param type $table
+    * @return type
+    */
    public function get_indexes($table)
    {
+      $indices = array();
+      
       $aux = $this->select("SHOW INDEXES FROM ".$table.";");
       if($aux)
       {
-         $indices = array();
          foreach($aux as $a)
             $indices[] = array('name' => $a['Key_name']);
-         return $indices;
+         
       }
-      else
-         return array();
+      
+      return $indices;
    }
    
    public function get_locks()
@@ -164,12 +191,19 @@ class fs_mysql extends fs_db
    public function version()
    {
       if(self::$link)
+      {
          return 'MYSQL '.self::$link->server_version;
+      }
       else
          return FALSE;
    }
    
-   /// ejecuta un select
+   /**
+    * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
+    * o false en caso de fallo.
+    * @param type $sql
+    * @return type
+    */
    public function select($sql)
    {
       $resultado = FALSE;
@@ -196,6 +230,17 @@ class fs_mysql extends fs_db
       return $resultado;
    }
    
+   /**
+    * Ejecuta una sentencia SQL de tipo select, pero con paginación,
+    * y devuelve un array con los resultados,
+    * o false en caso de fallo.
+    * Limit es el número de elementos que quieres que devuelve.
+    * Offset es el número de resultado desde el que quieres que empiece.
+    * @param type $sql
+    * @param type $limit
+    * @param type $offset
+    * @return type
+    */
    public function select_limit($sql, $limit, $offset)
    {
       $resultado = FALSE;
@@ -223,8 +268,17 @@ class fs_mysql extends fs_db
       return $resultado;
    }
    
-   /// ejecuta una consulta sobre la base de datos
-   public function exec($sql)
+   /**
+    * Ejecuta consultas SQL sobre la base de datos (inserts, updates y deletes).
+    * Para selects, mejor usar las funciones select() o select_limit().
+    * Por defecto se inicia una transacción, se ejecutan las consultas, y si todo
+    * sale bien, se guarda, sino se deshace.
+    * Se puede evitar este modo de transacción si se pone false
+    * en el parametro transaccion.
+    * @param type $sql
+    * @return boolean
+    */
+   public function exec($sql, $transaccion=TRUE)
    {
       $resultado = FALSE;
       
@@ -260,25 +314,62 @@ class fs_mysql extends fs_db
          else
             $resultado = TRUE;
          
-         if($resultado)
+         if($transaccion)
          {
-            self::$link->commit();
+            if($resultado)
+            {
+               self::$link->commit();
+            }
+            else
+               self::$link->rollback();
+            
+            /// reactivamos el autocommit
+            self::$link->autocommit(TRUE);
          }
-         else
-            self::$link->rollback();
-         
-         /// reactivamos el autocommit
-         self::$link->autocommit(TRUE);
       }
       
       return $resultado;
    }
    
+   public function begin_transaction()
+   {
+      if(self::$link)
+      {
+         self::$link->begin_transaction();
+      }
+   }
+   
+   public function commit()
+   {
+      if(self::$link)
+      {
+         self::$link->commit();
+      }
+   }
+   
+   public function rollback()
+   {
+      if(self::$link)
+      {
+         self::$link->rollback();
+      }
+   }
+   
+   /**
+    * Proporciona compatibilidad con la clase equivalente en PostgreSQL.
+    * @param type $seq
+    * @return boolean
+    */
    public function sequence_exists($seq)
    {
       return TRUE;
    }
    
+   /**
+    * Simula que devuelve el siguiente valor de una secuancia PostgreSQL.
+    * @param type $seq
+    * @return boolean
+    */
    public function nextval($seq)
    {
       /*
@@ -321,11 +412,17 @@ class fs_mysql extends fs_db
          return FALSE;
    }
    
+   /**
+    * Devuleve el último ID asignado.
+    * @return boolean
+    */
    public function lastval()
    {
       $aux = $this->select('SELECT LAST_INSERT_ID() as num;');
       if($aux)
+      {
          return $aux[0]['num'];
+      }
       else
          return FALSE;
    }
@@ -350,9 +447,13 @@ class fs_mysql extends fs_db
       return 'CAST('.$col.' as UNSIGNED)';
    }
    
-   /*
-    * Compara dos arrays de columnas, devuelve una sentencia sql
+   /**
+    * Compara dos arrays de columnas, devuelve una sentencia SQL
     * en caso de encontrar diferencias.
+    * @param type $table_name
+    * @param type $xml_cols
+    * @param type $columnas
+    * @return string
     */
    public function compare_columns($table_name, $xml_cols, $columnas)
    {
@@ -511,9 +612,13 @@ class fs_mysql extends fs_db
       }
    }
    
-   /*
-    * Compara dos arrays de restricciones, devuelve una sentencia sql
+   /**
+    * Compara dos arrays de restricciones, devuelve una sentencia SQL
     * en caso de encontrar diferencias.
+    * @param type $table_name
+    * @param type $c_nuevas
+    * @param type $c_old
+    * @return string
     */
    public function compare_constraints($table_name, $c_nuevas, $c_old)
    {
@@ -577,7 +682,13 @@ class fs_mysql extends fs_db
       return $consulta;
    }
    
-   /// devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
+   /**
+    * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+    * @param type $table_name
+    * @param type $xml_columnas
+    * @param type $xml_restricciones
+    * @return type
+    */
    public function generate_table($table_name, $xml_columnas, $xml_restricciones)
    {
       $consulta = "CREATE TABLE ".$table_name." ( ";
