@@ -75,21 +75,6 @@ function guarda_config($nombre_archivo)
    fwrite($archivo, "\n");
    fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
    fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Un número identificador para esta instancia de FacturaScripts.\n");
-   fwrite($archivo, " * Necesario para identificar cada caja en el TPV.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_ID', 1);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Nombre o dirección de la impresora de tickets.\n");
-   fwrite($archivo, " * '' -> impresora predefinida.\n");
-   fwrite($archivo, " * 'epson234' -> impresora con nombre epson234.\n");
-   fwrite($archivo, " * '/dev/usb/lp0' -> escribir diectamente sobre ese archivo.\n");
-   fwrite($archivo, " * 'remote-printer' -> permite imprimir mediante el programa fs_remote_printer.py\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_PRINTER', 'remote-printer');\n");
    fclose($archivo);
    
    header("Location: index.php");

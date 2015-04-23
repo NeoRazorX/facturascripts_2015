@@ -163,6 +163,6 @@ foreach($GLOBALS['plugins'] as $plug)
 {
    if( file_exists('plugins/'.$plug.'/functions.php') )
    {
-      include 'plugins/'.$plug.'/functions.php';
+      require_once 'plugins/'.$plug.'/functions.php';
    }
 }

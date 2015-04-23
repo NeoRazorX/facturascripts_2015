@@ -576,6 +576,12 @@ y las adquisiciones de bienes y servicios.'
          
          if( file_put_contents('tmp/enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
          {
+            /// cargamos el archivo functions.php
+            if( file_exists('plugins/'.$name.'/functions.php') )
+            {
+               require_once 'plugins/'.$name.'/functions.php';
+            }
+            
             if( file_exists(getcwd().'/plugins/'.$name.'/controller') )
             {
                /// activamos las páginas del plugin
@@ -767,5 +773,17 @@ y las adquisiciones de bienes y servicios.'
       }
       else
          return file_get_contents($url);
+   }
+   
+   public function get_max_file_upload()
+   {
+      $max = intval( ini_get('post_max_size') );
+      
+      if( intval(ini_get('upload_max_filesize')) > $max )
+      {
+         $max = intval(ini_get('upload_max_filesize'));
+      }
+      
+      return $max;
    }
 }

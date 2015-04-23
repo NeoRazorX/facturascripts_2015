@@ -46,6 +46,13 @@
          document.f_empresa.nombre.focus();
       }
    }
+   function delete_cuenta(id)
+   {
+      if( confirm('¿Realmente desea eliminar la cuenta bancaria #'+id+'?') )
+      {
+         window.location.href = '{$fsc->url()}&delete_cuenta='+id+'#cuentasb';
+      }
+   }
    $(document).ready(function() {
       comprobar_url();
       window.onpopstate = function() {
@@ -362,26 +369,37 @@
                      <h3 class="panel-title">Cuenta bancaria #{$value->codcuenta}</h3>
                   </div>
                   <div class="panel-body">
-                     <div class="form-group">
-                        Descripción:
-                        <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" placeholder="Cuenta principal" autocomplete="off"/>
+                     <div class="row">
+                        <div class="col-sm-8">
+                           <div class="form-group">
+                              <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" placeholder="Cuenta principal" autocomplete="off"/>
+                           </div>
+                        </div>
+                        <div class="col-sm-4 text-right">
+                           <div class="btn-group">
+                              <a class="btn btn-sm btn-danger" onclick="delete_cuenta('{$value->codcuenta}');">
+                                 <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+                              </a>
+                              <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion;this.form.submit();">
+                                 <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                              </button>
+                           </div>
+                        </div>
                      </div>
-                     <div class="form-group col-lg-6">
-                        <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
-                        <input class="form-control" type="text" name="iban" value="{$value->iban}" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
+                     <div class="row">
+                        <div class="col-lg-6">
+                           <div class="form-group">
+                              <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
+                              <input class="form-control" type="text" name="iban" value="{$value->iban}" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
+                           </div>
+                        </div>
+                        <div class="col-lg-6">
+                           <div class="form-group">
+                              Calcular IBAN:
+                              <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
+                           </div>
+                        </div>
                      </div>
-                     <div class="form-group col-lg-6">
-                        Calcular IBAN:
-                        <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
-                     </div>
-                  </div>
-                  <div class="panel-footer text-right">
-                     <a class="btn btn-sm btn-danger pull-left" type="button" onclick="return confirm('¿Realmente desea eliminar esta Cuenta bancaria?');" href="{$fsc->url()}&delete_cuenta={$value->codcuenta}#cuentasb">
-                        <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
-                     </a>
-                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.action='{$fsc->url()}#facturacion;this.form.submit();">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
-                     </button>
                   </div>
                </div>
             </form>

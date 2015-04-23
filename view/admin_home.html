@@ -555,7 +555,10 @@
                <div class="form-group">
                   <input type="file" name="fplugin" accept="application/zip"/>
                </div>
-               <button type="submit" class="btn btn-primary">
+               <p class="help-block">
+                  Este servidor admite un tamaño máximo de {$fsc->get_max_file_upload()} MB
+               </p>
+               <button type="submit" class="btn btn-primary" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir
                </button>
             </form>
