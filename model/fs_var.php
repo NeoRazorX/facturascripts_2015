@@ -31,7 +31,7 @@ class fs_var extends fs_model
    public $name;
    
    /**
-    * Valor almacenado. Varchar(255).
+    * Valor almacenado. Text.
     * @var type 
     */
    public $varchar;
@@ -147,6 +147,16 @@ class fs_var extends fs_model
       }
       
       return $this->db->exec($sql);
+   }
+   
+   /**
+    * Elimina de la base de datos la tupla con ese nombre.
+    * @param type $name
+    * @return type
+    */
+   public function simple_delete($name)
+   {
+      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";");
    }
    
    /**

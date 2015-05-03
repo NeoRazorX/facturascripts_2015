@@ -224,35 +224,6 @@
          </form>
       </div>
       <div role="tabpanel" class="tab-pane" id="t_plugins">
-         <div class="container-fluid">
-            <div class="row" style="margin-top: 10px; margin-bottom: 15px;">
-               <div class="col-xs-10">
-                  <div class="btn-group">
-                     <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        <span class="hidden-xs">&nbsp; Añadir</span>
-                     </a>
-                     <a href="https://www.facturascripts.com/store/" target="_blank" class="btn btn-sm btn-default">
-                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                        <span class="hidden-xs">&nbsp; Tienda de plugins</span>
-                     </a>
-                  </div>
-               </div>
-               <div class="col-xs-2">
-                  <form class="form" action="https://www.facturascripts.com/store/" target="_blank">
-                     <input type="hidden" name="post_type" value="product"/>
-                     <div class="input-group">
-                        <input type="text" name="s" placeholder="Buscar" class="form-control">
-                        <span class="input-group-btn hidden-xs">
-                           <button class="btn btn-primary" type="button">
-                              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                           </button>
-                        </span>
-                     </div>
-                  </form>
-               </div>
-            </div>
-         </div>
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -311,25 +282,41 @@
                {/loop}
             </table>
          </div>
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-xs-12">
+                  <div class="btn-group">
+                     <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <span class="hidden-xs">&nbsp; Añadir</span>
+                     </a>
+                  </div>
+               </div>
+            </div>
+         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="t_descargas">
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
                   <tr>
+                     <th></th>
                      <th class="text-left">Plugin</th>
                      <th class="text-left">Descripción</th>
                      <th></th>
                   </tr>
                </thead>
                {loop="$fsc->download_list"}
-               <tr>
+               <tr{if="file_exists('plugins/'.$key)"} class="bg-success"{/if}>
+                  <td class="text-right">
+                     <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="Descatado"></span>
+                  </td>
                   <td>{$key}</td>
                   <td>{$value['description']}</td>
                   <td class="text-right">
                      {if="file_exists('plugins/'.$key)"}
-                     <a href="#plugins" class="btn btn-xs btn-success">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Descargado
+                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Instalado
                      </a>
                      {else}
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}#plugins" class="btn btn-xs btn-primary">
@@ -339,14 +326,32 @@
                   </td>
                </tr>
                {/loop}
-               <tr class="bg-info">
-                  <td colspan="2">Más en la tienda de plugins.</td>
+               {loop="$fsc->download_list2"}
+               <tr{if="file_exists('plugins/'.$value->nombre)"} class="bg-success"{elseif="!$value->estable"} class="bg-warning"{/if}>
+                  <td>
+                     {if="!$value->estable"}
+                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Descatado"></span>
+                     {/if}
+                  </td>
+                  <td>{$value->nombre}</td>
+                  <td>{$value->descripcion}<br/>Autor: {$value->nick}</td>
                   <td class="text-right">
-                     <a href="https://www.facturascripts.com/store/" target="_blank" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Tienda
+                     {if="file_exists('plugins/'.$value->nombre)"}
+                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Instalado
                      </a>
+                     {elseif="substr($value->zip_link, -4) == '.zip'"}
+                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download2={$value->id}#plugins" class="btn btn-xs btn-primary">
+                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
+                     </a>
+                     {else}
+                     <a href="{$value->link}" target="_blank" class="btn btn-xs btn-info">
+                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Comprar
+                     </a>
+                     {/if}
                   </td>
                </tr>
+               {/loop}
             </table>
          </div>
       </div>
