@@ -408,7 +408,7 @@ class fs_user extends fs_model
       $this->nick = trim($this->nick);
       $this->last_browser = $this->no_html($this->last_browser);
       
-      if( !preg_match("/^[A-Z0-9_]{3,12}$/i", $this->nick) )
+      if( !preg_match("/^[A-Z0-9_\+\.\-]{3,12}$/i", $this->nick) )
       {
          $this->new_error_msg("Nick no válido. Debe tener entre 3 y 12 caracteres,
             valen números o letras, pero no la Ñ ni acentos.");

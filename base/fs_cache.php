@@ -97,7 +97,7 @@ class fs_cache
       }
       else if($json)
       {
-         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
+         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,49) != 0 )
          {
             return json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
          }
@@ -122,7 +122,7 @@ class fs_cache
       }
       else if($json)
       {
-         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
+         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,49) != 0 )
          {
             $aa = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
          }
@@ -147,7 +147,7 @@ class fs_cache
       }
       else if($json)
       {
-         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
+         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,49) != 0 )
          {
             $a = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
             if( is_array($a) )

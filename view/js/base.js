@@ -206,4 +206,8 @@ $(document).ready(function() {
          window.document.location = $(this).attr("href");
       }
    });
+   $(".cancel_clickable").mousedown(function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+   });
 });

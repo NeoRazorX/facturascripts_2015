@@ -20,6 +20,7 @@
 class admin_home extends fs_controller
 {
    public $download_list;
+   public $download_list2;
    public $paginas;
    public $step;
    
@@ -31,74 +32,14 @@ class admin_home extends fs_controller
    protected function process()
    {
       $this->download_list = array(
-          'colombia' => array(
-              'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
-              'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
-          ),
-          'documentos_facturas' => array(
-              'url' => 'https://github.com/NeoRazorX/documentos_facturas/archive/master.zip',
-              'description' => 'Permite adjuntar archivos a facturas de compra o venta.'
-          ),
-          'documentos_procli' => array(
-              'url' => 'https://github.com/jcanda/documentos_procli/archive/master.zip',
-              'description' => 'Permite adjuntar archivos a clientes o proveedores.'
-          ),
-          'factura_detallada' => array(
-              'url' => 'https://github.com/NeoRazorX/factura_detallada/archive/master.zip',
-              'description' => 'Añade un nuevo formato de impresión de facturas de cliente a FacturaScripts.'
-          ),
           'facturacion_base' => array(
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
               'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
           ),
-          'login_anonimo' => array(
-              'url' => 'https://github.com/NeoRazorX/login_anonimo/archive/master.zip',
-              'description' => 'Oculta el nombre de la empresa y la lista de usuarios en la pantalla de login.'
+          'colombia' => array(
+              'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
           ),
-          'megafacturador' => array(
-              'url' => 'https://github.com/NeoRazorX/megafacturador/archive/master.zip',
-              'description' => 'Permite convertir múltiples albaranes de compras o ventas en facturas.'
-          ),
-          'modelo_347' => array(
-              'url' => 'https://github.com/NeoRazorX/modelo_347/archive/master.zip',
-              'description' => 'El Modelo 347 es una declaración anual informativa de operaciones con terceras personas.
-Los empresarios y profesionales están obligados a la presentación del Modelo 347 siempre
-que hayan realizado operaciones con terceros por importe superior a 3.005,06 € durante
-el año natural (se puede cambiar la cantidad), computando de forma separada las entregas
-y las adquisiciones de bienes y servicios.'
-          ),
-          'pagos' => array(
-              'url' => 'https://github.com/NeoRazorX/pagos/archive/master.zip',
-              'description' => 'Permite la gestión de pagos de pedidos, albaranes y facturas de venta.'
-          ),
-          'presupuestos_y_pedidos' => array(
-              'url' => 'https://github.com/neorazorx/presupuestos_y_pedidos/archive/master.zip',
-              'description' => 'Añade soporte para pedidos y presupuestos a clientes.'
-          ),
-          'SAT' => array(
-              'url' => 'https://github.com/NeoRazorX/SAT/archive/master.zip',
-              'description' => 'Permite gestionar el Servicio de Asistencia Tecnica, centrado en el área informática.'
-          ),
-          'sql_editor' => array(
-              'url' => 'https://github.com/NeoRazorX/sql_editor/archive/master.zip',
-              'description' => 'Sencillo, pero potente editor de SQL.'
-          ),
-          'supermercado_solidario' => array(
-              'url' => 'https://github.com/NeoRazorX/supermercado_solidario/archive/master.zip',
-              'description' => 'Permite administrar un supermercado solidario. Incluye un TPV específico.'
-          ),
-          'xml_import_export' => array(
-              'url' => 'https://github.com/NeoRazorX/xml_import_export/archive/master.zip',
-              'description' => 'Permite importar/exportar información de FacturaScripts a partir de archivos XML.'
-          ),
-          'dashboard' => array(
-              'url' => 'https://github.com/shawe/dashboard/archive/master.zip',
-              'description' => 'Pantalla de información resumida para FacturaScripts. <b>Todavía en desarrollo</b>'
-          ),
-          'backups' => array(
-              'url' => 'https://github.com/shawe/backups/archive/master.zip',
-              'description' => 'Plugin para añadir soporte para backups de la base de datos de FacturaScripts.'
-          )
       );
       $fsvar = new fs_var();
       $this->step = $fsvar->simple_get('install_step');
@@ -113,6 +54,19 @@ y las adquisiciones de bienes y servicios.'
          {
             $GLOBALS['config2'][$i] = $_POST[$i];
             $guardar = TRUE;
+         }
+      }
+      
+      /**
+       * Pestaña descargas
+       */
+      if( !isset($_GET['check4updates']) )
+      {
+         $this->download_list2 = $this->cache->get('download_list');
+         if(!$this->download_list2)
+         {
+            $this->download_list2 = json_decode( @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE') );
+            $this->cache->set('download_list', $this->download_list2);
          }
       }
       
@@ -233,7 +187,10 @@ y las adquisiciones de bienes y servicios.'
                   unlink('download.zip');
                   
                   /// renombramos el directorio
-                  rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
+                  if( file_exists('plugins/'.$_GET['download'].'-master') )
+                  {
+                     rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
+                  }
                   
                   $this->new_message('Plugin añadido correctamente.');
                   $this->enable_plugin($_GET['download']);
@@ -256,6 +213,51 @@ y las adquisiciones de bienes y servicios.'
          }
          else
             $this->new_error_msg('Descarga no encontrada.');
+      }
+      else if( isset($_GET['download2']) )
+      {
+         $encontrado = FALSE;
+         foreach($this->download_list2 as $item)
+         {
+            if( $item->id == intval($_GET['download2']) )
+            {
+               $this->new_message('Descargando el plugin '.$item->nombre);
+               $encontrado = TRUE;
+               
+               if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
+               {
+                  $zip = new ZipArchive();
+                  if( $zip->open('download.zip') )
+                  {
+                     $zip->extractTo('plugins/');
+                     $zip->close();
+                     unlink('download.zip');
+                     
+                     /// renombramos el directorio
+                     if( file_exists('plugins/'.$item->nombre.'-master') )
+                     {
+                        rename('plugins/'.$item->nombre.'-master', 'plugins/'.$item->nombre);
+                     }
+                     
+                     $this->new_message('Plugin añadido correctamente.');
+                     $this->enable_plugin($item->nombre);
+                  }
+                  else
+                     $this->new_error_msg('Archivo no encontrado.');
+               }
+               else
+               {
+                  $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
+                          . '<a href="'.$item->zip_link.'" target="_blank">aquí</a> y añadirlo desde la pestaña <b>plugins</b>.');
+               }
+               break;
+            }
+         }
+         
+         if(!$encontrado)
+         {
+            $this->new_error_msg('Descarga no encontrada.');
+         }
       }
       else if( isset($_GET['reset']) )
       {

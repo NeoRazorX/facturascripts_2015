@@ -987,6 +987,11 @@ class fs_controller
       
       $txt .= 'memcache version: '.$this->cache->version()."\n";
       
+      if( function_exists('curl_init') )
+         $txt .= "curl: YES\n";
+      else
+         $txt .= "curl: NO\n";
+      
       $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
       
       if( isset($_SERVER['REQUEST_URI']) )
