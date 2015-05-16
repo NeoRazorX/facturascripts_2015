@@ -352,6 +352,14 @@ class admin_user extends fs_controller
               'text' => 'view/css/bootstrap-theme_dark_navbar.css',
               'params' => ''
           ),
+          array(
+              'name' => 'paper',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-paper.css',
+              'params' => ''
+          ),
       );
       foreach($extensions as $ext)
       {
