@@ -229,14 +229,32 @@ class admin_home extends fs_controller
                   $zip = new ZipArchive();
                   if( $zip->open('download.zip') )
                   {
+                     $plugins_list = scandir(getcwd().'/plugins');
                      $zip->extractTo('plugins/');
                      $zip->close();
                      unlink('download.zip');
                      
-                     /// renombramos el directorio
-                     if( file_exists('plugins/'.$item->nombre.'-master') )
+                     /// renombramos si es necesario
+                     foreach( scandir(getcwd().'/plugins') as $f)
                      {
-                        rename('plugins/'.$item->nombre.'-master', 'plugins/'.$item->nombre);
+                        if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                        {
+                           $encontrado2 = FALSE;
+                           foreach($plugins_list as $f2)
+                           {
+                              if($f == $f2)
+                              {
+                                 $encontrado2 = TRUE;
+                                 break;
+                              }
+                           }
+                           
+                           if(!$encontrado2)
+                           {
+                              rename('plugins/'.$f, 'plugins/'.$item->nombre);
+                              break;
+                           }
+                        }
                      }
                      
                      $this->new_message('Plugin añadido correctamente.');

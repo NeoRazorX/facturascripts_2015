@@ -49,7 +49,10 @@
             <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
          </div>
          <div class="col-sm-4 col-xs-6 text-right">
-            <span class="label label-default">Procesado en: {$fsc->duration()}</span>
+            <span class="label label-default">
+               <span class="glyphicon glyphicon-time" aria-hidden="true" title="Página procesada en {$fsc->duration()}"></span>
+               &nbsp; {$fsc->duration()}
+            </span>
          </div>
       </div>
    </div>

@@ -526,6 +526,16 @@
                      </div>
                   </div>
                </div>
+               <div class="row">
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Algoritmo de nuevo código:
+                        <select name="new_codigo" class="form-control">
+                           <option value="eneboo"{if="$GLOBALS['config2']['new_codigo']=='eneboo'"} selected='selected'{/if}>Compatible con Eneboo</option>
+                        </select>
+                     </div>
+                  </div>
+               </div>
                <div class="row" style="margin-top: 20px;">
                   <div class="col-md-6 col-sm-6">
                      <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{$fsc->url()}&caca={$fsc->random_string(4)}&reset=TRUE#avanzado'">
