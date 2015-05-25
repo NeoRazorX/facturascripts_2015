@@ -370,12 +370,12 @@
                   </div>
                   <div class="panel-body">
                      <div class="row">
-                        <div class="col-sm-8">
+                        <div class="col-md-8">
                            <div class="form-group">
                               <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" placeholder="Cuenta principal" autocomplete="off"/>
                            </div>
                         </div>
-                        <div class="col-sm-4 text-right">
+                        <div class="col-md-4 text-right">
                            <div class="btn-group">
                               <a class="btn btn-sm btn-danger" onclick="delete_cuenta('{$value->codcuenta}');">
                                  <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
@@ -387,16 +387,22 @@
                         </div>
                      </div>
                      <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-md-4">
                            <div class="form-group">
                               <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
                               <input class="form-control" type="text" name="iban" value="{$value->iban}" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
                            </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-md-4">
                            <div class="form-group">
                               Calcular IBAN:
                               <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="form-group">
+                              <a target="_blank" href="http://es.wikipedia.org/wiki/Society_for_Worldwide_Interbank_Financial_Telecommunication">SWIFT</a> o BIC:
+                              <input class="form-control" type="text" name="swift" value="{$value->swift}" maxlength="11" autocomplete="off"/>
                            </div>
                         </div>
                      </div>

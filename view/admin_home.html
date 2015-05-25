@@ -309,7 +309,7 @@
                {loop="$fsc->download_list"}
                <tr{if="file_exists('plugins/'.$key)"} class="bg-success"{/if}>
                   <td class="text-right">
-                     <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="Descatado"></span>
+                     <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="Destacado"></span>
                   </td>
                   <td>{$key}</td>
                   <td>{$value['description']}</td>
@@ -330,7 +330,7 @@
                <tr{if="file_exists('plugins/'.$value->nombre)"} class="bg-success"{elseif="!$value->estable"} class="bg-warning"{/if}>
                   <td>
                      {if="!$value->estable"}
-                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Descatado"></span>
+                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
                      {/if}
                   </td>
                   <td>{$value->nombre}</td>

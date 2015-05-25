@@ -29,6 +29,7 @@ class cuenta_banco extends fs_model
    public $codcuenta;
    public $descripcion;
    public $iban;
+   public $swift;
    
    public function __construct($c = FALSE)
    {
@@ -39,12 +40,14 @@ class cuenta_banco extends fs_model
          $this->codcuenta = $c['codcuenta'];
          $this->descripcion = $c['descripcion'];
          $this->iban = $c['iban'];
+         $this->swift = $c['swift'];
       }
       else
       {
          $this->codcuenta = NULL;
          $this->descripcion = NULL;
          $this->iban = NULL;
+         $this->swift = NULL;
       }
    }
    
@@ -92,14 +95,19 @@ class cuenta_banco extends fs_model
       
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-            iban = ".$this->var2str($this->iban)." WHERE codcuenta = ".$this->var2str($this->codcuenta).";";
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).
+                 ", iban = ".$this->var2str($this->iban).
+                 ", swift = ".$this->var2str($this->swift).
+                 " WHERE codcuenta = ".$this->var2str($this->codcuenta).";";
       }
       else
       {
          $this->codcuenta = $this->get_new_codigo();
-         $sql = "INSERT INTO ".$this->table_name." (codcuenta,descripcion,iban) VALUES
-            (".$this->var2str($this->codcuenta).",".$this->var2str($this->descripcion).",".$this->var2str($this->iban).");";
+         $sql = "INSERT INTO ".$this->table_name." (codcuenta,descripcion,iban,swift)
+                 VALUES (".$this->var2str($this->codcuenta).
+                 ",".$this->var2str($this->descripcion).
+                 ",".$this->var2str($this->iban).
+                 ",".$this->var2str($this->swift).");";
       }
       
       return $this->db->exec($sql);
@@ -138,7 +146,9 @@ class cuenta_banco extends fs_model
       $digitoControl =  98 - bcmod($dividendo, '97');
       
       if( strlen($digitoControl) == 1 )
+      {
          $digitoControl = '0'.$digitoControl;
+      }
       
       return $codpais.$digitoControl.$ccc;
    }
