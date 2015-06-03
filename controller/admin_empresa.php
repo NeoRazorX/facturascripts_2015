@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'extras/phpmailer/class.phpmailer.php';
+require_once 'extras/phpmailer/class.smtp.php';
 require_model('almacen.php');
 require_model('cuenta_banco.php');
 require_model('divisa.php');
@@ -137,6 +139,7 @@ class admin_empresa extends fs_controller
             $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
             $this->mail['mail_user'] = $_POST['mail_user'];
             $fsvar->array_save($this->mail);
+            $this->mail_test();
          }
       }
       else if( isset($_POST['logo']) )
@@ -155,7 +158,6 @@ class admin_empresa extends fs_controller
             $this->new_message('Logotipo borrado correctamente.');
          }
       }
-
       else if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
       {
          $cuenta = $this->cuenta_banco->get($_GET['delete_cuenta']);
@@ -190,6 +192,8 @@ class admin_empresa extends fs_controller
          else
             $cuentab->iban = $_POST['iban'];
          
+         $cuentab->swift = $_POST['swift'];
+         
          if( $cuentab->save() )
          {
             $this->new_message('Cuenta bancaria guardada correctamente.');
@@ -199,5 +203,39 @@ class admin_empresa extends fs_controller
       }
       
       $this->logo = file_exists('tmp/'.FS_TMP_NAME.'logo.png');
+   }
+   
+   private function mail_test()
+   {
+      if( $this->empresa->can_send_mail() )
+      {
+         $mail = new PHPMailer();
+         $mail->IsSMTP();
+         $mail->SMTPAuth = TRUE;
+         $mail->SMTPSecure = $this->mail['mail_enc'];
+         $mail->Host = $this->mail['mail_host'];
+         $mail->Port = intval($this->mail['mail_port']);
+         $mail->Username = $this->empresa->email;
+         if($this->mail['mail_user'] != '')
+         {
+            $mail->Username = $this->mail['mail_user'];
+         }
+         
+         $mail->Password = $this->empresa->email_password;
+         $mail->From = $this->empresa->email;
+         $mail->FromName = $this->user->nick;
+         $mail->CharSet = 'UTF-8';
+         
+         $mail->Subject = 'TEST';
+         $mail->AltBody = 'TEST';
+         $mail->WordWrap = 50;
+         $mail->MsgHTML('TEST');
+         $mail->IsHTML(TRUE);
+         
+         if( !$mail->SmtpConnect() )
+         {
+            $this->new_error_msg('No se ha podido conectar por email.');
+         }
+      }
    }
 }

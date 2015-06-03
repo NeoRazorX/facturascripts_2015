@@ -135,6 +135,9 @@
          <a href="#t_descargas" aria-controls="t_descargas" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-download-alt"></span>
             <span class="hidden-xs">&nbsp; Descargas</span>
+            {if="$fsc->new_downloads>0"}
+            <span class="badge" title="Hay {$fsc->new_downloads} nuevas descargas">{$fsc->new_downloads}</span>
+            {/if}
          </a>
       </li>
       <li role="presentation">
@@ -241,9 +244,11 @@
                <tr{if="!$value['compatible']"} class="bg-danger"{elseif="$value['enabled']"} class="bg-success"{/if}>
                   <td>{$value['name']}</td>
                   <td>
-                     {$value['description']}
-                     {if="$value['update_url']!='' AND $value['version_url']!=''"}
-                     <p><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualizable</p>
+                     <p>{$value['description']}</p>
+                     {if="$value['download2_url']!=''"}
+                     <a href="{$value['download2_url']}" target="_blank" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualiza!
+                     </a>
                      {/if}
                   </td>
                   <td class="text-right">
@@ -327,14 +332,20 @@
                </tr>
                {/loop}
                {loop="$fsc->download_list2"}
-               <tr{if="file_exists('plugins/'.$value->nombre)"} class="bg-success"{elseif="!$value->estable"} class="bg-warning"{/if}>
+               <tr{if="file_exists('plugins/'.$value->nombre)"} class="bg-success"{elseif="!$value->estable"} class="bg-warning"{elseif="$value->nuevo"} class="bg-info"{/if}>
                   <td>
                      {if="!$value->estable"}
                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
                      {/if}
                   </td>
                   <td>{$value->nombre}</td>
-                  <td>{$value->descripcion}<br/>Autor: {$value->nick}</td>
+                  <td>
+                     {$value->descripcion}<br/>
+                     {if="substr($value->zip_link, -4) == '.zip'"}
+                     <a href="{$value->link}" target="_blank">Web del proyecto</a>. &nbsp;
+                     {/if}
+                     Autor: {$value->nick}.
+                  </td>
                   <td class="text-right">
                      {if="file_exists('plugins/'.$value->nombre)"}
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">

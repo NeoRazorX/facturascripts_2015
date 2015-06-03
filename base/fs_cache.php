@@ -108,6 +108,12 @@ class fs_cache
          return FALSE;
    }
    
+   /**
+    * Devuelve un array almacenado en cache
+    * @param type $key
+    * @param type $json
+    * @return type
+    */
    public function get_array($key, $json=FALSE)
    {
       $aa = array();
@@ -131,6 +137,14 @@ class fs_cache
       return $aa;
    }
    
+   /**
+    * Devuelve un array almacenado en cache, tal y como get_array(), pero con la direfencia
+    * de que si no se encuentra en cache, se pone $error a true.
+    * @param type $key
+    * @param type $error
+    * @param type $json
+    * @return type
+    */
    public function get_array2($key, &$error, $json=FALSE)
    {
       $aa = array();

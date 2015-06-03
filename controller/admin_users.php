@@ -70,10 +70,18 @@ class admin_users extends fs_controller
          $nu = $this->user->get($_GET['delete']);
          if($nu)
          {
-            if( FS_DEMO )
+            if(FS_DEMO)
             {
                $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar usuarios.
                   Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
+            }
+            else if( $nu->admin AND !$this->user->admin )
+            {
+               $this->new_error_msg("No tienes permiso para eliminar a un administrador.");
+            }
+            else if( !$this->user->allow_delete_on(__CLASS__) )
+            {
+               $this->new_error_msg("No tienes permiso para eliminar usuarios.");
             }
             else if( $nu->delete() )
             {

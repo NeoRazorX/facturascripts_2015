@@ -135,7 +135,7 @@ class forma_pago extends fs_model
       $listaformas = $this->cache->get_array('m_forma_pago_all');
       if( !$listaformas )
       {
-         $formas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpago ASC;");
+         $formas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY descripcion ASC;");
          if($formas)
          {
             foreach($formas as $f)
