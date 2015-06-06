@@ -158,7 +158,7 @@ abstract class fs_model
    protected function clean_checked_tables()
    {
       self::$checked_tables = array();
-      $this->cache->delete('fs_checked_tables');
+      $this->cache->delete('fs_checked_tables', TRUE);
    }
    
    /**

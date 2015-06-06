@@ -89,6 +89,8 @@ class divisa extends fs_model
            "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
          VALUES ('PAB','BALBOAS','38.17','590','B');".
            "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
+         VALUES ('PEN','NUEVOS SOLES','3.52','604','S/.');".
+           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
          VALUES ('VEF','BOLÍVARES','38.17','937','Bs');";
    }
    

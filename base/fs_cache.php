@@ -99,7 +99,7 @@ class fs_cache
       {
          if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,49) != 0 )
          {
-            return json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
+            return json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key), TRUE );
          }
          else
             return FALSE;
@@ -130,7 +130,7 @@ class fs_cache
       {
          if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,49) != 0 )
          {
-            $aa = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
+            $aa = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key), TRUE );
          }
       }
       
@@ -163,7 +163,7 @@ class fs_cache
       {
          if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,49) != 0 )
          {
-            $a = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key) );
+            $a = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key), TRUE );
             if( is_array($a) )
             {
                $aa = $a;
@@ -175,11 +175,18 @@ class fs_cache
       return $aa;
    }
    
-   public function delete($key)
+   public function delete($key, $json=FALSE)
    {
       if(self::$connected)
       {
          return self::$memcache->delete(FS_CACHE_PREFIX.$key);
+      }
+      else if($json)
+      {
+         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
+         {
+            return unlink('tmp/'.FS_TMP_NAME.'memcache_'.$key);
+         }
       }
       else
          return FALSE;

@@ -246,7 +246,7 @@
                   <td>
                      <p>{$value['description']}</p>
                      {if="$value['download2_url']!=''"}
-                     <a href="{$value['download2_url']}" target="_blank" class="btn btn-xs btn-default">
+                     <a href="#" class="btn btn-xs btn-default" data-toggle="modal" data-target="#modal_update_plugin">
                         <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualiza!
                      </a>
                      {/if}
@@ -576,6 +576,36 @@
          </div>
          <div class="modal-body">
             <p>Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.</p>
+            <form class="form" action="{$fsc->url()}#plugins" enctype="multipart/form-data" method="post">
+               <input type="hidden" name="install" value="TRUE"/>
+               <div class="form-group">
+                  <input type="file" name="fplugin" accept="application/zip"/>
+               </div>
+               <p class="help-block">
+                  Este servidor admite un tamaño máximo de {$fsc->get_max_file_upload()} MB
+               </p>
+               <button type="submit" class="btn btn-primary" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="modal_update_plugin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel2">Actualizar un plugin de pago</h4>
+         </div>
+         <div class="modal-body">
+            <p>
+               Si tienes el archivo .zip de la última versión del plugin, puedes subirlo e instalarlo desde aquí.
+            </p>
             <form class="form" action="{$fsc->url()}#plugins" enctype="multipart/form-data" method="post">
                <input type="hidden" name="install" value="TRUE"/>
                <div class="form-group">
