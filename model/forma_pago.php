@@ -32,13 +32,29 @@ class forma_pago extends fs_model
    public $descripcion;
    
    /**
-    * PAGADOS -> marca las facturas generadas como pagadas.
+    * Pagados -> marca las facturas generadas como pagadas.
     * @var type 
     */
    public $genrecibos;
+   
+   /**
+    * Todavía sin uso.
+    * @var type 
+    */
    public $codcuenta;
+   
+   /**
+    * Todavía sin uso.
+    * @var type 
+    */
    public $domiciliado;
-
+   
+   /**
+    * Sirve para generar la fecha de vencimiento de las facturas.
+    * @var type 
+    */
+   public $vencimiento;
+   
    public function __construct($f=FALSE)
    {
       parent::__construct('formaspago');
@@ -49,6 +65,7 @@ class forma_pago extends fs_model
          $this->genrecibos = $f['genrecibos'];
          $this->codcuenta = $f['codcuenta'];
          $this->domiciliado = $this->str2bool($f['domiciliado']);
+         $this->vencimiento = $f['vencimiento'];
       }
       else
       {
@@ -57,13 +74,15 @@ class forma_pago extends fs_model
          $this->genrecibos = 'Emitidos';
          $this->codcuenta = '';
          $this->domiciliado = FALSE;
+         $this->vencimiento = '+1month';
       }
    }
    
    protected function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES ('CONT','CONTADO','Emitidos',NULL,FALSE);";
+      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
+              . " VALUES ('CONT','CONTADO','Emitidos',NULL,FALSE,'+1month');";
    }
    
    public function url()
@@ -104,16 +123,22 @@ class forma_pago extends fs_model
       
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-            genrecibos = ".$this->var2str($this->genrecibos).", codcuenta = ".$this->var2str($this->codcuenta).",
-            domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = ".$this->var2str($this->codpago).";";
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).
+                 ", genrecibos = ".$this->var2str($this->genrecibos).
+                 ", codcuenta = ".$this->var2str($this->codcuenta).
+                 ", domiciliado = ".$this->var2str($this->domiciliado).
+                 ", vencimiento = ".$this->var2str($this->vencimiento).
+                 " WHERE codpago = ".$this->var2str($this->codpago).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
-            (".$this->var2str($this->codpago).",".$this->var2str($this->descripcion).",
-            ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
-            ".$this->var2str($this->domiciliado).");";
+         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)
+                 VALUES (".$this->var2str($this->codpago).
+                 ",".$this->var2str($this->descripcion).
+                 ",".$this->var2str($this->genrecibos).
+                 ",".$this->var2str($this->codcuenta).
+                 ",".$this->var2str($this->domiciliado).
+                 ",".$this->var2str($this->vencimiento).");";
       }
       
       return $this->db->exec($sql);
