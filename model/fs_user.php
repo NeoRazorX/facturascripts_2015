@@ -335,7 +335,7 @@ class fs_user extends fs_model
    public function set_password($p='')
    {
       $p = strtolower( trim($p) );
-      if( strlen($p) > 1 AND strlen($p) <= 12 )
+      if( mb_strlen($p) > 1 AND mb_strlen($p) <= 12 )
       {
          $this->password = sha1($p);
          return TRUE;

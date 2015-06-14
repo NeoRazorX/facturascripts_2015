@@ -83,7 +83,12 @@ class admin_home extends fs_controller
          if(!$this->download_list2)
          {
             $this->download_list2 = json_decode( @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE') );
-            $this->cache->set('download_list', $this->download_list2);
+            if($this->download_list2)
+            {
+               $this->cache->set('download_list', $this->download_list2);
+            }
+            else
+               $this->download_list2 = array();
          }
          foreach($this->download_list2 as $i => $di)
          {

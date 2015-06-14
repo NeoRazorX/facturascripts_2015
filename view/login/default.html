@@ -126,7 +126,7 @@
                      <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
                      {loop name="$fsc->user->all()"}
                         {if="$value->nick == $nlogin"}
-                        <option value="{$value->nick}" selected>{$value->nick}</option>
+                        <option value="{$value->nick}" selected="selected">{$value->nick}</option>
                         {else}
                         <option value="{$value->nick}">{$value->nick}</option>
                         {/if}
@@ -134,7 +134,7 @@
                      </select>
                   </div>
                   <div class="form-group">
-                     <input type="password" class="form-control input-lg" name="password" maxlength="20" placeholder="Contraseña"/>
+                     <input type="password" class="form-control input-lg" name="password" maxlength="12" placeholder="Contraseña"/>
                      <p class="help-block">
                         <a href="#" id="b_new_password">¿Has olvidado la contraseña?</a>
                      </p>
