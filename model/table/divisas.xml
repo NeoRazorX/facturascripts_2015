@@ -40,6 +40,10 @@
       <tipo>double precision</tipo>
       <nulo>NO</nulo>
    </columna>
+   <columna>
+      <nombre>tasaconv_compra</nombre>
+      <tipo>double precision</tipo>
+   </columna>
    <restriccion>
       <nombre>divisas_pkey</nombre>
       <consulta>PRIMARY KEY (coddivisa)</consulta>

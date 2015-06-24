@@ -422,8 +422,8 @@
                   <div class="form-group col-md-3 col-sm-3">
                      Símbolo Divisa:
                      <select name="pos_divisa" class="form-control">
-                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected="selected"{/if}>A la Derecha del Número</option>
-                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected="selected"{/if}>A la Izquierda del Número</option>
+                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected="selected"{/if}>123 {$fsc->simbolo_divisa()}</option>
+                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected="selected"{/if}>{$fsc->simbolo_divisa()}123</option>
                      </select>
                   </div>
                   <div class="col-md-3 col-sm-4">
