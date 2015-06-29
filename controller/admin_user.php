@@ -162,9 +162,12 @@ class admin_user extends fs_controller
    {
       foreach($this->extensions as $ext)
       {
-         if( !file_exists($ext->text) )
+         if($ext->type == 'css')
          {
-            $ext->delete();
+            if( !file_exists($ext->text) )
+            {
+               $ext->delete();
+            }
          }
       }
       
@@ -279,19 +282,25 @@ class admin_user extends fs_controller
          }
          
          /*
-          * El propio usuario no puede decidir dejar de ser administrador.
+          * Propiedad admin: solamente un admin puede cambiarla.
           */
-         if($this->user->nick != $this->suser->nick)
+         if($this->user->admin)
          {
             /*
-             * Si un usuario es administrador y deja de serlo, hay que darle acceso
-             * a algunas páginas, en caso contrario no podrá continuar
+             * El propio usuario no puede decidir dejar de ser administrador.
              */
-            if($this->suser->admin AND !isset($_POST['sadmin']))
+            if($this->user->nick != $this->suser->nick)
             {
-               $user_no_more_admin = TRUE;
+               /*
+                * Si un usuario es administrador y deja de serlo, hay que darle acceso
+                * a algunas páginas, en caso contrario no podrá continuar
+                */
+               if($this->suser->admin AND !isset($_POST['sadmin']))
+               {
+                  $user_no_more_admin = TRUE;
+               }
+               $this->suser->admin = isset($_POST['sadmin']);
             }
-            $this->suser->admin = isset($_POST['sadmin']);
          }
          
          $this->suser->fs_page = NULL;
