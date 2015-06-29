@@ -39,7 +39,11 @@ class admin_users extends fs_controller
          $nu = $this->user->get($_POST['nnick']);
          if($nu)
          {
-            Header( 'location: '.$nu->url() );
+            $this->new_error_msg('El usuario <a href="'.$nu->url().'">ya existe</a>.');
+         }
+         else if( isset($_POST['nadmin']) AND !$this->user->admin )
+         {
+            $this->new_error_msg('Solamente un administrador puede crear otro administrador.');
          }
          else
          {
