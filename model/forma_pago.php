@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Forma de pago de una factura.
  */
@@ -38,7 +36,7 @@ class forma_pago extends fs_model
    public $genrecibos;
    
    /**
-    * Todavía sin uso.
+    * Código de la cuenta bancaria asociada.
     * @var type 
     */
    public $codcuenta;
