@@ -201,15 +201,15 @@
                </div>
                <div class="panel-body">
                   <div class="form-group col-sm-6">
-                     <label>Email:</label>
+                     Email:
                      <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" autofocus />
                   </div>
                   <div class="form-group col-sm-6">
-                     <label>Contraseña:</label>
+                     Contraseña:
                      <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="Contraseña"/>
                   </div>
                   <div class="form-group">
-                     <label>Firma:</label>
+                     Firma:
                      <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
                   </div>
                </div>
@@ -222,32 +222,35 @@
             
             <div class="panel panel-warning" id="panel_email2">
                <div class="panel-heading">
-                  <h3 class="panel-title">Si no usas Gmail o Google Apps, rellena también estos datos</h3>
+                  <h3 class="panel-title">Si no usas Gmail o Google Apps, rellena <b>también</b> estos datos</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-4">
                      Host:
-                     <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off" autofocus />
+                     <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
+                     <p class="help-block">
+                        <a href="//www.facturascripts.com/comm3/index.php?page=community_item&id=74" target="_blank">¿Necesitas ayuda?</a>
+                     </p>
                   </div>
                   <div class="form-group col-sm-2">
                      Puerto:
                      <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-sm-4">
+                  <div class="form-group col-sm-3">
                      Encriptación:
                      <select name="mail_enc" class="form-control">
                         <option value="ssl">SSL</option>
                         <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
                      </select>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-3">
                      Usuario:
                      <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
                   </div>
-                  <div class="col-sm-6">
-                     <br/>
-                     <a href="//www.facturascripts.com/comm3/index.php?page=community_item&id=74" target="_blank">¿Necesitas ayuda?</a>
-                  </div>
+               </div>
+               <div class="panel-footer">
+                  ¿Quieres usar tu propio dominio para tu email?
+                  Prueba <a href="https://goo.gl/bRFlmv" target="_blank">Google Apps for Work</a> en tu negocio.
                </div>
             </div>
             
