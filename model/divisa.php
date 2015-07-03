@@ -147,7 +147,7 @@ class divisa extends fs_model
       
       if( !preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa) )
       {
-         $this->new_error_msg("Código de almacén no válido.");
+         $this->new_error_msg("Código de divisa no válido.");
       }
       else if( isset($this->codiso) AND !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso) )
       {
