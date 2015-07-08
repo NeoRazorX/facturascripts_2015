@@ -133,24 +133,24 @@
                   <h3 class="panel-title">Datos generales</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-5">
                      Nombre:
                      <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-3">
                      Nombre Corto:
                      <input class="form-control" type="text" name="nombrecorto" value="{$fsc->empresa->nombrecorto}" autocomplete="off"/>
                   </div>
                   {if="$fsc->facturacion_base"}
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-4">
                      {#FS_CIFNIF#}:
                      <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-4">
                      Administrador:
                      <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-2">
                      <a href="{$fsc->pais->url()}">País</a>:
                      <select name="codpais" class="form-control">
                         {loop="$fsc->pais->all()"}
@@ -158,32 +158,32 @@
                         {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-3">
                      <div class="text-capitalize">{#FS_PROVINCIA#}:</div>
                      <input class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-3">
                      Ciudad:
                      <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-sm-6">
-                     Dirección:
-                     <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
-                  </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-3">
                      Código Postal:
                      <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-9">
+                     Dirección:
+                     <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+                  </div>
+                  <div class="form-group col-sm-4">
                      Teléfono:
                      <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-4">
                      Fax:
                      <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
                   </div>
                   {/if}
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-4">
                      Web:
                      <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
                   </div>
@@ -288,19 +288,21 @@
                      </select>
                      <p class="help-block">El {#FS_IRPF#} se define en la serie.</p>
                   </div>
-                  <div class="form-group col-sm-6">
-                     <label>
-                        <input type="checkbox" name="recequivalencia" value="TRUE"{if="$fsc->empresa->recequivalencia"} checked="checked"{/if}/>
-                        Aplicar recargo de equivalencia
-                     </label>
+                  <div class="col-sm-4">
+                     <div class="checkbox">
+                        <label>
+                           <input type="checkbox" name="contintegrada" value="TRUE"{if="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
+                           Contabilidad integrada
+                        </label>
+                     </div>
+                     <div class="checkbox">
+                        <label>
+                           <input type="checkbox" name="recequivalencia" value="TRUE"{if="$fsc->empresa->recequivalencia"} checked="checked"{/if}/>
+                           Aplicar recargo de equivalencia
+                        </label>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-6">
-                     <label>
-                        <input type="checkbox" name="contintegrada" value="TRUE"{if="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
-                        Contabilidad integrada
-                     </label>
-                  </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-5">
                      <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
                      <select name="codpago" class="form-control">
                      {loop="$fsc->forma_pago->all()"}
@@ -308,7 +310,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-3">
                      <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}

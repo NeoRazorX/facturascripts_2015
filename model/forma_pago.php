@@ -42,7 +42,7 @@ class forma_pago extends fs_model
    public $codcuenta;
    
    /**
-    * Todavía sin uso.
+    * Para indicar si hay que mostrar la cuenta bancaria del cliente.
     * @var type 
     */
    public $domiciliado;

@@ -162,6 +162,17 @@
                         <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
                            <span class="glyphicon glyphicon-unchecked"></span>
                         </button>
+                        <!--
+                        {$sin_activar=0}
+                        {loop="$fsc->paginas"}
+                           {if="!$value->enabled"}{$sin_activar+=1}{/if}
+                        {/loop}
+                        -->
+                        {if="$sin_activar>0"}
+                        <button class="btn btn-sm btn-default" type="button" title="Hay {$sin_activar} página(s) no activa(s).">
+                           <span class="badge">{$sin_activar}</span>
+                        </button>
+                        {/if}
                      </div>
                   </div>
                   <div class="col-xs-6 text-right">
