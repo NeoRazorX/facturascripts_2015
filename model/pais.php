@@ -68,7 +68,8 @@ class pais extends fs_model
                 'ECU' => 'EC',
                 'MEX' => 'MX',
                 'PAN' => 'PA',
-                'VEN' => 'VE'
+                'PER' => 'PE',
+                'VEN' => 'VE',
             );
             
             if( isset($codigos[$this->codpais]) )
@@ -94,21 +95,8 @@ class pais extends fs_model
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codpais,codiso,nombre,bandera) VALUES ('ESP','ES','España',NULL),".
            " ('ARG','AR','Argentina',NULL), ('CHL','CL','Chile',NULL), ('COL','CO','Colombia',NULL),".
-           " ('ECU','EC','Ecuador',NULL), ('MEX','MX','México',NULL), ('PAN','PA','Panamá',NULL), ('VEN','VE','Venezuela',NULL);";
-   }
-   
-   private function get_codiso($codpais)
-   {
-      $codigos = array(
-          'ESP' => 'ES',
-          'ARG' => 'AR',
-          'CHL' => 'CL',
-          'COL' => 'CO',
-          'ECU' => 'EC',
-          'MEX' => 'MX',
-          'PAN' => 'PA',
-          'VEN' => 'VE'
-      );
+           " ('ECU','EC','Ecuador',NULL), ('MEX','MX','México',NULL), ('PAN','PA','Panamá',NULL),".
+           " ('PER','PE','Perú',NULL), ('VEN','VE','Venezuela',NULL);";
    }
    
    public function url()

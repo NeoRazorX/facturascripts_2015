@@ -620,11 +620,36 @@ class fs_mysql extends fs_db
     * @param type $c_old
     * @return string
     */
-   public function compare_constraints($table_name, $c_nuevas, $c_old)
+   public function compare_constraints($table_name, $c_nuevas, $c_old, $solo_eliminar=FALSE)
    {
       $consulta = '';
       
-      if($c_old)
+      if($solo_eliminar)
+      {
+         if($c_old AND $c_nuevas)
+         {
+            /// comprobamos una a una las viejas
+            foreach($c_old as $col)
+            {
+               $encontrado = FALSE;
+               foreach($c_nuevas as $col2)
+               {
+                  if($col['restriccion'] == $col2['nombre'])
+                  {
+                     $encontrado = TRUE;
+                     break;
+                  }
+               }
+               if(!$encontrado)
+               {
+                  /// eliminamos la restriccion
+                  if($col['tipo'] == 'FOREIGN KEY')
+                     $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
+               }
+            }
+         }
+      }
+      else if($c_old)
       {
          if($c_nuevas)
          {
@@ -632,7 +657,6 @@ class fs_mysql extends fs_db
             foreach($c_old as $col)
             {
                $encontrado = FALSE;
-               
                foreach($c_nuevas as $col2)
                {
                   if($col['restriccion'] == $col2['nombre'])
@@ -740,5 +764,67 @@ class fs_mysql extends fs_db
       }
       
       return $consulta;
+   }
+   
+   /**
+    * Comprueba y actualiza la estructura de la tabla si es necesario
+    * @param type $table_name
+    * @return boolean
+    */
+   protected function check_table($table_name)
+   {
+      $done = TRUE;
+      $consulta = '';
+      $columnas = FALSE;
+      $restricciones = FALSE;
+      $xml_columnas = FALSE;
+      $xml_restricciones = FALSE;
+      
+      if( $this->get_xml_table($table_name, $xml_columnas, $xml_restricciones) )
+      {
+         if( $this->db->table_exists($table_name) )
+         {
+            /// eliminamos restricciones
+            $restricciones = $this->db->get_constraints($table_name);
+            $consulta2 = $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones, TRUE);
+            if($consulta2 != '')
+            {
+               if( !$this->db->exec($consulta2) )
+               {
+                  $this->new_error_msg('Error al eliminar las restricciones de '.$table_name);
+               }
+            }
+            
+            /// comparamos las columnas
+            $columnas = $this->db->get_columns($table_name);
+            $consulta .= $this->db->compare_columns($table_name, $xml_columnas, $columnas);
+            
+            /// comparamos las restricciones
+            $restricciones2 = $this->db->get_constraints($table_name);
+            $consulta .= $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones2);
+         }
+         else
+         {
+            /// generamos el sql para crear la tabla
+            $consulta .= $this->db->generate_table($table_name, $xml_columnas, $xml_restricciones);
+            $consulta .= $this->install();
+         }
+         
+         if($consulta != '')
+         {
+            if( !$this->db->exec($consulta) )
+            {
+               $this->new_error_msg('Error al comprobar la tabla '.$table_name);
+               $done = FALSE;
+            }
+         }
+      }
+      else
+      {
+         $this->new_error_msg('Error con el xml.');
+         $done = FALSE;
+      }
+      
+      return $done;
    }
 }

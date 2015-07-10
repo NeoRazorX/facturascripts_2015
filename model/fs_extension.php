@@ -135,6 +135,20 @@ class fs_extension extends fs_model
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name)." AND page_from = ".$this->var2str($this->from).";");
    }
    
+   public function all_from($from)
+   {
+      $elist = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE page_from = ".$this->var2str($from)." ORDER BY name ASC;");
+      if($data)
+      {
+         foreach($data as $d)
+            $elist[] = new fs_extension($d);
+      }
+      
+      return $elist;
+   }
+   
    public function all_to($to)
    {
       $elist = array();

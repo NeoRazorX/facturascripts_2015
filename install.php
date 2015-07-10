@@ -108,7 +108,7 @@ else if( isset($_REQUEST['db_type']) )
             ini_set('mysqli.default_socket', $_POST['mysql_socket']);
          }
          
-         $connection = new mysqli($_REQUEST['db_host'], $_REQUEST['db_user'], $_REQUEST['db_pass'], $_REQUEST['db_name'], intval($_REQUEST['db_port']));
+         $connection = @new mysqli($_REQUEST['db_host'], $_REQUEST['db_user'], $_REQUEST['db_pass'], $_REQUEST['db_name'], intval($_REQUEST['db_port']));
          if($connection->connect_error)
          {
             $errors[] = "db_mysql";
@@ -127,7 +127,7 @@ else if( isset($_REQUEST['db_type']) )
    {
       if( function_exists('pg_connect') )
       {
-         $connection = pg_connect('host='.$_REQUEST['db_host'].' dbname='.$_REQUEST['db_name'].' port='.$_REQUEST['db_port'].
+         $connection = @pg_connect('host='.$_REQUEST['db_host'].' dbname='.$_REQUEST['db_name'].' port='.$_REQUEST['db_port'].
                  ' user='.$_REQUEST['db_user'].' password='.$_REQUEST['db_pass'] );
          if($connection)
          {
