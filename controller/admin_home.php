@@ -82,7 +82,7 @@ class admin_home extends fs_controller
          $this->download_list2 = $this->cache->get('download_list');
          if(!$this->download_list2)
          {
-            $this->download_list2 = json_decode( @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE') );
+            $this->download_list2 = json_decode( @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE', 5) );
             if($this->download_list2)
             {
                $this->cache->set('download_list', $this->download_list2);
@@ -739,7 +739,7 @@ class admin_home extends fs_controller
       }
    }
    
-   private function curl_get_contents($url)
+   private function curl_get_contents($url, $timeout = 30)
    {
       if( function_exists('curl_init') )
       {
@@ -749,6 +749,7 @@ class admin_home extends fs_controller
          curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
          curl_close($ch);

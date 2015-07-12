@@ -367,15 +367,20 @@
                      Pie de página de la factura:
                      <textarea name="pie_factura" rows="2" class="form-control">{$fsc->empresa->pie_factura}</textarea>
                   </div>
+                  {if="$fsc->logo"}
+                  <div class="thumbnail">
+                     <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
+                     <button class="btn btn-xs btn-block btn-default" id="b_add_logo">
+                        <span class="glyphicon glyphicon-picture"></span>
+                        Añadir / Cambiar logotipo a las facturas
+                     </button>
+                  </div>
+                  {else}
                   <div class="form-group">
                      <button class="btn btn-sm btn-default" id="b_add_logo">
                         <span class="glyphicon glyphicon-picture"></span>
                         Añadir / Cambiar logotipo a las facturas
                      </button>
-                  </div>
-                  {if="$fsc->logo"}
-                  <div class="thumbnail">
-                     <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
                   </div>
                   {/if}
                   <div class="form-group">
@@ -484,7 +489,7 @@
             </div>
             <div class="modal-footer">
                {if="$fsc->logo"}
-               <a class="btn btn-sm btn-danger" type="button" href="{$fsc->url()}&delete_logo=TRUE#impresion">
+               <a class="btn btn-sm btn-danger pull-left" type="button" href="{$fsc->url()}&delete_logo=TRUE#impresion">
                   <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
                </a>
                {/if}
