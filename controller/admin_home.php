@@ -455,6 +455,7 @@ class admin_home extends fs_controller
                 'version_url' => '',
                 'prioridad' => '-',
                 'download2_url' => '',
+                'idplugin' => NULL
             );
             
             if( file_exists('plugins/'.$f.'/facturascripts.ini') )
@@ -478,6 +479,11 @@ class admin_home extends fs_controller
                   $plugin['require'] = $ini_file['require'];
                }
                
+               if( isset($ini_file['idplugin']) )
+               {
+                  $plugin['idplugin'] = $ini_file['idplugin'];
+               }
+               
                if( isset($ini_file['update_url']) )
                {
                   $plugin['update_url'] = $ini_file['update_url'];
@@ -491,11 +497,11 @@ class admin_home extends fs_controller
                {
                   foreach($this->download_list2 as $ditem)
                   {
-                     if($ditem->nombre == $f)
+                     if($ditem->id == $plugin['idplugin'])
                      {
                         if( intval($ditem->version) > $plugin['version'] )
                         {
-                           $plugin['download2_url'] = $ditem->link;
+                           $plugin['download2_url'] = 'updater.php?idplugin='.$plugin['idplugin'].'&name='.$f;
                         }
                         break;
                      }
