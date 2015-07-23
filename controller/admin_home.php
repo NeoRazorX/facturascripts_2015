@@ -388,9 +388,9 @@ class admin_home extends fs_controller
    {
       $clist = array();
       $include = array(
-          'albaran','albaranes','cifnif','pedido','pedidos',
-          'presupuesto','presupuestos','provincia','apartado',
-          'iva', 'irpf'
+          'factura','facturas','albaran','albaranes','pedido','pedidos',
+          'presupuesto','presupuestos','provincia','apartado','cifnif',
+          'iva','irpf','numero2'
       );
       
       foreach($GLOBALS['config2'] as $i => $value)
