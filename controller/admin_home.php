@@ -493,7 +493,7 @@ class admin_home extends fs_controller
                {
                   $plugin['version_url'] = $ini_file['version_url'];
                }
-               elseif (is_array($this->download_list2) || is_object($this->download_list2))
+               elseif( is_array($this->download_list2) )
                {
                   foreach($this->download_list2 as $ditem)
                   {

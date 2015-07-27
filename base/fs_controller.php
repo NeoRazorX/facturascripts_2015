@@ -263,7 +263,7 @@ class fs_controller
    }
    
    /**
-    * Cierra la conexión con la base de datos
+    * Cierra la conexión con la base de datos.
     */
    public function close()
    {
@@ -686,7 +686,7 @@ class fs_controller
    }
    
    /**
-    * Obsoleto
+    * Obsoleto. Usar private_core() en su lugar.
     */
    protected function process()
    {
@@ -808,7 +808,8 @@ class fs_controller
    }
    
    /**
-    * Establece un ejercicio como predeterminado para este usuario
+    * Establece un ejercicio como predeterminado para este usuario.
+    * Función obsoleta.
     * @param type $cod el código del ejercicio
     */
    protected function save_codejercicio($cod)
@@ -826,7 +827,7 @@ class fs_controller
    }
    
    /**
-    * Establece un almacén como predeterminado para este usuario
+    * Establece un almacén como predeterminado para este usuario.
     * @param type $cod el código del almacén
     */
    protected function save_codalmacen($cod)
@@ -836,7 +837,8 @@ class fs_controller
    }
    
    /**
-    * Establece un cliente como predeterminado para este usuario
+    * Establece un cliente como predeterminado para este usuario.
+    * Función obsoleta.
     * @param type $cod el código del cliente
     */
    protected function save_codcliente($cod)
@@ -846,7 +848,8 @@ class fs_controller
    }
    
    /**
-    * Establece una divisa como predeterminada para este usuario
+    * Establece una divisa como predeterminada para este usuario.
+    * Función obsoleta.
     * @param type $cod el código de la divisa
     */
    protected function save_coddivisa($cod)
@@ -856,7 +859,7 @@ class fs_controller
    }
    
    /**
-    * Establece una familia como predeterminada para este usuario
+    * Establece una familia como predeterminada para este usuario.
     * @param type $cod el código de la familia
     */
    protected function save_codfamilia($cod)
@@ -866,7 +869,8 @@ class fs_controller
    }
    
    /**
-    * Establece una forma de pago como predeterminada para este usuario
+    * Establece una forma de pago como predeterminada para este usuario.
+    * Función obsoleta.
     * @param type $cod el código de la forma de pago
     */
    protected function save_codpago($cod)
@@ -876,7 +880,7 @@ class fs_controller
    }
    
    /**
-    * Establece un impuesto (IVA) como predeterminado para este usuario
+    * Establece un impuesto (IVA) como predeterminado para este usuario.
     * @param type $cod el código del iumpuesto
     */
    protected function save_codimpuesto($cod)
@@ -886,7 +890,8 @@ class fs_controller
    }
    
    /**
-    * Establece un código de país como predeterminado para este usuario
+    * Establece un código de país como predeterminado para este usuario.
+    * Función obsoleta.
     * @param type $cod el código del país
     */
    protected function save_codpais($cod)
@@ -896,7 +901,8 @@ class fs_controller
    }
    
    /**
-    * Establece un proveedor como predeterminado para este usuario
+    * Establece un proveedor como predeterminado para este usuario.
+    * Función obsoleta.
     * @param type $cod el código del proveedor
     */
    protected function save_codproveedor($cod)
@@ -906,7 +912,8 @@ class fs_controller
    }
    
    /**
-    * Establece una serie como predeterminada para este usuario
+    * Establece una serie como predeterminada para este usuario.
+    * Función obsoleta.
     * @param type $cod el código de la serie
     */
    protected function save_codserie($cod)
@@ -1124,6 +1131,10 @@ class fs_controller
       return $this->last_changes;
    }
    
+   /**
+    * Devuelve TRUE si hay actualizaciones pendientes (sólo si eres admin).
+    * @return boolean
+    */
    public function check_for_updates()
    {
       if($this->user->admin)
@@ -1133,5 +1144,28 @@ class fs_controller
       }
       else
          return FALSE;
+   }
+   
+   /**
+    * Busca en la lista de plugins activos, en orden inverso de prioridad
+    * (el último plugin activo tiene más prioridad que el primero)
+    * y nos devuelve la ruta del archivo javascript que le solicitamos.
+    * Así usamos el archivo del plugin con mayor prioridad.
+    * @param type $filename
+    * @return type
+    */
+   public function get_js_location($filename)
+   {
+      $found = FALSE;
+      foreach($GLOBALS['plugins'] as $plugin)
+      {
+         if( file_exists('plugins/'.$plugin.'/view/js/'.$filename) )
+         {
+            return 'plugins/'.$plugin.'/view/js/'.$filename;
+         }
+      }
+      
+      /// si no está en los plugins estará en el núcleo
+      return 'view/js/'.$filename;
    }
 }

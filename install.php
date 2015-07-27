@@ -108,7 +108,6 @@ else if( isset($_REQUEST['db_type']) )
             ini_set('mysqli.default_socket', $_POST['mysql_socket']);
          }
          
-
          // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
          $connection = @new mysqli($_REQUEST['db_host'], $_REQUEST['db_user'], $_REQUEST['db_pass'], "", intval($_REQUEST['db_port']));
          if($connection->connect_error)
@@ -120,10 +119,9 @@ else if( isset($_REQUEST['db_type']) )
          {
             // Comprobamos que la BD exista, de lo contrario la creamos
             $db_selected = mysqli_select_db($connection, $_REQUEST['db_name']);
-            $sqlCrearBD = 'CREATE DATABASE '.$_REQUEST['db_name'];
-            
             if(!$db_selected)
             {
+               $sqlCrearBD = 'CREATE DATABASE '.$_REQUEST['db_name'];
                if(!mysqli_query($connection, $sqlCrearBD))
                {
                   $errors[] = "db_mysql";
