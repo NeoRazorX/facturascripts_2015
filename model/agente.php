@@ -39,9 +39,15 @@ class agente extends fs_model
    public $provincia;
    public $ciudad;
    public $direccion;
-   
+   public $seg_social;
+   public $cargo;
+   public $banco;
+   public $f_nacimiento;
+   public $f_alta;
+   public $f_baja;
+
    /**
-    * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, alabaranes y facturas.
+    * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, albaranes y facturas.
     * @var type 
     */
    public $porcomision;
@@ -81,6 +87,24 @@ class agente extends fs_model
          $this->nombre = $a['nombre'];
          $this->apellidos = $a['apellidos'];
          $this->codagente = $a['codagente'];
+         $this->seg_social = $a['seg_social'];
+         $this->banco = $a['banco'];
+         $this->cargo =$a['cargo'];
+         
+         if($a['f_alta'] != '')
+            $this->f_alta = Date('d-m-Y', strtotime($a['f_alta']));
+         else
+            $this->f_alta = '';
+         
+         if($a['f_baja'] != '')         
+            $this->f_baja = Date('d-m-Y', strtotime($a['f_baja']));
+         else
+            $this->f_baja = ''; 
+         
+         if($a['f_nacimiento'] != '')         
+            $this->f_nacimiento = Date('d-m-Y', strtotime($a['f_nacimiento']));
+         else
+             $this->f_nacimiento = '';
       }
       else
       {
@@ -99,6 +123,12 @@ class agente extends fs_model
          $this->nombre = '';
          $this->apellidos = '';
          $this->codagente = NULL;
+         $this->seg_social = NULL;
+         $this->banco = NULL;
+         $this->cargo = NULL;
+         $this->f_alta = Date('d-m-Y');
+         $this->f_baja = Date('d-m-Y');
+         $this->f_nacimiento = Date('d-m-Y');        
       }
    }
    
@@ -182,6 +212,10 @@ class agente extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
+               seg_social = ".$this->var2str($this->seg_social)." , cargo = ".$this->var2str($this->cargo).",
+               banco = ".$this->var2str($this->banco).", f_nacimiento = ".$this->var2str($this->f_nacimiento).",
+               f_alta = ".$this->var2str($this->f_alta).", f_baja = ".$this->var2str($this->f_baja).",
+               direccion = ".$this->var2str($this->direccion).", ciudad = ".$this->var2str($this->ciudad).",    
                apellidos = ".$this->var2str($this->apellidos).", dnicif = ".$this->var2str($this->dnicif).",
                telefono = ".$this->var2str($this->telefono).", email = ".$this->var2str($this->email).",
                porcomision = ".$this->var2str($this->porcomision)."
