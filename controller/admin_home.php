@@ -36,14 +36,22 @@ class admin_home extends fs_controller
       $this->download_list = array(
           'facturacion_base' => array(
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/facturacion_base',
               'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
           ),
           'colombia' => array(
               'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
+              'url_repo' => 'https://github.com/salvaWEBco/colombia',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
+          ),
+          'panama' => array(
+              'url' => 'https://github.com/NeoRazorX/panama/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/panama',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Panamá</b>.'
           ),
           'peru' => array(
               'url' => 'https://github.com/NeoRazorX/peru/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/peru',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Perú</b>.'
           ),
       );

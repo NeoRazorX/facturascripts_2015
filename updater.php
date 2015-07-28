@@ -30,6 +30,7 @@ class fs_updater
    public $errores;
    public $mensajes;
    private $plugin_pago_actualizado;
+   public $tr_options;
    public $tr_updates;
    
    public function __construct()
@@ -38,6 +39,7 @@ class fs_updater
       $this->errores = '';
       $this->mensajes = '';
       $this->plugin_pago_actualizado = FALSE;
+      $this->tr_options = '';
       $this->tr_updates = '';
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
@@ -100,7 +102,7 @@ class fs_updater
             }
             else
             {
-               $this->tr_updates = '<tr>'
+               $this->tr_options = '<tr>'
                        . '<td><b>Núcleo</b></td>'
                        . '<td>Núcleo de FacturaScripts.</td>'
                        . '<td class="text-right">'.$version_actual.'</td>'
@@ -185,6 +187,12 @@ class fs_updater
                   }
                   else
                      $this->errores .= 'Error al leer plugins/'.$_GET['name'].'/facturascripts.ini';
+               }
+               
+               if($this->tr_updates == '')
+               {
+                  $this->tr_updates = '<tr class="bg-success"><td colspan="5">El sistema está actualizado.'
+                          . ' <a href="index.php">Volver</a></td></tr>';
                }
             }
          }
@@ -524,24 +532,50 @@ $updater = new fs_updater();
          </div>
          <div class="row">
             <div class="col-sm-12">
-               <ul class="nav nav-tabs">
-                  <li role="presentation" class="active"><a href="#">Actualizaciones</a></li>
+               <ul class="nav nav-tabs" role="tablist">
+                  <li role="presentation" class="active">
+                     <a href="#actualizaciones" aria-controls="actualizaciones" role="tab" data-toggle="tab">
+                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+                        <span class="hidden-xs">&nbsp; Actualizaciones</span>
+                     </a>
+                  </li>
+                  <li role="presentation">
+                     <a href="#opciones" aria-controls="opciones" role="tab" data-toggle="tab">
+                        <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                        <span class="hidden-xs">&nbsp; Opciones</span>
+                     </a>
+                  </li>
                </ul>
-               <div class="table-responsive">
-                  <table class="table table-hover">
-                     <thead>
-                        <tr>
-                           <th class="text-left">Nombre</th>
-                           <th class="text-left">Descripción</th>
-                           <th class="text-right">Versión</th>
-                           <th class="text-right">Nueva versión</th>
-                           <th></th>
-                        </tr>
-                     </thead>
-                     <?php
-                     echo $updater->tr_updates;
-                     ?>
-                  </table>
+               <div class="tab-content">
+                  <div role="tabpanel" class="tab-pane active" id="actualizaciones">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th class="text-left">Nombre</th>
+                                 <th class="text-left">Descripción</th>
+                                 <th class="text-right">Versión</th>
+                                 <th class="text-right">Nueva versión</th>
+                                 <th></th>
+                              </tr>
+                           </thead>
+                           <?php echo $updater->tr_updates; ?>
+                        </table>
+                     </div>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="opciones">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th class="text-left">Opción</th>
+                                 <th></th>
+                              </tr>
+                           </thead>
+                           <?php echo $updater->tr_options; ?>
+                        </table>
+                     </div>
+                  </div>
                </div>
             </div>
          </div>

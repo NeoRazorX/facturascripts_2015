@@ -121,8 +121,8 @@ else if( isset($_REQUEST['db_type']) )
             $db_selected = mysqli_select_db($connection, $_REQUEST['db_name']);
             if(!$db_selected)
             {
-               $sqlCrearBD = 'CREATE DATABASE '.$_REQUEST['db_name'];
-               if(!mysqli_query($connection, $sqlCrearBD))
+               $sqlCrearBD = "CREATE DATABASE `".$_REQUEST['db_name']."`;";
+               if( !mysqli_query($connection, $sqlCrearBD) )
                {
                   $errors[] = "db_mysql";
                   $errors2[] = mysqli_error($connection);

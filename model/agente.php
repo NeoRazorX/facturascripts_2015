@@ -232,30 +232,41 @@ class agente extends fs_model
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).
-                    ", seg_social = ".$this->var2str($this->seg_social).
-                    ", cargo = ".$this->var2str($this->cargo).
-                    ", banco = ".$this->var2str($this->banco).
-                    ", f_nacimiento = ".$this->var2str($this->f_nacimiento).
-                    ", f_alta = ".$this->var2str($this->f_alta).
-                    ", f_baja = ".$this->var2str($this->f_baja).
-                    ", direccion = ".$this->var2str($this->direccion).
-                    ", ciudad = ".$this->var2str($this->ciudad).
                     ", apellidos = ".$this->var2str($this->apellidos).
                     ", dnicif = ".$this->var2str($this->dnicif).
                     ", telefono = ".$this->var2str($this->telefono).
                     ", email = ".$this->var2str($this->email).
+                    ", cargo = ".$this->var2str($this->cargo).
+                    ", provincia = ".$this->var2str($this->provincia).
+                    ", ciudad = ".$this->var2str($this->ciudad).
+                    ", direccion = ".$this->var2str($this->direccion).
+                    ", f_nacimiento = ".$this->var2str($this->f_nacimiento).
+                    ", f_alta = ".$this->var2str($this->f_alta).
+                    ", f_baja = ".$this->var2str($this->f_baja).
+                    ", seg_social = ".$this->var2str($this->seg_social).
+                    ", banco = ".$this->var2str($this->banco).
                     ", porcomision = ".$this->var2str($this->porcomision).
                     "  WHERE codagente = ".$this->var2str($this->codagente).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,email,porcomision)
+            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,
+               email,cargo,provincia,ciudad,direccion,f_nacimiento,f_alta,f_baja,seg_social,banco,porcomision)
                VALUES (".$this->var2str($this->codagente).
                     ",".$this->var2str($this->nombre).
                     ",".$this->var2str($this->apellidos).
                     ",".$this->var2str($this->dnicif).
                     ",".$this->var2str($this->telefono).
                     ",".$this->var2str($this->email).
+                    ",".$this->var2str($this->cargo).
+                    ",".$this->var2str($this->provincia).
+                    ",".$this->var2str($this->ciudad).
+                    ",".$this->var2str($this->direccion).
+                    ",".$this->var2str($this->f_nacimiento).
+                    ",".$this->var2str($this->f_alta).
+                    ",".$this->var2str($this->f_baja).
+                    ",".$this->var2str($this->seg_social).
+                    ",".$this->var2str($this->banco).
                     ",".$this->var2str($this->porcomision).");";
          }
          

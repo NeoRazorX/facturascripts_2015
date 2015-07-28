@@ -328,7 +328,10 @@
                      <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="Destacado"></span>
                   </td>
                   <td>{$key}</td>
-                  <td>{$value['description']}</td>
+                  <td>
+                     {$value['description']}<br/>
+                     <a href="{$value['url_repo']}" target="_blank">Web del proyecto</a>.
+                  </td>
                   <td class="text-right">
                      {if="file_exists('plugins/'.$key)"}
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
