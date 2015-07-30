@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'extras/phpmailer/class.phpmailer.php';
-require_once 'extras/phpmailer/class.smtp.php';
 require_model('almacen.php');
 require_model('cuenta_banco.php');
 require_model('divisa.php');
@@ -34,13 +32,11 @@ class admin_empresa extends fs_controller
    public $divisa;
    public $ejercicio;
    public $forma_pago;
-   public $impresion;
    public $mail;
    public $serie;
    public $pais;
    
    public $logo;
-   public $facturacion_base;
    
    public function __construct()
    {
@@ -57,8 +53,6 @@ class admin_empresa extends fs_controller
       $this->serie = new serie();
       $this->pais = new pais();
       
-      $fsvar = new fs_var();
-      
       /// obtenemos los datos de configuración del email
       $this->mail = array(
           'mail_host' => 'smtp.gmail.com',
@@ -66,17 +60,10 @@ class admin_empresa extends fs_controller
           'mail_enc' => 'ssl',
           'mail_user' => ''
       );
+      $fsvar = new fs_var();
       $this->mail = $fsvar->array_get($this->mail, FALSE);
       
-      /// obtenemos los datos de configuración de impresión
-      $this->impresion = array(
-          'print_ref' => '1',
-          'print_dto' => '1',
-          'print_alb' => '0'
-      );
-      $this->impresion = $fsvar->array_get($this->impresion, FALSE);
-      
-      if( isset($_POST['cifnif']) )
+      if( isset($_POST['nombre']) )
       {
          /*
           * Guardamos los elementos por defecto
@@ -122,13 +109,13 @@ class admin_empresa extends fs_controller
             $step = $fsvar->simple_get('install_step');
             if($step == 2)
             {
-               $step = 3;
-               $fsvar->simple_save('install_step', $step);
-            }
-            if($step == 3 AND $this->empresa->contintegrada)
-            {
-               $this->new_message('Recuerda que tienes que <a href="index.php?page=contabilidad_ejercicio&cod='.
-                       $this->empresa->codejercicio.'">importar los datos del ejercicio</a>.');
+               if( in_array('facturacion_base', $GLOBALS['plugins']) )
+               {
+                  $this->new_message('Y por último tienes que <a href="index.php?page=contabilidad_ejercicio&cod='.
+                          $this->empresa->codejercicio.'">importar los datos del ejercicio</a>.');
+               }
+               
+               $fsvar->simple_save('install_step', 3);
             }
          }
          else
@@ -137,81 +124,19 @@ class admin_empresa extends fs_controller
          /// guardamos los datos del email
          if( isset($_POST['mail_host']) )
          {
-            $this->mail['mail_host'] = 'smtp.gmail.com';
-            if($_POST['mail_host'] != '')
-            {
+            if($_POST['mail_host'] == '')
+               $this->mail['mail_host'] = 'smtp.gmail.com';
+            else
                $this->mail['mail_host'] = $_POST['mail_host'];
-            }
             
-            $this->mail['mail_port'] = '465';
-            if($_POST['mail_port'] != '')
-            {
+            if($_POST['mail_port'] == '')
+               $this->mail['mail_port'] = '465';
+            else
                $this->mail['mail_port'] = $_POST['mail_port'];
-            }
             
             $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
             $this->mail['mail_user'] = $_POST['mail_user'];
             $fsvar->array_save($this->mail);
-            $this->mail_test();
-         }
-         
-         /// guardamos los datos de impresión
-         $this->impresion['print_ref'] = '0';
-         if( isset($_POST['print_ref']) )
-         {
-            $this->impresion['print_ref'] = '1';
-         }
-         
-         $this->impresion['print_dto'] = '0';
-         if( isset($_POST['print_dto']) )
-         {
-            $this->impresion['print_dto'] = '1';
-         }
-         
-         $this->impresion['print_alb'] = '0';
-         if( isset($_POST['print_alb']) )
-         {
-            $this->impresion['print_alb'] = '1';
-         }
-         
-         $fsvar->array_save($this->impresion);
-      }
-      else if( isset($_POST['nombre']) )
-      {
-         /// guardamos solamente lo básico, ya que facturacion_base no está activado
-         $this->empresa->nombre = $_POST['nombre'];
-         $this->empresa->nombrecorto = $_POST['nombrecorto'];
-         $this->empresa->web = $_POST['web'];
-         $this->empresa->email = $_POST['email'];
-         $this->empresa->email_firma = $_POST['email_firma'];
-         $this->empresa->email_password = $_POST['email_password'];
-         
-         if( $this->empresa->save() )
-         {
-            $this->new_message('Datos guardados correctamente.');
-         }
-         else
-            $this->new_error_msg ('Error al guardar los datos.');
-         
-         /// guardamos los datos del email
-         if( isset($_POST['mail_host']) )
-         {
-            $this->mail['mail_host'] = 'smtp.gmail.com';
-            if($_POST['mail_host'] != '')
-            {
-               $this->mail['mail_host'] = $_POST['mail_host'];
-            }
-            
-            $this->mail['mail_port'] = '465';
-            if($_POST['mail_port'] != '')
-            {
-               $this->mail['mail_port'] = $_POST['mail_port'];
-            }
-            
-            $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
-            $this->mail['mail_user'] = $_POST['mail_user'];
-            $fsvar->array_save($this->mail);
-            $this->mail_test();
          }
       }
       else if( isset($_POST['logo']) )
@@ -230,6 +155,7 @@ class admin_empresa extends fs_controller
             $this->new_message('Logotipo borrado correctamente.');
          }
       }
+
       else if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
       {
          $cuenta = $this->cuenta_banco->get($_GET['delete_cuenta']);
@@ -264,8 +190,6 @@ class admin_empresa extends fs_controller
          else
             $cuentab->iban = $_POST['iban'];
          
-         $cuentab->swift = $_POST['swift'];
-         
          if( $cuentab->save() )
          {
             $this->new_message('Cuenta bancaria guardada correctamente.');
@@ -275,40 +199,5 @@ class admin_empresa extends fs_controller
       }
       
       $this->logo = file_exists('tmp/'.FS_TMP_NAME.'logo.png');
-      $this->facturacion_base = in_array('facturacion_base', $GLOBALS['plugins']);
-   }
-   
-   private function mail_test()
-   {
-      if( $this->empresa->can_send_mail() )
-      {
-         $mail = new PHPMailer();
-         $mail->IsSMTP();
-         $mail->SMTPAuth = TRUE;
-         $mail->SMTPSecure = $this->mail['mail_enc'];
-         $mail->Host = $this->mail['mail_host'];
-         $mail->Port = intval($this->mail['mail_port']);
-         $mail->Username = $this->empresa->email;
-         if($this->mail['mail_user'] != '')
-         {
-            $mail->Username = $this->mail['mail_user'];
-         }
-         
-         $mail->Password = $this->empresa->email_password;
-         $mail->From = $this->empresa->email;
-         $mail->FromName = $this->user->nick;
-         $mail->CharSet = 'UTF-8';
-         
-         $mail->Subject = 'TEST';
-         $mail->AltBody = 'TEST';
-         $mail->WordWrap = 50;
-         $mail->MsgHTML('TEST');
-         $mail->IsHTML(TRUE);
-         
-         if( !$mail->SmtpConnect() )
-         {
-            $this->new_error_msg('No se ha podido conectar por email.');
-         }
-      }
    }
 }

@@ -90,11 +90,6 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['libros_contables'] = 1;
       $GLOBALS['config2']['foreign_keys'] = 1;
    }
-   
-   if( !isset($GLOBALS['config2']['new_codigo']) )
-   {
-      $GLOBALS['config2']['new_codigo'] = 'eneboo';
-   }
 }
 else
 {
@@ -124,8 +119,7 @@ else
        'iva' => 'IVA',
        'irpf' => 'IRPF',
        'libros_contables' => 1,
-       'foreign_keys' => 1,
-       'new_codigo' => 'eneboo'
+       'foreign_keys' => 1
    );
 }
 

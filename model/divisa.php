@@ -38,12 +38,6 @@ class divisa extends fs_model
    public $tasaconv;
    
    /**
-    * Tasa de conversión respecto al euro (para compras).
-    * @var type 
-    */
-   public $tasaconv_compra;
-   
-   /**
     * código ISO 4217 en número: http://en.wikipedia.org/wiki/ISO_4217
     * @var type
     */
@@ -58,14 +52,6 @@ class divisa extends fs_model
          $this->coddivisa = $d['coddivisa'];
          $this->descripcion = $d['descripcion'];
          $this->tasaconv = floatval($d['tasaconv']);
-         
-         if( is_null($d['tasaconv_compra']) )
-         {
-            $this->tasaconv_compra = floatval($d['tasaconv']);
-         }
-         else
-            $this->tasaconv_compra = floatval($d['tasaconv_compra']);
-         
          $this->codiso = $d['codiso'];
          $this->simbolo = $d['simbolo'];
          
@@ -80,7 +66,6 @@ class divisa extends fs_model
          $this->coddivisa = NULL;
          $this->descripcion = '';
          $this->tasaconv = 1;
-         $this->tasaconv_compra = 1;
          $this->codiso = NULL;
          $this->simbolo = '?';
       }
@@ -103,8 +88,6 @@ class divisa extends fs_model
          VALUES ('MXN','PESOS (MXN)','18.1','484','$');".
            "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
          VALUES ('PAB','BALBOAS','38.17','590','B');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('PEN','NUEVOS SOLES','3.52','604','S/.');".
            "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
          VALUES ('VEF','BOLÍVARES','38.17','937','Bs');";
    }
@@ -147,7 +130,7 @@ class divisa extends fs_model
       
       if( !preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa) )
       {
-         $this->new_error_msg("Código de divisa no válido.");
+         $this->new_error_msg("Código de almacén no válido.");
       }
       else if( isset($this->codiso) AND !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso) )
       {
@@ -167,22 +150,17 @@ class divisa extends fs_model
          
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).
-                    ", tasaconv = ".$this->var2str($this->tasaconv).
-                    ", tasaconv_compra = ".$this->var2str($this->tasaconv_compra).
-                    ", codiso = ".$this->var2str($this->codiso).
-                    ", simbolo = ".$this->var2str($this->simbolo).
-                    " WHERE coddivisa = ".$this->var2str($this->coddivisa).";";
+            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
+               tasaconv = ".$this->var2str($this->tasaconv).", codiso = ".$this->var2str($this->codiso).",
+               simbolo = ".$this->var2str($this->simbolo)."
+               WHERE coddivisa = ".$this->var2str($this->coddivisa).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)".
-                    " VALUES (".$this->var2str($this->coddivisa).
-                    ",".$this->var2str($this->descripcion).
-                    ",".$this->var2str($this->tasaconv).
-                    ",".$this->var2str($this->tasaconv_compra).
-                    ",".$this->var2str($this->codiso).
-                    ",".$this->var2str($this->simbolo).");";
+            $sql = "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo) VALUES
+               (".$this->var2str($this->coddivisa).",".$this->var2str($this->descripcion).",
+                ".$this->var2str($this->tasaconv).",".$this->var2str($this->codiso).",
+                ".$this->var2str($this->simbolo).");";
          }
          
          return $this->db->exec($sql);
@@ -205,9 +183,10 @@ class divisa extends fs_model
    public function all()
    {
       $listad = $this->cache->get_array('m_divisa_all');
-      if(!$listad)
+      if( !$listad )
       {
-         $divisas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY coddivisa ASC;");
+         $divisas = $this->db->select("SELECT * FROM ".$this->table_name.
+                 " ORDER BY coddivisa ASC;");
          if($divisas)
          {
             foreach($divisas as $d)
@@ -215,7 +194,6 @@ class divisa extends fs_model
          }
          $this->cache->set('m_divisa_all', $listad);
       }
-      
       return $listad;
    }
 }
