@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Esta clase almacena los principales datos de la empresa.
  */
@@ -159,7 +157,7 @@ class empresa extends fs_model
          return FALSE;
       }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id=".$this->var2str($this->id).";");
+         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
    public function test()
@@ -194,7 +192,9 @@ class empresa extends fs_model
          $this->new_error_msg("El Nombre Corto debe ser más corto que el Nombre.");
       }
       else
+      {
          $status = TRUE;
+      }
       
       return $status;
    }
@@ -204,34 +204,88 @@ class empresa extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
-         $sql = "UPDATE ".$this->table_name." SET 
-            nombre = ".$this->var2str($this->nombre).",
-            nombrecorto = ".$this->var2str($this->nombrecorto).",
-            cifnif = ".$this->var2str($this->cifnif).", codedi = ".$this->var2str($this->codedi).",
-            administrador = ".$this->var2str($this->administrador).",
-            direccion = ".$this->var2str($this->direccion).",
-            codpostal = ".$this->var2str($this->codpostal).",
-            ciudad = ".$this->var2str($this->ciudad).", provincia = ".$this->var2str($this->provincia).",
-            apartado = ".$this->var2str($this->apartado).", codpais = ".$this->var2str($this->codpais).",
-            telefono = ".$this->var2str($this->telefono).", fax = ".$this->var2str($this->fax).",
-            email = ".$this->var2str($this->email).",
-            email_firma = ".$this->var2str($this->email_firma).",
-            email_password = ".$this->var2str($this->email_password).",
-            web = ".$this->var2str($this->web).",
-            codejercicio = ".$this->var2str($this->codejercicio).",
-            coddivisa = ".$this->var2str($this->coddivisa).", codpago = ".$this->var2str($this->codpago).",
-            codalmacen = ".$this->var2str($this->codalmacen).",
-            codserie = ".$this->var2str($this->codserie).",
-            recequivalencia = ".$this->var2str($this->recequivalencia).",
-            contintegrada = ".$this->var2str($this->contintegrada).",
-            stockpedidos = ".$this->var2str($this->stockpedidos).",
-            lema = ".$this->var2str($this->lema).", horario = ".$this->var2str($this->horario).",
-            pie_factura = ".$this->var2str($this->pie_factura)."
-            WHERE id = ".$this->var2str($this->id).";";
-         return $this->db->exec($sql);
+         
+         if( $this->exists() )
+         {
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)
+                 .", nombrecorto = ".$this->var2str($this->nombrecorto)
+                 .", cifnif = ".$this->var2str($this->cifnif)
+                 .", codedi = ".$this->var2str($this->codedi)
+                 .", administrador = ".$this->var2str($this->administrador)
+                 .", direccion = ".$this->var2str($this->direccion)
+                 .", codpostal = ".$this->var2str($this->codpostal)
+                 .", ciudad = ".$this->var2str($this->ciudad)
+                 .", provincia = ".$this->var2str($this->provincia)
+                 .", apartado = ".$this->var2str($this->apartado)
+                 .", codpais = ".$this->var2str($this->codpais)
+                 .", telefono = ".$this->var2str($this->telefono)
+                 .", fax = ".$this->var2str($this->fax)
+                 .", email = ".$this->var2str($this->email)
+                 .", email_firma = ".$this->var2str($this->email_firma)
+                 .", email_password = ".$this->var2str($this->email_password)
+                 .", web = ".$this->var2str($this->web)
+                 .", codejercicio = ".$this->var2str($this->codejercicio)
+                 .", coddivisa = ".$this->var2str($this->coddivisa)
+                 .", codpago = ".$this->var2str($this->codpago)
+                 .", codalmacen = ".$this->var2str($this->codalmacen)
+                 .", codserie = ".$this->var2str($this->codserie)
+                 .", recequivalencia = ".$this->var2str($this->recequivalencia)
+                 .", contintegrada = ".$this->var2str($this->contintegrada)
+                 .", stockpedidos = ".$this->var2str($this->stockpedidos)
+                 .", lema = ".$this->var2str($this->lema)
+                 .", horario = ".$this->var2str($this->horario)
+                 .", pie_factura = ".$this->var2str($this->pie_factura)
+                 ."  WHERE id = ".$this->var2str($this->id).";";
+            
+            return $this->db->exec($sql);
+         }
+         else
+         {
+            $sql = "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,
+               codalmacen,codpago,coddivisa,codejercicio,web,email,email_firma,email_password,fax,telefono,
+               codpais,apartado,provincia,ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,
+               nombrecorto,lema,horario,pie_factura) VALUES (".$this->var2str($this->stockpedidos)
+                    .",".$this->var2str($this->contintegrada)
+                    .",".$this->var2str($this->recequivalencia)
+                    .",".$this->var2str($this->codserie)
+                    .",".$this->var2str($this->codalmacen)
+                    .",".$this->var2str($this->codpago)
+                    .",".$this->var2str($this->coddivisa)
+                    .",".$this->var2str($this->codejercicio)
+                    .",".$this->var2str($this->web)
+                    .",".$this->var2str($this->email)
+                    .",".$this->var2str($this->email_firma)
+                    .",".$this->var2str($this->email_password)
+                    .",".$this->var2str($this->fax)
+                    .",".$this->var2str($this->telefono)
+                    .",".$this->var2str($this->codpais)
+                    .",".$this->var2str($this->apartado)
+                    .",".$this->var2str($this->provincia)
+                    .",".$this->var2str($this->ciudad)
+                    .",".$this->var2str($this->codpostal)
+                    .",".$this->var2str($this->direccion)
+                    .",".$this->var2str($this->administrador)
+                    .",".$this->var2str($this->codedi)
+                    .",".$this->var2str($this->cifnif)
+                    .",".$this->var2str($this->nombre)
+                    .",".$this->var2str($this->nombrecorto)
+                    .",".$this->var2str($this->lema)
+                    .",".$this->var2str($this->horario)
+                    .",".$this->var2str($this->pie_factura).");";
+            
+            if( $this->db->exec($sql) )
+            {
+               $this->id = $this->db->lastval();
+               return TRUE;
+            }
+            else
+               return FALSE;
+         }
       }
       else
+      {
          return FALSE;
+      }
    }
    
    public function delete()

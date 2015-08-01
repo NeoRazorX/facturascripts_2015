@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Define que un usuario tiene acceso a una página concreta
  * y si tiene permisos de eliminación en esa página.

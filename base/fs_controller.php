@@ -17,14 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if(strtolower(FS_DB_TYPE) == 'mysql')
-{
-   require_once 'base/fs_mysql.php';
-}
-else
-   require_once 'base/fs_postgresql.php';
-
 require_once 'base/fs_cache.php';
+require_once 'base/fs_db2.php';
 require_once 'base/fs_default_items.php';
 require_once 'base/fs_model.php';
 
@@ -46,7 +40,7 @@ class fs_controller
 {
    /**
     * Este objeto permite acceso directo a la base de datos.
-    * @var type es una instancia de fs_mysql o fs_postgresql
+    * @var fs_db2
     */
    protected $db;
    private $uptime;
@@ -58,13 +52,13 @@ class fs_controller
    
    /**
     * El usuario que ha hecho login
-    * @var type 
+    * @var fs_user
     */
    public $user;
    
    /**
     * El elemento del menú de esta página
-    * @var type 
+    * @var fs_page
     */
    public $page;
    
@@ -88,14 +82,14 @@ class fs_controller
    
    /**
     * La empresa
-    * @var type 
+    * @var empresa
     */
    public $empresa;
    public $default_items;
    
    /**
     * Este objeto permite interactuar con memcache
-    * @var type 
+    * @var fs_cache
     */
    protected $cache;
    
@@ -112,7 +106,7 @@ class fs_controller
     * @param type $shmenu debe ser TRUE si quieres añadir el acceso directo en el menú
     * @param type $important debe ser TRUE si quieres que se la primera página que ven los nuevos usuarios
     */
-   public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE, $important=FALSE)
+   public function __construct($name = '', $title = 'home', $folder = '', $admin = FALSE, $shmenu = TRUE, $important = FALSE)
    {
       $tiempo = explode(' ', microtime());
       $this->uptime = $tiempo[1] + $tiempo[0];
@@ -122,14 +116,8 @@ class fs_controller
       $this->simbolo_divisas = array();
       $this->extensions = array();
       
-      if(strtolower(FS_DB_TYPE) == 'mysql')
-      {
-         $this->db = new fs_mysql();
-      }
-      else
-         $this->db = new fs_postgresql();
-      
       $this->cache = new fs_cache();
+      $this->db = new fs_db2();
       
       /// comprobamos la versión de PHP
       if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
@@ -140,7 +128,7 @@ class fs_controller
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
-         $this->page = new fs_page( array('name'=>$name,'title'=>$title,'folder'=>$folder,'version'=>$this->version(),'show_on_menu'=>$shmenu, 'important'=>$important) );
+         $this->page = new fs_page( array('name'=>$name,'title'=>$title,'folder'=>$folder,'version'=>$this->version(),'show_on_menu'=>$shmenu,'important'=>$important) );
          if($name != '')
          {
             $this->page->save();

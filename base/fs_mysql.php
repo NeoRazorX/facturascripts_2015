@@ -17,13 +17,70 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_db.php';
-
 /**
  * Clase para conectar a MySQL
  */
-class fs_mysql extends fs_db
+class fs_mysql
 {
+   /**
+    * El enlace con la base de datos.
+    * @var type 
+    */
+   protected static $link;
+   protected static $t_selects;
+   protected static $t_transactions;
+   
+   /**
+    * Historial de consultas SQL.
+    * @var type 
+    */
+   protected static $history;
+   
+   /**
+    * Lista de errores.
+    * @var type 
+    */
+   protected static $errors;
+   
+   public function __construct()
+   {
+      if( !isset(self::$link) )
+      {
+         self::$t_selects = 0;
+         self::$t_transactions = 0;
+         self::$history = array();
+         self::$errors = array();
+      }
+   }
+   
+   /**
+    * Devuelve el número de selects ejecutados
+    * @return type
+    */
+   public function get_selects()
+   {
+      return self::$t_selects;
+   }
+   
+   /**
+    * Devuele le número de transacciones realizadas
+    * @return type
+    */
+   public function get_transactions()
+   {
+      return self::$t_transactions;
+   }
+   
+   public function get_history()
+   {
+      return self::$history;
+   }
+   
+   public function get_errors()
+   {
+      return self::$errors;
+   }
+   
    /**
     * Conecta a la base de datos.
     * @return boolean
@@ -50,17 +107,7 @@ class fs_mysql extends fs_db
             self::$link->set_charset('utf8');
             $connected = TRUE;
             
-            if(FS_FOREIGN_KEYS)
-            {
-               /// comprobamos el soporte para InnoDB
-               $data = $this->select("SHOW TABLE STATUS WHERE Name = 'fs_pages';");
-               if($data)
-               {
-                  if($data[0]['Engine'] != 'InnoDB')
-                     self::$errors[] = 'FacturaScripts necesita usar el motor InnoDB en MySQL, y tú estás usando el motor '.$data[0]['Engine'].'.';
-               }
-            }
-            else
+            if(!FS_FOREIGN_KEYS)
             {
                /// desactivamos las claves ajenas
                $this->exec("SET foreign_key_checks = 0;");
@@ -73,6 +120,16 @@ class fs_mysql extends fs_db
       }
       
       return $connected;
+   }
+   
+   public function connected()
+   {
+      if(self::$link)
+      {
+         return TRUE;
+      }
+      else
+         return FALSE;
    }
    
    /**
@@ -356,63 +413,6 @@ class fs_mysql extends fs_db
    }
    
    /**
-    * Proporciona compatibilidad con la clase equivalente en PostgreSQL.
-    * @param type $seq
-    * @return boolean
-    */
-   public function sequence_exists($seq)
-   {
-      return TRUE;
-   }
-   
-   /**
-    * Simula que devuelve el siguiente valor de una secuancia PostgreSQL.
-    * @param type $seq
-    * @return boolean
-    */
-   public function nextval($seq)
-   {
-      /*
-       * Todo este código es para emular las secuencias de PostgreSQL.
-       * El formato de $seq es tabla_columna_seq
-       */
-      $aux = explode('_', $seq);
-      $tabla = '';
-      $columna = '';
-      
-      /*
-       * Pero el nombre de la tabla o el de la columna puede contener '_',
-       * así que hay que comprobar directamente en el listado de tablas.
-       */
-      foreach($this->list_tables() as $t)
-      {
-         $encontrada = FALSE;
-         for($i=0; $i<count($aux); $i++)
-         {
-            if($i == 0)
-               $tabla = $aux[0];
-            else
-               $tabla .= '_' . $aux[$i];
-            
-            if($t['name'] == $tabla)
-            {
-               $columna = substr($seq, 1+strlen($tabla), -4);
-               $encontrada = TRUE;
-               break;
-            }
-         }
-         if($encontrada)
-            break;
-      }
-      
-      $result = $this->select('SELECT COALESCE(1+MAX('.$columna.'),1) as num FROM '.$tabla.';');
-      if($result)
-         return $result[0]['num'];
-      else
-         return FALSE;
-   }
-   
-   /**
     * Devuleve el último ID asignado.
     * @return boolean
     */
@@ -613,25 +613,26 @@ class fs_mysql extends fs_db
    }
    
    /**
-    * Compara dos arrays de restricciones, devuelve una sentencia SQL
+    * Compara dos arrays de restricciones, devuelve un array de sentencias SQL
     * en caso de encontrar diferencias.
     * @param type $table_name
     * @param type $c_nuevas
     * @param type $c_old
+    * @param type $solo_eliminar
     * @return string
     */
-   public function compare_constraints($table_name, $c_nuevas, $c_old, $solo_eliminar=FALSE)
+   public function compare_constraints($table_name, $c_nuevas, $c_old, $solo_eliminar = FALSE)
    {
       $consulta = '';
       
-      if($solo_eliminar)
+      if($c_old)
       {
-         if($c_old AND $c_nuevas)
+         /// comprobamos una a una las viejas
+         foreach($c_old as $col)
          {
-            /// comprobamos una a una las viejas
-            foreach($c_old as $col)
+            $encontrado = FALSE;
+            if($c_nuevas)
             {
-               $encontrado = FALSE;
                foreach($c_nuevas as $col2)
                {
                   if($col['restriccion'] == $col2['nombre'])
@@ -639,45 +640,25 @@ class fs_mysql extends fs_db
                      $encontrado = TRUE;
                      break;
                   }
-               }
-               if(!$encontrado)
-               {
-                  /// eliminamos la restriccion
-                  if($col['tipo'] == 'FOREIGN KEY')
-                     $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
-               }
-            }
-         }
-      }
-      else if($c_old)
-      {
-         if($c_nuevas)
-         {
-            /// comprobamos una a una las viejas
-            foreach($c_old as $col)
-            {
-               $encontrado = FALSE;
-               foreach($c_nuevas as $col2)
-               {
-                  if($col['restriccion'] == $col2['nombre'])
-                  {
-                     $encontrado = TRUE;
-                     break;
-                  }
-               }
-               
-               if(!$encontrado)
-               {
-                  /// eliminamos la restriccion
-                  if($col['tipo'] == 'FOREIGN KEY')
-                     $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
                }
             }
             
-            /// comprobamos una a una las nuevas
-            foreach($c_nuevas as $col)
+            if(!$encontrado AND $col['tipo'] == 'FOREIGN KEY')
             {
-               $encontrado = FALSE;
+               /// eliminamos la restriccion
+               $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
+            }
+         }
+      }
+      
+      if($c_nuevas AND !$solo_eliminar)
+      {
+         /// comprobamos una a una las nuevas
+         foreach($c_nuevas as $col)
+         {
+            $encontrado = FALSE;
+            if($c_old)
+            {
                foreach($c_old as $col2)
                {
                   if($col['nombre'] == $col2['restriccion'])
@@ -686,20 +667,13 @@ class fs_mysql extends fs_db
                      break;
                   }
                }
-               
-               /// añadimos la restriccion
-               if( !$encontrado AND substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
-                  $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
             }
-         }
-      }
-      else if($c_nuevas)
-      {
-         /// añadimos todas las restricciones nuevas
-         foreach($c_nuevas as $col)
-         {
-            if( substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
+            
+            if(!$encontrado AND substr($col['consulta'], 0, 11) == 'FOREIGN KEY')
+            {
+               /// añadimos la restriccion
                $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
+            }
          }
       }
       
@@ -766,65 +740,20 @@ class fs_mysql extends fs_db
       return $consulta;
    }
    
-   /**
-    * Comprueba y actualiza la estructura de la tabla si es necesario
-    * @param type $table_name
-    * @return boolean
-    */
-   protected function check_table($table_name)
+   public function check_table_aux($table_name)
    {
-      $done = TRUE;
-      $consulta = '';
-      $columnas = FALSE;
-      $restricciones = FALSE;
-      $xml_columnas = FALSE;
-      $xml_restricciones = FALSE;
+      $retorno = TRUE;
       
-      if( $this->get_xml_table($table_name, $xml_columnas, $xml_restricciones) )
+      /// ¿La tabla no usa InnoDB?
+      $data = $this->select("SHOW TABLE STATUS FROM `".FS_DB_NAME."` LIKE '".$table_name."';");
+      if($data)
       {
-         if( $this->db->table_exists($table_name) )
+         if($data[0]['Engine'] != 'InnoDB')
          {
-            /// eliminamos restricciones
-            $restricciones = $this->db->get_constraints($table_name);
-            $consulta2 = $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones, TRUE);
-            if($consulta2 != '')
-            {
-               if( !$this->db->exec($consulta2) )
-               {
-                  $this->new_error_msg('Error al eliminar las restricciones de '.$table_name);
-               }
-            }
-            
-            /// comparamos las columnas
-            $columnas = $this->db->get_columns($table_name);
-            $consulta .= $this->db->compare_columns($table_name, $xml_columnas, $columnas);
-            
-            /// comparamos las restricciones
-            $restricciones2 = $this->db->get_constraints($table_name);
-            $consulta .= $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones2);
-         }
-         else
-         {
-            /// generamos el sql para crear la tabla
-            $consulta .= $this->db->generate_table($table_name, $xml_columnas, $xml_restricciones);
-            $consulta .= $this->install();
-         }
-         
-         if($consulta != '')
-         {
-            if( !$this->db->exec($consulta) )
-            {
-               $this->new_error_msg('Error al comprobar la tabla '.$table_name);
-               $done = FALSE;
-            }
+            $retorno = $this->exec("ALTER TABLE ".$table_name." ENGINE=InnoDB;");
          }
       }
-      else
-      {
-         $this->new_error_msg('Error con el xml.');
-         $done = FALSE;
-      }
       
-      return $done;
+      return $retorno;
    }
 }

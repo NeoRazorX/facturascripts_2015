@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Un país, por ejemplo España.
  */
@@ -90,7 +88,7 @@ class pais extends fs_model
       }
    }
 
-   protected function install()
+   public function install()
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codpais,codiso,nombre,bandera) VALUES ('ESP','ES','España',NULL),".
@@ -175,13 +173,16 @@ class pais extends fs_model
          
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET codiso = ".$this->var2str($this->codiso).", nombre = ".$this->var2str($this->nombre)."
-               WHERE codpais = ".$this->var2str($this->codpais).";";
+            $sql = "UPDATE ".$this->table_name." SET codiso = ".$this->var2str($this->codiso).
+                    ", nombre = ".$this->var2str($this->nombre).
+                    "  WHERE codpais = ".$this->var2str($this->codpais).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codpais,codiso,nombre) VALUES
-               (".$this->var2str($this->codpais).",".$this->var2str($this->codiso).",".$this->var2str($this->nombre).");";
+                     (".$this->var2str($this->codpais).
+                    ",".$this->var2str($this->codiso).
+                    ",".$this->var2str($this->nombre).");";
          }
          
          return $this->db->exec($sql);
@@ -214,6 +215,7 @@ class pais extends fs_model
          }
          $this->cache->set('m_pais_all', $listap);
       }
+      
       return $listap;
    }
 }

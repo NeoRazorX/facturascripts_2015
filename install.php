@@ -51,6 +51,7 @@ function guarda_config($nombre_archivo)
    fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
    fwrite($archivo, " */\n");
    fwrite($archivo, "define('FS_DB_HISTORY', FALSE);\n");
+   fwrite($archivo, "\n");
    fwrite($archivo, "/*\n");
    fwrite($archivo, " * Habilita el modo demo, para pruebas.\n");
    fwrite($archivo, " * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");

@@ -76,7 +76,7 @@ class forma_pago extends fs_model
       }
    }
    
-   protected function install()
+   public function install()
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"

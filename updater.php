@@ -17,7 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (!file_exists('config.php')) {
+if( !file_exists('config.php') )
+{
    die('Archivo config.php no encontrado. No puedes actualizar sin instalar.');
 }
 

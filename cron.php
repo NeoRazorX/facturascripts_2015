@@ -24,16 +24,8 @@ require_once 'base/config2.php';
 $tiempo = explode(' ', microtime());
 $uptime = $tiempo[1] + $tiempo[0];
 
-if(strtolower(FS_DB_TYPE) == 'mysql')
-{
-   require_once 'base/fs_mysql.php';
-   $db = new fs_mysql();
-}
-else
-{
-   require_once 'base/fs_postgresql.php';
-   $db = new fs_postgresql();
-}
+require_once 'base/fs_db2.php';
+$db = new fs_db2();
 
 require_once 'base/fs_default_items.php';
 
@@ -108,7 +100,9 @@ else
    echo "¡Imposible conectar a la base de datos!\n";
    
    foreach($db->get_errors() as $err)
+   {
       echo $err."\n";
+   }
 }
 
 $tiempo = explode(' ', microtime());

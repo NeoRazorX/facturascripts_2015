@@ -19,16 +19,8 @@
 
 require_once 'base/bround.php';
 require_once 'base/fs_cache.php';
-
-if(strtolower(FS_DB_TYPE) == 'mysql')
-{
-   require_once 'base/fs_mysql.php';
-}
-else
-   require_once 'base/fs_postgresql.php';
-
+require_once 'base/fs_db2.php';
 require_once 'base/fs_default_items.php';
-
 
 /**
  * Esta función sirve para cargar modelos, y sobre todo, para cargarlos
@@ -74,7 +66,7 @@ abstract class fs_model
    /**
     * Proporciona acceso directo a la base de datos.
     * Implementa la clase fs_mysql o fs_postgresql.
-    * @var type 
+    * @var fs_db2
     */
    protected $db;
    
@@ -93,7 +85,7 @@ abstract class fs_model
    
    /**
     * Permite conectar e interactuar con memcache.
-    * @var type 
+    * @var fs_cache
     */
    protected $cache;
    protected $default_items;
@@ -109,16 +101,11 @@ abstract class fs_model
     */
    public function __construct($name = '', $basedir = '')
    {
-      if(strtolower(FS_DB_TYPE) == 'mysql')
-      {
-         $this->db = new fs_mysql();
-      }
-      else
-         $this->db = new fs_postgresql();
-      
-      $this->table_name = $name;
       $this->base_dir = $basedir;
       $this->cache = new fs_cache();
+      $this->db = new fs_db2();
+      $this->table_name = $name;
+      
       $this->default_items = new fs_default_items();
       
       if( !self::$errors )
@@ -215,7 +202,7 @@ abstract class fs_model
     * @param type $s cadena de texto a escapar
     * @return type cadena de texto resultante
     */
-   protected function escape_string($s='')
+   protected function escape_string($s = '')
    {
       return $this->db->escape_string($s);
    }
@@ -350,15 +337,29 @@ abstract class fs_model
    {
       $done = TRUE;
       $consulta = '';
-      $columnas = FALSE;
-      $restricciones = FALSE;
-      $xml_columnas = FALSE;
-      $xml_restricciones = FALSE;
+      $xml_columnas = array();
+      $xml_restricciones = array();
       
       if( $this->get_xml_table($table_name, $xml_columnas, $xml_restricciones) )
       {
          if( $this->db->table_exists($table_name) )
          {
+            if( !$this->db->check_table_aux($table_name) )
+            {
+               $this->new_error_msg('Error al convertir la tabla a InnoDB.');
+            }
+            
+            /// eliminamos restricciones
+            $restricciones = $this->db->get_constraints($table_name);
+            $consulta2 = $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones, TRUE);
+            if($consulta2 != '')
+            {
+               if( !$this->db->exec($consulta2) )
+               {
+                  $this->new_error_msg('Error al comprobar la tabla '.$table_name);
+               }
+            }
+            
             /// comparamos las columnas
             $columnas = $this->db->get_columns($table_name);
             $consulta .= $this->db->compare_columns($table_name, $xml_columnas, $columnas);
