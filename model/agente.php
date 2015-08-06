@@ -76,6 +76,10 @@ class agente extends fs_model
       parent::__construct('agentes');
       if($a)
       {
+         $this->codagente = $a['codagente'];
+         $this->nombre = $a['nombre'];
+         $this->apellidos = $a['apellidos'];
+         $this->dnicif = $a['dnicif'];
          $this->coddepartamento = $a['coddepartamento'];
          $this->email = $a['email'];
          $this->fax = $a['fax'];
@@ -87,10 +91,6 @@ class agente extends fs_model
          $this->direccion = $a['direccion'];
          $this->porcomision = floatval($a['porcomision']);
          $this->irpf = floatval($a['irpf']);
-         $this->dnicif = $a['dnicif'];
-         $this->nombre = $a['nombre'];
-         $this->apellidos = $a['apellidos'];
-         $this->codagente = $a['codagente'];
          $this->seg_social = $a['seg_social'];
          $this->banco = $a['banco'];
          $this->cargo =$a['cargo'];
@@ -115,6 +115,10 @@ class agente extends fs_model
       }
       else
       {
+         $this->codagente = NULL;
+         $this->nombre = '';
+         $this->apellidos = '';
+         $this->dnicif = '';
          $this->coddepartamento = NULL;
          $this->email = NULL;
          $this->fax = NULL;
@@ -126,10 +130,6 @@ class agente extends fs_model
          $this->direccion = NULL;
          $this->porcomision = 0;
          $this->irpf = 0;
-         $this->dnicif = '';
-         $this->nombre = '';
-         $this->apellidos = '';
-         $this->codagente = NULL;
          $this->seg_social = NULL;
          $this->banco = NULL;
          $this->cargo = NULL;
@@ -205,9 +205,9 @@ class agente extends fs_model
       $this->telefono = $this->no_html($this->telefono);
       $this->email = $this->no_html($this->email);
       
-      if( !preg_match("/^[A-Z0-9]{1,10}$/i", $this->codagente) )
+      if( strlen($this->codagente) < 1 OR strlen($this->codagente) > 10 )
       {
-         $this->new_error_msg("Código de agente no válido.");
+         $this->new_error_msg("Código de agente no válido. Debe tener entre 1 y 10 caracteres.");
       }
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
       {

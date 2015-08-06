@@ -609,17 +609,23 @@ class fs_postgresql
       {
          /// añade la coma al final
          if($i)
+         {
             $consulta .= ', ';
+         }
          else
             $i = TRUE;
          
          $consulta .= '"'.$col['nombre'].'" '.$col['tipo'];
          
          if($col['nulo'] == 'NO')
+         {
             $consulta .= ' NOT NULL';
+         }
          
          if($col['defecto'] AND !in_array($col['tipo'], array('serial', 'bigserial')))
+         {
             $consulta .= ' DEFAULT '.$col['defecto'];
+         }
       }
       
       return $consulta.' ); '.$this->compare_constraints($table_name, $xml_restricciones, FALSE);

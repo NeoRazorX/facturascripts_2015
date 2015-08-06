@@ -65,7 +65,7 @@
       Además, toda la facturación y contabilida básica ha sido movida al plugin <mark>facturacion_base</mark>.
    </p>
    <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
-      <span class="glyphicon glyphicon-upload"></span> &nbsp; Descargar facturacion_base
+      <span class="glyphicon glyphicon-download-alt"></span> &nbsp; Descargar facturacion_base
    </a>
 </div>
 {elseif="$fsc->step=='2'"}
@@ -447,12 +447,16 @@
                      </div>
                   </div>
                </div>
-               <div class="row">
+               <div class="row bg-info">
                   <div class="col-md-12 col-sm-12">
                      <h2>Traducciones:</h2>
+                     <p class="help-block">
+                        FACTURA y FACTURAS se traduce únicamente en los documentos de ventas.
+                        FACTURA_SIMPLIFICADA se utiliza en los tickets.
+                     </p>
                   </div>
                </div>
-               <div class="row">
+               <div class="row bg-info">
                   {loop="$fsc->traducciones()"}
                   <div class="col-md-2 col-sm-3">
                      <div class="form-group">
@@ -505,12 +509,12 @@
                      </div>
                   </div>
                </div>
-               <div class="row">
+               <div class="row bg-warning">
                   <div class="col-md-12 col-sm-12">
                      <h2>En desarrollo:</h2>
                   </div>
                </div>
-               <div class="row">
+               <div class="row bg-warning">
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
                         Comprobaciones en la base de datos:
@@ -551,7 +555,7 @@
                      </div>
                   </div>
                </div>
-               <div class="row">
+               <div class="row bg-warning">
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
                         Algoritmo de nuevo código:

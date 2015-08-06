@@ -97,7 +97,11 @@
                   <option value="">Ninguno</option>
                   <option value="">------</option>
                   {loop="$fsc->agente->all()"}
-                  <option value="{$value->codagente}"{if="$fsc->suser->codagente == $value->codagente"} selected="selected"{/if}>{$value->get_fullname()}</option>
+                     {if="$fsc->suser->codagente==$value->codagente"}
+                     <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
+                     {else}
+                     <option value="{$value->codagente}">{$value->get_fullname()}</option>
+                     {/if}
                   {/loop}
                </select>
                <p class="help-block">

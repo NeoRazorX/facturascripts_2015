@@ -398,7 +398,7 @@ class admin_home extends fs_controller
    {
       $clist = array();
       $include = array(
-          'factura','facturas','albaran','albaranes','pedido','pedidos',
+          'factura','facturas', 'factura_simplificada','albaran','albaranes','pedido','pedidos',
           'presupuesto','presupuestos','provincia','apartado','cifnif',
           'iva','irpf','numero2'
       );
