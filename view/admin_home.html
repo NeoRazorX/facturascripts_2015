@@ -451,7 +451,7 @@
                   <div class="col-md-12 col-sm-12">
                      <h2>Traducciones:</h2>
                      <p class="help-block">
-                        FACTURA y FACTURAS se traduce únicamente en los documentos de ventas.
+                        FACTURA y FACTURAS se traducen únicamente en los documentos de ventas.
                         FACTURA_SIMPLIFICADA se utiliza en los tickets.
                      </p>
                   </div>
@@ -511,7 +511,10 @@
                </div>
                <div class="row bg-warning">
                   <div class="col-md-12 col-sm-12">
-                     <h2>En desarrollo:</h2>
+                     <h2>
+                        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+                        &nbsp; Desarrollo:
+                     </h2>
                   </div>
                </div>
                <div class="row bg-warning">
@@ -526,6 +529,13 @@
                               No comprobar los tipos
                            </option>
                         </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Tipo entero:
+                        <input class="form-control" type="text" name="db_integer" value="{$GLOBALS['config2']['db_integer']}"/>
+                        <p class="help-block">Tipo a usar en la base de datos (MySQL).</p>
                      </div>
                   </div>
                   <div class="col-md-2 col-sm-2">
@@ -545,6 +555,8 @@
                         <p class="help-block">Los admninistradores pueden acceder desde cualquier IP.</p>
                      </div>
                   </div>
+               </div>
+               <div class="row bg-warning">
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
                         Generar los libros contables:
@@ -554,8 +566,6 @@
                         </select>
                      </div>
                   </div>
-               </div>
-               <div class="row bg-warning">
                   <div class="col-md-3 col-sm-3">
                      <div class="form-group">
                         Algoritmo de nuevo código:

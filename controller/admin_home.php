@@ -362,8 +362,17 @@ class admin_home extends fs_controller
             $new_fsc = new $page->name();
             $found = TRUE;
             
-            if( !$new_fsc->page->save() )
-               $this->new_error_msg("Imposible guardar la página ".$page->name);
+            if( isset($new_fsc->page) )
+            {
+               if( !$new_fsc->page->save() )
+               {
+                  $this->new_error_msg("Imposible guardar la página ".$page->name);
+               }
+            }
+            else
+            {
+               $this->new_error_msg("Error al leer la página ".$page->name);
+            }
             
             unset($new_fsc);
             break;

@@ -107,6 +107,11 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    {
       $GLOBALS['config2']['factura_simplificada'] = 'factura simplificada';
    }
+   
+   if( !isset($GLOBALS['config2']['db_integer']) )
+   {
+      $GLOBALS['config2']['db_integer'] = 'INTEGER';
+   }
 }
 else
 {
@@ -141,7 +146,8 @@ else
        'ip_whitelist' => '*',
        'libros_contables' => 1,
        'foreign_keys' => 1,
-       'new_codigo' => 'eneboo'
+       'new_codigo' => 'eneboo',
+       'db_integer' => 'INTEGER'
    );
 }
 
