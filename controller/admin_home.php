@@ -400,7 +400,7 @@ class admin_home extends fs_controller
       $include = array(
           'factura','facturas','albaran','albaranes','pedido','pedidos',
           'presupuesto','presupuestos','provincia','apartado','cifnif',
-          'iva','irpf','numero2'
+          'iva','irpf','numero2','servicio','servicios'
       );
       
       foreach($GLOBALS['config2'] as $i => $value)
