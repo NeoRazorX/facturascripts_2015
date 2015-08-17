@@ -38,7 +38,8 @@ class admin_info extends fs_controller
       
       if( !$cron_vars['cron_exists'] )
       {
-         $this->new_advice('Nunca se ha ejecutado el cron, te perderás algunas características interesantes de FacturaScripts.');
+         $this->new_advice('Nunca se ha ejecutado el <a href="http://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
+                 . ' te perderás algunas características interesantes de FacturaScripts.');
       }
       else if( $cron_vars['cron_error'] )
       {

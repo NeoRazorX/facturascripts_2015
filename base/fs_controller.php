@@ -678,7 +678,7 @@ class fs_controller
     */
    protected function process()
    {
-      
+      $this->new_advice('La función process() está obsoleta, usa private_core() en su lugar.');
    }
    
    /**

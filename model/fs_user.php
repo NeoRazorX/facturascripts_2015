@@ -95,10 +95,10 @@ class fs_user extends fs_model
          $this->password = $a['password'];
          $this->log_key = $a['log_key'];
          
-         $this->codagente = intval($a['codagente']);
-         if($this->codagente < 1)
+         $this->codagente = NULL;
+         if( isset($a['codagente']) )
          {
-            $this->codagente = NULL;
+            $this->codagente = $a['codagente'];
          }
          
          $this->admin = $this->str2bool($a['admin']);
@@ -177,6 +177,10 @@ class fs_user extends fs_model
          return 'index.php?page=admin_user&snick='.$this->nick;
    }
    
+   /**
+    * 
+    * @return boolean|agente
+    */
    public function get_agente()
    {
       if( isset($this->agente) )

@@ -193,7 +193,7 @@ class fs_updater
                if($this->tr_updates == '')
                {
                   $this->tr_updates = '<tr class="bg-success"><td colspan="5">El sistema está actualizado.'
-                          . ' <a href="index.php">Volver</a></td></tr>';
+                          . ' <a href="index.php?page=admin_home&updated=TRUE">Volver</a></td></tr>';
                }
             }
          }

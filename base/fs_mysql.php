@@ -464,6 +464,15 @@ class fs_mysql
          $encontrada = FALSE;
          if($columnas)
          {
+            if( strtolower($col['tipo']) == 'integer')
+            {
+               /**
+                * Desde la pestaña avanzado el panel de control se puede cambiar
+                * el tipo de entero a usar en las columnas.
+                */
+               $col['tipo'] = FS_DB_INTEGER;
+            }
+            
             foreach($columnas as $col2)
             {
                if($col2['column_name'] == $col['nombre'])
@@ -521,7 +530,7 @@ class fs_mysql
             
             if($col['tipo'] == 'serial')
             {
-               $consulta .= '`'.$col['nombre'].'` INT NOT NULL AUTO_INCREMENT;';
+               $consulta .= '`'.$col['nombre'].'` '.FS_DB_INTEGER.' NOT NULL AUTO_INCREMENT;';
             }
             else
             {
@@ -696,30 +705,48 @@ class fs_mysql
       {
          /// añade la coma al final
          if($i)
+         {
             $consulta .= ", ";
+         }
          else
             $i = TRUE;
          
          if($col['tipo'] == 'serial')
-            $consulta .= '`'.$col['nombre'].'` INT NOT NULL AUTO_INCREMENT';
+         {
+            $consulta .= '`'.$col['nombre'].'` '.FS_DB_INTEGER.' NOT NULL AUTO_INCREMENT';
+         }
          else
          {
+            if( strtolower($col['tipo']) == 'integer')
+            {
+               /**
+                * Desde la pestaña avanzado el panel de control se puede cambiar
+                * el tipo de entero a usar en las columnas.
+                */
+               $col['tipo'] = FS_DB_INTEGER;
+            }
+            
             $consulta .= '`'.$col['nombre'].'` '.$col['tipo'];
             
             if($col['nulo'] == 'NO')
+            {
                $consulta .= " NOT NULL";
+            }
             else
+            {
+               /// es muy importante especificar que la columna permite NULL
                $consulta .= " NULL";
+            }
             
             if($col['defecto'])
+            {
                $consulta .= " DEFAULT ".$col['defecto'];
-            else if($col['nulo'] == 'YES')
-               $consulta .= " DEFAULT NULL";
+            }
          }
       }
       
-      return $consulta.' '.$this->generate_table_constraints($xml_restricciones).' )
-         ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
+      return $consulta.' '.$this->generate_table_constraints($xml_restricciones).' ) '
+              .'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
    }
    
    private function generate_table_constraints($xml_restricciones)
@@ -731,7 +758,9 @@ class fs_mysql
          foreach($xml_restricciones as $res)
          {
             if( strstr(strtolower($res['consulta']), 'primary key') )
+            {
                $consulta .= ', '.$res['consulta'];
+            }
             else
                $consulta .= ', CONSTRAINT '.$res['nombre'].' '.$res['consulta'];
          }
