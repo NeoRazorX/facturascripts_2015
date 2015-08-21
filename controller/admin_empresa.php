@@ -47,7 +47,7 @@ class admin_empresa extends fs_controller
       parent::__construct(__CLASS__, 'Empresa', 'admin', TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->almacen = new almacen();
       $this->cuenta_banco = new cuenta_banco();

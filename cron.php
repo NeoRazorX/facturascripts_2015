@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/// accedemos al directorio de FacturaScripts
+chdir(__DIR__);
+
 /// cargamos las constantes de configuración
 require_once 'config.php';
 require_once 'base/config2.php';

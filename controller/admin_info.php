@@ -24,7 +24,7 @@ class admin_info extends fs_controller
       parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $fsvar = new fs_var();
       $cron_vars = $fsvar->array_get( array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE) );

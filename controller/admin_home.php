@@ -31,7 +31,7 @@ class admin_home extends fs_controller
       parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->download_list = array(
           'facturacion_base' => array(

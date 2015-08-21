@@ -541,6 +541,12 @@ $updater = new fs_updater();
                      </a>
                   </li>
                   <li role="presentation">
+                     <a href="#pago" aria-controls="pago" role="tab" data-toggle="tab">
+                        <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                        <span class="hidden-xs">&nbsp; Plugin de pago</span>
+                     </a>
+                  </li>
+                  <li role="presentation">
                      <a href="#opciones" aria-controls="opciones" role="tab" data-toggle="tab">
                         <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
                         <span class="hidden-xs">&nbsp; Opciones</span>
@@ -562,6 +568,16 @@ $updater = new fs_updater();
                            </thead>
                            <?php echo $updater->tr_updates; ?>
                         </table>
+                     </div>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="pago">
+                     <br/>
+                     <p>
+                        Recuerda que los plugins de pago se actualizan uno a uno desde
+                        <mark>Admin > Panel de control > Plugins</mark>.
+                     </p>
+                     <div class="thumbnail">
+                        <img src="view/img/plugins_pago.png" alt="plugins pago"/>
                      </div>
                   </div>
                   <div role="tabpanel" class="tab-pane" id="opciones">
