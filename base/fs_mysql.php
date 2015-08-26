@@ -95,7 +95,7 @@ class fs_mysql
       }
       else if( class_exists('mysqli') )
       {
-         self::$link = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, intval(FS_DB_PORT) );
+         self::$link = @new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, intval(FS_DB_PORT) );
          
          if(self::$link->connect_error)
          {
@@ -160,7 +160,12 @@ class fs_mysql
       if($aux)
       {
          foreach($aux as $a)
-            $tables[] = array('name' => $a['Tables_in_'.FS_DB_NAME]);
+         {
+            if( isset($a['Tables_in_'.FS_DB_NAME]) )
+            {
+               $tables[] = array('name' => $a['Tables_in_'.FS_DB_NAME]);
+            }
+         }
       }
       
       return $tables;

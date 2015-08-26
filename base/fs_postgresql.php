@@ -480,10 +480,6 @@ class fs_postgresql
       {
          return FALSE;
       }
-      else if( $v1 == substr($v2, 0, strlen($v1)) )
-      {
-         return FALSE;
-      }
       else if( substr($v1, 0, 4) == 'time' AND substr($v2, 0, 4) == 'time' )
       {
          return FALSE;

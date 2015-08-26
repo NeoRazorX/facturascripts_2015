@@ -205,14 +205,15 @@ class admin_home extends fs_controller
          if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
          {
             $zip = new ZipArchive();
-            if( $zip->open($_FILES['fplugin']['tmp_name']) )
+            $res = $zip->open($_FILES['fplugin']['tmp_name']);
+            if($res === TRUE)
             {
                $zip->extractTo('plugins/');
                $zip->close();
                $this->new_message('Plugin '.$_FILES['fplugin']['name'].' añadido correctamente. Ya puedes activarlo.');
             }
             else
-               $this->new_error_msg('Archivo no encontrado.');
+               $this->new_error_msg('Error al abrir el archivo ZIP. Código: '.$res);
          }
       }
       else if( isset($_GET['download']) )
@@ -811,7 +812,8 @@ class admin_home extends fs_controller
          if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
          {
             $zip = new ZipArchive();
-            if( $zip->open('download.zip') )
+            $res = $zip->open('download.zip');
+            if($res === TRUE)
             {
                $zip->extractTo('plugins/');
                $zip->close();
@@ -834,7 +836,7 @@ class admin_home extends fs_controller
                }
             }
             else
-               $this->new_error_msg('Archivo no encontrado.');
+               $this->new_error_msg('Error al abrir el ZIP. Código: '.$res);
          }
          else
          {
@@ -860,7 +862,8 @@ class admin_home extends fs_controller
             if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
             {
                $zip = new ZipArchive();
-               if( $zip->open('download.zip') )
+               $res = $zip->open('download.zip');
+               if($res === TRUE)
                {
                   $plugins_list = scandir(getcwd().'/plugins');
                   $zip->extractTo('plugins/');
@@ -894,7 +897,7 @@ class admin_home extends fs_controller
                   $this->enable_plugin($item->nombre);
                }
                else
-                  $this->new_error_msg('Archivo no encontrado.');
+                  $this->new_error_msg('Error al abrir el ZIP. Código: '.$res);
             }
             else
             {

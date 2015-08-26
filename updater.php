@@ -239,7 +239,7 @@ class fs_updater
             $this->mensajes = 'Actualizado correctamente.';
          }
          else
-            $this->errores = 'Ha habido un error con el archivo update.zip';
+            $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
       }
       else
          $this->errores = 'Error al descargar el archivo zip.';
@@ -279,7 +279,7 @@ class fs_updater
                $this->mensajes = 'Plugin actualizado correctamente.';
             }
             else
-               $this->errores = 'Ha habido un error con el archivo update.zip';
+               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
          }
          else
             $this->errores = 'Error al descargar el archivo zip.';
