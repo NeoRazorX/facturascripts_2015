@@ -32,12 +32,12 @@
 
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active">
+      <li role="presentation" {if="!$fsc->mostrar=='buscar'"} class="active"{/if}>
          <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
          </a>
       </li>
-      <li role="presentation">
+      <li{if="$fsc->mostrar=='buscar'"} class="active"{/if}>
          <a href="#history" aria-controls="history" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
             <span class="hidden-xs">&nbsp; Historial</span>
@@ -57,7 +57,7 @@
       </li>
    </ul>
    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="home">
+       <div role="tabpanel" class="tab-pane{if="!$fsc->mostrar=='buscar'"} active{/if}" id="home">
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -80,7 +80,7 @@
                </tr>
             </table>
          </div>
-         <div class="panel-group" id="accordion" style="margin: 10px;">
+         <div class="panel-group{if="$fsc->mostrar=='buscar'"} active{/if}" id="accordion" style="margin: 10px;">
             <div class="panel panel-default">
                <div class="panel-heading">
                   <h3 class="panel-title">
@@ -122,25 +122,100 @@
             {/if}
          </div>
       </div>
-      <div role="tabpanel" class="tab-pane" id="history">
-         <div class="table-responsive">
-            <table class="table table-hover">
+      <div role="tabpanel" class="tab-pane{if="$fsc->mostrar=='buscar'"} active{/if}" id="history">
+          <br/>
+<form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
+   <input type="hidden" name="mostrar" value="buscar"/>
+   <input type="hidden" name="offset" value="0"/>
+   <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-2">
+            <div class="form-group">
+               <div class="input-group">
+                  <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
+                  <span class="input-group-btn">
+                     <button class="btn btn-primary hidden-sm" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                     </button>
+                  </span>
+               </div>
+            </div>
+         </div>
+         <div class="col-sm-2">
+            <div class="form-group">
+               <select name="fs_user" class="form-control" onchange="this.form.submit()">
+                  <option value="">Cualquier usuario</option>
+                  <option value="">------</option>
+                  {loop="$fsc->user->all()"}
+                     {if="$value->nick==$fsc->fs_user"}
+                     <option value="{$value->nick}" selected="selected">{$value->nick}</option>
+                     {else}
+                     <option value="{$value->nick}">{$value->nick}</option>
+                     {/if}
+                  {/loop}
+               </select>
+            </div>
+         </div>
+         <div class="col-sm-2">
+            <div class="form-group">
+               <input type="text" name="desde" value="{$fsc->desde}" class="form-control datepicker" placeholder="Desde" autocomplete="off" onchange="this.form.submit()"/>
+            </div>
+         </div>
+         <div class="col-sm-2">
+            <div class="form-group">
+               <input type="text" name="hasta" value="{$fsc->hasta}" class="form-control datepicker" placeholder="Hasta" autocomplete="off" onchange="this.form.submit()"/>
+            </div>
+         </div>
+      </div>
+</form>
+   </div>
+         <div class="bootstrap-table">
+            <table class="table hover" 
+                   id="table" data-toggle="table" name="historial" 
+                   data-show-columns="true" 
+                   data-search="true" 
+                   data-show-refresh="true" 
+                   data-show-toggle="true" 
+                   data-show-export="true" 
+                   data-pagination="true"
+                   data-show-header="true"
+                   data-sortable="true" 
+                   data-show-footer="true" 
+                   >
                <thead>
                   <tr>
-                     <th class="text-left">Usuario</th>
-                     <th class="text-left">Detalle</th>
-                     <th class="text-left">IP</th>
-                     <th class="text-right">Fecha</th>
+                     <th data-field="state" data-checkbox="true"></th>
+                     <th data-sortable="true" data-field="Usuario" class="text-left">Usuario</th>
+                     <th data-sortable="true" data-field="Detalle" class="text-left">Detalle</th>
+                     <th data-sortable="true" data-field="IP" class="text-left">IP</th>
+                     <th data-sortable="true" field="Fecha" class="text-right">
+                          Fecha
+                        {if="$fsc->order=='fecha DESC'"}
+                        <a href="#" data-toggle="modal" data-target="#modal_orden">
+                           <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
+                        </a>
+                        {elseif="$fsc->order=='fecha ASC'"}
+                        <a href="#" data-toggle="modal" data-target="#modal_orden">
+                           <span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span>
+                        </a>
+                        {/if}
+                     </th>
                   </tr>
                </thead>
-               {loop="$fsc->get_fs_log()"}
+               {loop="$fsc->resultados"}
                <tr{if="$value->alerta"} class="bg-danger"{/if}>
+                   <td></td>
                   <td><a href="index.php?page=admin_user&snick={$value->usuario}">{$value->usuario}</a></td>
                   <td>{$value->detalle}</td>
                   <td>{$value->ip}</td>
-                  <td class="text-right">{$value->fecha}</td>
+                  <td class="text-right"><div class="th-inner sortable both">{$value->fecha}</div></td>
                </tr>
-               {/loop}
+               {else}
+                <tr class="bg-warning">
+                   <td></td>
+                   <td colspan="9">Ningún dato encontrado.</td>
+                </tr>
+                {/loop}
             </table>
          </div>
       </div>
@@ -187,5 +262,41 @@
       </div>
    </div>
 </div>
-
+<ul class="pager">
+   {if="$fsc->anterior_url()!=''"}
+   <li class="previous">
+      <a href="{$fsc->anterior_url()}">
+         <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
+      </a>
+   </li>
+   {/if}
+   
+   {if="$fsc->siguiente_url()!=''"}
+   <li class="next">
+      <a href="{$fsc->siguiente_url()}">
+         Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+   </li>
+   {/if}
+</ul>
+<div class="modal fade" id="modal_orden" tabindex="-1" role="dialog">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Selecciona el orden de los resultados</h4>
+         </div>
+         <div class="modal-body">
+            <a href="{$fsc->url()}&mostrar=buscar&order=fecha_desc" class="btn btn-sm btn-block btn-default{if="$fsc->order=='fecha DESC'"} active{/if}">
+               Ordenar por fecha descendente
+            </a>
+            <a href="{$fsc->url()}&mostrar=buscar&order=fecha_asc" class="btn btn-sm btn-block btn-default{if="$fsc->order=='fecha ASC'"} active{/if}">
+               Ordenar por fecha ascendente
+            </a>
+         </div>
+      </div>
+   </div>
+</div>
 {include="footer"}

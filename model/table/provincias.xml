@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : provincias.xml
+    Description:
+        Estructura de la tabla provincias.
+-->
+<tabla>
+   <columna>
+      <nombre>codpais</nombre>
+      <tipo>character varying(3)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>nombre</nombre>
+      <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>codprovincia</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>provincias_pkey</nombre>
+      <consulta>PRIMARY KEY (codprovincia)</consulta>
+   </restriccion>
+</tabla>

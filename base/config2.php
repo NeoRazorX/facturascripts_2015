@@ -112,6 +112,14 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    {
       $GLOBALS['config2']['db_integer'] = 'INTEGER';
    }
+    if( !isset($GLOBALS['config2']['servicio']) )
+   {
+      $GLOBALS['config2']['servicio'] = 'servicio';
+   }
+    if( !isset($GLOBALS['config2']['servicios']) )
+   {
+      $GLOBALS['config2']['servicios'] = 'servicios';
+   }
 }
 else
 {
@@ -131,6 +139,8 @@ else
        'pedidos' => 'pedidos',
        'presupuesto' => 'presupuesto',
        'presupuestos' => 'presupuestos',
+       'servicio' => 'servicio',
+       'servicios' => 'servivios',
        'provincia' => 'provincia',
        'apartado' => 'apartado',
        'cifnif' => 'CIF/NIF',
