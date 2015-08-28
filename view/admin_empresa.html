@@ -242,6 +242,8 @@
                      <select name="mail_enc" class="form-control">
                         <option value="ssl">SSL</option>
                         <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
+                        <option value="">---</option>
+                        <option value=""{if="$fsc->mail['mail_enc']==''"} selected="selected"{/if}>Ninguna</option>
                      </select>
                   </div>
                   <div class="form-group col-sm-3">

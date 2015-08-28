@@ -267,32 +267,41 @@ class admin_empresa extends fs_controller
    {
       if( $this->empresa->can_send_mail() )
       {
-         $mail = new PHPMailer();
-         $mail->IsSMTP();
-         $mail->SMTPAuth = TRUE;
-         $mail->SMTPSecure = $this->mail['mail_enc'];
-         $mail->Host = $this->mail['mail_host'];
-         $mail->Port = intval($this->mail['mail_port']);
-         $mail->Username = $this->empresa->email;
-         if($this->mail['mail_user'] != '')
+         /// Es imprescindible OpenSSL para enviar emails con los principales proveedores
+         if( extension_loaded('openssl') )
          {
-            $mail->Username = $this->mail['mail_user'];
+            $mail = new PHPMailer();
+            $mail->IsSMTP();
+            $mail->SMTPAuth = TRUE;
+            $mail->SMTPSecure = $this->mail['mail_enc'];
+            $mail->Host = $this->mail['mail_host'];
+            $mail->Port = intval($this->mail['mail_port']);
+            $mail->Username = $this->empresa->email;
+            if($this->mail['mail_user'] != '')
+            {
+               $mail->Username = $this->mail['mail_user'];
+            }
+            
+            $mail->Password = $this->empresa->email_password;
+            $mail->From = $this->empresa->email;
+            $mail->FromName = $this->user->nick;
+            $mail->CharSet = 'UTF-8';
+            
+            $mail->Subject = 'TEST';
+            $mail->AltBody = 'TEST';
+            $mail->WordWrap = 50;
+            $mail->MsgHTML('TEST');
+            $mail->IsHTML(TRUE);
+            
+            if( !$mail->SmtpConnect() )
+            {
+               $this->new_error_msg('No se ha podido conectar por email.');
+            }
          }
-         
-         $mail->Password = $this->empresa->email_password;
-         $mail->From = $this->empresa->email;
-         $mail->FromName = $this->user->nick;
-         $mail->CharSet = 'UTF-8';
-         
-         $mail->Subject = 'TEST';
-         $mail->AltBody = 'TEST';
-         $mail->WordWrap = 50;
-         $mail->MsgHTML('TEST');
-         $mail->IsHTML(TRUE);
-         
-         if( !$mail->SmtpConnect() )
+         else
          {
-            $this->new_error_msg('No se ha podido conectar por email.');
+            $this->new_error_msg('No se encuentra la extensión OpenSSL,'
+                    . ' imprescindible para enviar emails.');
          }
       }
    }
