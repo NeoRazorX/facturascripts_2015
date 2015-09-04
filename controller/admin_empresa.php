@@ -118,6 +118,11 @@ class admin_empresa extends fs_controller
          if( $this->empresa->save() )
          {
             $this->new_message('Datos guardados correctamente.');
+            if(!$this->empresa->contintegrada)
+            {
+               $this->new_message('¿Quieres activar la <b>contabilidad integrada</b>?'
+                       . ' Haz clic en la sección <a href="#facturacion">facturación</a>.');
+            }
             
             $step = $fsvar->simple_get('install_step');
             if($step == 2)

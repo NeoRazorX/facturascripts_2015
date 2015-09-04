@@ -19,6 +19,15 @@
 
 class admin_info extends fs_controller
 {
+   public $desde;
+   public $hasta;
+   public $mostrar;
+   public $nick;
+   public $num_resultados;
+   public $offset;
+   public $order;
+   public $resultados;
+   
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
@@ -26,6 +35,9 @@ class admin_info extends fs_controller
    
    protected function private_core()
    {
+      /**
+       * Cargamos las variables del cron
+       */
       $fsvar = new fs_var();
       $cron_vars = $fsvar->array_get( array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE) );
       
@@ -35,22 +47,7 @@ class admin_info extends fs_controller
          $cron_vars['cron_lock'] = FALSE;
          $fsvar->array_save($cron_vars);
       }
-      
-      if( !$cron_vars['cron_exists'] )
-      {
-         $this->new_advice('Nunca se ha ejecutado el <a href="http://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
-                 . ' te perderás algunas características interesantes de FacturaScripts.');
-      }
-      else if( $cron_vars['cron_error'] )
-      {
-         $this->new_error_msg('Parece que ha habido un error con el cron. Haz clic <a href="'.$this->url().'&fix=TRUE">aquí</a> para corregirlo.');
-      }
-      else if( $cron_vars['cron_lock'] )
-      {
-         $this->new_advice('Se está ejecutando el cron.');
-      }
-      
-      if( isset($_GET['clean_cache']) )
+      else if( isset($_GET['clean_cache']) )
       {
          /// borramos los archivos php del directorio tmp
          foreach( scandir(getcwd().'/tmp') as $f)
@@ -64,6 +61,58 @@ class admin_info extends fs_controller
             $this->new_message("Cache limpiada correctamente.");
          }
       }
+      else if( !$cron_vars['cron_exists'] )
+      {
+         $this->new_advice('Nunca se ha ejecutado el <a href="http://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
+                 . ' te perderás algunas características interesantes de FacturaScripts.');
+      }
+      else if( $cron_vars['cron_error'] )
+      {
+         $this->new_error_msg('Parece que ha habido un error con el cron. Haz clic <a href="'.$this->url().'&fix=TRUE">aquí</a> para corregirlo.');
+      }
+      else if( $cron_vars['cron_lock'] )
+      {
+         $this->new_advice('Se está ejecutando el cron.');
+      }
+      else if( isset($_GET['test']) )
+      {
+         for($i = 100; $i > 0; $i--)
+         {
+            $fslog = new fs_log();
+            $fslog->alerta = ( mt_rand(0,9) == 0 );
+            $fslog->detalle = $this->random_string();
+            $fslog->fecha = date(mt_rand(1, 28).'-'.mt_rand(1, 12).'-Y H:i:s');
+            $fslog->tipo = $this->random_string(20);
+            $fslog->usuario = $this->user->nick;
+            $fslog->save();
+         }
+      }
+      
+      $this->mostrar = '';
+      if( isset($_REQUEST['mostrar']) )
+      {
+         $this->mostrar = $_REQUEST['mostrar'];
+      }
+      
+      /// variables para la búsqueda en el historial
+      $this->desde = '';
+      $this->hasta = '';
+      $this->nick = '';
+      
+      if( isset($_REQUEST['desde']) )
+      {
+         $this->desde = $_REQUEST['desde'];
+         $this->hasta = $_REQUEST['hasta'];
+         $this->nick = $_REQUEST['nick'];
+      }
+      
+      $this->offset = 0;
+      if( isset($_REQUEST['offset']) )
+      {
+         $this->offset = intval($_REQUEST['offset']);
+      }
+      
+      $this->buscar();
    }
    
    public function linux()
@@ -121,9 +170,82 @@ class admin_info extends fs_controller
       return $this->db->list_tables();
    }
    
-   public function get_fs_log()
+   private function buscar()
    {
+      /// inicializamos esto solamente para que compruebe la tabla y asegurarnos que existe
       $fslog = new fs_log();
-      return $fslog->all();
+      
+      $this->resultados = array();
+      $this->num_resultados = 0;
+      $query = $this->empresa->no_html( strtolower($this->query) );
+      $sql = "SELECT * FROM fs_logs ";
+      $where = 'WHERE ';
+      
+      if($this->query != '')
+      {
+         $sql .= $where."(lower(detalle) LIKE '%".$query."%' OR lower(tipo) LIKE '%".$query."%')";
+         $where = ' AND ';
+      }
+      
+      if($this->nick != '')
+      {
+         $sql .= $where."usuario = ".$this->empresa->var2str($this->nick);
+         $where = ' AND ';
+      }
+     
+      if($this->desde != '')
+      {
+         $sql .= $where."fecha >= ".$this->empresa->var2str($this->desde);
+         $where = ' AND ';
+      }
+      
+      if($this->hasta != '')
+      {
+         $sql .= $where."fecha <= ".$this->empresa->var2str($this->hasta);
+         $where = ' AND ';
+      }
+      
+      $data = $this->db->select_limit($sql." ORDER BY fecha DESC", FS_ITEM_LIMIT, $this->offset);
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $this->resultados[] = new fs_log($d);
+         }
+      }
+   }
+   
+   public function anterior_url()
+   {
+      $url = '';
+      
+      if($this->offset > 0)
+      {
+         $url = $this->url()."&mostrar=".$this->mostrar
+                 ."&query=".$this->query
+                 ."&nick=".$this->nick
+                 ."&desde=".$this->desde
+                 ."&hasta=".$this->hasta
+                 ."&offset=".($this->offset-FS_ITEM_LIMIT);
+      }
+      
+      return $url;
+   }
+   
+   public function siguiente_url()
+   {
+      $url = '';
+      
+      if( count($this->resultados) == FS_ITEM_LIMIT )
+      {
+         $url = $this->url()."&mostrar=".$this->mostrar
+                 ."&query=".$this->query
+                 ."&nick=".$this->nick
+                 ."&desde=".$this->desde
+                 ."&hasta=".$this->hasta
+                 ."&offset=".($this->offset+FS_ITEM_LIMIT);
+      }
+      
+      return $url;
    }
 }

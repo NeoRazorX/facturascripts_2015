@@ -18,7 +18,6 @@
  */
 
 require_model('asiento.php');
-require_model('subcuenta.php');
 
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
@@ -106,6 +105,7 @@ class ejercicio extends fs_model
    protected function install()
    {
       $this->clean_cache();
+      
       return "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,
          estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
          VALUES ('".Date('Y')."','".Date('Y')."',".$this->var2str(Date('01-01-Y')).",
@@ -205,11 +205,13 @@ class ejercicio extends fs_model
     */
    public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE)
    {
-      $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name.
-         " WHERE fechainicio <= ".$this->var2str($fecha)." AND fechafin >= ".$this->var2str($fecha).";");
-      if($ejercicio)
+      $sql = "SELECT * FROM ".$this->table_name." WHERE fechainicio <= "
+              .$this->var2str($fecha)." AND fechafin >= ".$this->var2str($fecha).";";
+      
+      $data = $this->db->select($sql);
+      if($data)
       {
-         $eje = new ejercicio($ejercicio[0]);
+         $eje = new ejercicio($data[0]);
          if( $eje->abierto() OR !$solo_abierto )
          {
             return $eje;
@@ -242,7 +244,10 @@ class ejercicio extends fs_model
          return FALSE;
       }
       else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
+      {
+         return $this->db->select("SELECT * FROM ".$this->table_name
+                 ." WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
+      }
    }
    
    public function test()
@@ -262,7 +267,8 @@ class ejercicio extends fs_model
       }
       else if( strtotime($this->fechainicio) > strtotime($this->fechafin) )
       {
-         $this->new_error_msg("La fecha de inicio (".$this->fechainicio.") es posterior a la fecha fin (".$this->fechafin.").");
+         $this->new_error_msg("La fecha de inicio (".$this->fechainicio.") es "
+                 . "posterior a la fecha fin (".$this->fechafin.").");
       }
       else
          $status = TRUE;
@@ -290,27 +296,52 @@ class ejercicio extends fs_model
    {
       $status = TRUE;
       
-      /// comprobamos el balance de todas las subcuentas
-      $debe = 0;
-      $haber = 0;
-      $subcuenta = new subcuenta();
-      foreach($subcuenta->all_from_ejercicio($this->codejercicio) as $sc)
+      /// comprobamos la suma de las subcuentas
+      if( $this->db->table_exists('co_subcuentas') )
       {
-         $debe += $sc->debe;
-         $haber += $sc->haber;
+         $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_subcuentas"
+                 . " WHERE codejercicio = ".$this->var2str($this->codejercicio).";";
          
-         if( !$this->abierto() AND $sc->tiene_saldo() )
+         $data = $this->db->select($sql);
+         if($data)
          {
-            $this->new_error_msg('El ejercicio está cerrado pero la subcuenta <a href="'.
-                    $sc->url().'">'.$sc->codsubcuenta.'</a> aún tiene saldo ('.$sc->saldo.').');
-            $status = FALSE;
+            $debe = floatval($data[0]['debe']);
+            $haber = floatval($data[0]['haber']);
+            
+            if( !$this->floatcmp($debe, $haber, FS_NF0, TRUE) )
+            {
+               $this->new_error_msg('El ejercicio está descuadrado a nivel de subcuentas.'
+                       . ' Debe: '.$debe.' | Haber: '.$haber);
+               $status = FALSE;
+            }
          }
       }
       
-      if( !$this->floatcmp($debe, $haber, FS_NF0, TRUE) )
+      /// comprobamos la suma de las partidas de los asientos
+      if( $this->db->table_exists('co_partidas') )
       {
-         $this->new_error_msg('El ejercicio está descuadrado. Debe: '.$debe.' | Haber: '.$haber);
-         $status = FALSE;
+         $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_partidas"
+                 . " WHERE idasiento IN (SELECT idasiento FROM co_asientos"
+                 . " WHERE codejercicio = ".$this->var2str($this->codejercicio).");";
+         
+         $data = $this->db->select($sql);
+         if($data)
+         {
+            $debe = floatval($data[0]['debe']);
+            $haber = floatval($data[0]['haber']);
+            
+            if( !$this->floatcmp($debe, $haber, FS_NF0, TRUE) )
+            {
+               $this->new_error_msg('El ejercicio está descuadrado a nivel de asientos.'
+                       . ' Debe: '.$debe.' | Haber: '.$haber);
+               $status = FALSE;
+            }
+            else if(!$status)
+            {
+               $this->new_error_msg('Pero <b>NO</b> está descuadrado a nivel de asientos.'
+                       . ' Debe: '.$debe.' | Haber: '.$haber);
+            }
+         }
       }
       
       return $status;
@@ -321,24 +352,36 @@ class ejercicio extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-               fechainicio = ".$this->var2str($this->fechainicio).", fechafin = ".$this->var2str($this->fechafin).",
-               estado = ".$this->var2str($this->estado).", longsubcuenta = ".$this->var2str($this->longsubcuenta).",
-               plancontable = ".$this->var2str($this->plancontable).", idasientoapertura = ".$this->var2str($this->idasientoapertura).",
-               idasientopyg = ".$this->var2str($this->idasientopyg).", idasientocierre = ".$this->var2str($this->idasientocierre)."
-               WHERE codejercicio = ".$this->var2str($this->codejercicio).";";
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)
+                    .", fechainicio = ".$this->var2str($this->fechainicio)
+                    .", fechafin = ".$this->var2str($this->fechafin)
+                    .", estado = ".$this->var2str($this->estado)
+                    .", longsubcuenta = ".$this->var2str($this->longsubcuenta)
+                    .", plancontable = ".$this->var2str($this->plancontable)
+                    .", idasientoapertura = ".$this->var2str($this->idasientoapertura)
+                    .", idasientopyg = ".$this->var2str($this->idasientopyg)
+                    .", idasientocierre = ".$this->var2str($this->idasientocierre)
+                    ."  WHERE codejercicio = ".$this->var2str($this->codejercicio).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,plancontable,
-               idasientoapertura,idasientopyg,idasientocierre) VALUES (".$this->var2str($this->codejercicio).",".$this->var2str($this->nombre).",
-               ".$this->var2str($this->fechainicio).",".$this->var2str($this->fechafin).",".$this->var2str($this->estado).",
-               ".$this->var2str($this->longsubcuenta).",".$this->var2str($this->plancontable).",
-               ".$this->var2str($this->idasientoapertura).",".$this->var2str($this->idasientopyg).",
-               ".$this->var2str($this->idasientocierre).");";
+            $sql = "INSERT INTO ".$this->table_name." (codejercicio,nombre,fechainicio,fechafin,
+               estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
+               VALUES (".$this->var2str($this->codejercicio)
+                    .",".$this->var2str($this->nombre)
+                    .",".$this->var2str($this->fechainicio)
+                    .",".$this->var2str($this->fechafin)
+                    .",".$this->var2str($this->estado)
+                    .",".$this->var2str($this->longsubcuenta)
+                    .",".$this->var2str($this->plancontable)
+                    .",".$this->var2str($this->idasientoapertura)
+                    .",".$this->var2str($this->idasientopyg)
+                    .",".$this->var2str($this->idasientocierre).");";
          }
+         
          return $this->db->exec($sql);
       }
       else

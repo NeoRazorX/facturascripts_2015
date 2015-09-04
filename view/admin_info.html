@@ -32,12 +32,12 @@
 
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active">
+      <li role="presentation"{if="$fsc->mostrar==''"} class="active"{/if}>
          <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
          </a>
       </li>
-      <li role="presentation">
+      <li role="presentation"{if="$fsc->mostrar=='buscar'"} class="active"{/if}>
          <a href="#history" aria-controls="history" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
             <span class="hidden-xs">&nbsp; Historial</span>
@@ -57,7 +57,7 @@
       </li>
    </ul>
    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="home">
+      <div role="tabpanel" class="tab-pane{if="!$fsc->mostrar=='buscar'"} active{/if}" id="home">
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -80,7 +80,7 @@
                </tr>
             </table>
          </div>
-         <div class="panel-group" id="accordion" style="margin: 10px;">
+         <div class="panel-group{if="$fsc->mostrar=='buscar'"} active{/if}" id="accordion" style="margin: 10px;">
             <div class="panel panel-default">
                <div class="panel-heading">
                   <h3 class="panel-title">
@@ -122,27 +122,94 @@
             {/if}
          </div>
       </div>
-      <div role="tabpanel" class="tab-pane" id="history">
+      <div role="tabpanel" class="tab-pane{if="$fsc->mostrar=='buscar'"} active{/if}" id="history">
+         <br/>
+         <form name="f_custom_search" action="{$fsc->url()}" method="post" class="form">
+            <input type="hidden" name="mostrar" value="buscar"/>
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-sm-2">
+                     <div class="form-group">
+                        <div class="input-group">
+                           <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" placeholder="Buscar">
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary hidden-sm" type="submit">
+                                 <span class="glyphicon glyphicon-search"></span>
+                              </button>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-sm-2">
+                     <div class="form-group">
+                        <select name="nick" class="form-control" onchange="this.form.submit()">
+                           <option value="">Cualquier usuario</option>
+                           <option value="">------</option>
+                           {loop="$fsc->user->all()"}
+                              {if="$value->nick==$fsc->nick"}
+                              <option value="{$value->nick}" selected="selected">{$value->nick}</option>
+                              {else}
+                              <option value="{$value->nick}">{$value->nick}</option>
+                              {/if}
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-sm-2">
+                     <div class="form-group">
+                        <input type="text" name="desde" value="{$fsc->desde}" class="form-control datepicker" placeholder="Desde" autocomplete="off" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+                  <div class="col-sm-2">
+                     <div class="form-group">
+                        <input type="text" name="hasta" value="{$fsc->hasta}" class="form-control datepicker" placeholder="Hasta" autocomplete="off" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
                   <tr>
                      <th class="text-left">Usuario</th>
+                     <th class="text-left">Tipo</th>
                      <th class="text-left">Detalle</th>
                      <th class="text-left">IP</th>
                      <th class="text-right">Fecha</th>
                   </tr>
                </thead>
-               {loop="$fsc->get_fs_log()"}
-               <tr{if="$value->alerta"} class="bg-danger"{/if}>
+               {loop="$fsc->resultados"}
+               <tr{if="$value->alerta"} class="danger"{/if}>
                   <td><a href="index.php?page=admin_user&snick={$value->usuario}">{$value->usuario}</a></td>
+                  <td>{$value->tipo}</td>
                   <td>{$value->detalle}</td>
                   <td>{$value->ip}</td>
-                  <td class="text-right">{$value->fecha}</td>
+                  <td class="text-right"><div class="th-inner sortable both">{$value->fecha}</div></td>
+               </tr>
+               {else}
+               <tr class="bg-warning">
+                  <td colspan="5">Ningún dato encontrado.</td>
                </tr>
                {/loop}
             </table>
          </div>
+         <ul class="pager">
+            {if="$fsc->anterior_url()!=''"}
+            <li class="previous">
+               <a href="{$fsc->anterior_url()}">
+                  <span class="glyphicon glyphicon-chevron-left"></span> &nbsp; Anteriores
+               </a>
+            </li>
+            {/if}
+            {if="$fsc->siguiente_url()!=''"}
+            <li class="next">
+               <a href="{$fsc->siguiente_url()}">
+                  Siguientes &nbsp; <span class="glyphicon glyphicon-chevron-right"></span>
+               </a>
+            </li>
+            {/if}
+         </ul>
       </div>
       <div role="tabpanel" class="tab-pane" id="tablas">
          <div class="container-fluid" style="margin-top: 10px;">
