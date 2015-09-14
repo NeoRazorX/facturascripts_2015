@@ -757,6 +757,7 @@ class fs_controller
       
       $this->default_items->set_codpais( $this->empresa->codpais );
       $this->default_items->set_codserie( $this->empresa->codserie );
+      $this->default_items->set_coddivisa( $this->empresa->coddivisa );
    }
    
    /**

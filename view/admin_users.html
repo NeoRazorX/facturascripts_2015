@@ -122,7 +122,9 @@
          <form name="f_nuevo_usuario" class="form" role="form" action="{$fsc->page->url()}" method="post">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nuevo usuario</h4>
+               <h4 class="modal-title">
+                  <span class="glyphicon glyphicon-user"></span> &nbsp; Nuevo usuario
+               </h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -147,6 +149,10 @@
                      <option value="{$value->codagente}">{$value->get_fullname()}</option>
                      {/loop}
                   </select>
+                  <p class="help-block">
+                     Puedes tener empleados que no tengan acceso a FacturaScripts,
+                     o bien usuarios que no sean empleados, por eso está separado.
+                  </p>
                </div>
             </div>
             <div class="modal-footer">
