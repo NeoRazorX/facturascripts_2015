@@ -43,13 +43,10 @@
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
-            {if="FS_DEMO"}
-            <a class="navbar-brand" href="index.php">DEMO</a>
-            {elseif="$fsc->empresa->nombrecorto"}
-            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombrecorto}</a>
-            {else}
-            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
-            {/if}
+            <a class="navbar-brand" href="index.php">
+               <span class="glyphicon glyphicon-home"></span> &nbsp;
+               {if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}
+            </a>
          </div>
          
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

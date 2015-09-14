@@ -72,7 +72,7 @@ function guarda_config($nombre_archivo)
    fwrite($archivo, "define('FS_CACHE_PREFIX', '".$_REQUEST['cache_prefix']."');\n");
    fwrite($archivo, "\n");
    fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
-   fwrite($archivo, "define('FS_COOKIES_EXPIRE', 315360000);\n");
+   fwrite($archivo, "define('FS_COOKIES_EXPIRE', 7776000);\n");
    fwrite($archivo, "\n");
    fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
    fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");

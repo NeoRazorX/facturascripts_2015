@@ -42,12 +42,6 @@ class pais extends fs_model
     */
    public $nombre;
    
-   /**
-    * No implementado, es simplemente para dar compatibilidad con Eneboo.
-    * @var type
-    */
-   public $bandera;
-   
    public function __construct($p=FALSE)
    {
       parent::__construct('paises');
@@ -77,24 +71,41 @@ class pais extends fs_model
          }
          
          $this->nombre = $p['nombre'];
-         $this->bandera = $p['bandera'];
       }
       else
       {
          $this->codpais = '';
          $this->codiso = NULL;
          $this->nombre = '';
-         $this->bandera = NULL;
       }
    }
 
    public function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codpais,codiso,nombre,bandera) VALUES ('ESP','ES','España',NULL),".
-           " ('ARG','AR','Argentina',NULL), ('CHL','CL','Chile',NULL), ('COL','CO','Colombia',NULL),".
-           " ('ECU','EC','Ecuador',NULL), ('MEX','MX','México',NULL), ('PAN','PA','Panamá',NULL),".
-           " ('PER','PE','Perú',NULL), ('VEN','VE','Venezuela',NULL);";
+      return "INSERT INTO ".$this->table_name." (codpais,codiso,nombre)"
+              . " VALUES ('ESP','ES','España'),"
+              . " ('AND','AD','Andorra'),"
+              . " ('ARG','AR','Argentina'),"
+              . " ('BOL','BO','Bolivia'),"
+              . " ('CHL','CL','Chile'),"
+              . " ('COL','CO','Colombia'),"
+              . " ('CUB','CU','Cuba'),"
+              . " ('CRI','CR','Costa Rica'),"
+              . " ('DOM','DO','República Dominicana'),"
+              . " ('ECU','EC','Ecuador'),"
+              . " ('GNQ','GQ','Guinea Ecuatorial'),"
+              . " ('SLV','SV','El Salvador'),"
+              . " ('GTM','GT','Guatemala'),"
+              . " ('HND','HN','Honduras'),"
+              . " ('MEX','MX','México'),"
+              . " ('NIC','NI','Nicaragua'),"
+              . " ('PAN','PA','Panamá'),"
+              . " ('PER','PE','Perú'),"
+              . " ('PRI','PR','Puerto Rico'),"
+              . " ('PRY','PY','Paraguay'),"
+              . " ('URY','UY','Uruguay'),"
+              . " ('VEN','VE','Venezuela');";
    }
    
    public function url()

@@ -92,6 +92,12 @@
          </div>
          <div class="col-sm-2">
             <div class="form-group">
+               Email:
+               <input type="text" name="email" value="{$fsc->suser->email}" class="form-control" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="col-sm-2">
+            <div class="form-group">
                <a href="{$fsc->agente->url()}">Empleado</a>:
                <select name="scodagente" class="form-control">
                   <option value="">Ninguno</option>
@@ -139,30 +145,22 @@
                </select>
             </div>
          </div>
-         <div class="col-sm-2">
-            <div class="form-group">
-               Ejercicio:
-               <select name="ejercicio" class="form-control">
-               {loop="$fsc->ejercicio->all_abiertos()"}
-                  {if="$value->codejercicio==$fsc->suser->codejercicio"}
-                  <option value="{$value->codejercicio}" selected="selected">{$value->nombre}</option>
-                  {else}
-                  <option value="{$value->codejercicio}">{$value->nombre}</option>
-                  {/if}
-               {/loop}
-               </select>
-            </div>
-         </div>
       </div>
    </div>
    
    <div role="tabpanel">
       <ul class="nav nav-tabs" role="tablist">
          <li role="presentation" class="active">
-            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Autorizar</a>
+            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
+               <span class="glyphicon glyphicon-check"></span>
+               <span class="hidden-xs">&nbsp; Autorizar</span>
+            </a>
          </li>
          <li role="presentation">
-            <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Historial</a>
+            <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">
+               <span class="glyphicon glyphicon-book"></span>
+               <span class="hidden-xs">&nbsp; Historial</span>
+            </a>
          </li>
          {loop="$fsc->extensions"}
             {if="$value->type=='tab'"}
@@ -198,7 +196,7 @@
                      </tr>
                      {/loop}
                   {else}
-                  <tr class="bg-warning">
+                  <tr class="success">
                      <td colspan="4">
                         Los administradores tienen acceso a cualquier página.
                      </td>

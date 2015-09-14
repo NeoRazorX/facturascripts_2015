@@ -672,14 +672,6 @@ class fs_controller
    {
       $this->process();
    }
-      
-   /**
-    * @deprecated since version 2015.038
-    */
-   protected function process()
-   {
-      
-   }
    
    /**
     * Redirecciona a la página predeterminada para el usuario
@@ -745,126 +737,26 @@ class fs_controller
          $this->user->save();
       }
       else if( is_null($this->default_items->default_page()) )
+      {
          $this->default_items->set_default_page( $this->user->fs_page );
+      }
       
       if( is_null($this->default_items->showing_page()) )
-         $this->default_items->set_showing_page( $this->page->name );
-      
-      if( is_null($this->user->codejercicio) )
       {
-         $this->default_items->set_codejercicio( $this->empresa->codejercicio );
+         $this->default_items->set_showing_page( $this->page->name );
       }
-      else
-         $this->default_items->set_codejercicio( $this->user->codejercicio );
       
-      if( isset($_COOKIE['default_almacen']) )
-         $this->default_items->set_codalmacen( $_COOKIE['default_almacen'] );
-      else
-         $this->default_items->set_codalmacen( $this->empresa->codalmacen );
-      
-      if( isset($_COOKIE['default_cliente']) )
-         $this->default_items->set_codcliente( $_COOKIE['default_cliente'] );
-      
-      if( isset($_COOKIE['default_divisa']) )
-         $this->default_items->set_coddivisa( $_COOKIE['default_divisa'] );
-      else
-         $this->default_items->set_coddivisa( $this->empresa->coddivisa );
-      
-      if( isset($_COOKIE['default_familia']) )
-         $this->default_items->set_codfamilia( $_COOKIE['default_familia'] );
-      
-      if( isset($_COOKIE['default_formapago']) )
-         $this->default_items->set_codpago( $_COOKIE['default_formapago'] );
-      else
-         $this->default_items->set_codpago( $this->empresa->codpago );
+      $this->default_items->set_codejercicio( $this->empresa->codejercicio );
+      $this->default_items->set_codalmacen( $this->empresa->codalmacen );
+      $this->default_items->set_codpago( $this->empresa->codpago );
       
       if( isset($_COOKIE['default_impuesto']) )
-         $this->default_items->set_codimpuesto( $_COOKIE['default_impuesto'] );
-      
-      if( isset($_COOKIE['default_pais']) )
-         $this->default_items->set_codpais( $_COOKIE['default_pais'] );
-      else
-         $this->default_items->set_codpais( $this->empresa->codpais );
-      
-      if( isset($_COOKIE['default_proveedor']) )
-         $this->default_items->set_codproveedor( $_COOKIE['default_proveedor'] );
-      
-      if( isset($_COOKIE['default_serie']) )
-         $this->default_items->set_codserie( $_COOKIE['default_serie'] );
-      else
-         $this->default_items->set_codserie( $this->empresa->codserie );
-   }
-   
-   /**
-    * Establece un ejercicio como predeterminado para este usuario.
-    * Función obsoleta.
-    * @param type $cod el código del ejercicio
-    */
-   protected function save_codejercicio($cod)
-   {
-      if($cod != $this->user->codejercicio)
       {
-         $this->default_items->set_codejercicio($cod);
-         $this->user->codejercicio = $cod;
-         if( !$this->user->save() )
-         {
-            $this->new_error_msg('Error al establecer el ejercicio '.$cod.
-               ' como ejercicio predeterminado para este usuario.');
-         }
+         $this->default_items->set_codimpuesto( $_COOKIE['default_impuesto'] );
       }
-   }
-   
-   /**
-    * Establece un almacén como predeterminado para este usuario.
-    * @param type $cod el código del almacén
-    */
-   protected function save_codalmacen($cod)
-   {
-      setcookie('default_almacen', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codalmacen($cod);
-   }
-   
-   /**
-    * Establece un cliente como predeterminado para este usuario.
-    * Función obsoleta.
-    * @param type $cod el código del cliente
-    */
-   protected function save_codcliente($cod)
-   {
-      setcookie('default_cliente', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codcliente($cod);
-   }
-   
-   /**
-    * Establece una divisa como predeterminada para este usuario.
-    * Función obsoleta.
-    * @param type $cod el código de la divisa
-    */
-   protected function save_coddivisa($cod)
-   {
-      setcookie('default_divisa', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_coddivisa($cod);
-   }
-   
-   /**
-    * Establece una familia como predeterminada para este usuario.
-    * @param type $cod el código de la familia
-    */
-   protected function save_codfamilia($cod)
-   {
-      setcookie('default_familia', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codfamilia($cod);
-   }
-   
-   /**
-    * Establece una forma de pago como predeterminada para este usuario.
-    * Función obsoleta.
-    * @param type $cod el código de la forma de pago
-    */
-   protected function save_codpago($cod)
-   {
-      setcookie('default_formapago', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codpago($cod);
+      
+      $this->default_items->set_codpais( $this->empresa->codpais );
+      $this->default_items->set_codserie( $this->empresa->codserie );
    }
    
    /**
@@ -875,39 +767,6 @@ class fs_controller
    {
       setcookie('default_impuesto', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codimpuesto($cod);
-   }
-   
-   /**
-    * Establece un código de país como predeterminado para este usuario.
-    * Función obsoleta.
-    * @param type $cod el código del país
-    */
-   protected function save_codpais($cod)
-   {
-      setcookie('default_pais', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codpais($cod);
-   }
-   
-   /**
-    * Establece un proveedor como predeterminado para este usuario.
-    * Función obsoleta.
-    * @param type $cod el código del proveedor
-    */
-   protected function save_codproveedor($cod)
-   {
-      setcookie('default_proveedor', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codproveedor($cod);
-   }
-   
-   /**
-    * Establece una serie como predeterminada para este usuario.
-    * Función obsoleta.
-    * @param type $cod el código de la serie
-    */
-   protected function save_codserie($cod)
-   {
-      setcookie('default_serie', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codserie($cod);
    }
    
    /**
@@ -976,24 +835,31 @@ class fs_controller
       $txt .= 'database version: '.$this->db->version()."\n";
       
       if( $this->cache->connected() )
+      {
          $txt .= "memcache: YES\n";
+         $txt .= 'memcache version: '.$this->cache->version()."\n";
+      }
       else
          $txt .= "memcache: NO\n";
       
-      $txt .= 'memcache version: '.$this->cache->version()."\n";
-      
       if( function_exists('curl_init') )
+      {
          $txt .= "curl: YES\n";
+      }
       else
          $txt .= "curl: NO\n";
       
       $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
       
       if( isset($_SERVER['REQUEST_URI']) )
+      {
          $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+      }
       
       foreach($this->get_errors() as $e)
+      {
          $txt .= "\n" . $e;
+      }
       
       return str_replace('"', "'", $txt);
    }
@@ -1007,10 +873,14 @@ class fs_controller
    public function simbolo_divisa($coddivisa = FALSE)
    {
       if(!$coddivisa)
+      {
          $coddivisa = $this->empresa->coddivisa;
+      }
       
       if( isset($this->simbolo_divisas[$coddivisa]) )
+      {
          return $this->simbolo_divisas[$coddivisa];
+      }
       else
       {
          $divisa = new divisa();
@@ -1037,19 +907,25 @@ class fs_controller
    public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE)
    {
       if($coddivisa === FALSE)
+      {
          $coddivisa = $this->empresa->coddivisa;
+      }
       
       if(FS_POS_DIVISA == 'right')
       {
          if($simbolo)
+         {
             return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$this->simbolo_divisa($coddivisa);
+         }
          else
             return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$coddivisa;
       }
       else
       {
          if($simbolo)
+         {
             return $this->simbolo_divisa($coddivisa).number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+         }
          else
             return $coddivisa.' '.number_format($precio, FS_NF0, FS_NF1, FS_NF2);
       }
@@ -1065,7 +941,9 @@ class fs_controller
    public function show_numero($num=0, $decimales=FS_NF0, $js=FALSE)
    {
       if($js)
+      {
          return number_format($num, $decimales, '.', '');
+      }
       else
          return number_format($num, $decimales, FS_NF1, FS_NF2);
    }
@@ -1082,7 +960,9 @@ class fs_controller
       if( count($this->last_changes) > 0 )
       {
          if($this->last_changes[0]['url'] == $url)
+         {
             $this->last_changes[0]['nuevo'] = $nuevo;
+         }
          else
             array_unshift($this->last_changes, array('texto' => ucfirst($txt), 'url' => $url, 'nuevo' => $nuevo, 'cambio' => date('d-m-Y H:i:s')) );
       }

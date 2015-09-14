@@ -78,16 +78,6 @@ class admin_empresa extends fs_controller
       
       if( isset($_POST['cifnif']) )
       {
-         /*
-          * Guardamos los elementos por defecto
-          */
-         $this->save_codalmacen( $_POST['codalmacen'] );
-         $this->save_coddivisa( $_POST['coddivisa'] );
-         $this->save_codejercicio( $_POST['codejercicio'] );
-         $this->save_codpago( $_POST['codpago'] );
-         $this->save_codserie( $_POST['codserie'] );
-         $this->save_codpais( $_POST['codpais'] );
-         
          /// guardamos los datos de la empresa
          $this->empresa->nombre = $_POST['nombre'];
          $this->empresa->nombrecorto = $_POST['nombrecorto'];

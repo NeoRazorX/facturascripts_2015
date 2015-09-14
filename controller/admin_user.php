@@ -17,13 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('ejercicio.php');
-
 class admin_user extends fs_controller
 {
    public $agente;
    public $allow_delete;
-   public $ejercicio;
    public $user_log;
    public $suser;
    
@@ -40,7 +37,6 @@ class admin_user extends fs_controller
       $this->allow_delete = $this->user->allow_delete_on(__CLASS__);
       
       $this->agente = new agente();
-      $this->ejercicio = new ejercicio();
       
       $this->suser = FALSE;
       if( isset($_GET['snick']) )
@@ -272,6 +268,8 @@ class admin_user extends fs_controller
             }
          }
          
+         $this->suser->email = $_POST['email'];
+         
          if( isset($_POST['scodagente']) )
          {
             $this->suser->codagente = NULL;
@@ -312,12 +310,6 @@ class admin_user extends fs_controller
          if( isset($_POST['css']) )
          {
             $this->suser->css = $_POST['css'];
-         }
-         
-         $this->suser->codejercicio = NULL;
-         if( isset($_POST['ejercicio']) )
-         {
-            $this->suser->codejercicio = $_POST['ejercicio'];
          }
          
          if($error)

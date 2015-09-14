@@ -134,7 +134,7 @@ class agente extends fs_model
          $this->banco = NULL;
          $this->cargo = NULL;
          $this->f_alta = Date('d-m-Y');
-         $this->f_baja = Date('d-m-Y');
+         $this->f_baja = NULL;
          $this->f_nacimiento = Date('d-m-Y');        
       }
    }
