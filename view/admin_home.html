@@ -368,7 +368,7 @@
                   </td>
                   <td>{$value->nombre}</td>
                   <td>
-                     {$value->descripcion}<br/>
+                     {function="nl2br($value->descripcion)"}<br/>
                      {if="substr($value->zip_link, -4) == '.zip'"}
                      <a href="{$value->link}" target="_blank">Web del proyecto</a>. &nbsp;
                      {/if}

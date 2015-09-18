@@ -266,6 +266,7 @@ class admin_empresa extends fs_controller
          if( extension_loaded('openssl') )
          {
             $mail = new PHPMailer();
+            $mail->Timeout = 3;
             $mail->IsSMTP();
             $mail->SMTPAuth = TRUE;
             $mail->SMTPSecure = $this->mail['mail_enc'];
@@ -290,7 +291,21 @@ class admin_empresa extends fs_controller
             
             if( !$mail->SmtpConnect() )
             {
-               $this->new_error_msg('No se ha podido conectar por email.');
+               $this->new_error_msg('No se ha podido conectar por email. ¿La contraseña es correcta?');
+               
+               if($mail->Host == 'smtp.gmail.com')
+               {
+                  $this->new_error_msg('Aunque la contraseña de gmail sea correcta, en ciertas '
+                          . 'situaciones los servidores de gmail bloquean la conexión. '
+                          . 'Para superar esta situación debes crear y usar una '
+                          . '<a href="https://support.google.com/accounts/answer/185833?hl=es" '
+                          . 'target="_blank">contraseña de aplicación</a>');
+               }
+               else
+               {
+                  $this->new_error_msg("¿<a href='https://www.facturascripts.com/comm3/index.php?page=community_item&id=74'"
+                          . " target='_blank'>Necesitas ayuda</a>?");
+               }
             }
          }
          else

@@ -88,6 +88,12 @@ abstract class fs_model
     * @var fs_cache
     */
    protected $cache;
+   
+   /**
+    * Clase que se utiliza para definir algunos valores por defecto:
+    * codejercicio, codserie, coddivisa, etc...
+    * @var fs_default_items
+    */
    protected $default_items;
    
    private static $checked_tables;
@@ -96,15 +102,23 @@ abstract class fs_model
    /**
     * 
     * @param type $name nombre de la tabla de la base de datos.
-    * @param type $basedir ruta del directorio table donde se encuentra el XML
-    * con la estructura de la tabla de la base de datos.
     */
-   public function __construct($name = '', $basedir = '')
+   public function __construct($name = '')
    {
-      $this->base_dir = $basedir;
       $this->cache = new fs_cache();
       $this->db = new fs_db2();
       $this->table_name = $name;
+      
+      /// buscamos el xml de la tabla en los plugins
+      $this->base_dir = '';
+      foreach($GLOBALS['plugins'] as $plugin)
+      {
+         if( file_exists('plugins/'.$plugin.'/model/table/'.$name.'.xml') )
+         {
+            $this->base_dir = 'plugins/'.$plugin.'/';
+            break;
+         }
+      }
       
       $this->default_items = new fs_default_items();
       

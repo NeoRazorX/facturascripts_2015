@@ -670,7 +670,7 @@ class fs_controller
     */
    protected function private_core()
    {
-      $this->process();
+      
    }
    
    /**
@@ -746,9 +746,23 @@ class fs_controller
          $this->default_items->set_showing_page( $this->page->name );
       }
       
-      $this->default_items->set_codejercicio( $this->empresa->codejercicio );
-      $this->default_items->set_codalmacen( $this->empresa->codalmacen );
-      $this->default_items->set_codpago( $this->empresa->codpago );
+      if( isset($_COOKIE['default_almacen']) )
+      {
+         $this->default_items->set_codalmacen( $_COOKIE['default_almacen'] );
+      }
+      else
+      {
+         $this->default_items->set_codalmacen( $this->empresa->codalmacen );
+      }
+      
+      if( isset($_COOKIE['default_formapago']) )
+      {
+         $this->default_items->set_codpago( $_COOKIE['default_formapago'] );
+      }
+      else
+      {
+         $this->default_items->set_codpago( $this->empresa->codpago );
+      }
       
       if( isset($_COOKIE['default_impuesto']) )
       {
@@ -761,13 +775,103 @@ class fs_controller
    }
    
    /**
+    * Establece un ejercicio como predeterminado para este usuario.
+    * @deprecated since version 2015.039
+    * @param type $cod el código del ejercicio
+    */
+   protected function save_codejercicio($cod)
+   {
+      $this->new_error_msg('fs_controller::save_codejercicio() es una función obsoleta.');
+   }
+   
+   /**
+    * Establece un almacén como predeterminado para este usuario.
+    * @param type $cod el código del almacén
+    */
+   protected function save_codalmacen($cod)
+   {
+      setcookie('default_almacen', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codalmacen($cod);
+   }
+   
+   /**
+    * Establece un cliente como predeterminado para este usuario.
+    * @deprecated since version 2015.039
+    * @param type $cod el código del cliente
+    */
+   protected function save_codcliente($cod)
+   {
+      $this->new_error_msg('fs_controller::save_codcliente() es una función obsoleta.');
+   }
+   
+   /**
+    * Establece una divisa como predeterminada para este usuario.
+    * @deprecated since version 2015.039
+    * @param type $cod el código de la divisa
+    */
+   protected function save_coddivisa($cod)
+   {
+      $this->new_error_msg('fs_controller::save_coddivisa() es una función obsoleta.');
+   }
+   
+   /**
+    * Establece una familia como predeterminada para este usuario.
+    * @deprecated since version 2015.039
+    * @param type $cod el código de la familia
+    */
+   protected function save_codfamilia($cod)
+   {
+      $this->new_error_msg('fs_controller::save_codfamilia() es una función obsoleta.');
+   }
+   
+   /**
+    * Establece una forma de pago como predeterminada para este usuario.
+    * @param type $cod el código de la forma de pago
+    */
+   protected function save_codpago($cod)
+   {
+      setcookie('default_formapago', $cod, time()+FS_COOKIES_EXPIRE);
+      $this->default_items->set_codpago($cod);
+   }
+   
+   /**
     * Establece un impuesto (IVA) como predeterminado para este usuario.
-    * @param type $cod el código del iumpuesto
+    * @param type $cod el código del impuesto
     */
    protected function save_codimpuesto($cod)
    {
       setcookie('default_impuesto', $cod, time()+FS_COOKIES_EXPIRE);
       $this->default_items->set_codimpuesto($cod);
+   }
+   
+   /**
+    * Establece un código de país como predeterminado para este usuario.
+    * @deprecated since version 2015.039
+    * @param type $cod el código del país
+    */
+   protected function save_codpais($cod)
+   {
+      $this->new_error_msg('fs_controller::save_codpais() es una función obsoleta.');
+   }
+   
+   /**
+    * Establece un proveedor como predeterminado para este usuario.
+    * @deprecated since version 2015.039
+    * @param type $cod el código del proveedor
+    */
+   protected function save_codproveedor($cod)
+   {
+      $this->new_error_msg('fs_controller::save_codproveedor() es una función obsoleta.');
+   }
+   
+   /**
+    * Establece una serie como predeterminada para este usuario.
+    * @deprecated since version 2015.039
+    * @param type $cod el código de la serie
+    */
+   protected function save_codserie($cod)
+   {
+      $this->new_error_msg('fs_controller::save_codserie() es una función obsoleta.');
    }
    
    /**
@@ -814,7 +918,9 @@ class fs_controller
    {
       $ids = $this->cache->get_array('petition_ids');
       if( in_array($id, $ids) )
+      {
          return TRUE;
+      }
       else
       {
          $ids[] = $id;

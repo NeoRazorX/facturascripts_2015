@@ -29,7 +29,7 @@ class admin_user extends fs_controller
       parent::__construct(__CLASS__, 'Usuario', 'admin', TRUE, FALSE);
    }
    
-   public function process()
+   public function private_core()
    {
       $this->share_extensions();
       
