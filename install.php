@@ -51,6 +51,7 @@ function guarda_config($nombre_archivo)
    fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
    fwrite($archivo, " */\n");
    fwrite($archivo, "define('FS_DB_HISTORY', FALSE);\n");
+   fwrite($archivo, "\n");
    fwrite($archivo, "/*\n");
    fwrite($archivo, " * Habilita el modo demo, para pruebas.\n");
    fwrite($archivo, " * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");
@@ -71,7 +72,7 @@ function guarda_config($nombre_archivo)
    fwrite($archivo, "define('FS_CACHE_PREFIX', '".$_REQUEST['cache_prefix']."');\n");
    fwrite($archivo, "\n");
    fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
-   fwrite($archivo, "define('FS_COOKIES_EXPIRE', 315360000);\n");
+   fwrite($archivo, "define('FS_COOKIES_EXPIRE', 7776000);\n");
    fwrite($archivo, "\n");
    fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
    fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
@@ -92,6 +93,10 @@ else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
 else if( !function_exists('mb_substr') )
 {
    $errors[] = "mb_substr";
+}
+else if( !extension_loaded('openssl') )
+{
+   $errors[] = "openssl";
 }
 else if( !is_writable( getcwd() ) )
 {
@@ -234,7 +239,11 @@ $system_info = str_replace('"', "'", $system_info);
                      <li><a href="//www.facturascripts.com/comm3/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
                      <li><a href="//www.facturascripts.com/comm3/index.php?page=community_all" target="_blank">Todo</a></li>
                      <li class="divider"></li>
-                     <li><a href="#" id="b_feedback">Informar...</a></li>
+                     <li>
+                        <a href="#" id="b_feedback">
+                           <span class="glyphicon glyphicon-send"></span> &nbsp; Informar...
+                        </a>
+                     </li>
                   </ul>
                </li>
             </ul>
@@ -398,6 +407,38 @@ $system_info = str_replace('"', "'", $system_info);
                   <p>
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                      Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
+                     Nosotros recomendamos
+                     <a href="http://www.loading.es/clientes/aff.php?aff=857" target="_blank">Loading.es</a>
+                  </p>
+               </div>
+            </div>
+                  <?php
+               }
+               else if($err == 'openssl')
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  No se encuentra la extensión OpenSSL:
+               </div>
+               <div class="panel-body">
+                  <p>
+                     FacturaScripts necesita la extensión OpenSSL para poder descargar plugins,
+                     actualizaciones y enviar emails.
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
+                  <p>
+                     Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
+                     Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
+                     Nosotros recomendamos
+                     <a href="http://www.loading.es/clientes/aff.php?aff=857" target="_blank">Loading.es</a>
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Servidor personal:</h4>
+                  <p>
+                     Es muy raro que en una instalación propia de PHP ya sea en Linux o en Windows
+                     con uno de estos empaquetados Apache+PHP+MySQL no traiga de serie OpenSSL.
+                     <a href="#" data-toggle="modal" data-target="#modal_feedback">Informanos</a>
+                     de qué tienes instalado e intentaremos ofrecerte la mejor solución.
                   </p>
                </div>
             </div>

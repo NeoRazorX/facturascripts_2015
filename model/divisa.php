@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
  */
@@ -86,7 +84,7 @@ class divisa extends fs_model
       }
    }
    
-   protected function install()
+   public function install()
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)

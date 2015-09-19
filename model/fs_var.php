@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Una clase genérica para consultar o almacenar en la base de datos pares clave/valor.
  */

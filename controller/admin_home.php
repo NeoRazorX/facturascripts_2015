@@ -31,7 +31,7 @@ class admin_home extends fs_controller
       parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->download_list = array(
           'facturacion_base' => array(
@@ -128,13 +128,15 @@ class admin_home extends fs_controller
          $fsvar->name = 'updates';
          $fsvar->delete();
       }
+      else if(FS_DEMO)
+      {
+         $this->new_advice('En el modo demo no se pueden hacer cambios en esta página.');
+         $this->new_advice('Si te gusta FacturaScripts y quieres saber más, consulta la '
+                 . '<a href="https://www.facturascripts.com/comm3/index.php?page=community_questions">sección preguntas</a>.');
+      }
       else if( !$this->user->admin )
       {
          $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
-      }
-      else if(FS_DEMO)
-      {
-         $this->new_error_msg('En el modo demo no se pueden hacer cambios en esta página.');
       }
       else if( isset($_POST['modpages']) )
       {
@@ -203,14 +205,15 @@ class admin_home extends fs_controller
          if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
          {
             $zip = new ZipArchive();
-            if( $zip->open($_FILES['fplugin']['tmp_name']) )
+            $res = $zip->open($_FILES['fplugin']['tmp_name']);
+            if($res === TRUE)
             {
                $zip->extractTo('plugins/');
                $zip->close();
                $this->new_message('Plugin '.$_FILES['fplugin']['name'].' añadido correctamente. Ya puedes activarlo.');
             }
             else
-               $this->new_error_msg('Archivo no encontrado.');
+               $this->new_error_msg('Error al abrir el archivo ZIP. Código: '.$res);
          }
       }
       else if( isset($_GET['download']) )
@@ -360,8 +363,17 @@ class admin_home extends fs_controller
             $new_fsc = new $page->name();
             $found = TRUE;
             
-            if( !$new_fsc->page->save() )
-               $this->new_error_msg("Imposible guardar la página ".$page->name);
+            if( isset($new_fsc->page) )
+            {
+               if( !$new_fsc->page->save() )
+               {
+                  $this->new_error_msg("Imposible guardar la página ".$page->name);
+               }
+            }
+            else
+            {
+               $this->new_error_msg("Error al leer la página ".$page->name);
+            }
             
             unset($new_fsc);
             break;
@@ -396,7 +408,7 @@ class admin_home extends fs_controller
    {
       $clist = array();
       $include = array(
-          'factura','facturas','albaran','albaranes','pedido','pedidos',
+          'factura','facturas', 'factura_simplificada','albaran','albaranes','pedido','pedidos',
           'presupuesto','presupuestos','provincia','apartado','cifnif',
           'iva','irpf','numero2'
       );
@@ -800,7 +812,8 @@ class admin_home extends fs_controller
          if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
          {
             $zip = new ZipArchive();
-            if( $zip->open('download.zip') )
+            $res = $zip->open('download.zip');
+            if($res === TRUE)
             {
                $zip->extractTo('plugins/');
                $zip->close();
@@ -823,7 +836,7 @@ class admin_home extends fs_controller
                }
             }
             else
-               $this->new_error_msg('Archivo no encontrado.');
+               $this->new_error_msg('Error al abrir el ZIP. Código: '.$res);
          }
          else
          {
@@ -849,7 +862,8 @@ class admin_home extends fs_controller
             if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
             {
                $zip = new ZipArchive();
-               if( $zip->open('download.zip') )
+               $res = $zip->open('download.zip');
+               if($res === TRUE)
                {
                   $plugins_list = scandir(getcwd().'/plugins');
                   $zip->extractTo('plugins/');
@@ -883,7 +897,7 @@ class admin_home extends fs_controller
                   $this->enable_plugin($item->nombre);
                }
                else
-                  $this->new_error_msg('Archivo no encontrado.');
+                  $this->new_error_msg('Error al abrir el ZIP. Código: '.$res);
             }
             else
             {

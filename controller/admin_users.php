@@ -27,7 +27,7 @@ class admin_users extends fs_controller
       parent::__construct(__CLASS__, 'Usuarios', 'admin', TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->agente = new agente();
       

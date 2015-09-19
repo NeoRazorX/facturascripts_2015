@@ -17,7 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (!file_exists('config.php')) {
+if( !file_exists('config.php') )
+{
    die('Archivo config.php no encontrado. No puedes actualizar sin instalar.');
 }
 
@@ -192,7 +193,7 @@ class fs_updater
                if($this->tr_updates == '')
                {
                   $this->tr_updates = '<tr class="bg-success"><td colspan="5">El sistema está actualizado.'
-                          . ' <a href="index.php">Volver</a></td></tr>';
+                          . ' <a href="index.php?page=admin_home&updated=TRUE">Volver</a></td></tr>';
                }
             }
          }
@@ -238,7 +239,7 @@ class fs_updater
             $this->mensajes = 'Actualizado correctamente.';
          }
          else
-            $this->errores = 'Ha habido un error con el archivo update.zip';
+            $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
       }
       else
          $this->errores = 'Error al descargar el archivo zip.';
@@ -278,7 +279,7 @@ class fs_updater
                $this->mensajes = 'Plugin actualizado correctamente.';
             }
             else
-               $this->errores = 'Ha habido un error con el archivo update.zip';
+               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
          }
          else
             $this->errores = 'Error al descargar el archivo zip.';
@@ -540,6 +541,12 @@ $updater = new fs_updater();
                      </a>
                   </li>
                   <li role="presentation">
+                     <a href="#pago" aria-controls="pago" role="tab" data-toggle="tab">
+                        <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+                        <span class="hidden-xs">&nbsp; Plugin de pago</span>
+                     </a>
+                  </li>
+                  <li role="presentation">
                      <a href="#opciones" aria-controls="opciones" role="tab" data-toggle="tab">
                         <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
                         <span class="hidden-xs">&nbsp; Opciones</span>
@@ -561,6 +568,16 @@ $updater = new fs_updater();
                            </thead>
                            <?php echo $updater->tr_updates; ?>
                         </table>
+                     </div>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="pago">
+                     <br/>
+                     <p>
+                        Recuerda que los plugins de pago se actualizan uno a uno desde
+                        <mark>Admin > Panel de control > Plugins</mark>.
+                     </p>
+                     <div class="thumbnail">
+                        <img src="view/img/plugins_pago.png" alt="plugins pago"/>
                      </div>
                   </div>
                   <div role="tabpanel" class="tab-pane" id="opciones">

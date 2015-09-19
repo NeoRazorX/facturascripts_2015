@@ -21,16 +21,8 @@
 require_once 'config.php';
 require_once 'base/config2.php';
 
-if(strtolower(FS_DB_TYPE) == 'mysql')
-{
-   require_once 'base/fs_mysql.php';
-   $db = new fs_mysql();
-}
-else
-{
-   require_once 'base/fs_postgresql.php';
-   $db = new fs_postgresql();
-}
+require_once 'base/fs_db2.php';
+$db = new fs_db2();
 
 require_once 'base/fs_model.php';
 require_model('fs_extension.php');

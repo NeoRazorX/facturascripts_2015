@@ -47,7 +47,7 @@ class admin_empresa extends fs_controller
       parent::__construct(__CLASS__, 'Empresa', 'admin', TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->almacen = new almacen();
       $this->cuenta_banco = new cuenta_banco();
@@ -78,16 +78,6 @@ class admin_empresa extends fs_controller
       
       if( isset($_POST['cifnif']) )
       {
-         /*
-          * Guardamos los elementos por defecto
-          */
-         $this->save_codalmacen( $_POST['codalmacen'] );
-         $this->save_coddivisa( $_POST['coddivisa'] );
-         $this->save_codejercicio( $_POST['codejercicio'] );
-         $this->save_codpago( $_POST['codpago'] );
-         $this->save_codserie( $_POST['codserie'] );
-         $this->save_codpais( $_POST['codpais'] );
-         
          /// guardamos los datos de la empresa
          $this->empresa->nombre = $_POST['nombre'];
          $this->empresa->nombrecorto = $_POST['nombrecorto'];
@@ -118,6 +108,11 @@ class admin_empresa extends fs_controller
          if( $this->empresa->save() )
          {
             $this->new_message('Datos guardados correctamente.');
+            if(!$this->empresa->contintegrada)
+            {
+               $this->new_message('¿Quieres activar la <b>contabilidad integrada</b>?'
+                       . ' Haz clic en la sección <a href="#facturacion">facturación</a>.');
+            }
             
             $step = $fsvar->simple_get('install_step');
             if($step == 2)
@@ -267,32 +262,56 @@ class admin_empresa extends fs_controller
    {
       if( $this->empresa->can_send_mail() )
       {
-         $mail = new PHPMailer();
-         $mail->IsSMTP();
-         $mail->SMTPAuth = TRUE;
-         $mail->SMTPSecure = $this->mail['mail_enc'];
-         $mail->Host = $this->mail['mail_host'];
-         $mail->Port = intval($this->mail['mail_port']);
-         $mail->Username = $this->empresa->email;
-         if($this->mail['mail_user'] != '')
+         /// Es imprescindible OpenSSL para enviar emails con los principales proveedores
+         if( extension_loaded('openssl') )
          {
-            $mail->Username = $this->mail['mail_user'];
+            $mail = new PHPMailer();
+            $mail->Timeout = 3;
+            $mail->IsSMTP();
+            $mail->SMTPAuth = TRUE;
+            $mail->SMTPSecure = $this->mail['mail_enc'];
+            $mail->Host = $this->mail['mail_host'];
+            $mail->Port = intval($this->mail['mail_port']);
+            $mail->Username = $this->empresa->email;
+            if($this->mail['mail_user'] != '')
+            {
+               $mail->Username = $this->mail['mail_user'];
+            }
+            
+            $mail->Password = $this->empresa->email_password;
+            $mail->From = $this->empresa->email;
+            $mail->FromName = $this->user->nick;
+            $mail->CharSet = 'UTF-8';
+            
+            $mail->Subject = 'TEST';
+            $mail->AltBody = 'TEST';
+            $mail->WordWrap = 50;
+            $mail->MsgHTML('TEST');
+            $mail->IsHTML(TRUE);
+            
+            if( !$mail->SmtpConnect() )
+            {
+               $this->new_error_msg('No se ha podido conectar por email. ¿La contraseña es correcta?');
+               
+               if($mail->Host == 'smtp.gmail.com')
+               {
+                  $this->new_error_msg('Aunque la contraseña de gmail sea correcta, en ciertas '
+                          . 'situaciones los servidores de gmail bloquean la conexión. '
+                          . 'Para superar esta situación debes crear y usar una '
+                          . '<a href="https://support.google.com/accounts/answer/185833?hl=es" '
+                          . 'target="_blank">contraseña de aplicación</a>');
+               }
+               else
+               {
+                  $this->new_error_msg("¿<a href='https://www.facturascripts.com/comm3/index.php?page=community_item&id=74'"
+                          . " target='_blank'>Necesitas ayuda</a>?");
+               }
+            }
          }
-         
-         $mail->Password = $this->empresa->email_password;
-         $mail->From = $this->empresa->email;
-         $mail->FromName = $this->user->nick;
-         $mail->CharSet = 'UTF-8';
-         
-         $mail->Subject = 'TEST';
-         $mail->AltBody = 'TEST';
-         $mail->WordWrap = 50;
-         $mail->MsgHTML('TEST');
-         $mail->IsHTML(TRUE);
-         
-         if( !$mail->SmtpConnect() )
+         else
          {
-            $this->new_error_msg('No se ha podido conectar por email.');
+            $this->new_error_msg('No se encuentra la extensión OpenSSL,'
+                    . ' imprescindible para enviar emails.');
          }
       }
    }
