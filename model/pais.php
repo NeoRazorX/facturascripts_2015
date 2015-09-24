@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Un país, por ejemplo España.
  */
@@ -44,12 +42,6 @@ class pais extends fs_model
     */
    public $nombre;
    
-   /**
-    * No implementado, es simplemente para dar compatibilidad con Eneboo.
-    * @var type
-    */
-   public $bandera;
-   
    public function __construct($p=FALSE)
    {
       parent::__construct('paises');
@@ -68,7 +60,8 @@ class pais extends fs_model
                 'ECU' => 'EC',
                 'MEX' => 'MX',
                 'PAN' => 'PA',
-                'VEN' => 'VE'
+                'PER' => 'PE',
+                'VEN' => 'VE',
             );
             
             if( isset($codigos[$this->codpais]) )
@@ -78,37 +71,41 @@ class pais extends fs_model
          }
          
          $this->nombre = $p['nombre'];
-         $this->bandera = $p['bandera'];
       }
       else
       {
          $this->codpais = '';
          $this->codiso = NULL;
          $this->nombre = '';
-         $this->bandera = NULL;
       }
    }
 
-   protected function install()
+   public function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codpais,codiso,nombre,bandera) VALUES ('ESP','ES','España',NULL),".
-           " ('ARG','AR','Argentina',NULL), ('CHL','CL','Chile',NULL), ('COL','CO','Colombia',NULL),".
-           " ('ECU','EC','Ecuador',NULL), ('MEX','MX','México',NULL), ('PAN','PA','Panamá',NULL), ('VEN','VE','Venezuela',NULL);";
-   }
-   
-   private function get_codiso($codpais)
-   {
-      $codigos = array(
-          'ESP' => 'ES',
-          'ARG' => 'AR',
-          'CHL' => 'CL',
-          'COL' => 'CO',
-          'ECU' => 'EC',
-          'MEX' => 'MX',
-          'PAN' => 'PA',
-          'VEN' => 'VE'
-      );
+      return "INSERT INTO ".$this->table_name." (codpais,codiso,nombre)"
+              . " VALUES ('ESP','ES','España'),"
+              . " ('AND','AD','Andorra'),"
+              . " ('ARG','AR','Argentina'),"
+              . " ('BOL','BO','Bolivia'),"
+              . " ('CHL','CL','Chile'),"
+              . " ('COL','CO','Colombia'),"
+              . " ('CUB','CU','Cuba'),"
+              . " ('CRI','CR','Costa Rica'),"
+              . " ('DOM','DO','República Dominicana'),"
+              . " ('ECU','EC','Ecuador'),"
+              . " ('GNQ','GQ','Guinea Ecuatorial'),"
+              . " ('SLV','SV','El Salvador'),"
+              . " ('GTM','GT','Guatemala'),"
+              . " ('HND','HN','Honduras'),"
+              . " ('MEX','MX','México'),"
+              . " ('NIC','NI','Nicaragua'),"
+              . " ('PAN','PA','Panamá'),"
+              . " ('PER','PE','Perú'),"
+              . " ('PRI','PR','Puerto Rico'),"
+              . " ('PRY','PY','Paraguay'),"
+              . " ('URY','UY','Uruguay'),"
+              . " ('VEN','VE','Venezuela');";
    }
    
    public function url()
@@ -187,13 +184,16 @@ class pais extends fs_model
          
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET codiso = ".$this->var2str($this->codiso).", nombre = ".$this->var2str($this->nombre)."
-               WHERE codpais = ".$this->var2str($this->codpais).";";
+            $sql = "UPDATE ".$this->table_name." SET codiso = ".$this->var2str($this->codiso).
+                    ", nombre = ".$this->var2str($this->nombre).
+                    "  WHERE codpais = ".$this->var2str($this->codpais).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codpais,codiso,nombre) VALUES
-               (".$this->var2str($this->codpais).",".$this->var2str($this->codiso).",".$this->var2str($this->nombre).");";
+                     (".$this->var2str($this->codpais).
+                    ",".$this->var2str($this->codiso).
+                    ",".$this->var2str($this->nombre).");";
          }
          
          return $this->db->exec($sql);
@@ -226,6 +226,7 @@ class pais extends fs_model
          }
          $this->cache->set('m_pais_all', $listap);
       }
+      
       return $listap;
    }
 }

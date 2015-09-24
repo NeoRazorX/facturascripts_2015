@@ -27,7 +27,7 @@ class admin_users extends fs_controller
       parent::__construct(__CLASS__, 'Usuarios', 'admin', TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->agente = new agente();
       
@@ -39,7 +39,11 @@ class admin_users extends fs_controller
          $nu = $this->user->get($_POST['nnick']);
          if($nu)
          {
-            Header( 'location: '.$nu->url() );
+            $this->new_error_msg('El usuario <a href="'.$nu->url().'">ya existe</a>.');
+         }
+         else if( isset($_POST['nadmin']) AND !$this->user->admin )
+         {
+            $this->new_error_msg('Solamente un administrador puede crear otro administrador.');
          }
          else
          {
@@ -70,10 +74,18 @@ class admin_users extends fs_controller
          $nu = $this->user->get($_GET['delete']);
          if($nu)
          {
-            if( FS_DEMO )
+            if(FS_DEMO)
             {
                $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar usuarios.
                   Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
+            }
+            else if( $nu->admin AND !$this->user->admin )
+            {
+               $this->new_error_msg("No tienes permiso para eliminar a un administrador.");
+            }
+            else if( !$this->user->allow_delete_on(__CLASS__) )
+            {
+               $this->new_error_msg("No tienes permiso para eliminar usuarios.");
             }
             else if( $nu->delete() )
             {

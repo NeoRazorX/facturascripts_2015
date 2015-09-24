@@ -21,6 +21,8 @@ class admin_home extends fs_controller
 {
    public $download_list;
    public $download_list2;
+   public $last_download_check;
+   public $new_downloads;
    public $paginas;
    public $step;
    
@@ -29,16 +31,28 @@ class admin_home extends fs_controller
       parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE, TRUE);
    }
    
-   protected function process()
+   protected function private_core()
    {
       $this->download_list = array(
           'facturacion_base' => array(
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/facturacion_base',
               'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
           ),
           'colombia' => array(
               'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
+              'url_repo' => 'https://github.com/salvaWEBco/colombia',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
+          ),
+          'panama' => array(
+              'url' => 'https://github.com/NeoRazorX/panama/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/panama',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Panamá</b>.'
+          ),
+          'peru' => array(
+              'url' => 'https://github.com/NeoRazorX/peru/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/peru',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Perú</b>.'
           ),
       );
       $fsvar = new fs_var();
@@ -62,12 +76,40 @@ class admin_home extends fs_controller
        */
       if( !isset($_GET['check4updates']) )
       {
+         /**
+          * Usamos last_download_check para almacenar la última vez que vimos las descargas.
+          * Así podemos saber qué descargas son nuevas.
+          */
+         $this->last_download_check = $fsvar->simple_get('last_download_check');
+         if(!$this->last_download_check)
+         {
+            $this->last_download_check = Date('d-m-Y', strtotime('-1day'));
+         }
+         $this->new_downloads = 0;
+         
          $this->download_list2 = $this->cache->get('download_list');
          if(!$this->download_list2)
          {
-            $this->download_list2 = json_decode( @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE') );
-            $this->cache->set('download_list', $this->download_list2);
+            $this->download_list2 = json_decode( @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE', 5) );
+            if($this->download_list2)
+            {
+               $this->cache->set('download_list', $this->download_list2);
+            }
+            else
+               $this->download_list2 = array();
          }
+         foreach($this->download_list2 as $i => $di)
+         {
+            $this->download_list2[$i]->nuevo = FALSE;
+            if( strtotime($di->creado) > strtotime($this->last_download_check) )
+            {
+               $this->new_downloads++;
+               $this->download_list2[$i]->nuevo = TRUE;
+            }
+         }
+         /// ahora nos guardamos last_download_check
+         $this->last_download_check = Date('d-m-Y', strtotime('-1day'));
+         $fsvar->simple_save('last_download_check', $this->last_download_check);
       }
       
       if( isset($_GET['check4updates']) )
@@ -86,13 +128,15 @@ class admin_home extends fs_controller
          $fsvar->name = 'updates';
          $fsvar->delete();
       }
+      else if(FS_DEMO)
+      {
+         $this->new_advice('En el modo demo no se pueden hacer cambios en esta página.');
+         $this->new_advice('Si te gusta FacturaScripts y quieres saber más, consulta la '
+                 . '<a href="https://www.facturascripts.com/comm3/index.php?page=community_questions">sección preguntas</a>.');
+      }
       else if( !$this->user->admin )
       {
          $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
-      }
-      else if(FS_DEMO)
-      {
-         $this->new_error_msg('En el modo demo no se pueden hacer cambios en esta página.');
       }
       else if( isset($_POST['modpages']) )
       {
@@ -161,103 +205,24 @@ class admin_home extends fs_controller
          if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
          {
             $zip = new ZipArchive();
-            if( $zip->open($_FILES['fplugin']['tmp_name']) )
+            $res = $zip->open($_FILES['fplugin']['tmp_name']);
+            if($res === TRUE)
             {
                $zip->extractTo('plugins/');
                $zip->close();
                $this->new_message('Plugin '.$_FILES['fplugin']['name'].' añadido correctamente. Ya puedes activarlo.');
             }
             else
-               $this->new_error_msg('Archivo no encontrado.');
+               $this->new_error_msg('Error al abrir el archivo ZIP. Código: '.$res);
          }
       }
       else if( isset($_GET['download']) )
       {
-         if( isset($this->download_list[$_GET['download']]) )
-         {
-            $this->new_message('Descargando el plugin '.$_GET['download']);
-            
-            if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
-            {
-               $zip = new ZipArchive();
-               if( $zip->open('download.zip') )
-               {
-                  $zip->extractTo('plugins/');
-                  $zip->close();
-                  unlink('download.zip');
-                  
-                  /// renombramos el directorio
-                  if( file_exists('plugins/'.$_GET['download'].'-master') )
-                  {
-                     rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
-                  }
-                  
-                  $this->new_message('Plugin añadido correctamente.');
-                  $this->enable_plugin($_GET['download']);
-                  
-                  if($this->step == '1')
-                  {
-                     $this->step = '2';
-                     $fsvar->simple_save('install_step', $this->step);
-                  }
-               }
-               else
-                  $this->new_error_msg('Archivo no encontrado.');
-            }
-            else
-            {
-               $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
-                       . '<a href="'.$this->download_list[$_GET['download']]['url'].'" target="_blank">aquí</a> '
-                       . 'y añadirlo desde la pestaña <b>plugins</b>.');
-            }
-         }
-         else
-            $this->new_error_msg('Descarga no encontrada.');
+         $this->download1();
       }
       else if( isset($_GET['download2']) )
       {
-         $encontrado = FALSE;
-         foreach($this->download_list2 as $item)
-         {
-            if( $item->id == intval($_GET['download2']) )
-            {
-               $this->new_message('Descargando el plugin '.$item->nombre);
-               $encontrado = TRUE;
-               
-               if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
-               {
-                  $zip = new ZipArchive();
-                  if( $zip->open('download.zip') )
-                  {
-                     $zip->extractTo('plugins/');
-                     $zip->close();
-                     unlink('download.zip');
-                     
-                     /// renombramos el directorio
-                     if( file_exists('plugins/'.$item->nombre.'-master') )
-                     {
-                        rename('plugins/'.$item->nombre.'-master', 'plugins/'.$item->nombre);
-                     }
-                     
-                     $this->new_message('Plugin añadido correctamente.');
-                     $this->enable_plugin($item->nombre);
-                  }
-                  else
-                     $this->new_error_msg('Archivo no encontrado.');
-               }
-               else
-               {
-                  $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
-                          . '<a href="'.$item->zip_link.'" target="_blank">aquí</a> y añadirlo desde la pestaña <b>plugins</b>.');
-               }
-               break;
-            }
-         }
-         
-         if(!$encontrado)
-         {
-            $this->new_error_msg('Descarga no encontrada.');
-         }
+         $this->download2();
       }
       else if( isset($_GET['reset']) )
       {
@@ -398,8 +363,17 @@ class admin_home extends fs_controller
             $new_fsc = new $page->name();
             $found = TRUE;
             
-            if( !$new_fsc->page->save() )
-               $this->new_error_msg("Imposible guardar la página ".$page->name);
+            if( isset($new_fsc->page) )
+            {
+               if( !$new_fsc->page->save() )
+               {
+                  $this->new_error_msg("Imposible guardar la página ".$page->name);
+               }
+            }
+            else
+            {
+               $this->new_error_msg("Error al leer la página ".$page->name);
+            }
             
             unset($new_fsc);
             break;
@@ -434,9 +408,9 @@ class admin_home extends fs_controller
    {
       $clist = array();
       $include = array(
-          'albaran','albaranes','cifnif','pedido','pedidos',
-          'presupuesto','presupuestos','provincia','apartado',
-          'iva', 'irpf'
+          'factura','facturas', 'factura_simplificada','albaran','albaranes','pedido','pedidos',
+          'presupuesto','presupuestos','provincia','apartado','cifnif',
+          'iva','irpf','numero2'
       );
       
       foreach($GLOBALS['config2'] as $i => $value)
@@ -499,7 +473,9 @@ class admin_home extends fs_controller
                 'require' => '',
                 'update_url' => '',
                 'version_url' => '',
-                'prioridad' => '-'
+                'prioridad' => '-',
+                'download2_url' => '',
+                'idplugin' => NULL
             );
             
             if( file_exists('plugins/'.$f.'/facturascripts.ini') )
@@ -523,6 +499,11 @@ class admin_home extends fs_controller
                   $plugin['require'] = $ini_file['require'];
                }
                
+               if( isset($ini_file['idplugin']) )
+               {
+                  $plugin['idplugin'] = $ini_file['idplugin'];
+               }
+               
                if( isset($ini_file['update_url']) )
                {
                   $plugin['update_url'] = $ini_file['update_url'];
@@ -531,6 +512,20 @@ class admin_home extends fs_controller
                if( isset($ini_file['version_url']) )
                {
                   $plugin['version_url'] = $ini_file['version_url'];
+               }
+               elseif( is_array($this->download_list2) )
+               {
+                  foreach($this->download_list2 as $ditem)
+                  {
+                     if($ditem->id == $plugin['idplugin'])
+                     {
+                        if( intval($ditem->version) > $plugin['version'] )
+                        {
+                           $plugin['download2_url'] = 'updater.php?idplugin='.$plugin['idplugin'].'&name='.$f;
+                        }
+                        break;
+                     }
+                  }
                }
                
                if($plugin['enabled'])
@@ -572,7 +567,25 @@ class admin_home extends fs_controller
          rename('plugins/'.$name.'-master', 'plugins/'.$name);
       }
       
-      if( !in_array($name, $this->plugins()) )
+      /// comprobamos las dependencias
+      $install = TRUE;
+      foreach($this->plugin_advanced_list() as $pitem)
+      {
+         if($pitem['name'] == $name)
+         {
+            if($pitem['require'] != '')
+            {
+               if( !in_array($pitem['require'], $GLOBALS['plugins']) )
+               {
+                  $install = FALSE;
+                  $this->new_error_msg('Dependencias incumplidas: <b>'.$pitem['require'].'</b>');
+               }
+            }
+            break;
+         }
+      }
+      
+      if( $install AND !in_array($name, $GLOBALS['plugins']) )
       {
          array_unshift($GLOBALS['plugins'], $name);
          
@@ -752,7 +765,7 @@ class admin_home extends fs_controller
       }
    }
    
-   private function curl_get_contents($url)
+   private function curl_get_contents($url, $timeout = 30)
    {
       if( function_exists('curl_init') )
       {
@@ -762,6 +775,7 @@ class admin_home extends fs_controller
          curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
          curl_close($ch);
@@ -787,5 +801,116 @@ class admin_home extends fs_controller
       }
       
       return $max;
+   }
+   
+   private function download1()
+   {
+      if( isset($this->download_list[$_GET['download']]) )
+      {
+         $this->new_message('Descargando el plugin '.$_GET['download']);
+         
+         if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
+         {
+            $zip = new ZipArchive();
+            $res = $zip->open('download.zip');
+            if($res === TRUE)
+            {
+               $zip->extractTo('plugins/');
+               $zip->close();
+               unlink('download.zip');
+               
+               /// renombramos el directorio
+               if( file_exists('plugins/'.$_GET['download'].'-master') )
+               {
+                  rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
+               }
+               
+               $this->new_message('Plugin añadido correctamente.');
+               $this->enable_plugin($_GET['download']);
+               
+               if($this->step == '1')
+               {
+                  $this->step = '2';
+                  $fsvar = new fs_var();
+                  $fsvar->simple_save('install_step', $this->step);
+               }
+            }
+            else
+               $this->new_error_msg('Error al abrir el ZIP. Código: '.$res);
+         }
+         else
+         {
+            $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
+                    . '<a href="'.$this->download_list[$_GET['download']]['url'].'" target="_blank">aquí</a> '
+                    . 'y añadirlo desde la pestaña <b>plugins</b>.');
+         }
+      }
+      else
+         $this->new_error_msg('Descarga no encontrada.');
+   }
+   
+   private function download2()
+   {
+      $encontrado = FALSE;
+      foreach($this->download_list2 as $item)
+      {
+         if( $item->id == intval($_GET['download2']) )
+         {
+            $this->new_message('Descargando el plugin '.$item->nombre);
+            $encontrado = TRUE;
+            
+            if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
+            {
+               $zip = new ZipArchive();
+               $res = $zip->open('download.zip');
+               if($res === TRUE)
+               {
+                  $plugins_list = scandir(getcwd().'/plugins');
+                  $zip->extractTo('plugins/');
+                  $zip->close();
+                  unlink('download.zip');
+                  
+                  /// renombramos si es necesario
+                  foreach( scandir(getcwd().'/plugins') as $f)
+                  {
+                     if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                     {
+                        $encontrado2 = FALSE;
+                        foreach($plugins_list as $f2)
+                        {
+                           if($f == $f2)
+                           {
+                              $encontrado2 = TRUE;
+                              break;
+                           }
+                        }
+                           
+                        if(!$encontrado2)
+                        {
+                           rename('plugins/'.$f, 'plugins/'.$item->nombre);
+                           break;
+                        }
+                     }
+                  }
+                  
+                  $this->new_message('Plugin añadido correctamente.');
+                  $this->enable_plugin($item->nombre);
+               }
+               else
+                  $this->new_error_msg('Error al abrir el ZIP. Código: '.$res);
+            }
+            else
+            {
+               $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
+                       . '<a href="'.$item->zip_link.'" target="_blank">aquí</a> y añadirlo desde la pestaña <b>plugins</b>.');
+            }
+            break;
+         }
+      }
+      
+      if(!$encontrado)
+      {
+         $this->new_error_msg('Descarga no encontrada.');
+      }
    }
 }

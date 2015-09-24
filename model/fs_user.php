@@ -32,7 +32,18 @@ class fs_user extends fs_model
     * @var type 
     */
    public $nick;
+   
+   /**
+    * Contraseña, en sha1
+    * @var type 
+    */
    public $password;
+   
+   /**
+    * Email del usuario.
+    * @var type 
+    */
+   public $email;
    
    /**
     * Clave de sesión. El cliente se la guarda en una cookie,
@@ -42,10 +53,16 @@ class fs_user extends fs_model
     * @var type 
     */
    public $log_key;
+   
+   /**
+    * TRUE -> el usuario ha iniciado sesión
+    * No se guarda en la base de datos
+    * @var type 
+    */
    public $logged_on;
    
    /**
-    * Código del agente asignado.
+    * Código del agente/empleado asociado
     * @var type 
     */
    public $codagente;
@@ -55,6 +72,11 @@ class fs_user extends fs_model
     * @var type 
     */
    public $agente;
+   
+   /**
+    * TRUE -> el usuario es un administrador
+    * @var type 
+    */
    public $admin;
    
    /**
@@ -68,7 +90,17 @@ class fs_user extends fs_model
     * @var type 
     */
    public $last_login_time;
+   
+   /**
+    * Última IP usada
+    * @var type 
+    */
    public $last_ip;
+   
+   /**
+    * Último identificador de navegador usado
+    * @var type 
+    */
    public $last_browser;
    
    /**
@@ -76,7 +108,6 @@ class fs_user extends fs_model
     * @var type 
     */
    public $fs_page;
-   public $codejercicio;
    
    /**
     * Plantilla CSS predeterminada.
@@ -93,19 +124,25 @@ class fs_user extends fs_model
       {
          $this->nick = $a['nick'];
          $this->password = $a['password'];
+         $this->email = $a['email'];
          $this->log_key = $a['log_key'];
          
-         $this->codagente = intval($a['codagente']);
-         if($this->codagente < 1)
+         $this->codagente = NULL;
+         if( isset($a['codagente']) )
          {
-            $this->codagente = NULL;
+            $this->codagente = $a['codagente'];
          }
          
          $this->admin = $this->str2bool($a['admin']);
-         $this->last_login = Date('d-m-Y', strtotime($a['last_login']));
          
-         $this->last_login_time = '00:00:00';
-         if( !is_null($a['last_login_time']) )
+         $this->last_login = NULL;
+         if($a['last_login'])
+         {
+            $this->last_login = Date('d-m-Y', strtotime($a['last_login']));
+         }
+         
+         $this->last_login_time = NULL;
+         if($a['last_login_time'])
          {
             $this->last_login_time = $a['last_login_time'];
          }
@@ -113,7 +150,6 @@ class fs_user extends fs_model
          $this->last_ip = $a['last_ip'];
          $this->last_browser = $a['last_browser'];
          $this->fs_page = $a['fs_page'];
-         $this->codejercicio = $a['codejercicio'];
          
          $this->css = 'view/css/bootstrap-yeti.min.css';
          if( isset($a['css']) )
@@ -125,6 +161,7 @@ class fs_user extends fs_model
       {
          $this->nick = NULL;
          $this->password = NULL;
+         $this->email = NULL;
          $this->log_key = NULL;
          $this->codagente = NULL;
          $this->admin = FALSE;
@@ -133,7 +170,6 @@ class fs_user extends fs_model
          $this->last_ip = NULL;
          $this->last_browser = NULL;
          $this->fs_page = NULL;
-         $this->codejercicio = NULL;
          $this->css = 'view/css/bootstrap-yeti.min.css';
       }
       
@@ -149,10 +185,9 @@ class fs_user extends fs_model
    {
       $this->clean_cache(TRUE);
       
-      /// Esta tabla tiene claves ajenas a agentes, fs_pages y ejercicios
+      /// Esta tabla tiene claves ajenas a agentes y fs_pages
       new agente();
       new fs_page();
-      new ejercicio();
       
       $this->new_error_msg('Se ha creado el usuario <b>admin</b> con la contraseña <b>admin</b>.');
       if( $this->db->select("SELECT * FROM agentes WHERE codagente = '1';") )
@@ -177,6 +212,10 @@ class fs_user extends fs_model
          return 'index.php?page=admin_user&snick='.$this->nick;
    }
    
+   /**
+    * Devuelve el agente/empleado asociado
+    * @return boolean|agente
+    */
    public function get_agente()
    {
       if( isset($this->agente) )
@@ -329,13 +368,20 @@ class fs_user extends fs_model
    
    public function show_last_login()
    {
-      return Date('d-m-Y', strtotime($this->last_login)).' '.$this->last_login_time;
+      if( is_null($this->last_login) )
+      {
+         return '-';
+      }
+      else
+      {
+         return Date('d-m-Y', strtotime($this->last_login)).' '.$this->last_login_time;
+      }
    }
    
    public function set_password($p='')
    {
       $p = strtolower( trim($p) );
-      if( strlen($p) > 1 AND strlen($p) <= 12 )
+      if( mb_strlen($p) > 1 AND mb_strlen($p) <= 12 )
       {
          $this->password = sha1($p);
          return TRUE;
@@ -423,27 +469,40 @@ class fs_user extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET password = ".$this->var2str($this->password).",
-               log_key = ".$this->var2str($this->log_key).", codagente = ".$this->var2str($this->codagente).",
-               admin = ".$this->var2str($this->admin).", last_login = ".$this->var2str($this->last_login).",
-               last_ip = ".$this->var2str($this->last_ip).", last_browser = ".$this->var2str($this->last_browser).",
-               last_login_time = ".$this->var2str($this->last_login_time).",
-               fs_page = ".$this->var2str($this->fs_page).", codejercicio = ".$this->var2str($this->codejercicio).",
-               css = ".$this->var2str($this->css)." WHERE nick = ".$this->var2str($this->nick).";";
+            $sql = "UPDATE ".$this->table_name." SET password = ".$this->var2str($this->password)
+                    .", email = ".$this->var2str($this->email)
+                    .", log_key = ".$this->var2str($this->log_key)
+                    .", codagente = ".$this->var2str($this->codagente)
+                    .", admin = ".$this->var2str($this->admin)
+                    .", last_login = ".$this->var2str($this->last_login)
+                    .", last_ip = ".$this->var2str($this->last_ip)
+                    .", last_browser = ".$this->var2str($this->last_browser)
+                    .", last_login_time = ".$this->var2str($this->last_login_time)
+                    .", fs_page = ".$this->var2str($this->fs_page)
+                    .", css = ".$this->var2str($this->css)
+                    ."  WHERE nick = ".$this->var2str($this->nick).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,
-               last_login,last_login_time,last_ip,last_browser,fs_page,codejercicio,css) VALUES
-               (".$this->var2str($this->nick).",".$this->var2str($this->password).",
-               ".$this->var2str($this->log_key).",".$this->var2str($this->codagente).",
-               ".$this->var2str($this->admin).",".$this->var2str($this->last_login).",
-               ".$this->var2str($this->last_login_time).",".$this->var2str($this->last_ip).",
-               ".$this->var2str($this->last_browser).",".$this->var2str($this->fs_page).",
-               ".$this->var2str($this->codejercicio).",".$this->var2str($this->css).");";
+            $sql = "INSERT INTO ".$this->table_name." (nick,password,email,log_key,codagente,admin,
+               last_login,last_login_time,last_ip,last_browser,fs_page,css) VALUES
+               (".$this->var2str($this->nick)
+                    .",".$this->var2str($this->password)
+                    .",".$this->var2str($this->email)
+                    .",".$this->var2str($this->log_key)
+                    .",".$this->var2str($this->codagente)
+                    .",".$this->var2str($this->admin)
+                    .",".$this->var2str($this->last_login)
+                    .",".$this->var2str($this->last_login_time)
+                    .",".$this->var2str($this->last_ip)
+                    .",".$this->var2str($this->last_browser)
+                    .",".$this->var2str($this->fs_page)
+                    .",".$this->var2str($this->css).");";
          }
+         
          return $this->db->exec($sql);
       }
       else

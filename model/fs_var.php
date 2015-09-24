@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Una clase genérica para consultar o almacenar en la base de datos pares clave/valor.
  */
@@ -72,7 +70,9 @@ class fs_var extends fs_model
    {
       $comillas = '';
       if( strtolower(FS_DB_TYPE) == 'mysql' )
+      {
          $comillas = '`';
+      }
       
       if( $this->exists() )
       {
@@ -190,6 +190,7 @@ class fs_var extends fs_model
    
    /**
     * Guarda en la base de datos los pares clave, valor de un array simple.
+    * ATENCIÓN: si el valor es FALSE, elimina la clave de la tabla.
     * 
     * @param type $array
     */

@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Una serie de facturación o contabilidad, para tener distinta numeración
  * en cada serie.
@@ -71,7 +69,7 @@ class serie extends fs_model
       }
    }
    
-   protected function install()
+   public function install()
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta) VALUES ('A','SERIE A',FALSE,'0',NULL);";

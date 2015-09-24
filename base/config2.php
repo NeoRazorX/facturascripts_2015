@@ -90,6 +90,28 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['libros_contables'] = 1;
       $GLOBALS['config2']['foreign_keys'] = 1;
    }
+   
+   if( !isset($GLOBALS['config2']['new_codigo']) )
+   {
+      $GLOBALS['config2']['new_codigo'] = 'eneboo';
+   }
+   
+   if( !isset($GLOBALS['config2']['factura']) )
+   {
+      $GLOBALS['config2']['factura'] = 'factura';
+      $GLOBALS['config2']['facturas'] = 'facturas';
+      $GLOBALS['config2']['numero2'] = 'número 2';
+   }
+   
+   if( !isset($GLOBALS['config2']['factura_simplificada']) )
+   {
+      $GLOBALS['config2']['factura_simplificada'] = 'factura simplificada';
+   }
+   
+   if( !isset($GLOBALS['config2']['db_integer']) )
+   {
+      $GLOBALS['config2']['db_integer'] = 'INTEGER';
+   }
 }
 else
 {
@@ -100,15 +122,21 @@ else
        'nf2' => ' ',
        'pos_divisa' => 'right',
        'nfactura_cli' => 1,
+       'factura' => 'factura',
+       'facturas' => 'facturas',
+       'factura_simplificada' => 'factura simplificada',
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
-       'cifnif' => 'CIF/NIF',
        'pedido' => 'pedido',
        'pedidos' => 'pedidos',
        'presupuesto' => 'presupuesto',
        'presupuestos' => 'presupuestos',
        'provincia' => 'provincia',
        'apartado' => 'apartado',
+       'cifnif' => 'CIF/NIF',
+       'iva' => 'IVA',
+       'irpf' => 'IRPF',
+       'numero2' => 'número 2',
        'cost_is_average' => 1,
        'precio_compra' => 'coste',
        'homepage' => 'admin_home',
@@ -116,10 +144,10 @@ else
        'stock_negativo' => 0,
        'ventas_sin_stock' => 1,
        'ip_whitelist' => '*',
-       'iva' => 'IVA',
-       'irpf' => 'IRPF',
        'libros_contables' => 1,
-       'foreign_keys' => 1
+       'foreign_keys' => 1,
+       'new_codigo' => 'eneboo',
+       'db_integer' => 'INTEGER'
    );
 }
 

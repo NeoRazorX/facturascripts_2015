@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * Forma de pago de una factura.
  */
@@ -32,13 +30,29 @@ class forma_pago extends fs_model
    public $descripcion;
    
    /**
-    * PAGADOS -> marca las facturas generadas como pagadas.
+    * Pagados -> marca las facturas generadas como pagadas.
     * @var type 
     */
    public $genrecibos;
+   
+   /**
+    * Código de la cuenta bancaria asociada.
+    * @var type 
+    */
    public $codcuenta;
+   
+   /**
+    * Para indicar si hay que mostrar la cuenta bancaria del cliente.
+    * @var type 
+    */
    public $domiciliado;
-
+   
+   /**
+    * Sirve para generar la fecha de vencimiento de las facturas.
+    * @var type 
+    */
+   public $vencimiento;
+   
    public function __construct($f=FALSE)
    {
       parent::__construct('formaspago');
@@ -49,6 +63,7 @@ class forma_pago extends fs_model
          $this->genrecibos = $f['genrecibos'];
          $this->codcuenta = $f['codcuenta'];
          $this->domiciliado = $this->str2bool($f['domiciliado']);
+         $this->vencimiento = $f['vencimiento'];
       }
       else
       {
@@ -57,13 +72,17 @@ class forma_pago extends fs_model
          $this->genrecibos = 'Emitidos';
          $this->codcuenta = '';
          $this->domiciliado = FALSE;
+         $this->vencimiento = '+1month';
       }
    }
    
-   protected function install()
+   public function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES ('CONT','CONTADO','Emitidos',NULL,FALSE);";
+      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
+              . " VALUES ('CONT','Al contado','Emitidos',NULL,FALSE,'+1month')"
+              . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
+              . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+1week');";
    }
    
    public function url()
@@ -104,16 +123,22 @@ class forma_pago extends fs_model
       
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-            genrecibos = ".$this->var2str($this->genrecibos).", codcuenta = ".$this->var2str($this->codcuenta).",
-            domiciliado = ".$this->var2str($this->domiciliado)." WHERE codpago = ".$this->var2str($this->codpago).";";
+         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).
+                 ", genrecibos = ".$this->var2str($this->genrecibos).
+                 ", codcuenta = ".$this->var2str($this->codcuenta).
+                 ", domiciliado = ".$this->var2str($this->domiciliado).
+                 ", vencimiento = ".$this->var2str($this->vencimiento).
+                 " WHERE codpago = ".$this->var2str($this->codpago).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado) VALUES
-            (".$this->var2str($this->codpago).",".$this->var2str($this->descripcion).",
-            ".$this->var2str($this->genrecibos).",".$this->var2str($this->codcuenta).",
-            ".$this->var2str($this->domiciliado).");";
+         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)
+                 VALUES (".$this->var2str($this->codpago).
+                 ",".$this->var2str($this->descripcion).
+                 ",".$this->var2str($this->genrecibos).
+                 ",".$this->var2str($this->codcuenta).
+                 ",".$this->var2str($this->domiciliado).
+                 ",".$this->var2str($this->vencimiento).");";
       }
       
       return $this->db->exec($sql);
@@ -135,7 +160,7 @@ class forma_pago extends fs_model
       $listaformas = $this->cache->get_array('m_forma_pago_all');
       if( !$listaformas )
       {
-         $formas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpago ASC;");
+         $formas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY descripcion ASC;");
          if($formas)
          {
             foreach($formas as $f)

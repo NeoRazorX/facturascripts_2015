@@ -203,7 +203,7 @@ $(document).ready(function() {
    $('.clickableRow').mousedown(function(event) {
       if(event.which === 1)
       {
-         window.document.location = $(this).attr("href");
+         parent.document.location = $(this).attr("href");
       }
    });
    $(".cancel_clickable").mousedown(function(event) {

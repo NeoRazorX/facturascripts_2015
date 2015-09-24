@@ -30,6 +30,12 @@
       <tipo>boolean</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>vencimiento</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+      <defecto>'+1month'::character varying</defecto>
+   </columna>
    <restriccion>
       <nombre>formaspago_pkey</nombre>
       <consulta>PRIMARY KEY (codpago)</consulta>

@@ -21,44 +21,52 @@
 require_once 'config.php';
 require_once 'base/config2.php';
 
-if(strtolower(FS_DB_TYPE) == 'mysql')
-{
-   require_once 'base/fs_mysql.php';
-   $db = new fs_mysql();
-}
-else
-{
-   require_once 'base/fs_postgresql.php';
-   $db = new fs_postgresql();
-}
+require_once 'base/fs_db2.php';
+$db = new fs_db2();
 
 require_once 'base/fs_model.php';
+require_model('fs_extension.php');
 
 if( $db->connect() )
 {
    if( !isset($_REQUEST['v']) )
    {
-      echo 'Versión de la API ausente. Actualiza el cliente.';
+      echo 'Version de la API ausente. Actualiza el cliente.';
    }
    else if($_REQUEST['v'] == '2')
    {
       if( isset($_REQUEST['f']) )
       {
-         try
+         $ejecutada = FALSE;
+         $fsext = new fs_extension();
+         foreach($fsext->all_4_type('api') as $ext)
          {
-            $_REQUEST['f']();
+            if($ext->text == $_REQUEST['f'])
+            {
+               try
+               {
+                  $_REQUEST['f']();
+               }
+               catch(Exception $e)
+               {
+                  echo 'ERROR: '.$e->getMessage();
+               }
+               
+               $ejecutada = TRUE;
+            }
          }
-         catch(Exception $e)
+         
+         if(!$ejecutada)
          {
-            echo 'ERROR: '.$e->getMessage();
+            echo 'Ninguna funcion API ejecutada.';
          }
       }
       else
-         echo 'Ninguna función ejecutada.';
+         echo 'Ninguna funcion ejecutada.';
    }
    else
    {
-      echo 'Versión de la API incorrecta. Actualiza el cliente.';
+      echo 'Version de la API incorrecta. Actualiza el cliente.';
    }
 }
 else

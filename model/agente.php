@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_model.php';
-
 /**
  * El agente/empleado es el que se asocia a un albarán, factura o caja.
  * Cada usuario puede estar asociado a un agente, y un agente puede
@@ -26,6 +24,20 @@ require_once 'base/fs_model.php';
  */
 class agente extends fs_model
 {
+   /**
+    * Clave primaria. Varchar (10).
+    * @var type
+    */
+   public $codagente;
+   
+   /**
+    * Identificador fiscal.
+    * @var type 
+    */
+   public $dnicif;
+   public $nombre;
+   public $apellidos;
+   
    /**
     * Todavía sin uso.
     * @var type 
@@ -40,8 +52,15 @@ class agente extends fs_model
    public $ciudad;
    public $direccion;
    
+   public $seg_social;
+   public $cargo;
+   public $banco;
+   public $f_nacimiento;
+   public $f_alta;
+   public $f_baja;
+
    /**
-    * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, alabaranes y facturas.
+    * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, albaranes y facturas.
     * @var type 
     */
    public $porcomision;
@@ -51,21 +70,16 @@ class agente extends fs_model
     * @var type 
     */
    public $irpf;
-   public $dnicif;
-   public $nombre;
-   public $apellidos;
-   
-   /**
-    * Clave primaria. Varchar (10).
-    * @var type
-    */
-   public $codagente;
    
    public function __construct($a=FALSE)
    {
       parent::__construct('agentes');
       if($a)
       {
+         $this->codagente = $a['codagente'];
+         $this->nombre = $a['nombre'];
+         $this->apellidos = $a['apellidos'];
+         $this->dnicif = $a['dnicif'];
          $this->coddepartamento = $a['coddepartamento'];
          $this->email = $a['email'];
          $this->fax = $a['fax'];
@@ -77,13 +91,34 @@ class agente extends fs_model
          $this->direccion = $a['direccion'];
          $this->porcomision = floatval($a['porcomision']);
          $this->irpf = floatval($a['irpf']);
-         $this->dnicif = $a['dnicif'];
-         $this->nombre = $a['nombre'];
-         $this->apellidos = $a['apellidos'];
-         $this->codagente = $a['codagente'];
+         $this->seg_social = $a['seg_social'];
+         $this->banco = $a['banco'];
+         $this->cargo =$a['cargo'];
+         
+         $this->f_alta = NULL;
+         if($a['f_alta'] != '')
+         {
+            $this->f_alta = Date('d-m-Y', strtotime($a['f_alta']));
+         }
+         
+         $this->f_baja = NULL;
+         if($a['f_baja'] != '')
+         {
+            $this->f_baja = Date('d-m-Y', strtotime($a['f_baja']));
+         }
+         
+         $this->f_nacimiento = NULL;
+         if($a['f_nacimiento'] != '')
+         {
+            $this->f_nacimiento = Date('d-m-Y', strtotime($a['f_nacimiento']));
+         }
       }
       else
       {
+         $this->codagente = NULL;
+         $this->nombre = '';
+         $this->apellidos = '';
+         $this->dnicif = '';
          $this->coddepartamento = NULL;
          $this->email = NULL;
          $this->fax = NULL;
@@ -95,10 +130,12 @@ class agente extends fs_model
          $this->direccion = NULL;
          $this->porcomision = 0;
          $this->irpf = 0;
-         $this->dnicif = '';
-         $this->nombre = '';
-         $this->apellidos = '';
-         $this->codagente = NULL;
+         $this->seg_social = NULL;
+         $this->banco = NULL;
+         $this->cargo = NULL;
+         $this->f_alta = Date('d-m-Y');
+         $this->f_baja = NULL;
+         $this->f_nacimiento = Date('d-m-Y');        
       }
    }
    
@@ -119,7 +156,9 @@ class agente extends fs_model
       $sql = "SELECT MAX(".$this->db->sql_to_int('codagente').") as cod FROM ".$this->table_name.";";
       $cod = $this->db->select($sql);
       if($cod)
+      {
          return 1 + intval($cod[0]['cod']);
+      }
       else
          return 1;
    }
@@ -127,7 +166,9 @@ class agente extends fs_model
    public function url()
    {
       if( is_null($this->codagente) )
+      {
          return "index.php?page=admin_agentes";
+      }
       else
          return "index.php?page=admin_agente&cod=".$this->codagente;
    }
@@ -146,7 +187,9 @@ class agente extends fs_model
    public function exists()
    {
       if( is_null($this->codagente) )
+      {
          return FALSE;
+      }
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
    }
@@ -162,12 +205,18 @@ class agente extends fs_model
       $this->telefono = $this->no_html($this->telefono);
       $this->email = $this->no_html($this->email);
       
-      if( !preg_match("/^[A-Z0-9]{1,10}$/i", $this->codagente) )
-         $this->new_error_msg("Código de agente no válido.");
+      if( strlen($this->codagente) < 1 OR strlen($this->codagente) > 10 )
+      {
+         $this->new_error_msg("Código de agente no válido. Debe tener entre 1 y 10 caracteres.");
+      }
       else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
-         $this->new_error_msg("Nombre de agente no válido.");
-      else if( strlen($this->apellidos) < 1 OR strlen($this->apellidos) > 50 )
-         $this->new_error_msg("Apellidos del agente no válidos.");
+      {
+         $this->new_error_msg("El nombre de empleado no puede superar los 50 caracteres.");
+      }
+      else if( strlen($this->apellidos) < 1 OR strlen($this->apellidos) > 100 )
+      {
+         $this->new_error_msg("Los apellidos del empleado no pueden superar los 100 caracteres.");
+      }
       else
          $status = TRUE;
       
@@ -179,21 +228,48 @@ class agente extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-               apellidos = ".$this->var2str($this->apellidos).", dnicif = ".$this->var2str($this->dnicif).",
-               telefono = ".$this->var2str($this->telefono).", email = ".$this->var2str($this->email).",
-               porcomision = ".$this->var2str($this->porcomision)."
-               WHERE codagente = ".$this->var2str($this->codagente).";";
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).
+                    ", apellidos = ".$this->var2str($this->apellidos).
+                    ", dnicif = ".$this->var2str($this->dnicif).
+                    ", telefono = ".$this->var2str($this->telefono).
+                    ", email = ".$this->var2str($this->email).
+                    ", cargo = ".$this->var2str($this->cargo).
+                    ", provincia = ".$this->var2str($this->provincia).
+                    ", ciudad = ".$this->var2str($this->ciudad).
+                    ", direccion = ".$this->var2str($this->direccion).
+                    ", f_nacimiento = ".$this->var2str($this->f_nacimiento).
+                    ", f_alta = ".$this->var2str($this->f_alta).
+                    ", f_baja = ".$this->var2str($this->f_baja).
+                    ", seg_social = ".$this->var2str($this->seg_social).
+                    ", banco = ".$this->var2str($this->banco).
+                    ", porcomision = ".$this->var2str($this->porcomision).
+                    "  WHERE codagente = ".$this->var2str($this->codagente).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,email,porcomision)
-               VALUES (".$this->var2str($this->codagente).",".$this->var2str($this->nombre).",
-               ".$this->var2str($this->apellidos).",".$this->var2str($this->dnicif).",
-               ".$this->var2str($this->telefono).",".$this->var2str($this->email).",".$this->var2str($this->porcomision).");";
+            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,
+               email,cargo,provincia,ciudad,direccion,f_nacimiento,f_alta,f_baja,seg_social,banco,porcomision)
+               VALUES (".$this->var2str($this->codagente).
+                    ",".$this->var2str($this->nombre).
+                    ",".$this->var2str($this->apellidos).
+                    ",".$this->var2str($this->dnicif).
+                    ",".$this->var2str($this->telefono).
+                    ",".$this->var2str($this->email).
+                    ",".$this->var2str($this->cargo).
+                    ",".$this->var2str($this->provincia).
+                    ",".$this->var2str($this->ciudad).
+                    ",".$this->var2str($this->direccion).
+                    ",".$this->var2str($this->f_nacimiento).
+                    ",".$this->var2str($this->f_alta).
+                    ",".$this->var2str($this->f_baja).
+                    ",".$this->var2str($this->seg_social).
+                    ",".$this->var2str($this->banco).
+                    ",".$this->var2str($this->porcomision).");";
          }
+         
          return $this->db->exec($sql);
       }
       else
@@ -214,7 +290,7 @@ class agente extends fs_model
    public function all()
    {
       $listagentes = $this->cache->get_array('m_agente_all');
-      if( !$listagentes )
+      if(!$listagentes)
       {
          $agentes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
          if($agentes)
@@ -224,6 +300,7 @@ class agente extends fs_model
          }
          $this->cache->set('m_agente_all', $listagentes);
       }
+      
       return $listagentes;
    }
 }

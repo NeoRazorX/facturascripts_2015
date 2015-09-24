@@ -28,52 +28,58 @@ class fs_default_items
    private static $showing_page;
    private static $codejercicio;
    private static $codalmacen;
-   private static $codcliente;
    private static $coddivisa;
-   private static $codfamilia;
    private static $codpago;
    private static $codimpuesto;
    private static $codpais;
-   private static $codproveedor;
    private static $codserie;
    
    public function __construct()
    {
       if( !isset(self::$default_page) )
+      {
          self::$default_page = NULL;
+      }
       
       if( !isset(self::$showing_page) )
+      {
          self::$showing_page = NULL;
+      }
       
       if( !isset(self::$codejercicio) )
+      {
          self::$codejercicio = NULL;
+      }
       
       if( !isset(self::$codalmacen) )
+      {
          self::$codalmacen = NULL;
-      
-      if( !isset(self::$codcliente) )
-         self::$codcliente = NULL;
+      }
       
       if( !isset(self::$coddivisa) )
+      {
          self::$coddivisa = NULL;
-      
-      if( !isset(self::$codfamilia) )
-         self::$codfamilia = NULL;
+      }
       
       if( !isset(self::$codpago) )
+      {
          self::$codpago = NULL;
+      }
       
       if( !isset(self::$codimpuesto) )
+      {
          self::$codimpuesto = NULL;
+      }
       
       if( !isset(self::$codpais) )
+      {
          self::$codpais = NULL;
-      
-      if( !isset(self::$codproveedor) )
-         self::$codproveedor = NULL;
+      }
       
       if( !isset(self::$codserie) )
+      {
          self::$codserie = NULL;
+      }
    }
    
    public function codejercicio()
@@ -96,16 +102,6 @@ class fs_default_items
       self::$codalmacen = $cod;
    }
    
-   public function codcliente()
-   {
-      return self::$codcliente;
-   }
-   
-   public function set_codcliente($cod)
-   {
-      self::$codcliente = $cod;
-   }
-   
    public function coddivisa()
    {
       return self::$coddivisa;
@@ -114,16 +110,6 @@ class fs_default_items
    public function set_coddivisa($cod)
    {
       self::$coddivisa = $cod;
-   }
-   
-   public function codfamilia()
-   {
-      return self::$codfamilia;
-   }
-   
-   public function set_codfamilia($cod)
-   {
-      self::$codfamilia = $cod;
    }
    
    public function codpago()
@@ -154,16 +140,6 @@ class fs_default_items
    public function set_codpais($cod)
    {
       self::$codpais = $cod;
-   }
-   
-   public function codproveedor()
-   {
-      return self::$codproveedor;
-   }
-   
-   public function set_codproveedor($cod)
-   {
-      self::$codproveedor = $cod;
    }
    
    public function codserie()

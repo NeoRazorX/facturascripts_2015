@@ -110,8 +110,10 @@ class fs_log extends fs_model
                  . ", tipo = " . $this->var2str($this->tipo)
                  . ", detalle = " . $this->var2str($this->detalle)
                  . ", usuario = " . $this->var2str($this->usuario)
-                 . ", ip = " . $this->var2str($this->ip). ", alerta = " . $this->var2str($this->alerta)
-                 . " WHERE id=" . $this->var2str($this->id) . ";";
+                 . ", ip = " . $this->var2str($this->ip)
+                 . ", alerta = " . $this->var2str($this->alerta)
+                 . "  WHERE id=" . $this->var2str($this->id) . ";";
+         
          return $this->db->exec($sql);
       }
       else
@@ -121,7 +123,8 @@ class fs_log extends fs_model
                  . $this->var2str($this->tipo) . ","
                  . $this->var2str($this->detalle) . ","
                  . $this->var2str($this->usuario) . ","
-                 . $this->var2str($this->ip) . ",". $this->var2str($this->alerta) . ");";
+                 . $this->var2str($this->ip) . ","
+                 . $this->var2str($this->alerta) . ");";
 
          if( $this->db->exec($sql) )
          {
@@ -138,11 +141,11 @@ class fs_log extends fs_model
       return $this->db->exec("DELETE FROM fs_logs WHERE id =" . $this->var2str($this->id) . ";");
    }
    
-   public function all($offset=0)
+   public function all($offset=0, $limit = FS_ITEM_LIMIT)
    {
       $lista = array();
       
-      $data = $this->db->select_limit("SELECT * FROM fs_logs ORDER BY fecha DESC", FS_ITEM_LIMIT, $offset);
+      $data = $this->db->select_limit("SELECT * FROM fs_logs ORDER BY fecha DESC", $limit, $offset);
       if($data)
       {
          foreach($data as $d)

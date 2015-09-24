@@ -17,14 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if(strtolower(FS_DB_TYPE) == 'mysql')
-{
-   require_once 'base/fs_mysql.php';
-}
-else
-   require_once 'base/fs_postgresql.php';
-
 require_once 'base/fs_cache.php';
+require_once 'base/fs_db2.php';
 require_once 'base/fs_default_items.php';
 require_once 'base/fs_model.php';
 
@@ -46,7 +40,7 @@ class fs_controller
 {
    /**
     * Este objeto permite acceso directo a la base de datos.
-    * @var type es una instancia de fs_mysql o fs_postgresql
+    * @var fs_db2
     */
    protected $db;
    private $uptime;
@@ -58,13 +52,13 @@ class fs_controller
    
    /**
     * El usuario que ha hecho login
-    * @var type 
+    * @var fs_user
     */
    public $user;
    
    /**
     * El elemento del menú de esta página
-    * @var type 
+    * @var fs_page
     */
    public $page;
    
@@ -88,14 +82,14 @@ class fs_controller
    
    /**
     * La empresa
-    * @var type 
+    * @var empresa
     */
    public $empresa;
    public $default_items;
    
    /**
     * Este objeto permite interactuar con memcache
-    * @var type 
+    * @var fs_cache
     */
    protected $cache;
    
@@ -112,7 +106,7 @@ class fs_controller
     * @param type $shmenu debe ser TRUE si quieres añadir el acceso directo en el menú
     * @param type $important debe ser TRUE si quieres que se la primera página que ven los nuevos usuarios
     */
-   public function __construct($name='', $title='home', $folder='', $admin=FALSE, $shmenu=TRUE, $important=FALSE)
+   public function __construct($name = '', $title = 'home', $folder = '', $admin = FALSE, $shmenu = TRUE, $important = FALSE)
    {
       $tiempo = explode(' ', microtime());
       $this->uptime = $tiempo[1] + $tiempo[0];
@@ -122,14 +116,8 @@ class fs_controller
       $this->simbolo_divisas = array();
       $this->extensions = array();
       
-      if(strtolower(FS_DB_TYPE) == 'mysql')
-      {
-         $this->db = new fs_mysql();
-      }
-      else
-         $this->db = new fs_postgresql();
-      
       $this->cache = new fs_cache();
+      $this->db = new fs_db2();
       
       /// comprobamos la versión de PHP
       if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
@@ -140,7 +128,7 @@ class fs_controller
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
-         $this->page = new fs_page( array('name'=>$name,'title'=>$title,'folder'=>$folder,'version'=>$this->version(),'show_on_menu'=>$shmenu, 'important'=>$important) );
+         $this->page = new fs_page( array('name'=>$name,'title'=>$title,'folder'=>$folder,'version'=>$this->version(),'show_on_menu'=>$shmenu,'important'=>$important) );
          if($name != '')
          {
             $this->page->save();
@@ -263,7 +251,7 @@ class fs_controller
    }
    
    /**
-    * Cierra la conexión con la base de datos
+    * Cierra la conexión con la base de datos.
     */
    public function close()
    {
@@ -682,14 +670,6 @@ class fs_controller
     */
    protected function private_core()
    {
-      $this->process();
-   }
-   
-   /**
-    * Obsoleto
-    */
-   protected function process()
-   {
       
    }
    
@@ -757,76 +737,55 @@ class fs_controller
          $this->user->save();
       }
       else if( is_null($this->default_items->default_page()) )
+      {
          $this->default_items->set_default_page( $this->user->fs_page );
+      }
       
       if( is_null($this->default_items->showing_page()) )
-         $this->default_items->set_showing_page( $this->page->name );
-      
-      if( is_null($this->user->codejercicio) )
       {
-         $this->default_items->set_codejercicio( $this->empresa->codejercicio );
+         $this->default_items->set_showing_page( $this->page->name );
       }
-      else
-         $this->default_items->set_codejercicio( $this->user->codejercicio );
       
       if( isset($_COOKIE['default_almacen']) )
+      {
          $this->default_items->set_codalmacen( $_COOKIE['default_almacen'] );
+      }
       else
+      {
          $this->default_items->set_codalmacen( $this->empresa->codalmacen );
-      
-      if( isset($_COOKIE['default_cliente']) )
-         $this->default_items->set_codcliente( $_COOKIE['default_cliente'] );
-      
-      if( isset($_COOKIE['default_divisa']) )
-         $this->default_items->set_coddivisa( $_COOKIE['default_divisa'] );
-      else
-         $this->default_items->set_coddivisa( $this->empresa->coddivisa );
-      
-      if( isset($_COOKIE['default_familia']) )
-         $this->default_items->set_codfamilia( $_COOKIE['default_familia'] );
+      }
       
       if( isset($_COOKIE['default_formapago']) )
+      {
          $this->default_items->set_codpago( $_COOKIE['default_formapago'] );
+      }
       else
+      {
          $this->default_items->set_codpago( $this->empresa->codpago );
+      }
       
       if( isset($_COOKIE['default_impuesto']) )
+      {
          $this->default_items->set_codimpuesto( $_COOKIE['default_impuesto'] );
+      }
       
-      if( isset($_COOKIE['default_pais']) )
-         $this->default_items->set_codpais( $_COOKIE['default_pais'] );
-      else
-         $this->default_items->set_codpais( $this->empresa->codpais );
-      
-      if( isset($_COOKIE['default_proveedor']) )
-         $this->default_items->set_codproveedor( $_COOKIE['default_proveedor'] );
-      
-      if( isset($_COOKIE['default_serie']) )
-         $this->default_items->set_codserie( $_COOKIE['default_serie'] );
-      else
-         $this->default_items->set_codserie( $this->empresa->codserie );
+      $this->default_items->set_codpais( $this->empresa->codpais );
+      $this->default_items->set_codserie( $this->empresa->codserie );
+      $this->default_items->set_coddivisa( $this->empresa->coddivisa );
    }
    
    /**
-    * Establece un ejercicio como predeterminado para este usuario
+    * Establece un ejercicio como predeterminado para este usuario.
+    * @deprecated since version 2015.039
     * @param type $cod el código del ejercicio
     */
    protected function save_codejercicio($cod)
    {
-      if($cod != $this->user->codejercicio)
-      {
-         $this->default_items->set_codejercicio($cod);
-         $this->user->codejercicio = $cod;
-         if( !$this->user->save() )
-         {
-            $this->new_error_msg('Error al establecer el ejercicio '.$cod.
-               ' como ejercicio predeterminado para este usuario.');
-         }
-      }
+      $this->new_error_msg('fs_controller::save_codejercicio() es una función obsoleta.');
    }
    
    /**
-    * Establece un almacén como predeterminado para este usuario
+    * Establece un almacén como predeterminado para este usuario.
     * @param type $cod el código del almacén
     */
    protected function save_codalmacen($cod)
@@ -836,37 +795,37 @@ class fs_controller
    }
    
    /**
-    * Establece un cliente como predeterminado para este usuario
+    * Establece un cliente como predeterminado para este usuario.
+    * @deprecated since version 2015.039
     * @param type $cod el código del cliente
     */
    protected function save_codcliente($cod)
    {
-      setcookie('default_cliente', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codcliente($cod);
+      $this->new_error_msg('fs_controller::save_codcliente() es una función obsoleta.');
    }
    
    /**
-    * Establece una divisa como predeterminada para este usuario
+    * Establece una divisa como predeterminada para este usuario.
+    * @deprecated since version 2015.039
     * @param type $cod el código de la divisa
     */
    protected function save_coddivisa($cod)
    {
-      setcookie('default_divisa', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_coddivisa($cod);
+      $this->new_error_msg('fs_controller::save_coddivisa() es una función obsoleta.');
    }
    
    /**
-    * Establece una familia como predeterminada para este usuario
+    * Establece una familia como predeterminada para este usuario.
+    * @deprecated since version 2015.039
     * @param type $cod el código de la familia
     */
    protected function save_codfamilia($cod)
    {
-      setcookie('default_familia', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codfamilia($cod);
+      $this->new_error_msg('fs_controller::save_codfamilia() es una función obsoleta.');
    }
    
    /**
-    * Establece una forma de pago como predeterminada para este usuario
+    * Establece una forma de pago como predeterminada para este usuario.
     * @param type $cod el código de la forma de pago
     */
    protected function save_codpago($cod)
@@ -876,8 +835,8 @@ class fs_controller
    }
    
    /**
-    * Establece un impuesto (IVA) como predeterminado para este usuario
-    * @param type $cod el código del iumpuesto
+    * Establece un impuesto (IVA) como predeterminado para este usuario.
+    * @param type $cod el código del impuesto
     */
    protected function save_codimpuesto($cod)
    {
@@ -886,33 +845,33 @@ class fs_controller
    }
    
    /**
-    * Establece un código de país como predeterminado para este usuario
+    * Establece un código de país como predeterminado para este usuario.
+    * @deprecated since version 2015.039
     * @param type $cod el código del país
     */
    protected function save_codpais($cod)
    {
-      setcookie('default_pais', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codpais($cod);
+      $this->new_error_msg('fs_controller::save_codpais() es una función obsoleta.');
    }
    
    /**
-    * Establece un proveedor como predeterminado para este usuario
+    * Establece un proveedor como predeterminado para este usuario.
+    * @deprecated since version 2015.039
     * @param type $cod el código del proveedor
     */
    protected function save_codproveedor($cod)
    {
-      setcookie('default_proveedor', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codproveedor($cod);
+      $this->new_error_msg('fs_controller::save_codproveedor() es una función obsoleta.');
    }
    
    /**
-    * Establece una serie como predeterminada para este usuario
+    * Establece una serie como predeterminada para este usuario.
+    * @deprecated since version 2015.039
     * @param type $cod el código de la serie
     */
    protected function save_codserie($cod)
    {
-      setcookie('default_serie', $cod, time()+FS_COOKIES_EXPIRE);
-      $this->default_items->set_codserie($cod);
+      $this->new_error_msg('fs_controller::save_codserie() es una función obsoleta.');
    }
    
    /**
@@ -959,7 +918,9 @@ class fs_controller
    {
       $ids = $this->cache->get_array('petition_ids');
       if( in_array($id, $ids) )
+      {
          return TRUE;
+      }
       else
       {
          $ids[] = $id;
@@ -981,24 +942,31 @@ class fs_controller
       $txt .= 'database version: '.$this->db->version()."\n";
       
       if( $this->cache->connected() )
+      {
          $txt .= "memcache: YES\n";
+         $txt .= 'memcache version: '.$this->cache->version()."\n";
+      }
       else
          $txt .= "memcache: NO\n";
       
-      $txt .= 'memcache version: '.$this->cache->version()."\n";
-      
       if( function_exists('curl_init') )
+      {
          $txt .= "curl: YES\n";
+      }
       else
          $txt .= "curl: NO\n";
       
       $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
       
       if( isset($_SERVER['REQUEST_URI']) )
+      {
          $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+      }
       
       foreach($this->get_errors() as $e)
+      {
          $txt .= "\n" . $e;
+      }
       
       return str_replace('"', "'", $txt);
    }
@@ -1012,10 +980,14 @@ class fs_controller
    public function simbolo_divisa($coddivisa = FALSE)
    {
       if(!$coddivisa)
+      {
          $coddivisa = $this->empresa->coddivisa;
+      }
       
       if( isset($this->simbolo_divisas[$coddivisa]) )
+      {
          return $this->simbolo_divisas[$coddivisa];
+      }
       else
       {
          $divisa = new divisa();
@@ -1042,19 +1014,25 @@ class fs_controller
    public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE)
    {
       if($coddivisa === FALSE)
+      {
          $coddivisa = $this->empresa->coddivisa;
+      }
       
       if(FS_POS_DIVISA == 'right')
       {
          if($simbolo)
+         {
             return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$this->simbolo_divisa($coddivisa);
+         }
          else
             return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$coddivisa;
       }
       else
       {
          if($simbolo)
+         {
             return $this->simbolo_divisa($coddivisa).number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+         }
          else
             return $coddivisa.' '.number_format($precio, FS_NF0, FS_NF1, FS_NF2);
       }
@@ -1070,7 +1048,9 @@ class fs_controller
    public function show_numero($num=0, $decimales=FS_NF0, $js=FALSE)
    {
       if($js)
+      {
          return number_format($num, $decimales, '.', '');
+      }
       else
          return number_format($num, $decimales, FS_NF1, FS_NF2);
    }
@@ -1087,7 +1067,9 @@ class fs_controller
       if( count($this->last_changes) > 0 )
       {
          if($this->last_changes[0]['url'] == $url)
+         {
             $this->last_changes[0]['nuevo'] = $nuevo;
+         }
          else
             array_unshift($this->last_changes, array('texto' => ucfirst($txt), 'url' => $url, 'nuevo' => $nuevo, 'cambio' => date('d-m-Y H:i:s')) );
       }
@@ -1124,6 +1106,10 @@ class fs_controller
       return $this->last_changes;
    }
    
+   /**
+    * Devuelve TRUE si hay actualizaciones pendientes (sólo si eres admin).
+    * @return boolean
+    */
    public function check_for_updates()
    {
       if($this->user->admin)
@@ -1133,5 +1119,28 @@ class fs_controller
       }
       else
          return FALSE;
+   }
+   
+   /**
+    * Busca en la lista de plugins activos, en orden inverso de prioridad
+    * (el último plugin activo tiene más prioridad que el primero)
+    * y nos devuelve la ruta del archivo javascript que le solicitamos.
+    * Así usamos el archivo del plugin con mayor prioridad.
+    * @param type $filename
+    * @return type
+    */
+   public function get_js_location($filename)
+   {
+      $found = FALSE;
+      foreach($GLOBALS['plugins'] as $plugin)
+      {
+         if( file_exists('plugins/'.$plugin.'/view/js/'.$filename) )
+         {
+            return 'plugins/'.$plugin.'/view/js/'.$filename;
+         }
+      }
+      
+      /// si no está en los plugins estará en el núcleo
+      return 'view/js/'.$filename;
    }
 }

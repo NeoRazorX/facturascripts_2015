@@ -2,9 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-   <title>{$fsc->page->title} &lsaquo; {$fsc->empresa->nombre}</title>
+   <title>{$fsc->page->title} &lsaquo; {if="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</title>
    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" href="{$fsc->user->css}" />
    <link rel="stylesheet" href="view/css/datepicker.css" />
@@ -42,13 +43,10 @@
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
-            {if="FS_DEMO"}
-            <a class="navbar-brand" href="index.php">DEMO</a>
-            {elseif="$fsc->empresa->nombrecorto"}
-            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombrecorto}</a>
-            {else}
-            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
-            {/if}
+            <a class="navbar-brand" href="index.php">
+               <span class="glyphicon glyphicon-home"></span> &nbsp;
+               {if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}
+            </a>
          </div>
          
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -107,9 +105,9 @@
                      <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_questions" target="_blank">Preguntas</a></li>
                      <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_errors" target="_blank">Errores</a></li>
                      <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_all" target="_blank">Todo</a></li>
+                     <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_colabora" target="_blank">Colabora</a></li>
                      <li class="divider"></li>
-                     <li><a href="#" id="b_feedback">Informar...</a></li>
+                     <li><a href="#" id="b_feedback"><span class="glyphicon glyphicon-send"></span> &nbsp; Informar...</a></li>
                   </ul>
                </li>
                
