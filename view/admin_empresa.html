@@ -72,32 +72,24 @@
 </script>
 
 <div class="container-fluid">
-   <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
-      <div class="col-xs-6">
-         <div class="btn-group hidden-xs">
-            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
-               <span class="glyphicon glyphicon-refresh"></span>
-            </a>
-            {if="$fsc->page->is_default()"}
-            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
-               <span class="glyphicon glyphicon-home"></span>
-            </a>
-            {else}
-            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
-               <span class="glyphicon glyphicon-home"></span>
-            </a>
-            {/if}
+   <div class="row">
+      <div class="col-md-2 col-sm-3"></div>
+      <div class="col-md-10 col-sm-9">
+         <div class="page-header">
+            <h1>
+               Empresa
+               <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
+                  <span class="glyphicon glyphicon-refresh"></span>
+               </a>
+               <div class="btn-group">
+                  {loop="$fsc->extensions"}
+                     {if="$value->type=='button'"}
+                     <a href="index.php?page={$value->from}{$value->params}" class="btn btn-xs btn-default">{$value->text}</a>
+                     {/if}
+                  {/loop}
+               </div>
+            </h1>
          </div>
-         <div class="btn-group">
-            {loop="$fsc->extensions"}
-               {if="$value->type=='button'"}
-               <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
-               {/if}
-            {/loop}
-         </div>
-      </div>
-      <div class="col-xs-6 text-right">
-         <h2 style="margin-top: 0px;">Empresa</h2>
       </div>
    </div>
    <div class="row">
@@ -155,7 +147,7 @@
                      <a href="{$fsc->pais->url()}">País</a>:
                      <select name="codpais" class="form-control">
                         {loop="$fsc->pais->all()"}
-                        <option value="{$value->codpais}"{if="$fsc->empresa->codpais == $value->codpais"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codpais}"{if="$fsc->empresa->codpais == $value->codpais"} selected=""{/if}>{$value->nombre}</option>
                         {/loop}
                      </select>
                   </div>
@@ -198,20 +190,42 @@
             
             <div class="panel panel-primary" id="panel_email">
                <div class="panel-heading">
-                  <h3 class="panel-title">Email</h3>
+                  <h3 class="panel-title">Configuración de email</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-6">
-                     Email:
-                     <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" autofocus />
-                  </div>
-                  <div class="form-group col-sm-6">
-                     Contraseña:
-                     <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="Contraseña"/>
-                  </div>
-                  <div class="form-group">
-                     Firma:
-                     <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
+                  <div class="container-fluid">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <p class="help-block">
+                              Si configuras tu cuenta de email, podrás usarla para
+                              enviar documentos.
+                           </p>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <div class="form-group">
+                              <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" placeholder="email" autofocus=""/>
+                              <p class="help-block">
+                                 ¿Quieres usar tunombre@tuempresa.com?
+                                 Prueba gratis <a href="https://goo.gl/bRFlmv" target="_blank">Google Apps for Work</a>.
+                              </p>
+                           </div>
+                        </div>
+                        <div class="col-sm-6">
+                           <div class="form-group">
+                              <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <div class="form-group">
+                              Firma:
+                              <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
+                           </div>
+                        </div>
+                     </div>
                   </div>
                </div>
                <div class="panel-footer text-right">
@@ -241,19 +255,15 @@
                      Encriptación:
                      <select name="mail_enc" class="form-control">
                         <option value="ssl">SSL</option>
-                        <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
+                        <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected=""{/if}>TLS</option>
                         <option value="">---</option>
-                        <option value=""{if="$fsc->mail['mail_enc']==''"} selected="selected"{/if}>Ninguna</option>
+                        <option value=""{if="$fsc->mail['mail_enc']==''"} selected=""{/if}>Ninguna</option>
                      </select>
                   </div>
                   <div class="form-group col-sm-3">
                      Usuario:
                      <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
                   </div>
-               </div>
-               <div class="panel-footer">
-                  ¿Quieres usar tu propio dominio para tu email?
-                  Prueba <a href="https://goo.gl/bRFlmv" target="_blank">Google Apps for Work</a> en tu negocio.
                </div>
             </div>
             
@@ -266,7 +276,7 @@
                      <a href="{$fsc->divisa->url()}">Divisa</a>:
                      <select name="coddivisa" class="form-control">
                      {loop="$fsc->divisa->all()"}
-                        <option value="{$value->coddivisa}"{if="$fsc->empresa->coddivisa == $value->coddivisa"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->coddivisa}"{if="$fsc->empresa->coddivisa == $value->coddivisa"} selected=""{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                      <p class="help-block">
@@ -277,7 +287,7 @@
                      <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="codejercicio" class="form-control" autofocus >
                      {loop="$fsc->ejercicio->all()"}
-                        <option value="{$value->codejercicio}"{if="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codejercicio}"{if="$fsc->empresa->codejercicio == $value->codejercicio"} selected=""{/if}>{$value->nombre}</option>
                      {/loop}
                      </select>
                      <p class="help-block">Sólo sirve para inicializar algunos campos.</p>
@@ -286,7 +296,7 @@
                      <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
-                        <option value="{$value->codserie}"{if="$fsc->empresa->codserie == $value->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->codserie}"{if="$fsc->empresa->codserie == $value->codserie"} selected=""{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                      <p class="help-block">El {#FS_IRPF#} se define en la serie.</p>
@@ -309,7 +319,7 @@
                      <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
                      <select name="codpago" class="form-control">
                      {loop="$fsc->forma_pago->all()"}
-                        <option value="{$value->codpago}"{if="$fsc->empresa->codpago == $value->codpago"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->codpago}"{if="$fsc->empresa->codpago == $value->codpago"} selected=""{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                   </div>
@@ -317,7 +327,7 @@
                      <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}
-                        <option value="{$value->codalmacen}"{if="$fsc->empresa->codalmacen == $value->codalmacen"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codalmacen}"{if="$fsc->empresa->codalmacen == $value->codalmacen"} selected=""{/if}>{$value->nombre}</option>
                      {/loop}
                      </select>
                   </div>
@@ -487,7 +497,7 @@
                   </div>
                </div>
                <div class="form-group">
-                  <input class="form-control" name="fimagen" type="file" accept="image/png"/>
+                  <input name="fimagen" type="file" accept="image/png"/>
                </div>
             </div>
             <div class="modal-footer">

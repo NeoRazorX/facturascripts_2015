@@ -312,7 +312,7 @@ class fs_postgresql
          }
          else
          {
-            self::$errors[] = pg_last_error(self::$link);
+            self::$errors[] = pg_last_error(self::$link).'. La secuencia ocupa la posición '.count(self::$history);
             
             if($transaccion)
             {

@@ -339,8 +339,10 @@ $system_info = str_replace('"', "'", $system_info);
    
    <div class="container">
       <div class="row">
-         <div class="col-lg-12 text-center" style="margin-top: 20px; margin-bottom: 20px;">
-            <h1>Bienvenido al instalador de FacturaScripts <?php echo file_get_contents('VERSION'); ?></h1>
+         <div class="col-lg-12">
+            <div class="page-header">
+               <h1>Bienvenido al instalador de FacturaScripts <?php echo file_get_contents('VERSION'); ?></h1>
+            </div>
          </div>
       </div>
       
@@ -491,10 +493,15 @@ $system_info = str_replace('"', "'", $system_info);
             <p>
                Recuerda que tienes el menú de ayuda arriba a la derecha. Si encuentras cualquier problema,
                haz clic en <b>informar...</b> y describe tu duda, sugerencia o el error que has encontrado.
-            </p>
-            <p>
                No sabemos hacer software perfecto, pero con tu ayuda nos podemos acercar cada vez más ;-)
             </p>
+            <p>
+               Y si quieres saber más, no olvides seguir a nuestro desarrollador principal
+               en su canal de youtube.
+            </p>
+            <a href="https://www.youtube.com/user/NeoRazorX" target="_blank" class="btn btn-sm btn-danger">
+               <span class="glyphicon glyphicon-facetime-video"></span> &nbsp; FacturaScripts en YouTube
+            </a>
          </div>
          <div class="col-lg-2">
             <div class="thumbnail">
@@ -509,7 +516,7 @@ $system_info = str_replace('"', "'", $system_info);
                <div class="panel panel-primary">
                   <div class="panel-heading">
                      <h3 class="panel-title">
-                        <span class="badge">1</span> Configuración de la base de datos
+                        <span class="badge">1</span> &nbsp; Configuración de la base de datos
                      </h3>
                   </div>
                   <div class="panel-body">
@@ -550,7 +557,7 @@ $system_info = str_replace('"', "'", $system_info);
                <div class="panel panel-info" id="panel_configuracion_inicial_cache">
                   <div class="panel-heading">
                      <h3 class="panel-title">
-                        <span class="badge">2</span> Configuración Memcache (opcional)
+                        <span class="badge">2</span> &nbsp; Configuración Memcache (opcional)
                      </h3>
                   </div>
                   <div class="panel-body">

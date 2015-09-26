@@ -103,7 +103,7 @@
                   </tr>
                </thead>
                {loop="$fsc->historial"}
-               <tr{if="$value->alerta"} class="bg-danger"{/if}>
+               <tr{if="$value->alerta"} class="danger"{/if}>
                   <td><a href="index.php?page=admin_user&snick={$value->usuario}">{$value->usuario}</a></td>
                   <td>{$value->detalle}</td>
                   <td>{$value->ip}</td>
@@ -145,6 +145,7 @@
                   <a target="_blank" href="{$fsc->agente->url()}">Empleado</a>:
                   <select name="ncodagente" class="form-control">
                      <option value="">Ninguno</option>
+                     <option value="">------</option>
                      {loop="$fsc->agente->all()"}
                      <option value="{$value->codagente}">{$value->get_fullname()}</option>
                      {/loop}
