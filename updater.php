@@ -259,6 +259,9 @@ class fs_updater
             
             if($zip_status === TRUE)
             {
+               /// nos guardamos la lista previa de plugins
+               $plugins_list = scandir(getcwd().'/plugins');
+               
                /// eliminamos los archivos antiguos
                $this->delTree('plugins/' . $_GET['plugin']);
                
@@ -267,10 +270,27 @@ class fs_updater
                $zip->close();
                unlink('update.zip');
                
-               if( file_exists('plugins/' . $_GET['plugin'] . '-master') )
+               /// renombramos si es necesario
+               foreach( scandir(getcwd().'/plugins') as $f)
                {
-                  /// renombramos el directorio
-                  rename('plugins/' . $_GET['plugin'] . '-master', 'plugins/' . $_GET['plugin']);
+                  if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                  {
+                     $encontrado2 = FALSE;
+                     foreach($plugins_list as $f2)
+                     {
+                        if($f == $f2)
+                        {
+                           $encontrado2 = TRUE;
+                           break;
+                        }
+                     }
+                     
+                     if(!$encontrado2)
+                     {
+                        rename('plugins/'.$f, 'plugins/'.$_GET['plugin']);
+                        break;
+                     }
+                  }
                }
                
                /// limpiamos la caché

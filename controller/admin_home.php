@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Panel de control de FacturaScripts.
+ */
 class admin_home extends fs_controller
 {
    public $download_list;
@@ -33,6 +36,9 @@ class admin_home extends fs_controller
    
    protected function private_core()
    {
+      /**
+       * Esta es la lista de plugins fijos, los imprescindibles.
+       */
       $this->download_list = array(
           'facturacion_base' => array(
               'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
@@ -87,6 +93,9 @@ class admin_home extends fs_controller
          }
          $this->new_downloads = 0;
          
+         /**
+          * Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.
+          */
          $this->download_list2 = $this->cache->get('download_list');
          if(!$this->download_list2)
          {
@@ -218,10 +227,12 @@ class admin_home extends fs_controller
       }
       else if( isset($_GET['download']) )
       {
+         /// descargamos un plugin de la lista fija
          $this->download1();
       }
       else if( isset($_GET['download2']) )
       {
+         /// descargamos un plugin de la lista de la comunidad
          $this->download2();
       }
       else if( isset($_GET['reset']) )
@@ -260,6 +271,10 @@ class admin_home extends fs_controller
       $this->load_menu(TRUE);
    }
    
+   /**
+    * Devuelve las páginas/controladore de los plugins activos.
+    * @return type
+    */
    private function all_pages()
    {
       $pages = array();
@@ -346,11 +361,19 @@ class admin_home extends fs_controller
       return $pages;
    }
    
+   /**
+    * Devuelve la lista de plugins instalados y activados
+    * @return type
+    */
    private function plugins()
    {
       return $GLOBALS['plugins'];
    }
    
+   /**
+    * Activa una página/controlador.
+    * @param type $page
+    */
    private function enable_page($page)
    {
       /// primero buscamos en los plugins
@@ -392,6 +415,10 @@ class admin_home extends fs_controller
       }
    }
    
+   /**
+    * Desactiva una página/controlador.
+    * @param type $page
+    */
    private function disable_page($page)
    {
       if($page->name == $this->page->name)
@@ -404,6 +431,10 @@ class admin_home extends fs_controller
       }
    }
    
+   /**
+    * Devuelve la lista de elementos a traducir
+    * @return type
+    */
    public function traducciones()
    {
       $clist = array();
@@ -423,11 +454,11 @@ class admin_home extends fs_controller
    }
 
    /**
-   * Timezones list with GMT offset
-   * 
-   * @return array
-   * @link http://stackoverflow.com/a/9328760
-   */
+    * Timezones list with GMT offset
+    * 
+    * @return array
+    * @link http://stackoverflow.com/a/9328760
+    */
    public function get_timezone_list()
    {
       $zones_array = array();
@@ -442,11 +473,19 @@ class admin_home extends fs_controller
       return $zones_array;
    }
    
+   /**
+    * Lista de opciones para NF0
+    * @return type
+    */
    public function nf0()
    {
       return array(0, 1, 2, 3, 4);
    }
    
+   /**
+    * Lista de opciones para NF1
+    * @return type
+    */
    public function nf1()
    {
       return array(
@@ -456,6 +495,10 @@ class admin_home extends fs_controller
       );
    }
    
+   /**
+    * Devuelve la lista completada de plugins instalados
+    * @return type
+    */
    public function plugin_advanced_list()
    {
       $plugins = array();
@@ -548,6 +591,11 @@ class admin_home extends fs_controller
       return $plugins;
    }
    
+   /**
+    * Elimina recursivamente un directorio
+    * @param type $dir
+    * @return type
+    */
    private function delTree($dir)
    {
       $files = array_diff(scandir($dir), array('.','..'));
@@ -558,6 +606,10 @@ class admin_home extends fs_controller
       return rmdir($dir);
    }
    
+   /**
+    * Activa un plugin
+    * @param type $name
+    */
    private function enable_plugin($name)
    {
       if( substr($name, -7) == '-master' )
@@ -632,6 +684,10 @@ class admin_home extends fs_controller
       }
    }
    
+   /**
+    * Desactiva un plugin
+    * @param type $name
+    */
    private function disable_plugin($name)
    {
       if( file_exists('tmp/enabled_plugins.list') )
@@ -715,6 +771,10 @@ class admin_home extends fs_controller
       }
    }
    
+   /**
+    * Comprueba actualizaciones de los plugins y del núcleo.
+    * @return boolean
+    */
    public function check_for_updates2()
    {
       if( !$this->user->admin )
@@ -765,6 +825,12 @@ class admin_home extends fs_controller
       }
    }
    
+   /**
+    * Descarga el contenido con crul o file_get_contents
+    * @param type $url
+    * @param type $timeout
+    * @return type
+    */
    private function curl_get_contents($url, $timeout = 30)
    {
       if( function_exists('curl_init') )
@@ -791,6 +857,10 @@ class admin_home extends fs_controller
          return file_get_contents($url);
    }
    
+   /**
+    * Devuelve el tamaño máximo permitido para subir archivos.
+    * @return type
+    */
    public function get_max_file_upload()
    {
       $max = intval( ini_get('post_max_size') );
@@ -803,6 +873,9 @@ class admin_home extends fs_controller
       return $max;
    }
    
+   /**
+    * Descarga un plugin de la lista de plugins fijos.
+    */
    private function download1()
    {
       if( isset($this->download_list[$_GET['download']]) )
@@ -849,6 +922,9 @@ class admin_home extends fs_controller
          $this->new_error_msg('Descarga no encontrada.');
    }
    
+   /**
+    * Descarga un plugin de la lista dinámica de la comunidad.
+    */
    private function download2()
    {
       $encontrado = FALSE;
@@ -884,7 +960,7 @@ class admin_home extends fs_controller
                               break;
                            }
                         }
-                           
+                        
                         if(!$encontrado2)
                         {
                            rename('plugins/'.$f, 'plugins/'.$item->nombre);
