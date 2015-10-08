@@ -501,12 +501,14 @@ class fs_mysql
                            {
                               $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col2['column_name'].'` '.$col2['data_type'];
                               
-                              if($col2['is_nullable'] == 'YES')
+                              if($col2['is_nullable'] == 'YES' || $col2['is_nullable'] == 'SI')
                               {
                                  $consulta .= ' NULL AUTO_INCREMENT;';
                               }
-                              else
+                              else if($col2['is_nullable'] == 'NO')
+			      {
                                  $consulta .= ' NOT NULL AUTO_INCREMENT;';
+			      }
                            }
                         }
                         else
@@ -516,11 +518,11 @@ class fs_mysql
                   
                   if($col2['is_nullable'] != $col['nulo'])
                   {
-                     if($col['nulo'] == 'YES')
+                     if($col['nulo'] == 'YES' || $col['nulo'] == 'SI')
                      {
                         $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NULL;';
                      }
-                     else
+                     else if($col['nulo'] == 'NO')
                         $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NOT NULL;';
                   }
                   
@@ -552,11 +554,11 @@ class fs_mysql
                {
                   $consulta .= " DEFAULT ".$col['defecto'].";";
                }
-               else if($col['nulo'] == 'YES')
+               else if($col['nulo'] == 'YES' || $col['nulo'] == 'SI')
                {
                   $consulta .= " DEFAULT NULL;";
                }
-               else
+               else if($col['nulo'] == 'NO')
                   $consulta .= ';';
             }
          }
