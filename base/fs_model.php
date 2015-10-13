@@ -330,10 +330,12 @@ abstract class fs_model
     */
    public function no_html($t)
    {
-      $newt = str_replace('<', '&lt;', $t);
-      $newt = str_replace('>', '&gt;', $newt);
-      $newt = str_replace('"', '&quot;', $newt);
-      $newt = str_replace("'", '&#39;', $newt);
+      $newt = str_replace(
+              array('<','>','"',"'"),
+              array('&lt;','&gt;','&quot;','&#39;'),
+              $t
+      );
+      
       return trim($newt);
    }
    
@@ -432,12 +434,14 @@ abstract class fs_model
                   $columnas[$i]['nombre'] = $col->nombre;
                   $columnas[$i]['tipo'] = $col->tipo;
                   
+                  $columnas[$i]['nulo'] = 'YES';
                   if($col->nulo)
                   {
-                     $columnas[$i]['nulo'] = $col->nulo;
+                     if( strtolower($col->nulo) == 'no')
+                     {
+                        $columnas[$i]['nulo'] = 'NO';
+                     }
                   }
-                  else
-                     $columnas[$i]['nulo'] = 'YES';
                   
                   if($col->defecto == '')
                   {

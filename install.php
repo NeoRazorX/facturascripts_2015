@@ -286,6 +286,10 @@ $system_info = str_replace('"', "'", $system_info);
          if(document.f_configuracion_inicial.db_type.value == 'POSTGRESQL')
          {
             document.f_configuracion_inicial.db_port.value = '5432';
+            if(document.f_configuracion_inicial.db_user.value == '')
+            {
+               document.f_configuracion_inicial.db_user.value = 'postgres';
+            }
             $("#mysql_socket").hide();
          }
          else
@@ -470,6 +474,24 @@ $system_info = str_replace('"', "'", $system_info);
             <div class="panel panel-danger">
                <div class="panel-heading">
                   Acceso a base de datos PostgreSQL:
+               </div>
+               <div class="panel-body">
+                  <ul>
+                   <?php
+                   foreach($errors2 as $err2)
+                      echo "<li>".$err2."</li>";
+                   ?>
+                  </ul>
+               </div>
+            </div>
+                  <?php
+               }
+               else
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  Error:
                </div>
                <div class="panel-body">
                   <ul>

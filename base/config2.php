@@ -121,7 +121,6 @@ else
        'nf1' => '.',
        'nf2' => ' ',
        'pos_divisa' => 'right',
-       'nfactura_cli' => 1,
        'factura' => 'factura',
        'facturas' => 'facturas',
        'factura_simplificada' => 'factura simplificada',

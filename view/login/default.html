@@ -126,7 +126,7 @@
                      <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
                      {loop name="$fsc->user->all()"}
                         {if="$value->nick == $nlogin"}
-                        <option value="{$value->nick}" selected="selected">{$value->nick}</option>
+                        <option value="{$value->nick}" selected="">{$value->nick}</option>
                         {else}
                         <option value="{$value->nick}">{$value->nick}</option>
                         {/if}

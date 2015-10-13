@@ -36,90 +36,8 @@ class admin_home extends fs_controller
    
    protected function private_core()
    {
-      /**
-       * Esta es la lista de plugins fijos, los imprescindibles.
-       */
-      $this->download_list = array(
-          'facturacion_base' => array(
-              'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
-              'url_repo' => 'https://github.com/NeoRazorX/facturacion_base',
-              'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
-          ),
-          'colombia' => array(
-              'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
-              'url_repo' => 'https://github.com/salvaWEBco/colombia',
-              'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
-          ),
-          'panama' => array(
-              'url' => 'https://github.com/NeoRazorX/panama/archive/master.zip',
-              'url_repo' => 'https://github.com/NeoRazorX/panama',
-              'description' => 'Plugin de adaptación de FacturaScripts a <b>Panamá</b>.'
-          ),
-          'peru' => array(
-              'url' => 'https://github.com/NeoRazorX/peru/archive/master.zip',
-              'url_repo' => 'https://github.com/NeoRazorX/peru',
-              'description' => 'Plugin de adaptación de FacturaScripts a <b>Perú</b>.'
-          ),
-      );
+      $this->get_download_list();
       $fsvar = new fs_var();
-      $this->step = $fsvar->simple_get('install_step');
-      
-      /**
-       * Pestaña avanzado
-       */
-      $guardar = FALSE;
-      foreach($GLOBALS['config2'] as $i => $value)
-      {
-         if( isset($_POST[$i]) )
-         {
-            $GLOBALS['config2'][$i] = $_POST[$i];
-            $guardar = TRUE;
-         }
-      }
-      
-      /**
-       * Pestaña descargas
-       */
-      if( !isset($_GET['check4updates']) )
-      {
-         /**
-          * Usamos last_download_check para almacenar la última vez que vimos las descargas.
-          * Así podemos saber qué descargas son nuevas.
-          */
-         $this->last_download_check = $fsvar->simple_get('last_download_check');
-         if(!$this->last_download_check)
-         {
-            $this->last_download_check = Date('d-m-Y', strtotime('-1day'));
-         }
-         $this->new_downloads = 0;
-         
-         /**
-          * Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.
-          */
-         $this->download_list2 = $this->cache->get('download_list');
-         if(!$this->download_list2)
-         {
-            $this->download_list2 = json_decode( @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE', 5) );
-            if($this->download_list2)
-            {
-               $this->cache->set('download_list', $this->download_list2);
-            }
-            else
-               $this->download_list2 = array();
-         }
-         foreach($this->download_list2 as $i => $di)
-         {
-            $this->download_list2[$i]->nuevo = FALSE;
-            if( strtotime($di->creado) > strtotime($this->last_download_check) )
-            {
-               $this->new_downloads++;
-               $this->download_list2[$i]->nuevo = TRUE;
-            }
-         }
-         /// ahora nos guardamos last_download_check
-         $this->last_download_check = Date('d-m-Y', strtotime('-1day'));
-         $fsvar->simple_save('last_download_check', $this->last_download_check);
-      }
       
       if( isset($_GET['check4updates']) )
       {
@@ -134,8 +52,7 @@ class admin_home extends fs_controller
       else if( isset($_GET['updated']) )
       {
          /// el sistema ya se ha actualizado
-         $fsvar->name = 'updates';
-         $fsvar->delete();
+         $fsvar->simple_delete('updates');
       }
       else if(FS_DEMO)
       {
@@ -149,6 +66,8 @@ class admin_home extends fs_controller
       }
       else if( isset($_POST['modpages']) )
       {
+         /// activar/desactivas páginas del menú
+         
          if(!$this->step)
          {
             $this->step = '1';
@@ -183,6 +102,7 @@ class admin_home extends fs_controller
       }
       else if( isset($_GET['enable']) )
       {
+         /// activar plugin
          $this->enable_plugin($_GET['enable']);
          
          if($this->step == '1')
@@ -193,10 +113,14 @@ class admin_home extends fs_controller
       }
       else if( isset($_GET['disable']) )
       {
+         /// desactivar plugin
+         
          $this->disable_plugin($_GET['disable']);
       }
       else if( isset($_GET['delete_plugin']) )
       {
+         /// eliminar plugin
+         
          if( is_writable('plugins/'.$_GET['delete_plugin']) )
          {
             if( $this->delTree('plugins/'.$_GET['delete_plugin']) )
@@ -211,6 +135,8 @@ class admin_home extends fs_controller
       }
       else if( isset($_POST['install']) )
       {
+         /// instalar plugin (copiarlo y descomprimirlo)
+         
          if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
          {
             $zip = new ZipArchive();
@@ -237,33 +163,49 @@ class admin_home extends fs_controller
       }
       else if( isset($_GET['reset']) )
       {
+         /// reseteamos la configuración avanzada
+         
          if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
          {
             unlink('tmp/'.FS_TMP_NAME.'config2.ini');
             $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'#avanzado">aquí</a> para continuar.');
          }
       }
-      else if($guardar)
+      else
       {
-         $file = fopen('tmp/'.FS_TMP_NAME.'config2.ini', 'w');
-         if($file)
+         /// ¿Guardamos las opciones de la pestaña avanzado?
+         $guardar = FALSE;
+         foreach($GLOBALS['config2'] as $i => $value)
          {
-            foreach($GLOBALS['config2'] as $i => $value)
+            if( isset($_POST[$i]) )
             {
-               if( is_numeric($value) )
-               {
-                  fwrite($file, $i." = ".$value.";\n");
-               }
-               else
-               {
-                  fwrite($file, $i." = '".$value."';\n");
-               }
+               $GLOBALS['config2'][$i] = $_POST[$i];
+               $guardar = TRUE;
             }
-            
-            fclose($file);
          }
          
-         $this->new_message('Datos guardados correctamente.');
+         if($guardar)
+         {
+            $file = fopen('tmp/'.FS_TMP_NAME.'config2.ini', 'w');
+            if($file)
+            {
+               foreach($GLOBALS['config2'] as $i => $value)
+               {
+                  if( is_numeric($value) )
+                  {
+                     fwrite($file, $i." = ".$value.";\n");
+                  }
+                  else
+                  {
+                     fwrite($file, $i." = '".$value."';\n");
+                  }
+               }
+               
+               fclose($file);
+            }
+            
+            $this->new_message('Datos guardados correctamente.');
+         }
       }
       
       
@@ -508,17 +450,18 @@ class admin_home extends fs_controller
          if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
          {
             $plugin = array(
-                'name' => $f,
-                'description' => 'Sin descripción.',
                 'compatible' => FALSE,
+                'description' => 'Sin descripción.',
+                'download2_url' => '',
                 'enabled' => FALSE,
-                'version' => 0,
+                'idplugin' => NULL,
+                'name' => $f,
+                'prioridad' => '-',
                 'require' => '',
                 'update_url' => '',
+                'version' => 0,
                 'version_url' => '',
-                'prioridad' => '-',
-                'download2_url' => '',
-                'idplugin' => NULL
+                'wizard' => FALSE,
             );
             
             if( file_exists('plugins/'.$f.'/facturascripts.ini') )
@@ -556,7 +499,7 @@ class admin_home extends fs_controller
                {
                   $plugin['version_url'] = $ini_file['version_url'];
                }
-               elseif( is_array($this->download_list2) )
+               else if($this->download_list2)
                {
                   foreach($this->download_list2 as $ditem)
                   {
@@ -569,6 +512,11 @@ class admin_home extends fs_controller
                         break;
                      }
                   }
+               }
+               
+               if( isset($ini_file['wizard']) )
+               {
+                  $plugin['wizard'] = $ini_file['wizard'];
                }
                
                if($plugin['enabled'])
@@ -621,10 +569,13 @@ class admin_home extends fs_controller
       
       /// comprobamos las dependencias
       $install = TRUE;
+      $wizard = FALSE;
       foreach($this->plugin_advanced_list() as $pitem)
       {
          if($pitem['name'] == $name)
          {
+            $wizard = $pitem['wizard'];
+            
             if($pitem['require'] != '')
             {
                if( !in_array($pitem['require'], $GLOBALS['plugins']) )
@@ -643,38 +594,48 @@ class admin_home extends fs_controller
          
          if( file_put_contents('tmp/enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
          {
-            /// cargamos el archivo functions.php
-            if( file_exists('plugins/'.$name.'/functions.php') )
+            if($wizard)
             {
-               require_once 'plugins/'.$name.'/functions.php';
+               $this->new_advice('Ya puedes <a href="index.php?page='.$wizard.'">configurar el plugin</a>.');
+               header('Location: index.php?page='.$wizard);
             }
-            
-            if( file_exists(getcwd().'/plugins/'.$name.'/controller') )
+            else
             {
-               /// activamos las páginas del plugin
-               $page_list = array();
-               foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
+               /// cargamos el archivo functions.php
+               if( file_exists('plugins/'.$name.'/functions.php') )
                {
-                  if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
-                  {
-                     $page_name = substr($f, 0, -4);
-                     $page_list[] = $page_name;
-                     
-                     require_once 'plugins/'.$name.'/controller/'.$f;
-                     $new_fsc = new $page_name();
-                     
-                     if( !$new_fsc->page->save() )
-                        $this->new_error_msg("Imposible guardar la página ".$page_name);
-                     
-                     unset($new_fsc);
-                  }
+                  require_once 'plugins/'.$name.'/functions.php';
                }
                
-               $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
+               if( file_exists(getcwd().'/plugins/'.$name.'/controller') )
+               {
+                  /// activamos las páginas del plugin
+                  $page_list = array();
+                  foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
+                  {
+                     if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+                     {
+                        $page_name = substr($f, 0, -4);
+                        $page_list[] = $page_name;
+                        
+                        require_once 'plugins/'.$name.'/controller/'.$f;
+                        $new_fsc = new $page_name();
+                        
+                        if( !$new_fsc->page->save() )
+                        {
+                           $this->new_error_msg("Imposible guardar la página ".$page_name);
+                        }
+                        
+                        unset($new_fsc);
+                     }
+                  }
+                  
+                  $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
+               }
+               
+               $this->new_message('Plugin <b>'.$name.'</b> activado correctamente.');
+               $this->load_menu(TRUE);
             }
-            
-            $this->new_message('Plugin <b>'.$name.'</b> activado correctamente.');
-            $this->load_menu(TRUE);
             
             /// limpiamos la caché
             $this->cache->clean();
@@ -791,6 +752,7 @@ class admin_home extends fs_controller
          {
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
+               /// plugin con descarga gratuita
                $internet_ini = @parse_ini_string( $this->curl_get_contents($plugin['version_url']) );
                if($internet_ini)
                {
@@ -801,14 +763,28 @@ class admin_home extends fs_controller
                   }
                }
             }
+            else if($plugin['idplugin'])
+            {
+               /// plugin de pago/oculto
+               
+               if($plugin['download2_url'] != '')
+               {
+                  /// download2_url implica que hay actualización
+                  $updates = TRUE;
+                  break;
+               }
+            }
          }
          
-         /// comprobamos actualizaciones del núcleo
-         $version = file_get_contents('VERSION');
-         $internet_version = $this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
-         if( floatval($version) < floatval($internet_version) )
+         if(!$updates)
          {
-            $updates = TRUE;
+            /// comprobamos actualizaciones del núcleo
+            $version = file_get_contents('VERSION');
+            $internet_version = $this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
+            if( floatval($version) < floatval($internet_version) )
+            {
+               $updates = TRUE;
+            }
          }
          
          if($updates)
@@ -988,5 +964,88 @@ class admin_home extends fs_controller
       {
          $this->new_error_msg('Descarga no encontrada.');
       }
+   }
+   
+   private function get_download_list()
+   {
+      /**
+       * Esta es la lista de plugins fijos, los imprescindibles.
+       */
+      $this->download_list = array(
+          'facturacion_base' => array(
+              'url' => 'https://github.com/NeoRazorX/facturacion_base/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/facturacion_base',
+              'description' => 'Permite la gestión básica de una empresa: gestión de ventas, de compras y contabilidad básica.'
+          ),
+          'argentina' => array(
+              'url' => 'https://github.com/FacturaScripts/argentina/archive/master.zip',
+              'url_repo' => 'https://github.com/FacturaScripts/argentina',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Argentina</b>.'
+          ),
+          'colombia' => array(
+              'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
+              'url_repo' => 'https://github.com/salvaWEBco/colombia',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
+          ),
+          'ecuador' => array(
+              'url' => 'https://github.com/FacturaScripts/ecuador/archive/master.zip',
+              'url_repo' => 'https://github.com/FacturaScripts/ecuador',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Ecuador</b>.'
+          ),
+          'panama' => array(
+              'url' => 'https://github.com/NeoRazorX/panama/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/panama',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Panamá</b>.'
+          ),
+          'peru' => array(
+              'url' => 'https://github.com/NeoRazorX/peru/archive/master.zip',
+              'url_repo' => 'https://github.com/NeoRazorX/peru',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Perú</b>.'
+          ),
+      );
+      $fsvar = new fs_var();
+      $this->step = $fsvar->simple_get('install_step');
+      
+      /**
+        * Usamos last_download_check para almacenar la última vez que vimos las descargas.
+        * Así podemos saber qué descargas son nuevas.
+        */
+      $this->last_download_check = $fsvar->simple_get('last_download_check');
+      if(!$this->last_download_check)
+      {
+         $this->last_download_check = Date('d-m-Y', strtotime('-1week'));
+      }
+      $this->new_downloads = 0;
+      
+      /**
+       * Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.
+       */
+      $this->download_list2 = $this->cache->get('download_list');
+      if(!$this->download_list2)
+      {
+         $json = @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE', 5);
+         if($json)
+         {
+            $this->download_list2 = json_decode($json);
+            $this->cache->set('download_list', $this->download_list2);
+         }
+         else
+         {
+            $this->new_error_msg('Error al descargar la lista de plugins.');
+            $this->download_list2 = array();
+         }
+      }
+      foreach($this->download_list2 as $i => $di)
+      {
+         $this->download_list2[$i]->nuevo = FALSE;
+         if( strtotime($di->creado) > strtotime($this->last_download_check) )
+         {
+            $this->new_downloads++;
+            $this->download_list2[$i]->nuevo = TRUE;
+         }
+      }
+      /// ahora nos guardamos last_download_check
+      $this->last_download_check = Date('d-m-Y', strtotime('-1week'));
+      $fsvar->simple_save('last_download_check', $this->last_download_check);
    }
 }

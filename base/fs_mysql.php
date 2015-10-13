@@ -180,7 +180,7 @@ class fs_mysql
    {
       $columnas = array();
       
-      $aux = $this->select("SHOW COLUMNS FROM ".$table.";");
+      $aux = $this->select("SHOW COLUMNS FROM `".$table."`;");
       if($aux)
       {
          foreach($aux as $a)
