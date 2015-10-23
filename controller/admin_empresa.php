@@ -198,7 +198,15 @@ class admin_empresa extends fs_controller
       {
          if( is_uploaded_file($_FILES['fimagen']['tmp_name']) )
          {
-            copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.png");
+            if( substr( strtolower($_FILES['fimagen']['name']), '3') == 'png' )
+            {
+               copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.png");
+            }
+            else
+            {
+               copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.jpg");
+            }
+            
             $this->new_message('Logotipo guardado correctamente.');
          }
       }
@@ -208,6 +216,15 @@ class admin_empresa extends fs_controller
          {
             unlink('tmp/'.FS_TMP_NAME.'logo.png');
             $this->new_message('Logotipo borrado correctamente.');
+         }
+         else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
+         {
+            unlink('tmp/'.FS_TMP_NAME.'logo.jpg');
+            $this->new_message('Logotipo borrado correctamente.');
+         }
+         else
+         {
+            $this->new_message('Logotipo no encontrado.');
          }
       }
       else if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
@@ -254,8 +271,17 @@ class admin_empresa extends fs_controller
             $this->new_error_msg('Imposible guardar la cuenta bancaria.');
       }
       
-      $this->logo = file_exists('tmp/'.FS_TMP_NAME.'logo.png');
       $this->facturacion_base = in_array('facturacion_base', $GLOBALS['plugins']);
+      
+      $this->logo = FALSE;
+      if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
+      {
+         $this->logo = 'tmp/'.FS_TMP_NAME.'logo.png';
+      }
+      else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
+      {
+         $this->logo = 'tmp/'.FS_TMP_NAME.'logo.jpg';
+      }
    }
    
    private function mail_test()

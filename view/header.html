@@ -34,7 +34,7 @@
    {/loop}
 </head>
 <body>
-   <nav class="navbar navbar-default" role="navigation" style="margin: 0px 0px 5px 0px;">
+   <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin: 0px 0px 5px 0px;">
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -130,6 +130,8 @@
          </div>
       </div>
    </nav>
+   
+   <div style="margin-bottom: 55px"></div>
    
    {if="$fsc->get_errors()"}
    <div class="alert alert-danger hidden-print">
