@@ -169,14 +169,6 @@ class admin_user extends fs_controller
       
       $extensions = array(
           array(
-              'name' => 'bootstrap',
-              'page_from' => __CLASS__,
-              'page_to' => __CLASS__,
-              'type' => 'css',
-              'text' => 'view/css/bootstrap.min.css',
-              'params' => ''
-          ),
-          array(
               'name' => 'cosmo',
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
@@ -222,14 +214,6 @@ class admin_user extends fs_controller
               'page_to' => __CLASS__,
               'type' => 'css',
               'text' => 'view/css/bootstrap-yeti.min.css',
-              'params' => ''
-          ),
-          array(
-              'name' => 'bootstrap-theme_dark',
-              'page_from' => __CLASS__,
-              'page_to' => __CLASS__,
-              'type' => 'css',
-              'text' => 'view/css/bootstrap-theme_dark_navbar.css',
               'params' => ''
           ),
       );
