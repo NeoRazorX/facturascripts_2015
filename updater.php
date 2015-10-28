@@ -195,41 +195,48 @@ class fs_updater
    
    private function actualizar_nucleo()
    {
-      $url = 'https://github.com/NeoRazorX/facturascripts_2015/archive/master.zip';
+      $urls = array(
+          'https://github.com/NeoRazorX/facturascripts_2015/archive/master.zip',
+          'https://codeload.github.com/NeoRazorX/facturascripts_2015/zip/master'
+      );
       
-      if( @file_put_contents('update.zip', $this->curl_get_contents($url)) )
+      foreach($urls as $url)
       {
-         $zip = new ZipArchive();
-         $zip_status = $zip->open('update.zip');
-         
-         if($zip_status === TRUE)
+         if( @file_put_contents('update.zip', $this->curl_get_contents($url)) )
          {
-            $zip->extractTo('.');
-            $zip->close();
-            unlink('update.zip');
+            $zip = new ZipArchive();
+            $zip_status = $zip->open('update.zip');
             
-            /// eliminamos archivos antiguos
-            $this->delTree('base/');
-            $this->delTree('controller/');
-            $this->delTree('extras/');
-            $this->delTree('model/');
-            $this->delTree('raintpl/');
-            $this->delTree('view/');
-            
-            /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
-            $this->recurse_copy('facturascripts_2015-master/', '.');
-            $this->delTree('facturascripts_2015-master/');
-            
-            /// limpiamos la caché
-            $this->clean_cache();
-            
-            $this->mensajes = 'Actualizado correctamente.';
+            if($zip_status === TRUE)
+            {
+               $zip->extractTo('.');
+               $zip->close();
+               unlink('update.zip');
+               
+               /// eliminamos archivos antiguos
+               $this->delTree('base/');
+               $this->delTree('controller/');
+               $this->delTree('extras/');
+               $this->delTree('model/');
+               $this->delTree('raintpl/');
+               $this->delTree('view/');
+               
+               /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
+               $this->recurse_copy('facturascripts_2015-master/', '.');
+               $this->delTree('facturascripts_2015-master/');
+               
+               /// limpiamos la caché
+               $this->clean_cache();
+               
+               $this->mensajes = 'Actualizado correctamente.';
+               break;
+            }
+            else
+               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
          }
          else
-            $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
+            $this->errores = 'Error al descargar el archivo zip.';
       }
-      else
-         $this->errores = 'Error al descargar el archivo zip.';
    }
    
    private function actualizar_plugin()
@@ -388,6 +395,12 @@ class fs_updater
       return $notwritable;
    }
 
+   /**
+    * Descarga el contenido con curl o file_get_contents
+    * @param type $url
+    * @param type $timeout
+    * @return type
+    */
    private function curl_get_contents($url)
    {
       if( function_exists('curl_init') )
@@ -400,19 +413,64 @@ class fs_updater
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
-         curl_close($ch);
-
-         if($info['http_code'] == 302)
+         
+         if($info['http_code'] == 301 OR $info['http_code'] == 302)
          {
-            return file_get_contents($url);
+            $redirs = 0;
+            return $this->curl_redirect_exec($ch, $redirs);
          }
          else
+         {
+            curl_close($ch);
             return $data;
+         }
       }
       else
          return file_get_contents($url);
    }
-
+   
+   /**
+    * Función alternativa para cuando el followlocation falla.
+    * @param type $ch
+    * @param type $redirects
+    * @param type $curlopt_header
+    * @return type
+    */
+   private function curl_redirect_exec($ch, &$redirects, $curlopt_header = false)
+   {
+      curl_setopt($ch, CURLOPT_HEADER, true);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      $data = curl_exec($ch);
+      $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+      
+      if($http_code == 301 || $http_code == 302)
+      {
+         list($header) = explode("\r\n\r\n", $data, 2);
+         $matches = array();
+         preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
+         $url = trim(str_replace($matches[1], "", $matches[0]));
+         $url_parsed = parse_url($url);
+         if( isset($url_parsed) )
+         {
+            curl_setopt($ch, CURLOPT_URL, $url);
+            $redirects++;
+            return $this->curl_redirect_exec($ch, $redirects, $curlopt_header);
+         }
+      }
+      
+      if($curlopt_header)
+      {
+         curl_close($ch);
+         return $data;
+      }
+      else
+      {
+         list(, $body) = explode("\r\n\r\n", $data, 2);
+         curl_close($ch);
+         return $body;
+      }
+   }
+   
    public function check_for_plugin_updates()
    {
       if( !isset($this->plugin_updates) )

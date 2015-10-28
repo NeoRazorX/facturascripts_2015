@@ -802,12 +802,12 @@ class admin_home extends fs_controller
    }
    
    /**
-    * Descarga el contenido con crul o file_get_contents
+    * Descarga el contenido con curl o file_get_contents
     * @param type $url
     * @param type $timeout
     * @return type
     */
-   private function curl_get_contents($url, $timeout = 30)
+   private function curl_get_contents($url)
    {
       if( function_exists('curl_init') )
       {
@@ -817,20 +817,64 @@ class admin_home extends fs_controller
          curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
-         curl_close($ch);
          
-         if($info['http_code'] == 302)
+         if($info['http_code'] == 301 OR $info['http_code'] == 302)
          {
-            return file_get_contents($url);
+            $redirs = 0;
+            return $this->curl_redirect_exec($ch, $redirs);
          }
          else
+         {
+            curl_close($ch);
             return $data;
+         }
       }
       else
          return file_get_contents($url);
+   }
+   
+   /**
+    * Función alternativa para cuando el followlocation falla.
+    * @param type $ch
+    * @param type $redirects
+    * @param type $curlopt_header
+    * @return type
+    */
+   private function curl_redirect_exec($ch, &$redirects, $curlopt_header = false)
+   {
+      curl_setopt($ch, CURLOPT_HEADER, true);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      $data = curl_exec($ch);
+      $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+      
+      if($http_code == 301 || $http_code == 302)
+      {
+         list($header) = explode("\r\n\r\n", $data, 2);
+         $matches = array();
+         preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
+         $url = trim(str_replace($matches[1], "", $matches[0]));
+         $url_parsed = parse_url($url);
+         if( isset($url_parsed) )
+         {
+            curl_setopt($ch, CURLOPT_URL, $url);
+            $redirects++;
+            return $this->curl_redirect_exec($ch, $redirects, $curlopt_header);
+         }
+      }
+      
+      if($curlopt_header)
+      {
+         curl_close($ch);
+         return $data;
+      }
+      else
+      {
+         list(, $body) = explode("\r\n\r\n", $data, 2);
+         curl_close($ch);
+         return $body;
+      }
    }
    
    /**
