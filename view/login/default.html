@@ -101,9 +101,16 @@
    </div>
    {/if}
    
-   <div class="visible-md visible-lg" style="padding-bottom: 50px;"></div>
-   
    <div id="box_login" class="container" style="margin-top: 50px;">
+      <div class="row">
+         <div class="col-md-7 col-md-offset-2">
+            <div class="page-header">
+               <h1>
+                  <span class="glyphicon glyphicon-user"></span> &nbsp; Iniciar sesión
+               </h1>
+            </div>
+         </div>
+      </div>
       <div class="row">
          <div class="col-md-3 col-md-offset-2">
             <div class="thumbnail hidden-sm hidden-xs">
@@ -122,7 +129,6 @@
                   </div>
                   {else}
                   <div class="form-group">
-                     <span class="glyphicon glyphicon-user"></span> Usuario:
                      <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
                      {loop name="$fsc->user->all()"}
                         {if="$value->nick == $nlogin"}
