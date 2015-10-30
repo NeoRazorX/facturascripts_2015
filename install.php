@@ -94,6 +94,13 @@ else if( !function_exists('mb_substr') )
 {
    $errors[] = "mb_substr";
 }
+else if( !extension_loaded('simplexml') )
+{
+   $errors[] = "simplexml";
+   $errors2[] = 'No se encuentra la extensión simplexml en tu instalación de PHP.'
+           . ' Debes instalarla o activarla.';
+   $errors2[] = 'Si usas Red Hat o derivados, instala el paquete php-xml.';
+}
 else if( !extension_loaded('openssl') )
 {
    $errors[] = "openssl";
@@ -496,8 +503,17 @@ $system_info = str_replace('"', "'", $system_info);
                <div class="panel-body">
                   <ul>
                    <?php
-                   foreach($errors2 as $err2)
-                      echo "<li>".$err2."</li>";
+                   if($errors2)
+                   {
+                       foreach($errors2 as $err2)
+                       {
+                          echo "<li>".$err2."</li>";
+                       }
+                   }
+                   else
+                   {
+                       echo "<li>Error desconocido.</li>";
+                   }
                    ?>
                   </ul>
                </div>
