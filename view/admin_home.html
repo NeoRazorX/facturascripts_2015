@@ -364,7 +364,7 @@
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Instalado
                      </a>
-                     {elseif="substr($value->zip_link, -4) == '.zip'"}
+                     {elseif="$value->zip_link"}
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download2={$value->id}#plugins" class="btn btn-xs btn-primary">
                         <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
                      </a>
