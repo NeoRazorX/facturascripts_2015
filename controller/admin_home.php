@@ -381,9 +381,9 @@ class admin_home extends fs_controller
    {
       $clist = array();
       $include = array(
-          'factura','facturas', 'factura_simplificada','albaran','albaranes','pedido','pedidos',
-          'presupuesto','presupuestos','provincia','apartado','cifnif',
-          'iva','irpf','numero2'
+          'factura','facturas','factura_simplificada','factura_rectificativa',
+          'albaran','albaranes','pedido','pedidos','presupuesto','presupuestos',
+          'provincia','apartado','cifnif','iva','irpf','numero2'
       );
       
       foreach($GLOBALS['config2'] as $i => $value)
@@ -615,18 +615,21 @@ class admin_home extends fs_controller
                   {
                      if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
                      {
-                        $page_name = substr($f, 0, -4);
-                        $page_list[] = $page_name;
-                        
-                        require_once 'plugins/'.$name.'/controller/'.$f;
-                        $new_fsc = new $page_name();
-                        
-                        if( !$new_fsc->page->save() )
+                        if( substr($f, -4) == '.php' )
                         {
-                           $this->new_error_msg("Imposible guardar la página ".$page_name);
+                           $page_name = substr($f, 0, -4);
+                           $page_list[] = $page_name;
+                           
+                           require_once 'plugins/'.$name.'/controller/'.$f;
+                           $new_fsc = new $page_name();
+                           
+                           if( !$new_fsc->page->save() )
+                           {
+                              $this->new_error_msg("Imposible guardar la página ".$page_name);
+                           }
+                           
+                           unset($new_fsc);
                         }
-                        
-                        unset($new_fsc);
                      }
                   }
                   

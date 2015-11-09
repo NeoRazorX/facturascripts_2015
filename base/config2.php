@@ -108,6 +108,11 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['factura_simplificada'] = 'factura simplificada';
    }
    
+   if( !isset($GLOBALS['config2']['factura_rectificativa']) )
+   {
+      $GLOBALS['config2']['factura_rectificativa'] = 'factura rectificativa';
+   }
+   
    if( !isset($GLOBALS['config2']['db_integer']) )
    {
       $GLOBALS['config2']['db_integer'] = 'INTEGER';
@@ -124,6 +129,7 @@ else
        'factura' => 'factura',
        'facturas' => 'facturas',
        'factura_simplificada' => 'factura simplificada',
+       'factura_rectificativa' => 'factura rectificativa',
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
        'pedido' => 'pedido',
