@@ -16,6 +16,13 @@
          window.location.href = '{$fsc->url()}&delete_plugin='+name+'#plugins';
       }
    }
+   function descargar_plugin_inestable(id)
+   {
+      if( confirm("Este plugin está marcado como inestable ¿Estas seguro de que quieres descargarlo?") )
+      {
+         window.location.href = '{$fsc->url()}&caca={$fsc->random_string(4)}&download2='+id+'#plugins';
+      }
+   }
    $(document).ready(function() {
       
       {if="$fsc->step=='1'"}
@@ -168,8 +175,8 @@
                         {/loop}
                         -->
                         {if="$sin_activar>0"}
-                        <button class="btn btn-sm btn-default" type="button" title="Hay {$sin_activar} página(s) no activa(s).">
-                           <span class="badge">{$sin_activar}</span>
+                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Hay {$sin_activar} página(s) no activa(s).">
+                           <b>{$sin_activar}</b>
                         </button>
                         {/if}
                      </div>
@@ -345,7 +352,7 @@
                </tr>
                {/loop}
                {loop="$fsc->download_list2"}
-               <tr{if="file_exists('plugins/'.$value->nombre)"} class="success"{elseif="!$value->estable"} class="warning"{elseif="$value->nuevo"} class="info"{/if}>
+               <tr{if="file_exists('plugins/'.$value->nombre)"} class="success"{elseif="!$value->estable"} class="danger"{elseif="$value->nuevo"} class="info"{/if}>
                   <td>
                      {if="!$value->estable"}
                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
@@ -365,9 +372,15 @@
                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Instalado
                      </a>
                      {elseif="$value->zip_link"}
-                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download2={$value->id}#plugins" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
-                     </a>
+                        {if="$value->estable"}
+                        <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download2={$value->id}#plugins" class="btn btn-xs btn-primary">
+                           <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
+                        </a>
+                        {else}
+                        <a href="#" class="btn btn-xs btn-primary" onclick="descargar_plugin_inestable('{$value->id}')">
+                           <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
+                        </a>
+                        {/if}
                      {else}
                      <a href="{$value->link}" target="_blank" class="btn btn-xs btn-info">
                         <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Comprar
@@ -442,7 +455,10 @@
                </div>
                <div class="row bg-info">
                   <div class="col-md-12 col-sm-12">
-                     <h2>Traducciones:</h2>
+                     <h2>
+                        <span class="glyphicon glyphicon-globe"></span>
+                        &nbsp; Traducciones:
+                     </h2>
                      <p class="help-block">
                         FACTURA y FACTURAS se traducen únicamente en los documentos de ventas.
                         FACTURA_SIMPLIFICADA se utiliza en los tickets.
@@ -454,7 +470,7 @@
                   <div class="col-md-2 col-sm-3">
                      <div class="form-group">
                         <span class="text-uppercase">{$value['nombre']}:</span>
-                        <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}"/>
+                        <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}" autocomplete="off"/>
                      </div>
                   </div>
                   {/loop}

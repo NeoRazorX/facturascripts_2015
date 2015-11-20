@@ -561,8 +561,8 @@ $system_info = str_replace('"', "'", $system_info);
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Tipo de servidor SQL:
                         <select name="db_type" class="form-control" onchange="change_db_type()">
-                           <option value="MYSQL"<?php if($db_type=='MYSQL') { echo ' selected="selected"'; } ?>>MySQL</option>
-                           <option value="POSTGRESQL"<?php if($db_type=='POSTGRESQL') { echo ' selected="selected"'; } ?>>PostgreSQL</option>
+                           <option value="MYSQL"<?php if($db_type=='MYSQL') { echo ' selected=""'; } ?>>MySQL</option>
+                           <option value="POSTGRESQL"<?php if($db_type=='POSTGRESQL') { echo ' selected=""'; } ?>>PostgreSQL</option>
                         </select>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
