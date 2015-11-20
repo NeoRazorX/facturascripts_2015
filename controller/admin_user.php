@@ -216,6 +216,38 @@ class admin_user extends fs_controller
               'text' => 'view/css/bootstrap-yeti.min.css',
               'params' => ''
           ),
+          array(
+              'name' => 'lumen',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-lumen.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'paper',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-paper.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'simplex',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-simplex.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'spacelab',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-spacelab.min.css',
+              'params' => ''
+          ),
       );
       foreach($extensions as $ext)
       {
