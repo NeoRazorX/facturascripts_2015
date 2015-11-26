@@ -151,7 +151,7 @@ else
        'ip_whitelist' => '*',
        'libros_contables' => 1,
        'foreign_keys' => 1,
-       'new_codigo' => 'eneboo',
+       'new_codigo' => 'new',
        'db_integer' => 'INTEGER'
    );
 }

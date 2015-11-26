@@ -198,7 +198,9 @@ class admin_empresa extends fs_controller
       {
          if( is_uploaded_file($_FILES['fimagen']['tmp_name']) )
          {
-            if( substr( strtolower($_FILES['fimagen']['name']), '3') == 'png' )
+            $this->delete_logo();
+            
+            if( substr( strtolower($_FILES['fimagen']['name']), -3) == 'png' )
             {
                copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.png");
             }
@@ -212,20 +214,7 @@ class admin_empresa extends fs_controller
       }
       else if( isset($_GET['delete_logo']) )
       {
-         if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
-         {
-            unlink('tmp/'.FS_TMP_NAME.'logo.png');
-            $this->new_message('Logotipo borrado correctamente.');
-         }
-         else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
-         {
-            unlink('tmp/'.FS_TMP_NAME.'logo.jpg');
-            $this->new_message('Logotipo borrado correctamente.');
-         }
-         else
-         {
-            $this->new_message('Logotipo no encontrado.');
-         }
+         $this->delete_logo();
       }
       else if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
       {
@@ -339,6 +328,20 @@ class admin_empresa extends fs_controller
             $this->new_error_msg('No se encuentra la extensión OpenSSL,'
                     . ' imprescindible para enviar emails.');
          }
+      }
+   }
+   
+   private function delete_logo()
+   {
+      if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
+      {
+         unlink('tmp/'.FS_TMP_NAME.'logo.png');
+         $this->new_message('Logotipo borrado correctamente.');
+      }
+      else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
+      {
+         unlink('tmp/'.FS_TMP_NAME.'logo.jpg');
+         $this->new_message('Logotipo borrado correctamente.');
       }
    }
 }
