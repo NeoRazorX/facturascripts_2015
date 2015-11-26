@@ -116,7 +116,15 @@
                      <div class="row">
                         <div class="col-sm-5">
                            <div class="thumbnail hidden-sm hidden-xs">
+                              {if="FS_DEMO"}
                               <img src="view/img/logo.png" alt="logo"/>
+                              {elseif="file_exists('tmp/'.FS_TMP_NAME.'logo.png')"}
+                              <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="{$fsc->empresa->nombre}"/>
+                              {elseif="file_exists('tmp/'.FS_TMP_NAME.'logo.jpg')"}
+                              <img src="tmp/{#FS_TMP_NAME#}logo.jpg" alt="{$fsc->empresa->nombre}"/>
+                              {else}
+                              <img src="view/img/logo.png" alt="logo"/>
+                              {/if}
                            </div>
                         </div>
                         <div class="col-sm-7">
