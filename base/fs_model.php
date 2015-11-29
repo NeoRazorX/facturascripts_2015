@@ -274,7 +274,14 @@ abstract class fs_model
          return base64_decode($v);
    }
    
-   protected function str2bool($v)
+   /**
+    * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
+    * Esta función devuelve TRUE si el valor se corresponde con
+    * alguno de los anteriores.
+    * @param type $v
+    * @return type
+    */
+   public function str2bool($v)
    {
       return ($v == 't' OR $v == '1');
    }
