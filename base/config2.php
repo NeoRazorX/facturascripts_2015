@@ -146,7 +146,7 @@ else
        'precio_compra' => 'coste',
        'homepage' => 'admin_home',
        'check_db_types' => 'false',
-       'stock_negativo' => 0,
+       'stock_negativo' => 1,
        'ventas_sin_stock' => 1,
        'ip_whitelist' => '*',
        'libros_contables' => 1,

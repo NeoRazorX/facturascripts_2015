@@ -149,59 +149,87 @@
                   <h3 class="panel-title">Datos generales</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-5">
-                     Nombre:
-                     <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
+                  <div class="col-sm-5">
+                     <div class="form-group">
+                        Nombre:
+                        <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     Nombre Corto:
-                     <input class="form-control" type="text" name="nombrecorto" value="{$fsc->empresa->nombrecorto}" autocomplete="off"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        Nombre Corto:
+                        <input class="form-control" type="text" name="nombrecorto" value="{$fsc->empresa->nombrecorto}" autocomplete="off"/>
+                     </div>
                   </div>
                   {if="$fsc->facturacion_base"}
-                  <div class="form-group col-sm-4">
-                     {#FS_CIFNIF#}:
-                     <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        {#FS_CIFNIF#}:
+                        <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-4">
-                     Administrador:
-                     <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Administrador:
+                        <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-2">
-                     <a href="{$fsc->pais->url()}">País</a>:
-                     <select name="codpais" class="form-control">
+                  <div class="col-sm-2">
+                     <div class="form-group">
+                        <a href="{$fsc->pais->url()}">País</a>:
+                        <select name="codpais" class="form-control">
                         {loop="$fsc->pais->all()"}
-                        <option value="{$value->codpais}"{if="$fsc->empresa->codpais == $value->codpais"} selected=""{/if}>{$value->nombre}</option>
+                           {if="$fsc->empresa->codpais==$value->codpais"}
+                           <option value="{$value->codpais}" selected="">{$value->nombre}</option>
+                           {else}
+                           <option value="{$value->codpais}">{$value->nombre}</option>
+                           {/if}
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     <div class="text-capitalize">{#FS_PROVINCIA#}:</div>
-                     <input id="ac_provincia" class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        <span class="text-capitalize">{#FS_PROVINCIA#}:</span>
+                        <input id="ac_provincia" class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     Ciudad:
-                     <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        Ciudad:
+                        <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     Código Postal:
-                     <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        Código Postal:
+                        <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-9">
-                     Dirección:
-                     <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+                  <div class="col-sm-9">
+                     <div class="form-group">
+                        Dirección:
+                        <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-4">
-                     Teléfono:
-                     <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Teléfono:
+                        <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-4">
-                     Fax:
-                     <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Fax:
+                        <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
+                     </div>
                   </div>
                   {/if}
-                  <div class="form-group col-sm-4">
-                     Web:
-                     <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Web:
+                        <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
+                     </div>
                   </div>
                </div>
                <div class="panel-footer text-right">
@@ -263,29 +291,53 @@
                   <h3 class="panel-title">Si no usas Gmail o Google Apps, rellena <b>también</b> estos datos</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-4">
-                     Host:
-                     <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
-                     <p class="help-block">
-                        <a href="//www.facturascripts.com/comm3/index.php?page=community_item&id=74" target="_blank">¿Necesitas ayuda?</a>
-                     </p>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           Host:
+                           <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Puerto:
+                           <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
+                        </div>
+                     </div>
+                     <div class="col-sm-3">
+                        <div class="form-group">
+                           Encriptación:
+                           <select name="mail_enc" class="form-control">
+                              <option value="ssl">SSL</option>
+                              <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected=""{/if}>TLS</option>
+                              <option value="">---</option>
+                              <option value=""{if="$fsc->mail['mail_enc']==''"} selected=""{/if}>Ninguna</option>
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-sm-3">
+                        <div class="form-group">
+                           Usuario:
+                           <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
+                        </div>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-2">
-                     Puerto:
-                     <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
-                  </div>
-                  <div class="form-group col-sm-3">
-                     Encriptación:
-                     <select name="mail_enc" class="form-control">
-                        <option value="ssl">SSL</option>
-                        <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected=""{/if}>TLS</option>
-                        <option value="">---</option>
-                        <option value=""{if="$fsc->mail['mail_enc']==''"} selected=""{/if}>Ninguna</option>
-                     </select>
-                  </div>
-                  <div class="form-group col-sm-3">
-                     Usuario:
-                     <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <div class="checkbox">
+                           <label>
+                              {if="$fsc->mail['mail_low_security']"}
+                              <input type="checkbox" name="mail_low_security" value="TRUE" checked=""/>
+                              {else}
+                              <input type="checkbox" name="mail_low_security" value="TRUE"/>
+                              {/if}
+                              Permitir certificados de servidor poco seguros: los certificados
+                              autofirmados son algo habitual en servidores dedicados,
+                              aunque poco seguros. Activa esta opción si no puedes conectar
+                              a tu servidor de correo aunque los datos sean correctos.
+                           </label>
+                        </div>
+                     </div>
                   </div>
                </div>
             </div>
@@ -295,7 +347,7 @@
                   <h3 class="panel-title">Facturación</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-4">
+                  <div class="col-sm-4">
                      <a href="{$fsc->divisa->url()}">Divisa</a>:
                      <select name="coddivisa" class="form-control">
                      {loop="$fsc->divisa->all()"}
@@ -306,7 +358,7 @@
                         <a href="index.php?page=admin_home#avanzado">Cambiar el formato</a>.
                      </p>
                   </div>
-                  <div class="form-group col-sm-4">
+                  <div class="col-sm-4">
                      <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="codejercicio" class="form-control" autofocus >
                      {loop="$fsc->ejercicio->all()"}
@@ -315,7 +367,7 @@
                      </select>
                      <p class="help-block">Sólo sirve para inicializar algunos campos.</p>
                   </div>
-                  <div class="form-group col-sm-4">
+                  <div class="col-sm-4">
                      <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
@@ -338,7 +390,7 @@
                         </label>
                      </div>
                   </div>
-                  <div class="form-group col-sm-5">
+                  <div class="col-sm-5">
                      <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
                      <select name="codpago" class="form-control">
                      {loop="$fsc->forma_pago->all()"}
@@ -346,7 +398,7 @@
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-sm-3">
+                  <div class="col-sm-3">
                      <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}
