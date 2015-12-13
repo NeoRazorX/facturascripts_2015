@@ -36,6 +36,8 @@ class admin_home extends fs_controller
    
    protected function private_core()
    {
+      $this->check_htaccess();
+      
       $this->get_download_list();
       $fsvar = new fs_var();
       
@@ -1100,5 +1102,23 @@ class admin_home extends fs_controller
       /// ahora nos guardamos last_download_check
       $this->last_download_check = Date('d-m-Y', strtotime('-1week'));
       $fsvar->simple_save('last_download_check', $this->last_download_check);
+   }
+   
+   private function check_htaccess()
+   {
+      if( !file_exists('.htaccess') )
+      {
+         $txt = file_get_contents('htaccess-sample');
+         file_put_contents('.htaccess', $txt);
+      }
+      
+      /// ahora comprobamos el de tmp/XXXXX/private_keys
+      if( file_exists('tmp/'.FS_TMP_NAME.'private_keys') )
+      {
+         if( !file_exists('tmp/'.FS_TMP_NAME.'private_keys/.htaccess') )
+         {
+            file_put_contents('tmp/'.FS_TMP_NAME.'private_keys/.htaccess', 'Deny from all');
+         }
+      }
    }
 }

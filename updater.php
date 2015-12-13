@@ -552,7 +552,10 @@ class fs_updater
                               }
                               else if( !file_exists('tmp/'.FS_TMP_NAME.'private_keys/') )
                               {
-                                 mkdir('tmp/'.FS_TMP_NAME.'private_keys/');
+                                 if( mkdir('tmp/'.FS_TMP_NAME.'private_keys/') )
+                                 {
+                                    file_put_contents('tmp/'.FS_TMP_NAME.'private_keys/.htaccess', 'Deny from all');
+                                 }
                               }
                               
                               $this->plugin_updates[] = $plugin;
