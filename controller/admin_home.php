@@ -114,13 +114,11 @@ class admin_home extends fs_controller
       else if( isset($_GET['disable']) )
       {
          /// desactivar plugin
-         
          $this->disable_plugin($_GET['disable']);
       }
       else if( isset($_GET['delete_plugin']) )
       {
          /// eliminar plugin
-         
          if( is_writable('plugins/'.$_GET['delete_plugin']) )
          {
             if( $this->delTree('plugins/'.$_GET['delete_plugin']) )
@@ -135,9 +133,18 @@ class admin_home extends fs_controller
       }
       else if( isset($_POST['install']) )
       {
-         /// instalar plugin (copiarlo y descomprimirlo)
+         $disabled = FALSE;
+         if( defined('FS_DISABLE_ADD_PLUGINS') )
+         {
+            $disabled = FS_DISABLE_ADD_PLUGINS;
+         }
          
-         if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
+         /// instalar plugin (copiarlo y descomprimirlo)
+         if($disabled)
+         {
+            $this->new_error_msg('La subida de plugins está desactivada.');
+         }
+         else if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
          {
             $zip = new ZipArchive();
             $res = $zip->open($_FILES['fplugin']['tmp_name']);
@@ -164,7 +171,6 @@ class admin_home extends fs_controller
       else if( isset($_GET['reset']) )
       {
          /// reseteamos la configuración avanzada
-         
          if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
          {
             unlink('tmp/'.FS_TMP_NAME.'config2.ini');
