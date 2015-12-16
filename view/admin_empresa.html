@@ -510,19 +510,13 @@
                         </div>
                      </div>
                      <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                            <div class="form-group">
                               <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
                               <input class="form-control" type="text" name="iban" value="{$value->iban}" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
                            </div>
                         </div>
-                        <div class="col-md-4">
-                           <div class="form-group">
-                              Calcular IBAN:
-                              <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
-                           </div>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                            <div class="form-group">
                               <a target="_blank" href="http://es.wikipedia.org/wiki/Society_for_Worldwide_Interbank_Financial_Telecommunication">SWIFT</a> o BIC:
                               <input class="form-control" type="text" name="swift" value="{$value->swift}" maxlength="11" autocomplete="off"/>
@@ -536,7 +530,10 @@
             <div class="panel panel-success">
                <div class="panel-heading">
                   <h3 class="panel-title">
-                     <a id="b_nueva_cuenta" href="#">Nueva cuenta bancaria...</a>
+                     <a id="b_nueva_cuenta" href="#">
+                        <span class="glyphicon glyphicon-plus-sign"></span>
+                        &nbsp; Nueva cuenta bancaria...
+                     </a>
                   </h3>
                </div>
             </div>
@@ -594,7 +591,10 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nueva cuenta bancaria</h4>
+               <h4 class="modal-title">
+                  <span class="glyphicon glyphicon-credit-card"></span>
+                  &nbsp; Nueva cuenta bancaria
+               </h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -604,10 +604,6 @@
                <div class="form-group">
                   <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
                   <input class="form-control" type="text" name="iban" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
-               </div>
-               <div class="form-group">
-                  Calcular IBAN:
-                  <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
                </div>
                <div class="form-group">
                   <a target="_blank" href="http://es.wikipedia.org/wiki/Society_for_Worldwide_Interbank_Financial_Telecommunication">SWIFT</a> o BIC:

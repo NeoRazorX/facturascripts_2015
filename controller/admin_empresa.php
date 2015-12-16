@@ -248,15 +248,9 @@ class admin_empresa extends fs_controller
          {
             $cuentab = new cuenta_banco();
          }
+         
          $cuentab->descripcion = $_POST['descripcion'];
-         
-         if($_POST['ciban'] != '')
-         {
-            $cuentab->iban = $cuentab->calcular_iban($_POST['ciban']);
-         }
-         else
-            $cuentab->iban = $_POST['iban'];
-         
+         $cuentab->iban = $_POST['iban'];
          $cuentab->swift = $_POST['swift'];
          
          if( $cuentab->save() )
