@@ -379,13 +379,13 @@
                   <div class="col-sm-4">
                      <div class="checkbox">
                         <label>
-                           <input type="checkbox" name="contintegrada" value="TRUE"{if="$fsc->empresa->contintegrada"} checked="checked"{/if}/>
+                           <input type="checkbox" name="contintegrada" value="TRUE"{if="$fsc->empresa->contintegrada"} checked=""{/if}/>
                            Contabilidad integrada
                         </label>
                      </div>
                      <div class="checkbox">
                         <label>
-                           <input type="checkbox" name="recequivalencia" value="TRUE"{if="$fsc->empresa->recequivalencia"} checked="checked"{/if}/>
+                           <input type="checkbox" name="recequivalencia" value="TRUE"{if="$fsc->empresa->recequivalencia"} checked=""{/if}/>
                            Aplicar recargo de equivalencia
                         </label>
                      </div>
@@ -423,7 +423,7 @@
                      <div class="checkbox-inline">
                         <label>
                            {if="$fsc->impresion['print_ref']"}
-                           <input type="checkbox" name="print_ref" value="TRUE" checked="checked"/>
+                           <input type="checkbox" name="print_ref" value="TRUE" checked=""/>
                            {else}
                            <input type="checkbox" name="print_ref" value="TRUE"/>
                            {/if}
@@ -433,7 +433,7 @@
                      <div class="checkbox-inline">
                         <label>
                            {if="$fsc->impresion['print_dto']"}
-                           <input type="checkbox" name="print_dto" value="TRUE" checked="checked"/>
+                           <input type="checkbox" name="print_dto" value="TRUE" checked=""/>
                            {else}
                            <input type="checkbox" name="print_dto" value="TRUE"/>
                            {/if}
@@ -443,7 +443,7 @@
                      <div class="checkbox-inline">
                         <label>
                            {if="$fsc->impresion['print_alb']"}
-                           <input type="checkbox" name="print_alb" value="TRUE" checked="checked"/>
+                           <input type="checkbox" name="print_alb" value="TRUE" checked=""/>
                            {else}
                            <input type="checkbox" name="print_alb" value="TRUE"/>
                            {/if}
@@ -599,7 +599,7 @@
             <div class="modal-body">
                <div class="form-group">
                   Descripción:
-                  <input class="form-control" type="text" name="descripcion" placeholder="Cuenta principal" autocomplete="off"/>
+                  <input class="form-control" type="text" name="descripcion" placeholder="Cuenta principal" autocomplete="off" required=""/>
                </div>
                <div class="form-group">
                   <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
@@ -611,7 +611,7 @@
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <button class="btn btn-sm btn-primary" type="submit">
                   <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                </button>
             </div>
