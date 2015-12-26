@@ -21,6 +21,7 @@ class admin_user extends fs_controller
 {
    public $agente;
    public $allow_delete;
+   public $allow_modify;
    public $user_log;
    public $suser;
    
@@ -34,7 +35,10 @@ class admin_user extends fs_controller
       $this->share_extensions();
       
       /// ¿El usuario tiene permiso para eliminar en esta página?
-      $this->allow_delete = $this->user->allow_delete_on(__CLASS__);
+      $this->allow_delete = $this->user->admin;
+      
+      /// ¿El usuario tiene permiso para modificar en esta página?
+      $this->allow_modify = $this->user->admin;
       
       $this->agente = new agente();
       
@@ -48,8 +52,16 @@ class admin_user extends fs_controller
       {
          $this->page->title = $this->suser->nick;
          
+         /// ¿Estamos modificando nuestro usuario?
+         if($this->suser->nick == $this->user->nick)
+         {
+            $this->allow_modify = TRUE;
+            $this->allow_delete = FALSE;
+         }
+         
          if( isset($_POST['nnombre']) )
          {
+            /// Nuevo empleado
             $age0 = new agente();
             $age0->codagente = $age0->get_new_codigo();
             $age0->nombre = $_POST['nnombre'];
@@ -258,14 +270,14 @@ class admin_user extends fs_controller
    
    private function modificar_user()
    {
-      if($this->suser->admin AND !$this->user->admin)
-      {
-         $this->new_error_msg('No puedes modificar los datos de un administrador.');
-      }
-      else if(FS_DEMO AND $this->user->nick != $this->suser->nick)
+      if(FS_DEMO AND $this->user->nick != $this->suser->nick)
       {
          $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
             Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
+      }
+      else if(!$this->allow_modify)
+      {
+         $this->new_error_msg('No tienes permiso para modificar estos datos.');
       }
       else
       {
