@@ -274,7 +274,14 @@ abstract class fs_model
          return base64_decode($v);
    }
    
-   protected function str2bool($v)
+   /**
+    * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
+    * Esta función devuelve TRUE si el valor se corresponde con
+    * alguno de los anteriores.
+    * @param type $v
+    * @return type
+    */
+   public function str2bool($v)
    {
       return ($v == 't' OR $v == '1');
    }
@@ -330,10 +337,12 @@ abstract class fs_model
     */
    public function no_html($t)
    {
-      $newt = str_replace('<', '&lt;', $t);
-      $newt = str_replace('>', '&gt;', $newt);
-      $newt = str_replace('"', '&quot;', $newt);
-      $newt = str_replace("'", '&#39;', $newt);
+      $newt = str_replace(
+              array('<','>','"',"'"),
+              array('&lt;','&gt;','&quot;','&#39;'),
+              $t
+      );
+      
       return trim($newt);
    }
    
@@ -432,12 +441,14 @@ abstract class fs_model
                   $columnas[$i]['nombre'] = $col->nombre;
                   $columnas[$i]['tipo'] = $col->tipo;
                   
+                  $columnas[$i]['nulo'] = 'YES';
                   if($col->nulo)
                   {
-                     $columnas[$i]['nulo'] = $col->nulo;
+                     if( strtolower($col->nulo) == 'no')
+                     {
+                        $columnas[$i]['nulo'] = 'NO';
+                     }
                   }
-                  else
-                     $columnas[$i]['nulo'] = 'YES';
                   
                   if($col->defecto == '')
                   {

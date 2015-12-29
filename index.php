@@ -68,7 +68,10 @@ else
             $fsc = new $pagename();
          }
          else
+         {
+            header("HTTP/1.0 404 Not Found");
             $fsc = new fs_controller();
+         }
       }
    }
    else

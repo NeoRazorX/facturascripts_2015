@@ -34,7 +34,7 @@
    {/loop}
 </head>
 <body>
-   <nav class="navbar navbar-default" role="navigation" style="margin: 0px 0px 5px 0px;">
+   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -53,7 +53,7 @@
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
                <li class="dropdown{if="$value1==$fsc->page->folder"} active{/if}">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="text-transform: capitalize;">{$value1}</a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="text-transform: capitalize;">{$value1}</a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->pages($value1)"}
                      <li{if="$value2->showing()"} class="active"{/if}><a href="{$value2->url()}">{$value2->title}</a></li>
@@ -130,6 +130,12 @@
          </div>
       </div>
    </nav>
+   
+   {if="$fsc->user->css=='view/css/bootstrap-yeti.min.css'"}
+   <div style="margin-bottom: 55px"></div>
+   {else}
+   <div style="margin-bottom: 65px"></div>
+   {/if}
    
    {if="$fsc->get_errors()"}
    <div class="alert alert-danger hidden-print">

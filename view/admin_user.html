@@ -104,7 +104,7 @@
                   <option value="">------</option>
                   {loop="$fsc->agente->all()"}
                      {if="$fsc->suser->codagente==$value->codagente"}
-                     <option value="{$value->codagente}" selected="selected">{$value->get_fullname()}</option>
+                     <option value="{$value->codagente}" selected="">{$value->get_fullname()}</option>
                      {else}
                      <option value="{$value->codagente}">{$value->get_fullname()}</option>
                      {/if}
@@ -122,7 +122,7 @@
                {loop="$fsc->suser->get_menu()"}
                   {if="$value->show_on_menu"}
                      {if="$value->name==$fsc->suser->fs_page"}
-                     <option value="{$value->name}" selected="selected">{$value->folder} - {$value->title}</option>
+                     <option value="{$value->name}" selected="">{$value->folder} - {$value->title}</option>
                      {else}
                      <option value="{$value->name}">{$value->folder} - {$value->title}</option>
                      {/if}
@@ -137,7 +137,7 @@
                <select name="css" class="form-control">
                   {loop="$fsc->extensions"}
                      {if="$value->type=='css'"}
-                     <option value="{$value->text}"{if="$value->text==$fsc->suser->css"} selected="selected"{/if}>{$value->name}</option>
+                     <option value="{$value->text}"{if="$value->text==$fsc->suser->css"} selected=""{/if}>{$value->name}</option>
                      {/if}
                   {else}
                   <option value="view/css/bootstrap-yeti.min.css">yeti</option>

@@ -64,7 +64,8 @@ class admin_empresa extends fs_controller
           'mail_host' => 'smtp.gmail.com',
           'mail_port' => '465',
           'mail_enc' => 'ssl',
-          'mail_user' => ''
+          'mail_user' => '',
+          'mail_low_security' => FALSE
       );
       $this->mail = $fsvar->array_get($this->mail, FALSE);
       
@@ -107,6 +108,10 @@ class admin_empresa extends fs_controller
          
          if( $this->empresa->save() )
          {
+            /// guardamos las opciones por defecto de almacén y forma de pago
+            $this->save_codalmacen($_POST['codalmacen']);
+            $this->save_codpago($_POST['codpago']);
+            
             $this->new_message('Datos guardados correctamente.');
             if(!$this->empresa->contintegrada)
             {
@@ -146,6 +151,7 @@ class admin_empresa extends fs_controller
             
             $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
             $this->mail['mail_user'] = $_POST['mail_user'];
+            $this->mail['mail_low_security'] = isset($_POST['mail_low_security']);
             $fsvar->array_save($this->mail);
             $this->mail_test();
          }
@@ -190,6 +196,7 @@ class admin_empresa extends fs_controller
             
             $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
             $this->mail['mail_user'] = $_POST['mail_user'];
+            $this->mail['mail_low_security'] = isset($_POST['mail_low_security']);
             $fsvar->array_save($this->mail);
             $this->mail_test();
          }
@@ -198,17 +205,23 @@ class admin_empresa extends fs_controller
       {
          if( is_uploaded_file($_FILES['fimagen']['tmp_name']) )
          {
-            copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.png");
+            $this->delete_logo();
+            
+            if( substr( strtolower($_FILES['fimagen']['name']), -3) == 'png' )
+            {
+               copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.png");
+            }
+            else
+            {
+               copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.jpg");
+            }
+            
             $this->new_message('Logotipo guardado correctamente.');
          }
       }
       else if( isset($_GET['delete_logo']) )
       {
-         if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
-         {
-            unlink('tmp/'.FS_TMP_NAME.'logo.png');
-            $this->new_message('Logotipo borrado correctamente.');
-         }
+         $this->delete_logo();
       }
       else if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
       {
@@ -235,15 +248,9 @@ class admin_empresa extends fs_controller
          {
             $cuentab = new cuenta_banco();
          }
+         
          $cuentab->descripcion = $_POST['descripcion'];
-         
-         if($_POST['ciban'] != '')
-         {
-            $cuentab->iban = $cuentab->calcular_iban($_POST['ciban']);
-         }
-         else
-            $cuentab->iban = $_POST['iban'];
-         
+         $cuentab->iban = $_POST['iban'];
          $cuentab->swift = $_POST['swift'];
          
          if( $cuentab->save() )
@@ -254,8 +261,17 @@ class admin_empresa extends fs_controller
             $this->new_error_msg('Imposible guardar la cuenta bancaria.');
       }
       
-      $this->logo = file_exists('tmp/'.FS_TMP_NAME.'logo.png');
       $this->facturacion_base = in_array('facturacion_base', $GLOBALS['plugins']);
+      
+      $this->logo = FALSE;
+      if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
+      {
+         $this->logo = 'tmp/'.FS_TMP_NAME.'logo.png';
+      }
+      else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
+      {
+         $this->logo = 'tmp/'.FS_TMP_NAME.'logo.jpg';
+      }
    }
    
    private function mail_test()
@@ -289,7 +305,19 @@ class admin_empresa extends fs_controller
             $mail->MsgHTML('TEST');
             $mail->IsHTML(TRUE);
             
-            if( !$mail->SmtpConnect() )
+            $SMTPOptions = array();
+            if($this->mail['mail_low_security'])
+            {
+               $SMTPOptions = array(
+                   'ssl' => array(
+                       'verify_peer' => false,
+                       'verify_peer_name' => false,
+                       'allow_self_signed' => true
+                   )
+               );
+            }
+            
+            if( !$mail->SmtpConnect($SMTPOptions) )
             {
                $this->new_error_msg('No se ha podido conectar por email. ¿La contraseña es correcta?');
                
@@ -313,6 +341,20 @@ class admin_empresa extends fs_controller
             $this->new_error_msg('No se encuentra la extensión OpenSSL,'
                     . ' imprescindible para enviar emails.');
          }
+      }
+   }
+   
+   private function delete_logo()
+   {
+      if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
+      {
+         unlink('tmp/'.FS_TMP_NAME.'logo.png');
+         $this->new_message('Logotipo borrado correctamente.');
+      }
+      else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
+      {
+         unlink('tmp/'.FS_TMP_NAME.'logo.jpg');
+         $this->new_message('Logotipo borrado correctamente.');
       }
    }
 }

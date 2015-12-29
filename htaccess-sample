@@ -1,0 +1,18 @@
+Options -Indexes
+
+<IfModule mod_php5.c>
+   php_value max_input_vars 5000
+   php_value post_max_size 99M
+   php_value upload_max_filesize 99M
+</IfModule>
+
+<IfModule mod_expires.c>
+   ExpiresActive On
+   ExpiresDefault "access plus 1 week"
+   ExpiresByType text/css                  "access plus 1 week"
+   ExpiresByType application/javascript    "access plus 1 week"
+   ExpiresByType text/javascript           "access plus 1 weel"
+   <FilesMatch "\.(php|cgi)$">
+      ExpiresActive Off
+   </FilesMatch>
+</IfModule>

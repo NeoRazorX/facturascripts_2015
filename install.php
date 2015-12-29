@@ -10,7 +10,7 @@ $db_port = '3306';
 $db_name = 'facturascripts';
 $db_user = '';
 
-function random_string($length = 10)
+function random_string($length = 20)
 {
    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
 }
@@ -93,6 +93,13 @@ else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
 else if( !function_exists('mb_substr') )
 {
    $errors[] = "mb_substr";
+}
+else if( !extension_loaded('simplexml') )
+{
+   $errors[] = "simplexml";
+   $errors2[] = 'No se encuentra la extensión simplexml en tu instalación de PHP.'
+           . ' Debes instalarla o activarla.';
+   $errors2[] = 'Si usas Red Hat o derivados, instala el paquete php-xml.';
 }
 else if( !extension_loaded('openssl') )
 {
@@ -286,6 +293,10 @@ $system_info = str_replace('"', "'", $system_info);
          if(document.f_configuracion_inicial.db_type.value == 'POSTGRESQL')
          {
             document.f_configuracion_inicial.db_port.value = '5432';
+            if(document.f_configuracion_inicial.db_user.value == '')
+            {
+               document.f_configuracion_inicial.db_user.value = 'postgres';
+            }
             $("#mysql_socket").hide();
          }
          else
@@ -339,8 +350,10 @@ $system_info = str_replace('"', "'", $system_info);
    
    <div class="container">
       <div class="row">
-         <div class="col-lg-12 text-center" style="margin-top: 20px; margin-bottom: 20px;">
-            <h1>Bienvenido al instalador de FacturaScripts <?php echo file_get_contents('VERSION'); ?></h1>
+         <div class="col-lg-12">
+            <div class="page-header">
+               <h1>Bienvenido al instalador de FacturaScripts <?php echo file_get_contents('VERSION'); ?></h1>
+            </div>
          </div>
       </div>
       
@@ -480,6 +493,33 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
                   <?php
                }
+               else
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  Error:
+               </div>
+               <div class="panel-body">
+                  <ul>
+                   <?php
+                   if($errors2)
+                   {
+                       foreach($errors2 as $err2)
+                       {
+                          echo "<li>".$err2."</li>";
+                       }
+                   }
+                   else
+                   {
+                       echo "<li>Error desconocido.</li>";
+                   }
+                   ?>
+                  </ul>
+               </div>
+            </div>
+                  <?php
+               }
             }
             ?>
          </div>
@@ -491,10 +531,15 @@ $system_info = str_replace('"', "'", $system_info);
             <p>
                Recuerda que tienes el menú de ayuda arriba a la derecha. Si encuentras cualquier problema,
                haz clic en <b>informar...</b> y describe tu duda, sugerencia o el error que has encontrado.
-            </p>
-            <p>
                No sabemos hacer software perfecto, pero con tu ayuda nos podemos acercar cada vez más ;-)
             </p>
+            <p>
+               Y si quieres saber más, no olvides seguir a nuestro desarrollador principal
+               en su canal de youtube.
+            </p>
+            <a href="https://www.youtube.com/user/NeoRazorX" target="_blank" class="btn btn-sm btn-danger">
+               <span class="glyphicon glyphicon-facetime-video"></span> &nbsp; FacturaScripts en YouTube
+            </a>
          </div>
          <div class="col-lg-2">
             <div class="thumbnail">
@@ -509,15 +554,15 @@ $system_info = str_replace('"', "'", $system_info);
                <div class="panel panel-primary">
                   <div class="panel-heading">
                      <h3 class="panel-title">
-                        <span class="badge">1</span> Configuración de la base de datos
+                        <span class="badge">1</span> &nbsp; Configuración de la base de datos
                      </h3>
                   </div>
                   <div class="panel-body">
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
                         Tipo de servidor SQL:
                         <select name="db_type" class="form-control" onchange="change_db_type()">
-                           <option value="MYSQL"<?php if($db_type=='MYSQL') { echo ' selected="selected"'; } ?>>MySQL</option>
-                           <option value="POSTGRESQL"<?php if($db_type=='POSTGRESQL') { echo ' selected="selected"'; } ?>>PostgreSQL</option>
+                           <option value="MYSQL"<?php if($db_type=='MYSQL') { echo ' selected=""'; } ?>>MySQL</option>
+                           <option value="POSTGRESQL"<?php if($db_type=='POSTGRESQL') { echo ' selected=""'; } ?>>PostgreSQL</option>
                         </select>
                      </div>
                      <div class="form-group col-lg-4 col-md-4 col-sm-4">
@@ -550,7 +595,7 @@ $system_info = str_replace('"', "'", $system_info);
                <div class="panel panel-info" id="panel_configuracion_inicial_cache">
                   <div class="panel-heading">
                      <h3 class="panel-title">
-                        <span class="badge">2</span> Configuración Memcache (opcional)
+                        <span class="badge">2</span> &nbsp; Configuración Memcache (opcional)
                      </h3>
                   </div>
                   <div class="panel-body">

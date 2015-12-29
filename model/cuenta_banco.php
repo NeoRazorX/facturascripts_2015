@@ -56,6 +56,11 @@ class cuenta_banco extends fs_model
       return '';
    }
    
+   public function url()
+   {
+      return 'index.php?page=admin_empresa#cuentasb';
+   }
+   
    public function get($cod)
    {
       $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcuenta = ".$this->var2str($cod).";");

@@ -4,6 +4,29 @@
 <script type="text/javascript">
    function comprobar_url()
    {
+      if(window.location.hash.substring(1) == 'email')
+      {
+         mostrar_seccion('email');
+      }
+      else if(window.location.hash.substring(1) == 'facturacion')
+      {
+         mostrar_seccion('facturacion');
+      }
+      else if(window.location.hash.substring(1) == 'cuentasb')
+      {
+         mostrar_seccion('cuentasb');
+      }
+      else if(window.location.hash.substring(1) == 'impresion')
+      {
+         mostrar_seccion('impresion');
+      }
+      else
+      {
+         mostrar_seccion('');
+      }
+   }
+   function mostrar_seccion(id)
+   {
       $("#panel_generales").hide();
       $("#panel_email").hide();
       $("#panel_email2").hide();
@@ -16,25 +39,25 @@
       $("#b_cuentasb").removeClass('active');
       $("#b_impresion").removeClass('active');
       
-      if(window.location.hash.substring(1) == 'email')
+      if(id == 'email')
       {
          $("#panel_email").show();
          $("#panel_email2").show();
          $("#b_email").addClass('active');
          document.f_empresa.email.focus();
       }
-      else if(window.location.hash.substring(1) == 'facturacion')
+      else if(id == 'facturacion')
       {
          $("#panel_facturacion").show();
          $("#b_facturacion").addClass('active');
          document.f_empresa.coddivisa.focus();
       }
-      else if(window.location.hash.substring(1) == 'cuentasb')
+      else if(id == 'cuentasb')
       {
          $("#panel_cuentasb").show();
          $("#b_cuentasb").addClass('active');
       }
-      else if(window.location.hash.substring(1) == 'impresion')
+      else if(id == 'impresion')
       {
          $("#panel_impresion").show();
          $("#b_impresion").addClass('active');
@@ -72,51 +95,43 @@
 </script>
 
 <div class="container-fluid">
-   <div class="row" style="margin-top: 10px; margin-bottom: 5px;">
-      <div class="col-xs-6">
-         <div class="btn-group hidden-xs">
-            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
-               <span class="glyphicon glyphicon-refresh"></span>
-            </a>
-            {if="$fsc->page->is_default()"}
-            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
-               <span class="glyphicon glyphicon-home"></span>
-            </a>
-            {else}
-            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
-               <span class="glyphicon glyphicon-home"></span>
-            </a>
-            {/if}
+   <div class="row">
+      <div class="col-md-2 col-sm-3"></div>
+      <div class="col-md-10 col-sm-9">
+         <div class="page-header">
+            <h1>
+               Empresa
+               <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
+                  <span class="glyphicon glyphicon-refresh"></span>
+               </a>
+               <span class="btn-group">
+                  {loop="$fsc->extensions"}
+                     {if="$value->type=='button'"}
+                     <a href="index.php?page={$value->from}{$value->params}" class="btn btn-xs btn-default">{$value->text}</a>
+                     {/if}
+                  {/loop}
+               </span>
+            </h1>
          </div>
-         <div class="btn-group">
-            {loop="$fsc->extensions"}
-               {if="$value->type=='button'"}
-               <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
-               {/if}
-            {/loop}
-         </div>
-      </div>
-      <div class="col-xs-6 text-right">
-         <h2 style="margin-top: 0px;">Empresa</h2>
       </div>
    </div>
    <div class="row">
       <div class="col-md-2 col-sm-3">
          <div class="list-group">
-            <a id="b_generales" href="#generales" class="list-group-item active">
+            <a id="b_generales" href="#generales" class="list-group-item active" onclick="mostrar_seccion('')">
                <span class="glyphicon glyphicon-dashboard"></span> &nbsp; Datos generales
             </a>
-            <a id="b_email" href="#email" class="list-group-item">
+            <a id="b_email" href="#email" class="list-group-item" onclick="mostrar_seccion('email')">
                <span class="glyphicon glyphicon-envelope"></span> &nbsp; Email
             </a>
             {if="$fsc->facturacion_base"}
-            <a id="b_facturacion" href="#facturacion" class="list-group-item">
+            <a id="b_facturacion" href="#facturacion" class="list-group-item" onclick="mostrar_seccion('facturacion')">
                <span class="glyphicon glyphicon-usd"></span> &nbsp; Facturación
             </a>
-            <a id="b_cuentasb" href="#cuentasb" class="list-group-item">
+            <a id="b_cuentasb" href="#cuentasb" class="list-group-item" onclick="mostrar_seccion('cuentasb')">
                <span class="glyphicon glyphicon-credit-card"></span> &nbsp; Cuentas bancarias
             </a>
-            <a id="b_impresion" href="#impresion" class="list-group-item">
+            <a id="b_impresion" href="#impresion" class="list-group-item" onclick="mostrar_seccion('impresion')">
                <span class="glyphicon glyphicon-print"></span> &nbsp; Impresión
             </a>
             {/if}
@@ -134,59 +149,87 @@
                   <h3 class="panel-title">Datos generales</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-5">
-                     Nombre:
-                     <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
+                  <div class="col-sm-5">
+                     <div class="form-group">
+                        Nombre:
+                        <input class="form-control" type="text" name="nombre" value="{$fsc->empresa->nombre}" autocomplete="off" autofocus />
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     Nombre Corto:
-                     <input class="form-control" type="text" name="nombrecorto" value="{$fsc->empresa->nombrecorto}" autocomplete="off"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        Nombre Corto:
+                        <input class="form-control" type="text" name="nombrecorto" value="{$fsc->empresa->nombrecorto}" autocomplete="off"/>
+                     </div>
                   </div>
                   {if="$fsc->facturacion_base"}
-                  <div class="form-group col-sm-4">
-                     {#FS_CIFNIF#}:
-                     <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        {#FS_CIFNIF#}:
+                        <input class="form-control" type="text" name="cifnif" value="{$fsc->empresa->cifnif}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-4">
-                     Administrador:
-                     <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Administrador:
+                        <input class="form-control" type="text" name="administrador" value="{$fsc->empresa->administrador}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-2">
-                     <a href="{$fsc->pais->url()}">País</a>:
-                     <select name="codpais" class="form-control">
+                  <div class="col-sm-2">
+                     <div class="form-group">
+                        <a href="{$fsc->pais->url()}">País</a>:
+                        <select name="codpais" class="form-control">
                         {loop="$fsc->pais->all()"}
-                        <option value="{$value->codpais}"{if="$fsc->empresa->codpais == $value->codpais"} selected="selected"{/if}>{$value->nombre}</option>
+                           {if="$fsc->empresa->codpais==$value->codpais"}
+                           <option value="{$value->codpais}" selected="">{$value->nombre}</option>
+                           {else}
+                           <option value="{$value->codpais}">{$value->nombre}</option>
+                           {/if}
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     <div class="text-capitalize">{#FS_PROVINCIA#}:</div>
-                     <input id="ac_provincia" class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        <span class="text-capitalize">{#FS_PROVINCIA#}:</span>
+                        <input id="ac_provincia" class="form-control" type="text" name="provincia" value="{$fsc->empresa->provincia}"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     Ciudad:
-                     <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        Ciudad:
+                        <input class="form-control" type="text" name="ciudad" value="{$fsc->empresa->ciudad}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     Código Postal:
-                     <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
+                  <div class="col-sm-3">
+                     <div class="form-group">
+                        Código Postal:
+                        <input class="form-control" type="text" name="codpostal" value="{$fsc->empresa->codpostal}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-9">
-                     Dirección:
-                     <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+                  <div class="col-sm-9">
+                     <div class="form-group">
+                        Dirección:
+                        <input class="form-control" type="text" name="direccion" value="{$fsc->empresa->direccion}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-4">
-                     Teléfono:
-                     <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Teléfono:
+                        <input class="form-control" type="text" name="telefono" value="{$fsc->empresa->telefono}" autocomplete="off"/>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-4">
-                     Fax:
-                     <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Fax:
+                        <input class="form-control" type="text" name="fax" value="{$fsc->empresa->fax}" autocomplete="off"/>
+                     </div>
                   </div>
                   {/if}
-                  <div class="form-group col-sm-4">
-                     Web:
-                     <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
+                  <div class="col-sm-4">
+                     <div class="form-group">
+                        Web:
+                        <input class="form-control" type="text" name="web" value="{$fsc->empresa->web}" autocomplete="off"/>
+                     </div>
                   </div>
                </div>
                <div class="panel-footer text-right">
@@ -198,20 +241,42 @@
             
             <div class="panel panel-primary" id="panel_email">
                <div class="panel-heading">
-                  <h3 class="panel-title">Email</h3>
+                  <h3 class="panel-title">Configuración de email</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-6">
-                     Email:
-                     <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" autofocus />
-                  </div>
-                  <div class="form-group col-sm-6">
-                     Contraseña:
-                     <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="Contraseña"/>
-                  </div>
-                  <div class="form-group">
-                     Firma:
-                     <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
+                  <div class="container-fluid">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <p class="help-block">
+                              Si configuras tu cuenta de email, podrás usarla para
+                              enviar documentos.
+                           </p>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <div class="form-group">
+                              <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" placeholder="email" autofocus=""/>
+                              <p class="help-block">
+                                 ¿Quieres usar tunombre@tuempresa.com?
+                                 Prueba gratis <a href="https://goo.gl/bRFlmv" target="_blank">Google Apps for Work</a>.
+                              </p>
+                           </div>
+                        </div>
+                        <div class="col-sm-6">
+                           <div class="form-group">
+                              <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <div class="form-group">
+                              Firma:
+                              <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
+                           </div>
+                        </div>
+                     </div>
                   </div>
                </div>
                <div class="panel-footer text-right">
@@ -226,34 +291,54 @@
                   <h3 class="panel-title">Si no usas Gmail o Google Apps, rellena <b>también</b> estos datos</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-4">
-                     Host:
-                     <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
-                     <p class="help-block">
-                        <a href="//www.facturascripts.com/comm3/index.php?page=community_item&id=74" target="_blank">¿Necesitas ayuda?</a>
-                     </p>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           Host:
+                           <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Puerto:
+                           <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
+                        </div>
+                     </div>
+                     <div class="col-sm-3">
+                        <div class="form-group">
+                           Encriptación:
+                           <select name="mail_enc" class="form-control">
+                              <option value="ssl">SSL</option>
+                              <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected=""{/if}>TLS</option>
+                              <option value="">---</option>
+                              <option value=""{if="$fsc->mail['mail_enc']==''"} selected=""{/if}>Ninguna</option>
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-sm-3">
+                        <div class="form-group">
+                           Usuario:
+                           <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
+                        </div>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-2">
-                     Puerto:
-                     <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <div class="checkbox">
+                           <label>
+                              {if="$fsc->mail['mail_low_security']"}
+                              <input type="checkbox" name="mail_low_security" value="TRUE" checked=""/>
+                              {else}
+                              <input type="checkbox" name="mail_low_security" value="TRUE"/>
+                              {/if}
+                              Permitir certificados de servidor poco seguros: los certificados
+                              autofirmados son algo habitual en servidores dedicados,
+                              aunque poco seguros. Activa esta opción si no puedes conectar
+                              a tu servidor de correo aunque los datos sean correctos.
+                           </label>
+                        </div>
+                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
-                     Encriptación:
-                     <select name="mail_enc" class="form-control">
-                        <option value="ssl">SSL</option>
-                        <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected="selected"{/if}>TLS</option>
-                        <option value="">---</option>
-                        <option value=""{if="$fsc->mail['mail_enc']==''"} selected="selected"{/if}>Ninguna</option>
-                     </select>
-                  </div>
-                  <div class="form-group col-sm-3">
-                     Usuario:
-                     <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
-                  </div>
-               </div>
-               <div class="panel-footer">
-                  ¿Quieres usar tu propio dominio para tu email?
-                  Prueba <a href="https://goo.gl/bRFlmv" target="_blank">Google Apps for Work</a> en tu negocio.
                </div>
             </div>
             
@@ -262,31 +347,31 @@
                   <h3 class="panel-title">Facturación</h3>
                </div>
                <div class="panel-body">
-                  <div class="form-group col-sm-4">
+                  <div class="col-sm-4">
                      <a href="{$fsc->divisa->url()}">Divisa</a>:
                      <select name="coddivisa" class="form-control">
                      {loop="$fsc->divisa->all()"}
-                        <option value="{$value->coddivisa}"{if="$fsc->empresa->coddivisa == $value->coddivisa"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->coddivisa}"{if="$fsc->empresa->coddivisa == $value->coddivisa"} selected=""{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                      <p class="help-block">
                         <a href="index.php?page=admin_home#avanzado">Cambiar el formato</a>.
                      </p>
                   </div>
-                  <div class="form-group col-sm-4">
+                  <div class="col-sm-4">
                      <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
                      <select name="codejercicio" class="form-control" autofocus >
                      {loop="$fsc->ejercicio->all()"}
-                        <option value="{$value->codejercicio}"{if="$fsc->empresa->codejercicio == $value->codejercicio"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codejercicio}"{if="$fsc->empresa->codejercicio == $value->codejercicio"} selected=""{/if}>{$value->nombre}</option>
                      {/loop}
                      </select>
                      <p class="help-block">Sólo sirve para inicializar algunos campos.</p>
                   </div>
-                  <div class="form-group col-sm-4">
+                  <div class="col-sm-4">
                      <a href="{$fsc->serie->url()}">Serie</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
-                        <option value="{$value->codserie}"{if="$fsc->empresa->codserie == $value->codserie"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->codserie}"{if="$fsc->empresa->codserie == $value->codserie"} selected=""{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                      <p class="help-block">El {#FS_IRPF#} se define en la serie.</p>
@@ -305,19 +390,19 @@
                         </label>
                      </div>
                   </div>
-                  <div class="form-group col-sm-5">
+                  <div class="col-sm-5">
                      <a href="{$fsc->forma_pago->url()}">Forma de pago</a>:
                      <select name="codpago" class="form-control">
                      {loop="$fsc->forma_pago->all()"}
-                        <option value="{$value->codpago}"{if="$fsc->empresa->codpago == $value->codpago"} selected="selected"{/if}>{$value->descripcion}</option>
+                        <option value="{$value->codpago}"{if="$fsc->empresa->codpago == $value->codpago"} selected=""{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
                   </div>
-                  <div class="form-group col-sm-3">
+                  <div class="col-sm-3">
                      <a href="{$fsc->almacen->url()}">Almacén</a>:
                      <select name="codalmacen" class="form-control">
                      {loop="$fsc->almacen->all()"}
-                        <option value="{$value->codalmacen}"{if="$fsc->empresa->codalmacen == $value->codalmacen"} selected="selected"{/if}>{$value->nombre}</option>
+                        <option value="{$value->codalmacen}"{if="$fsc->empresa->codalmacen == $value->codalmacen"} selected=""{/if}>{$value->nombre}</option>
                      {/loop}
                      </select>
                   </div>
@@ -370,22 +455,12 @@
                      Pie de página de la factura:
                      <textarea name="pie_factura" rows="2" class="form-control">{$fsc->empresa->pie_factura}</textarea>
                   </div>
-                  {if="$fsc->logo"}
-                  <div class="thumbnail">
-                     <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
-                     <button class="btn btn-xs btn-block btn-default" id="b_add_logo">
-                        <span class="glyphicon glyphicon-picture"></span>
-                        Añadir / Cambiar logotipo a las facturas
-                     </button>
-                  </div>
-                  {else}
                   <div class="form-group">
                      <button class="btn btn-sm btn-default" id="b_add_logo">
                         <span class="glyphicon glyphicon-picture"></span>
-                        Añadir / Cambiar logotipo a las facturas
+                        Añadir / Cambiar logotipo para los documentos
                      </button>
                   </div>
-                  {/if}
                   <div class="form-group">
                      Lema:
                      <input class="form-control" type="text" name="lema" value="{$fsc->empresa->lema}" autocomplete="off" autofocus />
@@ -416,6 +491,11 @@
                         <div class="col-md-8">
                            <div class="form-group">
                               <input class="form-control" type="text" name="descripcion" value="{$value->descripcion}" placeholder="Cuenta principal" autocomplete="off"/>
+                              <p class="help-block">
+                                 Puedes asociar tus cuentas bancarias con las
+                                 <a href="index.php?page=contabilidad_formas_pago">formas de pago</a>
+                                 para que aparezcan en las facturas.
+                              </p>
                            </div>
                         </div>
                         <div class="col-md-4 text-right">
@@ -430,19 +510,13 @@
                         </div>
                      </div>
                      <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                            <div class="form-group">
                               <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
                               <input class="form-control" type="text" name="iban" value="{$value->iban}" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
                            </div>
                         </div>
-                        <div class="col-md-4">
-                           <div class="form-group">
-                              Calcular IBAN:
-                              <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
-                           </div>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                            <div class="form-group">
                               <a target="_blank" href="http://es.wikipedia.org/wiki/Society_for_Worldwide_Interbank_Financial_Telecommunication">SWIFT</a> o BIC:
                               <input class="form-control" type="text" name="swift" value="{$value->swift}" maxlength="11" autocomplete="off"/>
@@ -456,7 +530,10 @@
             <div class="panel panel-success">
                <div class="panel-heading">
                   <h3 class="panel-title">
-                     <a id="b_nueva_cuenta" href="#">Nueva cuenta bancaria...</a>
+                     <a id="b_nueva_cuenta" href="#">
+                        <span class="glyphicon glyphicon-plus-sign"></span>
+                        &nbsp; Nueva cuenta bancaria...
+                     </a>
                   </h3>
                </div>
             </div>
@@ -472,13 +549,16 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Logotipo para las facturas</h4>
+               <h4 class="modal-title">
+                  <span class="glyphicon glyphicon-picture"></span>
+                  Logotipo para los documentos
+               </h4>
             </div>
             <div class="modal-body">
                <div style="text-align: center;">
                   <div class="thumbnail">
                      {if="$fsc->logo"}
-                     <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="logotipo"/>
+                     <img src="{$fsc->logo}" alt="logotipo"/>
                      {else}
                      <div class="caption">
                         Selecciona una imagen.
@@ -487,7 +567,7 @@
                   </div>
                </div>
                <div class="form-group">
-                  <input class="form-control" name="fimagen" type="file" accept="image/png"/>
+                  <input name="fimagen" type="file" accept="image/jpeg, image/png"/>
                </div>
             </div>
             <div class="modal-footer">
@@ -511,7 +591,10 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nueva cuenta bancaria</h4>
+               <h4 class="modal-title">
+                  <span class="glyphicon glyphicon-credit-card"></span>
+                  &nbsp; Nueva cuenta bancaria
+               </h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -521,10 +604,6 @@
                <div class="form-group">
                   <a target="_blank" href="http://es.wikipedia.org/wiki/International_Bank_Account_Number">IBAN</a>:
                   <input class="form-control" type="text" name="iban" maxlength="28" placeholder="ES12345678901234567890123456" autocomplete="off"/>
-               </div>
-               <div class="form-group">
-                  Calcular IBAN:
-                  <input class="form-control" type="text" name="ciban" maxlength="20" placeholder="ENTIDAD SUCURSAL DC CUENTA" autocomplete="off"/>
                </div>
                <div class="form-group">
                   <a target="_blank" href="http://es.wikipedia.org/wiki/Society_for_Worldwide_Interbank_Financial_Telecommunication">SWIFT</a> o BIC:

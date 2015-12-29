@@ -49,3 +49,4 @@ ul.dropdown-menu li a:first-letter {
 .clickableRow:hover {
    cursor: pointer;
 }
+.modal-dialog {z-index: 1050;}

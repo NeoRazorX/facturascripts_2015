@@ -80,7 +80,7 @@ class forma_pago extends fs_model
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
-              . " VALUES ('CONT','Al contado','Emitidos',NULL,FALSE,'+1month')"
+              . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+1month')"
               . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
               . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+1week');";
    }

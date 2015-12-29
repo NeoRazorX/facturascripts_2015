@@ -226,7 +226,12 @@ class ejercicio extends fs_model
          $eje->nombre = Date('Y', strtotime($fecha));
          $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
          $eje->fechafin = Date('31-12-Y', strtotime($fecha));
-         if( $eje->save() )
+         
+         if( strtotime($fecha) < 1 )
+         {
+            $this->new_error_msg("Fecha no válida: ".$fecha);
+         }
+         else if( $eje->save() )
          {
             return $eje;
          }
@@ -269,6 +274,10 @@ class ejercicio extends fs_model
       {
          $this->new_error_msg("La fecha de inicio (".$this->fechainicio.") es "
                  . "posterior a la fecha fin (".$this->fechafin.").");
+      }
+      else if( strtotime($this->fechainicio) < 1 )
+      {
+         $this->new_error_msg("Fecha no válida.");
       }
       else
          $status = TRUE;

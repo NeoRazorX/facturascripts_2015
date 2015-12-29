@@ -169,14 +169,6 @@ class admin_user extends fs_controller
       
       $extensions = array(
           array(
-              'name' => 'bootstrap',
-              'page_from' => __CLASS__,
-              'page_to' => __CLASS__,
-              'type' => 'css',
-              'text' => 'view/css/bootstrap.min.css',
-              'params' => ''
-          ),
-          array(
               'name' => 'cosmo',
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
@@ -225,11 +217,35 @@ class admin_user extends fs_controller
               'params' => ''
           ),
           array(
-              'name' => 'bootstrap-theme_dark',
+              'name' => 'lumen',
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-theme_dark_navbar.css',
+              'text' => 'view/css/bootstrap-lumen.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'paper',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-paper.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'simplex',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-simplex.min.css',
+              'params' => ''
+          ),
+          array(
+              'name' => 'spacelab',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'css',
+              'text' => 'view/css/bootstrap-spacelab.min.css',
               'params' => ''
           ),
           array(

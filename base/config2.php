@@ -108,6 +108,11 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['factura_simplificada'] = 'factura simplificada';
    }
    
+   if( !isset($GLOBALS['config2']['factura_rectificativa']) )
+   {
+      $GLOBALS['config2']['factura_rectificativa'] = 'factura rectificativa';
+   }
+   
    if( !isset($GLOBALS['config2']['db_integer']) )
    {
       $GLOBALS['config2']['db_integer'] = 'INTEGER';
@@ -121,10 +126,10 @@ else
        'nf1' => '.',
        'nf2' => ' ',
        'pos_divisa' => 'right',
-       'nfactura_cli' => 1,
        'factura' => 'factura',
        'facturas' => 'facturas',
        'factura_simplificada' => 'factura simplificada',
+       'factura_rectificativa' => 'factura rectificativa',
        'albaran' => 'albarán',
        'albaranes' => 'albaranes',
        'pedido' => 'pedido',
@@ -141,12 +146,12 @@ else
        'precio_compra' => 'coste',
        'homepage' => 'admin_home',
        'check_db_types' => 'false',
-       'stock_negativo' => 0,
+       'stock_negativo' => 1,
        'ventas_sin_stock' => 1,
        'ip_whitelist' => '*',
        'libros_contables' => 1,
        'foreign_keys' => 1,
-       'new_codigo' => 'eneboo',
+       'new_codigo' => 'new',
        'db_integer' => 'INTEGER'
    );
 }

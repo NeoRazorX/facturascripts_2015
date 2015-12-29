@@ -746,6 +746,8 @@ class fs_controller
          $this->default_items->set_showing_page( $this->page->name );
       }
       
+      $this->default_items->set_codejercicio($this->empresa->codejercicio);
+      
       if( isset($_COOKIE['default_almacen']) )
       {
          $this->default_items->set_codalmacen( $_COOKIE['default_almacen'] );

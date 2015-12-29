@@ -16,6 +16,13 @@
          window.location.href = '{$fsc->url()}&delete_plugin='+name+'#plugins';
       }
    }
+   function descargar_plugin_inestable(id)
+   {
+      if( confirm("Este plugin está marcado como inestable ¿Estas seguro de que quieres descargarlo?") )
+      {
+         window.location.href = '{$fsc->url()}&caca={$fsc->random_string(4)}&download2='+id+'#plugins';
+      }
+   }
    $(document).ready(function() {
       
       {if="$fsc->step=='1'"}
@@ -71,28 +78,13 @@
       incluso eliminarlos.
    </p>
    <p>
-      Además, toda la facturación y contabilida básica ha sido movida al plugin
+      Además, toda la facturación y contabilidad básica ha sido movida al plugin
       <b>facturacion_base</b>. Puedes descargarlo automáticamente e instalarlo pulsando
       este botón.
    </p>
    <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
       <span class="glyphicon glyphicon-download-alt"></span> &nbsp; Descargar facturacion_base
    </a>
-</div>
-{elseif="$fsc->step=='2'"}
-<div class="well">
-   <div class="page-header" style="margin-top: 0px;">
-      <h1>Tu empresa</h1>
-   </div>
-   <p>
-      Ya falta poco. Ahora tienes que escribir el nombre de la empresa, la dirección, etc...
-      Y si quieres desactivar la parte de compras o la contabilidad, recuerda que
-      puedes activar o desactivar lo que quieras desde la pestaña <b>menú</b>.
-   </p>
-   <a href="index.php?page=admin_empresa" class="btn btn-sm btn-info">
-      <span class="glyphicon glyphicon-edit"></span> &nbsp; Datos de la empresa
-   </a>
-   &nbsp; Accesible desde Admin &gt; Empresa
 </div>
 {else}
 <div class="container-fluid" style="margin-top: 10px;">
@@ -183,8 +175,8 @@
                         {/loop}
                         -->
                         {if="$sin_activar>0"}
-                        <button class="btn btn-sm btn-default" type="button" title="Hay {$sin_activar} página(s) no activa(s).">
-                           <span class="badge">{$sin_activar}</span>
+                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Hay {$sin_activar} página(s) no activa(s).">
+                           <b>{$sin_activar}</b>
                         </button>
                         {/if}
                      </div>
@@ -210,7 +202,7 @@
                      </tr>
                   </thead>
                   {loop="$fsc->paginas"}
-                  <tr{if="!$value->exists"} class="bg-danger"{/if}>
+                  <tr{if="!$value->exists"} class="danger"{/if}>
                      <td>
                         <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked="checked"{/if}/>
                         &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
@@ -266,13 +258,13 @@
                   </tr>
                </thead>
                {loop="$fsc->plugin_advanced_list()"}
-               <tr{if="!$value['compatible']"} class="bg-danger"{elseif="$value['enabled']"} class="bg-success"{/if}>
+               <tr{if="!$value['compatible']"} class="danger"{elseif="$value['enabled']"} class="success"{/if}>
                   <td>{$value['name']}</td>
                   <td>
                      <p>{$value['description']}</p>
-                     {if="$value['download2_url']!=''"}
-                     <a href="{$value['download2_url']}" target="_blank" class="btn btn-xs btn-info">
-                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; ¡Actualiza!
+                     {if="$value['wizard']!='' AND $value['enabled']"}
+                     <a href="index.php?page={$value['wizard']}" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> &nbsp; Configurar
                      </a>
                      {/if}
                   </td>
@@ -306,7 +298,7 @@
                   </td>
                </tr>
                {else}
-               <tr class="bg-warning">
+               <tr class="warning">
                   <td colspan="5">No tienes plugin instalados. Mira en la pestaña <b>Descargas</b>.</td>
                </tr>
                {/loop}
@@ -337,7 +329,7 @@
                   </tr>
                </thead>
                {loop="$fsc->download_list"}
-               <tr{if="file_exists('plugins/'.$key)"} class="bg-success"{/if}>
+               <tr{if="file_exists('plugins/'.$key)"} class="success"{/if}>
                   <td class="text-right">
                      <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="Destacado"></span>
                   </td>
@@ -360,7 +352,7 @@
                </tr>
                {/loop}
                {loop="$fsc->download_list2"}
-               <tr{if="file_exists('plugins/'.$value->nombre)"} class="bg-success"{elseif="!$value->estable"} class="bg-warning"{elseif="$value->nuevo"} class="bg-info"{/if}>
+               <tr{if="file_exists('plugins/'.$value->nombre)"} class="success"{elseif="!$value->estable"} class="danger"{elseif="$value->nuevo"} class="info"{/if}>
                   <td>
                      {if="!$value->estable"}
                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
@@ -379,10 +371,16 @@
                      <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Instalado
                      </a>
-                     {elseif="substr($value->zip_link, -4) == '.zip'"}
-                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download2={$value->id}#plugins" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
-                     </a>
+                     {elseif="$value->zip_link"}
+                        {if="$value->estable"}
+                        <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download2={$value->id}#plugins" class="btn btn-xs btn-primary">
+                           <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
+                        </a>
+                        {else}
+                        <a href="#" class="btn btn-xs btn-primary" onclick="descargar_plugin_inestable('{$value->id}')">
+                           <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
+                        </a>
+                        {/if}
                      {else}
                      <a href="{$value->link}" target="_blank" class="btn btn-xs btn-info">
                         <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> &nbsp; Comprar
@@ -404,7 +402,7 @@
                         <select class="form-control" name="zona_horaria">
                         {loop="$fsc->get_timezone_list()"}
                            {if="isset($GLOBALS['config2']['zona_horaria'])"}
-                           <option value="{$value['zone']}"{if="$value['zone']==$GLOBALS['config2']['zona_horaria']"} selected="selected"{/if}>
+                           <option value="{$value['zone']}"{if="$value['zone']==$GLOBALS['config2']['zona_horaria']"} selected=""{/if}>
                               {$value['diff_from_GMT']} - {$value['zone']}
                            </option>
                            {else}
@@ -418,7 +416,7 @@
                      Portada:
                      <select name="homepage" class="form-control">
                         {loop="$fsc->paginas"}
-                        <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected="selected"{/if}>{$value->name}</option>
+                        <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected=""{/if}>{$value->name}</option>
                         {/loop}
                      </select>
                   </div>
@@ -426,7 +424,7 @@
                      Decimales:
                      <select name="nf0" class="form-control">
                      {loop="$fsc->nf0()"}
-                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected="selected"{/if}>{$value}</option>
+                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
                      {/loop}
                      </select>
                   </div>
@@ -434,7 +432,7 @@
                      Separador para los Decimales:
                      <select name="nf1" class="form-control">
                      {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected="selected"{/if}>{$value}</option>
+                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected=""{/if}>{$value}</option>
                      {/loop}
                      </select>
                   </div>
@@ -443,27 +441,24 @@
                      <select name="nf2" class="form-control">
                         <option value="">(Ninguno)</option>
                         {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected="selected"{/if}>{$value}</option>
+                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected=""{/if}>{$value}</option>
                         {/loop}
                      </select>
                   </div>
                   <div class="form-group col-md-3 col-sm-3">
                      Símbolo Divisa:
                      <select name="pos_divisa" class="form-control">
-                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected="selected"{/if}>123 {$fsc->simbolo_divisa()}</option>
-                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected="selected"{/if}>{$fsc->simbolo_divisa()}123</option>
+                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected=""{/if}>123 {$fsc->simbolo_divisa()}</option>
+                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected=""{/if}>{$fsc->simbolo_divisa()}123</option>
                      </select>
-                  </div>
-                  <div class="col-md-3 col-sm-4">
-                     <div class="form-group">
-                         Nº de la primera factura de venta:
-                        <input class="form-control" type="number" name="nfactura_cli" value="{$GLOBALS['config2']['nfactura_cli']}"/>
-                     </div>
                   </div>
                </div>
                <div class="row bg-info">
                   <div class="col-md-12 col-sm-12">
-                     <h2>Traducciones:</h2>
+                     <h2>
+                        <span class="glyphicon glyphicon-globe"></span>
+                        &nbsp; Traducciones:
+                     </h2>
                      <p class="help-block">
                         FACTURA y FACTURAS se traducen únicamente en los documentos de ventas.
                         FACTURA_SIMPLIFICADA se utiliza en los tickets.
@@ -475,53 +470,10 @@
                   <div class="col-md-2 col-sm-3">
                      <div class="form-group">
                         <span class="text-uppercase">{$value['nombre']}:</span>
-                        <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}"/>
+                        <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}" autocomplete="off"/>
                      </div>
                   </div>
-                  {/loop}      
-               </div>
-               <div class="row">
-                  <div class="col-md-12 col-sm-12">
-                     <h2>Artículos:</h2>
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="col-md-3 col-sm-3">
-                     <div class="form-group">
-                        Precio de coste:
-                        <select name="cost_is_average" class="form-control">
-                           <option value="1"{if="$GLOBALS['config2']['cost_is_average']==1"} selected='selected'{/if}>Calculado</option>
-                           <option value="0"{if="$GLOBALS['config2']['cost_is_average']==0"} selected='selected'{/if}>Editable</option>
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                     <div class="form-group">
-                        Al comprar, añadir con:
-                        <select name="precio_compra" class="form-control">
-                           <option value="coste"{if="$GLOBALS['config2']['precio_compra']=='coste'"} selected='selected'{/if}>Precio de coste</option>
-                           <option value="pvp"{if="$GLOBALS['config2']['precio_compra']=='pvp'"} selected='selected'{/if}>PVP</option>
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                     <div class="form-group">
-                        Permitir stock negativo:
-                        <select name="stock_negativo" class="form-control">
-                           <option value="1"{if="$GLOBALS['config2']['stock_negativo']==1"} selected='selected'{/if}>Si</option>
-                           <option value="0"{if="$GLOBALS['config2']['stock_negativo']==0"} selected='selected'{/if}>No</option>
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3">
-                     <div class="form-group">
-                        Permitir ventas sin stock:
-                        <select name="ventas_sin_stock" class="form-control">
-                           <option value="1"{if="$GLOBALS['config2']['ventas_sin_stock']==1"} selected='selected'{/if}>Si</option>
-                           <option value="0"{if="$GLOBALS['config2']['ventas_sin_stock']==0"} selected='selected'{/if}>No</option>
-                        </select>
-                     </div>
-                  </div>
+                  {/loop}
                </div>
                <div class="row bg-warning">
                   <div class="col-md-12 col-sm-12">
@@ -536,10 +488,10 @@
                      <div class="form-group">
                         Comprobaciones en la base de datos:
                         <select name="check_db_types" class="form-control">
-                           <option value="true"{if="$GLOBALS['config2']['check_db_types']=='true'"} selected='selected'{/if}>
+                           <option value="true"{if="$GLOBALS['config2']['check_db_types']=='true'"} selected=''{/if}>
                               Comprobar los tipos de las columnas de las tablas
                            </option>
-                           <option value="false"{if="$GLOBALS['config2']['check_db_types']=='false'"} selected='selected'{/if}>
+                           <option value="false"{if="$GLOBALS['config2']['check_db_types']=='false'"} selected=''{/if}>
                               No comprobar los tipos
                            </option>
                         </select>
@@ -556,8 +508,8 @@
                      <div class="form-group">
                         Comprobar claves ajenas:
                         <select name="foreign_keys" class="form-control">
-                           <option value="1"{if="$GLOBALS['config2']['foreign_keys']==1"} selected='selected'{/if}>Si</option>
-                           <option value="0"{if="$GLOBALS['config2']['foreign_keys']==0"} selected='selected'{/if}>No</option>
+                           <option value="1"{if="$GLOBALS['config2']['foreign_keys']==1"} selected=''{/if}>Si</option>
+                           <option value="0"{if="$GLOBALS['config2']['foreign_keys']==0"} selected=''{/if}>No</option>
                         </select>
                         <p class="help-block">Sólo se puede desactivar en MySQL.</p>
                      </div>
@@ -575,8 +527,8 @@
                      <div class="form-group">
                         Generar los libros contables:
                         <select name="libros_contables" class="form-control">
-                           <option value="1"{if="$GLOBALS['config2']['libros_contables']==1"} selected='selected'{/if}>Si</option>
-                           <option value="0"{if="$GLOBALS['config2']['libros_contables']==0"} selected='selected'{/if}>No</option>
+                           <option value="1"{if="$GLOBALS['config2']['libros_contables']==1"} selected=''{/if}>Si</option>
+                           <option value="0"{if="$GLOBALS['config2']['libros_contables']==0"} selected=''{/if}>No</option>
                         </select>
                      </div>
                   </div>
@@ -584,8 +536,8 @@
                      <div class="form-group">
                         Algoritmo de nuevo código:
                         <select name="new_codigo" class="form-control">
-                           <option value="eneboo"{if="$GLOBALS['config2']['new_codigo']=='eneboo'"} selected='selected'{/if}>Compatible con Eneboo</option>
-                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected='selected'{/if}>TIPO + EJERCICIO + SERIE + NÚMERO</option>
+                           <option value="eneboo"{if="$GLOBALS['config2']['new_codigo']=='eneboo'"} selected=''{/if}>Compatible con Eneboo</option>
+                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + SERIE + NÚMERO</option>
                         </select>
                      </div>
                   </div>

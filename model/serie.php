@@ -43,11 +43,17 @@ class serie extends fs_model
    public $irpf;
    
    /**
-    * Sin uso.
+    * ejercicio para el que asignamos la numeración inicial de la serie.
     * @var type 
     */
-   public $idcuenta;
-
+   public $codejercicio;
+   
+   /**
+    * numeración inicial para las facturas de esta serie.
+    * @var type 
+    */
+   public $numfactura;
+   
    public function __construct($s=FALSE)
    {
       parent::__construct('series');
@@ -57,7 +63,8 @@ class serie extends fs_model
          $this->descripcion = $s['descripcion'];
          $this->siniva = $this->str2bool($s['siniva']);
          $this->irpf = floatval($s['irpf']);
-         $this->idcuenta = $this->intval($s['idcuenta']);
+         $this->codejercicio = $s['codejercicio'];
+         $this->numfactura = max( array(1, intval($s['numfactura'])) );
       }
       else
       {
@@ -65,14 +72,15 @@ class serie extends fs_model
          $this->descripcion = '';
          $this->siniva = FALSE;
          $this->irpf = 0;
-         $this->idcuenta = NULL;
+         $this->codejercicio = NULL;
+         $this->numfactura = 1;
       }
    }
    
    public function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta) VALUES ('A','SERIE A',FALSE,'0',NULL);";
+      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf) VALUES ('A','SERIE A',FALSE,'0');";
    }
    
    public function url()
@@ -90,6 +98,11 @@ class serie extends fs_model
       return ( $this->codserie == $this->default_items->codserie() );
    }
    
+   /**
+    * Devuelve la serie solicitada o false si no la encuentra.
+    * @param type $cod
+    * @return \serie|boolean
+    */
    public function get($cod)
    {
       $serie = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = ".$this->var2str($cod).";");
@@ -118,6 +131,11 @@ class serie extends fs_model
       $this->codserie = trim($this->codserie);
       $this->descripcion = $this->no_html($this->descripcion);
       
+      if($this->numfactura < 1)
+      {
+         $this->numfactura = 1;
+      }
+      
       if( !preg_match("/^[A-Z0-9]{1,2}$/i", $this->codserie) )
       {
          $this->new_error_msg("Código de serie no válido.");
@@ -137,18 +155,27 @@ class serie extends fs_model
       if( $this->test() )
       {
          $this->clean_cache();
+         
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).",
-               siniva = ".$this->var2str($this->siniva).", irpf = ".$this->var2str($this->irpf).",
-               idcuenta = ".$this->var2str($this->idcuenta)." WHERE codserie = ".$this->var2str($this->codserie).";";
+            $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion)
+                    .", siniva = ".$this->var2str($this->siniva)
+                    .", irpf = ".$this->var2str($this->irpf)
+                    .", codejercicio = ".$this->var2str($this->codejercicio)
+                    .", numfactura = ".$this->var2str($this->numfactura)
+                    ." WHERE codserie = ".$this->var2str($this->codserie).";";
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,idcuenta)
-               VALUES (".$this->var2str($this->codserie).",".$this->var2str($this->descripcion).",".$this->var2str($this->siniva).",
-               ".$this->var2str($this->irpf).",".$this->var2str($this->idcuenta).");";
+            $sql = "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf,codejercicio,numfactura) VALUES "
+                    . "(".$this->var2str($this->codserie)
+                    . ",".$this->var2str($this->descripcion)
+                    . ",".$this->var2str($this->siniva)
+                    . ",".$this->var2str($this->irpf)
+                    . ",".$this->var2str($this->codejercicio)
+                    . ",".$this->var2str($this->numfactura).");";
          }
+         
          return $this->db->exec($sql);
       }
       else
@@ -169,7 +196,7 @@ class serie extends fs_model
    public function all()
    {
       $serielist = $this->cache->get_array('m_serie_all');
-      if( !$serielist )
+      if(!$serielist)
       {
          $series = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codserie ASC;");
          if($series)
@@ -179,6 +206,7 @@ class serie extends fs_model
          }
          $this->cache->set('m_serie_all', $serielist);
       }
+      
       return $serielist;
    }
 }
