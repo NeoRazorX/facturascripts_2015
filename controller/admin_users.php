@@ -49,6 +49,8 @@ class admin_users extends fs_controller
          {
             $nu = new fs_user();
             $nu->nick = $_POST['nnick'];
+            $nu->email = $_POST['nemail'];
+            
             if( $nu->set_password($_POST['npassword']) )
             {
                $nu->admin = isset($_POST['nadmin']);

@@ -31,7 +31,7 @@ class admin_home extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE);
    }
    
    protected function private_core()
@@ -158,6 +158,10 @@ class admin_home extends fs_controller
             }
             else
                $this->new_error_msg('Error al abrir el archivo ZIP. Código: '.$res);
+         }
+         else
+         {
+            $this->new_error_msg('Archivo no encontrado.');
          }
       }
       else if( isset($_GET['download']) )
@@ -429,7 +433,7 @@ class admin_home extends fs_controller
     */
    public function nf0()
    {
-      return array(0, 1, 2, 3, 4);
+      return array(0, 1, 2, 3, 4, 5);
    }
    
    /**

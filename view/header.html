@@ -45,7 +45,7 @@
             </button>
             <a class="navbar-brand" href="index.php">
                <span class="glyphicon glyphicon-home"></span> &nbsp;
-               {if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}
+               <span class="hidden-sm">{if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</span>
             </a>
          </div>
          
@@ -61,6 +61,18 @@
                   </ul>
                </li>
                {/loop}
+               <li class="dropdown hidden-sm">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" title="Acceso rápido">
+                     <span class="glyphicon glyphicon-star"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                     {loop="$fsc->user->get_menu()"}
+                        {if="$value->important"}
+                        <li><a href="{$value->url()}">{$value->title}</a></li>
+                        {/if}
+                     {/loop}
+                  </ul>
+               </li>
             </ul>
             
             <ul class="nav navbar-nav navbar-right">

@@ -104,7 +104,7 @@ class fs_controller
     * @param type $folder es el menú dónde quieres colocar el acceso directo
     * @param type $admin OBSOLETO
     * @param type $shmenu debe ser TRUE si quieres añadir el acceso directo en el menú
-    * @param type $important debe ser TRUE si quieres que se la primera página que ven los nuevos usuarios
+    * @param type $important debe ser TRUE si quieres que aparezca en el menú de destacado
     */
    public function __construct($name = '', $title = 'home', $folder = '', $admin = FALSE, $shmenu = TRUE, $important = FALSE)
    {
@@ -128,7 +128,16 @@ class fs_controller
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
-         $this->page = new fs_page( array('name'=>$name,'title'=>$title,'folder'=>$folder,'version'=>$this->version(),'show_on_menu'=>$shmenu,'important'=>$important) );
+         $this->page = new fs_page(
+                 array(
+                     'name' => $name,
+                     'title' => $title,
+                     'folder' => $folder,
+                     'version' => $this->version(),
+                     'show_on_menu' => $shmenu,
+                     'important' => $important
+                 )
+         );
          if($name != '')
          {
             $this->page->save();
@@ -636,7 +645,9 @@ class fs_controller
       foreach($this->menu as $m)
       {
          if($m->folder!='' AND $m->show_on_menu AND !in_array($m->folder, $folders) )
+         {
             $folders[] = $m->folder;
+         }
       }
       return $folders;
    }
@@ -652,7 +663,9 @@ class fs_controller
       foreach($this->menu as $p)
       {
          if($f == $p->folder AND $p->show_on_menu AND !in_array($p, $pages) )
+         {
             $pages[] = $p;
+         }
       }
       return $pages;
    }
@@ -689,18 +702,13 @@ class fs_controller
                
                /*
                 * Cuando un usuario no tiene asignada una página por defecto,
-                * se selecciona la primera página importante a la que tiene acceso.
+                * se selecciona la primera página del menú.
                 */
                foreach($this->menu as $p)
                {
                   if($p->show_on_menu)
                   {
                      $page = $p->name;
-                  }
-                  
-                  if($p->important)
-                  {
-                     break;
                   }
                }
             }
@@ -1007,13 +1015,13 @@ class fs_controller
    /**
     * Devuelve un string con el precio en el formato predefinido y con la
     * divisa seleccionada (o la predeterminada).
-    * 
     * @param type $precio
     * @param type $coddivisa
     * @param type $simbolo
+    * @param type $dec nº de decimales
     * @return type
     */
-   public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE)
+   public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE, $dec=FS_NF0)
    {
       if($coddivisa === FALSE)
       {
@@ -1024,19 +1032,19 @@ class fs_controller
       {
          if($simbolo)
          {
-            return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$this->simbolo_divisa($coddivisa);
+            return number_format($precio, $dec, FS_NF1, FS_NF2).' '.$this->simbolo_divisa($coddivisa);
          }
          else
-            return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$coddivisa;
+            return number_format($precio, $dec, FS_NF1, FS_NF2).' '.$coddivisa;
       }
       else
       {
          if($simbolo)
          {
-            return $this->simbolo_divisa($coddivisa).number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+            return $this->simbolo_divisa($coddivisa).number_format($precio, $dec, FS_NF1, FS_NF2);
          }
          else
-            return $coddivisa.' '.number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+            return $coddivisa.' '.number_format($precio, $dec, FS_NF1, FS_NF2);
       }
    }
    

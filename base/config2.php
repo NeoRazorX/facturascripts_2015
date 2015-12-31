@@ -57,6 +57,11 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['pos_divisa'] = 'right';
    }
    
+   if( !isset($GLOBALS['config2']['nf0_art']) )
+   {
+      $GLOBALS['config2']['nf0_art'] = 4;
+   }
+   
    if( !isset($GLOBALS['config2']['homepage']) )
    {
       $GLOBALS['config2']['homepage'] = 'admin_home';
@@ -123,6 +128,7 @@ else
    $GLOBALS['config2'] = array(
        'zona_horaria' => 'Europe/Madrid',
        'nf0' => 2,
+       'nf0_art' => 2,
        'nf1' => '.',
        'nf2' => ' ',
        'pos_divisa' => 'right',

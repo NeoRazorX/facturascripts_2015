@@ -346,7 +346,11 @@ class admin_user extends fs_controller
          }
          else if( $this->suser->save() )
          {
-            if( !$this->suser->admin )
+            if(!$this->user->admin)
+            {
+               /// si no eres administrador, no puedes cambiar los permisos
+            }
+            else if(!$this->suser->admin)
             {
                /// para cada página, comprobamos si hay que darle acceso o no
                foreach($this->all_pages() as $p)
@@ -382,6 +386,12 @@ class admin_user extends fs_controller
                   {
                      /// la página ha sido marcada como autorizada.
                      $a->save();
+                     
+                     if( is_null($this->suser->fs_page) )
+                     {
+                        $this->suser->fs_page = $p->name;
+                        $this->suser->save();
+                     }
                   }
                   else
                   {

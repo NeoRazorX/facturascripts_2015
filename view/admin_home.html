@@ -195,17 +195,19 @@
                   <thead>
                      <tr>
                         <th class="text-left">Página</th>
+                        <th></th>
                         <th class="text-left">Menú</th>
-                        <th class="text-left">Versión</th>
-                        <th class="text-center">Importante</th>
                         <th class="text-center">Existe</th>
                      </tr>
                   </thead>
                   {loop="$fsc->paginas"}
                   <tr{if="!$value->exists"} class="danger"{/if}>
                      <td>
-                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked="checked"{/if}/>
+                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked=""{/if}/>
                         &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
+                     </td>
+                     <td class="text-right">
+                        {if="$value->important"}<span class="glyphicon glyphicon-star"></span>{/if}
                      </td>
                      <td>
                         {if="$value->show_on_menu"}
@@ -214,9 +216,9 @@
                         -
                         {/if}
                      </td>
-                     <td>{$value->version}</td>
-                     <td class="text-center">{if="$value->important"}<span class="glyphicon glyphicon-ok"></span>{/if}</td>
-                     <td class="text-center">{if="$value->exists"}<span class="glyphicon glyphicon-ok"></span>{/if}</td>
+                     <td class="text-center">
+                        {if="$value->exists"}<span class="glyphicon glyphicon-ok"></span>{/if}
+                     </td>
                   </tr>
                   {/loop}
                </table>
@@ -421,10 +423,18 @@
                      </select>
                   </div>
                   <div class="form-group col-md-3 col-sm-3">
-                     Decimales:
+                     Decimales de los totales:
                      <select name="nf0" class="form-control">
                      {loop="$fsc->nf0()"}
                         <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
+                     {/loop}
+                     </select>
+                  </div>
+                  <div class="form-group col-md-3 col-sm-3">
+                     Decimales de los precios:
+                     <select name="nf0_art" class="form-control">
+                     {loop="$fsc->nf0()"}
+                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0_art']"} selected=""{/if}>{$value}</option>
                      {/loop}
                      </select>
                   </div>

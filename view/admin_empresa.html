@@ -112,6 +112,13 @@
                   {/loop}
                </span>
             </h1>
+            {if="!$fsc->facturacion_base"}
+            <p class="help-block">
+               <span class="glyphicon glyphicon-exclamation-sign"></span> &nbsp;
+               Para poder configurar el resto de opciones de la empresa debes instalar el plugin
+               <b>facturacion_base</b>.
+            </p>
+            {/if}
          </div>
       </div>
    </div>

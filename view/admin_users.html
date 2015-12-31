@@ -2,6 +2,11 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
+      if(window.location.hash.substring(1) == 'nuevo')
+      {
+         $("#modal_nuevo_usuario").modal('show');
+         document.f_nuevo_usuario.nnick.focus();
+      }
       $("#b_nuevo_usuario").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_usuario").modal('show');
@@ -134,12 +139,14 @@
                <div class="form-group">
                   Contraseña:
                   <input class="form-control" type="password" name="npassword" maxlength="12"/>
-               </div>
-               <div class="form-group">
                   <label>
                      <input type="checkbox" name="nadmin" value="TRUE"/>
                      Administrador
                   </label>
+               </div>
+               <div class="form-group">
+                  Email:
+                  <input class="form-control" type="text" name="nemail" autocomplete="off"/>
                </div>
                <div class="form-group">
                   <a target="_blank" href="{$fsc->agente->url()}">Empleado</a>:

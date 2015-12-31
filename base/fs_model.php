@@ -127,7 +127,7 @@ abstract class fs_model
       
       if( !self::$checked_tables )
       {
-         self::$checked_tables = $this->cache->get_array('fs_checked_tables', TRUE);
+         self::$checked_tables = $this->cache->get_array('fs_checked_tables');
          if(self::$checked_tables)
          {
             /// nos aseguramos de que existan todas las tablas que se suponen comprobadas
@@ -150,7 +150,7 @@ abstract class fs_model
             if( $this->check_table($name) )
             {
                self::$checked_tables[] = $name;
-               $this->cache->set('fs_checked_tables', self::$checked_tables, 5400, TRUE);
+               $this->cache->set('fs_checked_tables', self::$checked_tables, 5400);
             }
          }
       }
@@ -159,7 +159,7 @@ abstract class fs_model
    protected function clean_checked_tables()
    {
       self::$checked_tables = array();
-      $this->cache->delete('fs_checked_tables', TRUE);
+      $this->cache->delete('fs_checked_tables');
    }
    
    /**

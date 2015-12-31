@@ -76,6 +76,9 @@ function guarda_config($nombre_archivo)
    fwrite($archivo, "\n");
    fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
    fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
+   fwrite($archivo, "\n");
+   fwrite($archivo, "/// desactiva el poder añadir plugins manualmente\n");
+   fwrite($archivo, "define('FS_DISABLE_ADD_PLUGINS', FALSE);\n");
    fclose($archivo);
    
    header("Location: index.php");
