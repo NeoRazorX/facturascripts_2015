@@ -223,6 +223,18 @@ class fs_controller
                   $this->query = $_REQUEST['query'];
                }
                
+               /// quitamos extensiones de páginas a las que el usuario no tenga acceso
+               foreach($this->extensions as $i => $value)
+               {
+                  if($value->type == 'tab' OR $value->type == 'tab_button')
+                  {
+                     if( !$this->user->have_access_to($value->from) )
+                     {
+                        unset($this->extensions[$i]);
+                     }
+                  }
+               }
+               
                $this->private_core();
             }
          }
