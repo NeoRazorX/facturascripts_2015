@@ -553,9 +553,9 @@ class fs_mysql
       /// eliminamos código problemático de postgresql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
-      $consulta = str_replace('now()', "0", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "0", $consulta);
-      $consulta = str_replace('CURRENT_DATE', "0", $consulta);
+      $consulta = str_replace('now()', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta;
    }
@@ -594,6 +594,12 @@ class fs_mysql
       }
    }
    
+   /**
+    * Compara los tipos por defecto. Devuelve TRUE si son equivalentes.
+    * @param type $v1
+    * @param type $v2
+    * @return type
+    */
    private function compare_defaults($v1, $v2)
    {
       if( in_array($v1, array('0', 'false', 'FALSE')) )
@@ -604,10 +610,20 @@ class fs_mysql
       {
          return in_array($v2, array('1', 'true', 'true'));
       }
+      else if($v1 == 'now()' AND $v2 == '00:00')
+      {
+         return TRUE;
+      }
+      else if($v1 == 'CURRENT_TIMESTAMP' AND $v2 == '00:00')
+      {
+         return TRUE;
+      }
+      else if( $v1 == 'CURRENT_DATE' AND $v2 == date("'Y-m-d'") )
+      {
+         return TRUE;
+      }
       else
       {
-         $v1 = str_replace('now()', "0", $v1);
-         $v2 = str_replace('now()', "0", $v2);
          $v1 = str_replace('::character varying', '', $v1);
          $v2 = str_replace('::character varying', '', $v2);
          $v1 = str_replace("'", '', $v1);
@@ -685,9 +701,9 @@ class fs_mysql
       /// eliminamos código problemático de postgresql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
-      $consulta = str_replace('now()', "0", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "0", $consulta);
-      $consulta = str_replace('CURRENT_DATE', "0", $consulta);
+      $consulta = str_replace('now()', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta;
    }
@@ -751,9 +767,9 @@ class fs_mysql
       /// eliminamos código problemático de postgresql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
-      $consulta = str_replace('now()', "0", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "0", $consulta);
-      $consulta = str_replace('CURRENT_DATE', "0", $consulta);
+      $consulta = str_replace('now()', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta.' '.$this->generate_table_constraints($xml_restricciones).' ) '
               .'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
@@ -779,9 +795,9 @@ class fs_mysql
       /// eliminamos código problemático de postgresql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
-      $consulta = str_replace('now()', "0", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "0", $consulta);
-      $consulta = str_replace('CURRENT_DATE', "0", $consulta);
+      $consulta = str_replace('now()', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta;
    }

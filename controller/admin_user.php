@@ -69,7 +69,12 @@ class admin_user extends fs_controller
             $age0->dnicif = $_POST['ndnicif'];
             $age0->telefono = $_POST['ntelefono'];
             $age0->email = $_POST['nemail'];
-            if( $age0->save() )
+            
+            if(!$this->user->admin)
+            {
+               $this->new_error_msg('Solamente un administrador puede crear y asignar un empleado desde aquí.');
+            }
+            else if( $age0->save() )
             {
                $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
                $this->suser->codagente = $age0->codagente;
@@ -162,6 +167,11 @@ class admin_user extends fs_controller
             }
          }
       }
+      
+      /// ordenamos por nombre
+      usort($returnlist, function($a, $b) {
+         return strcmp($a->name, $b->name);
+      });
       
       return $returnlist;
    }

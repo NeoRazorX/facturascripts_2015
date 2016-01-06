@@ -195,7 +195,6 @@
                   <thead>
                      <tr>
                         <th class="text-left">Página</th>
-                        <th></th>
                         <th class="text-left">Menú</th>
                         <th class="text-center">Existe</th>
                      </tr>
@@ -206,11 +205,10 @@
                         <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked=""{/if}/>
                         &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
                      </td>
-                     <td class="text-right">
-                        {if="$value->important"}<span class="glyphicon glyphicon-star"></span>{/if}
-                     </td>
                      <td>
-                        {if="$value->show_on_menu"}
+                        {if="$value->important"}
+                        <span class="glyphicon glyphicon-star"></span> » {$value->title}
+                        {elseif="$value->show_on_menu"}
                         <span class="text-capitalize">{$value->folder}</span> » {$value->title}
                         {else}
                         -

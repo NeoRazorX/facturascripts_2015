@@ -19,6 +19,8 @@
 
 class admin_info extends fs_controller
 {
+   public $allow_delete;
+   
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
@@ -26,6 +28,9 @@ class admin_info extends fs_controller
    
    protected function private_core()
    {
+      /// ¿El usuario tiene permiso para eliminar en esta página?
+      $this->allow_delete = $this->user->admin;
+      
       /**
        * Cargamos las variables del cron
        */

@@ -22,10 +22,12 @@
          <h3 style="margin-top: 0px;">{$fsc->page->title}</h3>
       </div>
       <div class="col-sm-3 col-xs-2 text-right">
+         {if="$fsc->allow_delete"}
          <a class="btn btn-sm btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
             <span class="glyphicon glyphicon-trash"></span>
             <span class="hidden-xs">&nbsp; Limpiar la cache</span>
          </a>
+         {/if}
       </div>
    </div>
 </div>

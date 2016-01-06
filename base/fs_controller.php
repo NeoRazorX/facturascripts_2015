@@ -226,7 +226,7 @@ class fs_controller
                /// quitamos extensiones de páginas a las que el usuario no tenga acceso
                foreach($this->extensions as $i => $value)
                {
-                  if($value->type == 'tab' OR $value->type == 'tab_button')
+                  if($value->type != 'config')
                   {
                      if( !$this->user->have_access_to($value->from) )
                      {
