@@ -404,7 +404,16 @@ class fs_user extends fs_model
       {
          $this->last_login = Date('d-m-Y');
          $this->last_login_time = Date('H:i:s');
-         $this->last_ip = $_SERVER['REMOTE_ADDR'];
+         
+         if( isset($_SERVER['HTTP_X_FORWARDED_FOR']) )
+         {
+            $this->last_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+         }
+         else
+         {
+            $this->last_ip = $_SERVER['REMOTE_ADDR'];
+         }
+         
          $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
          $this->save();
       }
@@ -424,7 +433,16 @@ class fs_user extends fs_model
       $this->logged_on = TRUE;
       $this->last_login = Date('d-m-Y');
       $this->last_login_time = Date('H:i:s');
-      $this->last_ip = $_SERVER['REMOTE_ADDR'];
+      
+      if( isset($_SERVER['HTTP_X_FORWARDED_FOR']) )
+      {
+         $this->last_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+      }
+      else
+      {
+         $this->last_ip = $_SERVER['REMOTE_ADDR'];
+      }
+      
       $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
    }
    
