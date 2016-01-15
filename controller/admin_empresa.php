@@ -24,8 +24,8 @@ require_model('cuenta_banco.php');
 require_model('divisa.php');
 require_model('ejercicio.php');
 require_model('forma_pago.php');
-require_model('serie.php');
 require_model('pais.php');
+require_model('serie.php');
 
 class admin_empresa extends fs_controller
 {
@@ -252,6 +252,11 @@ class admin_empresa extends fs_controller
          $cuentab->descripcion = $_POST['descripcion'];
          $cuentab->iban = $_POST['iban'];
          $cuentab->swift = $_POST['swift'];
+         
+         if( isset($_POST['codsubcuenta']) )
+         {
+            $cuentab->codsubcuenta = $_POST['codsubcuenta'];
+         }
          
          if( $cuentab->save() )
          {

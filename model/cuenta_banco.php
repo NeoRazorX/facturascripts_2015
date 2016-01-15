@@ -30,6 +30,7 @@ class cuenta_banco extends fs_model
    public $descripcion;
    public $iban;
    public $swift;
+   public $codsubcuenta;
    
    public function __construct($c = FALSE)
    {
@@ -41,6 +42,7 @@ class cuenta_banco extends fs_model
          $this->descripcion = $c['descripcion'];
          $this->iban = $c['iban'];
          $this->swift = $c['swift'];
+         $this->codsubcuenta = $c['codsubcuenta'];
       }
       else
       {
@@ -48,6 +50,7 @@ class cuenta_banco extends fs_model
          $this->descripcion = NULL;
          $this->iban = NULL;
          $this->swift = NULL;
+         $this->codsubcuenta = NULL;
       }
    }
    
@@ -103,16 +106,18 @@ class cuenta_banco extends fs_model
          $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).
                  ", iban = ".$this->var2str($this->iban).
                  ", swift = ".$this->var2str($this->swift).
+                 ", codsubcuenta = ".$this->var2str($this->codsubcuenta).
                  " WHERE codcuenta = ".$this->var2str($this->codcuenta).";";
       }
       else
       {
          $this->codcuenta = $this->get_new_codigo();
-         $sql = "INSERT INTO ".$this->table_name." (codcuenta,descripcion,iban,swift)
+         $sql = "INSERT INTO ".$this->table_name." (codcuenta,descripcion,iban,swift,codsubcuenta)
                  VALUES (".$this->var2str($this->codcuenta).
                  ",".$this->var2str($this->descripcion).
                  ",".$this->var2str($this->iban).
-                 ",".$this->var2str($this->swift).");";
+                 ",".$this->var2str($this->swift).
+                 ",".$this->var2str($this->codsubcuenta).");";
       }
       
       return $this->db->exec($sql);

@@ -87,7 +87,7 @@
    </columna>
    <columna>
       <nombre>email_firma</nombre>
-      <tipo>character varying(100)</tipo>
+      <tipo>text</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
