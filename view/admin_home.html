@@ -215,7 +215,11 @@
                         {/if}
                      </td>
                      <td class="text-center">
-                        {if="$value->exists"}<span class="glyphicon glyphicon-ok"></span>{/if}
+                        {if="$value->exists"}
+                        <span class="glyphicon glyphicon-ok"></span>
+                        {else}
+                        <span class="glyphicon glyphicon-exclamation-sign" title="No se encuentra el controlador o pertenece a un plugin inactivo"></span>
+                        {/if}
                      </td>
                   </tr>
                   {/loop}
