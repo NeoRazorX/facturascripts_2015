@@ -1061,6 +1061,11 @@ class admin_home extends fs_controller
               'url_repo' => 'https://github.com/NeoRazorX/peru',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Perú</b>.'
           ),
+          'republica_dominicana' => array(
+              'url' => 'https://github.com/joenilson/republica_dominicana/archive/master.zip',
+              'url_repo' => 'https://github.com/joenilson/republica_dominicana',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>República Dominicana</b>.'
+          ),
       );
       $fsvar = new fs_var();
       $this->step = $fsvar->simple_get('install_step');
