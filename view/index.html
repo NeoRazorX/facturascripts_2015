@@ -3,40 +3,88 @@
 <div class="container">
    <div class="row">
       <div class="col-sm-12">
+         <div class="page-header">
+            <h1>
+               <span class="glyphicon glyphicon-exclamation-sign"></span>
+               Página no encontrada
+            </h1>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-8">
          <div class="panel panel-danger">
             <div class="panel-heading">
-               <h3 class="panel-title">Página no encontrada</h3>
+               <h3 class="panel-title">Ayuda</h3>
             </div>
             <div class="panel-body">
-               <div class="container-fluid">
-                  <div class="row">
-                     <div class="col-sm-6">
-                        <ul>
-                           <li>No se encuentra el controlador de esta página.</li>
-                           <li>Consulta con el administrador.</li>
-                           <li>
-                              Si crees que es un error de FacturaScripts, no dudes en notificármelo.
-                              <b>Haz clic en el botón de ayuda</b>
-                              <span class="glyphicon glyphicon-question-sign"></span>
-                              y <b>notifícame el error</b>.
-                           </li>
-                           {if="isset($_GET['page'])"}
-                           <li>
-                              <b>Si eres programador</b> y estas intentando hacer un plugin, entonces te comento que
-                              lo que ha pasado es que no encuentro el archivo <b>{$_GET['page']}.php</b>,
-                              que debería estar en el directorio controller de tu plugin.
-                           </li>
-                           {/if}
-                        </ul>
-                     </div>
-                     <div class="col-sm-6 text-right">
-                        <div class="thumbnail">
-                           <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
-                        </div>
-                     </div>
-                  </div>
-               </div>
+               <p class="help-block">
+                  No se encuentra el controlador de esta página.
+                  Consulta con el administrador.
+               </p>
+               <h3>Problemas frecuentes:</h3>
+               <ul>
+                  <li>
+                     <b>¿Has actualizado desde FacturaScripts 2014 o anteriores?</b>
+                     <ul>
+                        <li>
+                           El sistema ha cambiado mucho, ahora los plugins tienen un desarrollo
+                           independiente.
+                        </li>
+                        <li>
+                           Elimina los plugins antiguos y sigue el asistente de Admin &gt;
+                           <a href="index.php?page=admin_home">Panel de control</a>.
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <b>¿Has desactivado un plugin?</b>
+                     <ul>
+                        <li>
+                           Es posible que fallase al eliminar las entradas del menú.
+                           Ve a admin &gt; <a href="index.php?page=admin_home">Panel de control</a>
+                           &gt; Menú y pulsa guardar. Eliminará las entradas del menú de las páginas
+                           que ya no estén activas.
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <b>¿Has reinstalado a lo bestia?</b>
+                     <ul>
+                        <li>
+                           Tendrás en el menú acceso a páginas de plugins que no están activos.
+                           Ve a admin &gt; <a href="index.php?page=admin_home">Panel de control</a>
+                           &gt; Menú y pulsa guardar. Eliminará las entradas del menú de las páginas
+                           que ya no estén activas.
+                        </li>
+                     </ul>
+                  </li>
+                  {if="isset($_GET['page'])"}
+                  <li>
+                     <b>¿Eres programador y estas intentando hacer un plugin?</b>
+                     <ul>
+                        <li>
+                           Entonces te comento que lo que ha pasado es que no encuentro
+                           el archivo <b>{$_GET['page']}.php</b>, que debería estar en
+                           el directorio <b>controller</b> de tu plugin.
+                        </li>
+                     </ul>
+                  </li>
+                  {/if}
+               </ul>
+               <p class="help-block">
+                  Si crees que es un error de FacturaScripts, no dudes en notificármelo.
+                  <b>Haz clic en el botón de ayuda</b> <span class="glyphicon glyphicon-question-sign"></span>
+                  y <b>notifícame el error</b>. Intenta no obviar información importante:
+                  ¿Has actualizado desde FacturaScripts 2014 o anteriores? ¿Vienes de Eneboo/Abanq?
+                  ¿Has reinstalado a lo bestia? Son cuestiones importantes a la hora de buscar un error.
+               </p>
             </div>
+         </div>
+      </div>
+      <div class="col-sm-4">
+         <div class="thumbnail">
+            <img src="view/img/fuuu_face.png" alt="fuuuuu"/>
          </div>
       </div>
    </div>

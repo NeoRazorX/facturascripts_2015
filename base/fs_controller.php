@@ -504,7 +504,7 @@ class fs_controller
          else
          {
             $user = $this->user->get($_POST['user']);
-            $password = strtolower($_POST['password']);
+            $password = $_POST['password'];
             if($user)
             {
                if( $user->password == sha1($password) )
@@ -538,7 +538,15 @@ class fs_controller
                }
                else
                {
-                  $this->new_error_msg('¡Contraseña incorrecta!');
+                  if( $password == mb_strtolower($password, 'UTF8') )
+                  {
+                     $this->new_error_msg('¡Contraseña incorrecta!');
+                  }
+                  else
+                  {
+                     $this->new_error_msg('¡Contraseña incorrecta! Ten en cuenta que estás escribiendo en mayúsculas.');
+                  }
+                  
                   $this->banear_ip($ips);
                }
             }

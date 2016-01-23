@@ -215,7 +215,11 @@
                         {/if}
                      </td>
                      <td class="text-center">
-                        {if="$value->exists"}<span class="glyphicon glyphicon-ok"></span>{/if}
+                        {if="$value->exists"}
+                        <span class="glyphicon glyphicon-ok"></span>
+                        {else}
+                        <span class="glyphicon glyphicon-exclamation-sign" title="No se encuentra el controlador o pertenece a un plugin inactivo"></span>
+                        {/if}
                      </td>
                   </tr>
                   {/loop}
@@ -503,6 +507,10 @@
                               No comprobar los tipos
                            </option>
                         </select>
+                        <p class="help-block">
+                           Tendrás que <a href="index.php?page=admin_info">limpiar la caché</a>
+                           para que comiencen las comprobaciones.
+                        </p>
                      </div>
                   </div>
                   <div class="col-md-3 col-sm-3">
