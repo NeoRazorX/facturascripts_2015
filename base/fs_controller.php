@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -507,7 +507,12 @@ class fs_controller
             $password = $_POST['password'];
             if($user)
             {
-               if( $user->password == sha1($password) )
+               /**
+                * En versiones anteriores se guardaban las contraseñas siempre en
+                * minúsculas, por eso, para dar compatibilidad comprobamos también
+                * en minúsculas.
+                */
+               if( $user->password == sha1($password) OR $user->password == sha1( mb_strtolower($password, 'UTF8') ) )
                {
                   $user->new_logkey();
                   
@@ -538,15 +543,7 @@ class fs_controller
                }
                else
                {
-                  if( $password == mb_strtolower($password, 'UTF8') )
-                  {
-                     $this->new_error_msg('¡Contraseña incorrecta!');
-                  }
-                  else
-                  {
-                     $this->new_error_msg('¡Contraseña incorrecta! Ten en cuenta que estás escribiendo en mayúsculas.');
-                  }
-                  
+                  $this->new_error_msg('¡Contraseña incorrecta!');
                   $this->banear_ip($ips);
                }
             }
