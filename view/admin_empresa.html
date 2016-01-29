@@ -104,13 +104,6 @@
                <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
                   <span class="glyphicon glyphicon-refresh"></span>
                </a>
-               <span class="btn-group">
-                  {loop="$fsc->extensions"}
-                     {if="$value->type=='button'"}
-                     <a href="index.php?page={$value->from}{$value->params}" class="btn btn-xs btn-default">{$value->text}</a>
-                     {/if}
-                  {/loop}
-               </span>
             </h1>
             {if="!$fsc->facturacion_base"}
             <p class="help-block">
@@ -457,24 +450,48 @@
                            mostrar albaranes relacionados.
                         </label>
                      </div>
+                     <div class="checkbox-inline">
+                        <label>
+                           {if="$fsc->impresion['print_formapago']"}
+                           <input type="checkbox" name="print_formapago" value="TRUE" checked=""/>
+                           {else}
+                           <input type="checkbox" name="print_formapago" value="TRUE"/>
+                           {/if}
+                           mostrar forma de pago en las facturas.
+                        </label>
+                     </div>
                   </div>
                   <div class="form-group">
                      Pie de página de la factura:
-                     <textarea name="pie_factura" rows="2" class="form-control">{$fsc->empresa->pie_factura}</textarea>
+                     <textarea name="pie_factura" rows="3" class="form-control">{$fsc->empresa->pie_factura}</textarea>
                   </div>
-                  <div class="form-group">
-                     <button class="btn btn-sm btn-default" id="b_add_logo">
-                        <span class="glyphicon glyphicon-picture"></span>
-                        Añadir / Cambiar logotipo para los documentos
-                     </button>
-                  </div>
-                  <div class="form-group">
-                     Lema:
-                     <input class="form-control" type="text" name="lema" value="{$fsc->empresa->lema}" autocomplete="off" autofocus />
-                  </div>
-                  <div class="form-group">
-                     Horario:
-                     <input class="form-control" type="text" name="horario" value="{$fsc->empresa->horario}" autocomplete="off"/>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        {if="$fsc->logo"}
+                        <div class="thumbnail">
+                           <img src="{$fsc->logo}" alt="logotipo"/>
+                        </div>
+                        <button class="btn btn-sm btn-block btn-default" id="b_add_logo">
+                           <span class="glyphicon glyphicon-picture"></span>
+                           Cambiar logotipo
+                        </button>
+                        {else}
+                        <button class="btn btn-sm btn-default" id="b_add_logo">
+                           <span class="glyphicon glyphicon-picture"></span>
+                           Añadir logotipo
+                        </button>
+                        {/if}
+                     </div>
+                     <div class="col-sm-8">
+                        <div class="form-group">
+                           Lema:
+                           <input class="form-control" type="text" name="lema" value="{$fsc->empresa->lema}" autocomplete="off"/>
+                        </div>
+                        <div class="form-group">
+                           Horario:
+                           <input class="form-control" type="text" name="horario" value="{$fsc->empresa->horario}" autocomplete="off"/>
+                        </div>
+                     </div>
                   </div>
                </div>
                <div class="panel-footer" style="text-align: right;">
@@ -568,17 +585,11 @@
                </h4>
             </div>
             <div class="modal-body">
-               <div style="text-align: center;">
-                  <div class="thumbnail">
-                     {if="$fsc->logo"}
-                     <img src="{$fsc->logo}" alt="logotipo"/>
-                     {else}
-                     <div class="caption">
-                        Selecciona una imagen.
-                     </div>
-                     {/if}
-                  </div>
+               {if="$fsc->logo"}
+               <div class="thumbnail">
+                  <img src="{$fsc->logo}" alt="logotipo"/>
                </div>
+               {/if}
                <div class="form-group">
                   <input name="fimagen" type="file" accept="image/jpeg, image/png"/>
                </div>

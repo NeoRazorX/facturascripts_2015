@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -57,6 +57,23 @@ class cuenta_banco extends fs_model
    protected function install()
    {
       return '';
+   }
+   
+   /**
+    * Devuelve el IBAN con o sin espacios.
+    * @param type $espacios
+    * @return type
+    */
+   public function iban($espacios = FALSE)
+   {
+      if($espacios)
+      {
+         return $this->iban;
+      }
+      else
+      {
+         return str_replace(' ', '', $this->iban);
+      }
    }
    
    public function url()
