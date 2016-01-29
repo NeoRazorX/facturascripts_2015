@@ -381,14 +381,14 @@ class fs_user extends fs_model
    public function set_password($p='')
    {
       $p = trim($p);
-      if( mb_strlen($p) > 1 AND mb_strlen($p) <= 12 )
+      if( mb_strlen($p) > 1 AND mb_strlen($p) <= 32 )
       {
          $this->password = sha1($p);
          return TRUE;
       }
       else
       {
-         $this->new_error_msg('La contraseña debe contener entre 1 y 12 caracteres.');
+         $this->new_error_msg('La contraseña debe contener entre 1 y 32 caracteres.');
          return FALSE;
       }
    }

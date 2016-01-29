@@ -73,7 +73,8 @@ class admin_empresa extends fs_controller
       $this->impresion = array(
           'print_ref' => '1',
           'print_dto' => '1',
-          'print_alb' => '0'
+          'print_alb' => '0',
+          'print_formapago' => '1'
       );
       $this->impresion = $fsvar->array_get($this->impresion, FALSE);
       
@@ -160,6 +161,7 @@ class admin_empresa extends fs_controller
          $this->impresion['print_ref'] = ( isset($_POST['print_ref']) ? 1 : 0 );
          $this->impresion['print_dto'] = ( isset($_POST['print_dto']) ? 1 : 0 );
          $this->impresion['print_alb'] = ( isset($_POST['print_alb']) ? 1 : 0 );
+         $this->impresion['print_formapago'] = ( isset($_POST['print_formapago']) ? 1 : 0 );
          $fsvar->array_save($this->impresion);
       }
       else if( isset($_POST['nombre']) )
