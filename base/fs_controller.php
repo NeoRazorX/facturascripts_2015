@@ -1170,4 +1170,20 @@ class fs_controller
       /// si no está en los plugins estará en el núcleo
       return 'view/js/'.$filename;
    }
+   
+   /**
+    * Devuelve el tamaño máximo permitido para subir archivos.
+    * @return type
+    */
+   public function get_max_file_upload()
+   {
+      $max = intval( ini_get('post_max_size') );
+      
+      if( intval(ini_get('upload_max_filesize')) > $max )
+      {
+         $max = intval(ini_get('upload_max_filesize'));
+      }
+      
+      return $max;
+   }
 }

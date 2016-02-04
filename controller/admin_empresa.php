@@ -35,7 +35,6 @@ class admin_empresa extends fs_controller
    public $ejercicio;
    public $forma_pago;
    public $impresion;
-   public $mail;
    public $serie;
    public $pais;
    
@@ -58,16 +57,6 @@ class admin_empresa extends fs_controller
       $this->pais = new pais();
       
       $fsvar = new fs_var();
-      
-      /// obtenemos los datos de configuración del email
-      $this->mail = array(
-          'mail_host' => 'smtp.gmail.com',
-          'mail_port' => '465',
-          'mail_enc' => 'ssl',
-          'mail_user' => '',
-          'mail_low_security' => FALSE
-      );
-      $this->mail = $fsvar->array_get($this->mail, FALSE);
       
       /// obtenemos los datos de configuración de impresión
       $this->impresion = array(
@@ -94,8 +83,6 @@ class admin_empresa extends fs_controller
          $this->empresa->fax = $_POST['fax'];
          $this->empresa->web = $_POST['web'];
          $this->empresa->email = $_POST['email'];
-         $this->empresa->email_firma = $_POST['email_firma'];
-         $this->empresa->email_password = $_POST['email_password'];
          $this->empresa->lema = $_POST['lema'];
          $this->empresa->horario = $_POST['horario'];
          $this->empresa->contintegrada = isset($_POST['contintegrada']);
@@ -106,6 +93,16 @@ class admin_empresa extends fs_controller
          $this->empresa->codalmacen = $_POST['codalmacen'];
          $this->empresa->pie_factura = $_POST['pie_factura'];
          $this->empresa->recequivalencia = isset($_POST['recequivalencia']);
+         
+         /// configuración de email
+         $this->empresa->email_config['mail_password'] = $_POST['mail_password'];
+         $this->empresa->email_config['mail_bcc'] = $_POST['mail_bcc'];
+         $this->empresa->email_config['mail_firma'] = $_POST['mail_firma'];
+         $this->empresa->email_config['mail_host'] = $_POST['mail_host'];
+         $this->empresa->email_config['mail_port'] = intval($_POST['mail_port']);
+         $this->empresa->email_config['mail_enc'] = strtolower($_POST['mail_enc']);
+         $this->empresa->email_config['mail_user'] = $_POST['mail_user'];
+         $this->empresa->email_config['mail_low_security'] = isset($_POST['mail_low_security']);
          
          if( $this->empresa->save() )
          {
@@ -126,36 +123,17 @@ class admin_empresa extends fs_controller
                $step = 3;
                $fsvar->simple_save('install_step', $step);
             }
+            
             if($step == 3 AND $this->empresa->contintegrada)
             {
                $this->new_message('Recuerda que tienes que <a href="index.php?page=contabilidad_ejercicio&cod='.
                        $this->empresa->codejercicio.'">importar los datos del ejercicio</a>.');
             }
+            
+            $this->mail_test();
          }
          else
             $this->new_error_msg ('Error al guardar los datos.');
-         
-         /// guardamos los datos del email
-         if( isset($_POST['mail_host']) )
-         {
-            $this->mail['mail_host'] = 'smtp.gmail.com';
-            if($_POST['mail_host'] != '')
-            {
-               $this->mail['mail_host'] = $_POST['mail_host'];
-            }
-            
-            $this->mail['mail_port'] = '465';
-            if($_POST['mail_port'] != '')
-            {
-               $this->mail['mail_port'] = $_POST['mail_port'];
-            }
-            
-            $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
-            $this->mail['mail_user'] = $_POST['mail_user'];
-            $this->mail['mail_low_security'] = isset($_POST['mail_low_security']);
-            $fsvar->array_save($this->mail);
-            $this->mail_test();
-         }
          
          /// guardamos los datos de impresión
          $this->impresion['print_ref'] = ( isset($_POST['print_ref']) ? 1 : 0 );
@@ -171,37 +149,24 @@ class admin_empresa extends fs_controller
          $this->empresa->nombrecorto = $_POST['nombrecorto'];
          $this->empresa->web = $_POST['web'];
          $this->empresa->email = $_POST['email'];
-         $this->empresa->email_firma = $_POST['email_firma'];
-         $this->empresa->email_password = $_POST['email_password'];
+         
+         /// configuración de email
+         $this->empresa->email_config['mail_password'] = $_POST['mail_password'];
+         $this->empresa->email_config['mail_bcc'] = $_POST['mail_bcc'];
+         $this->empresa->email_config['mail_firma'] = $_POST['mail_firma'];
+         $this->empresa->email_config['mail_host'] = $_POST['mail_host'];
+         $this->empresa->email_config['mail_port'] = intval($_POST['mail_port']);
+         $this->empresa->email_config['mail_enc'] = strtolower($_POST['mail_enc']);
+         $this->empresa->email_config['mail_user'] = $_POST['mail_user'];
+         $this->empresa->email_config['mail_low_security'] = isset($_POST['mail_low_security']);
          
          if( $this->empresa->save() )
          {
             $this->new_message('Datos guardados correctamente.');
+            $this->mail_test();
          }
          else
             $this->new_error_msg ('Error al guardar los datos.');
-         
-         /// guardamos los datos del email
-         if( isset($_POST['mail_host']) )
-         {
-            $this->mail['mail_host'] = 'smtp.gmail.com';
-            if($_POST['mail_host'] != '')
-            {
-               $this->mail['mail_host'] = $_POST['mail_host'];
-            }
-            
-            $this->mail['mail_port'] = '465';
-            if($_POST['mail_port'] != '')
-            {
-               $this->mail['mail_port'] = $_POST['mail_port'];
-            }
-            
-            $this->mail['mail_enc'] = strtolower($_POST['mail_enc']);
-            $this->mail['mail_user'] = $_POST['mail_user'];
-            $this->mail['mail_low_security'] = isset($_POST['mail_low_security']);
-            $fsvar->array_save($this->mail);
-            $this->mail_test();
-         }
       }
       else if( isset($_POST['logo']) )
       {
@@ -290,18 +255,18 @@ class admin_empresa extends fs_controller
          {
             $mail = new PHPMailer();
             $mail->Timeout = 3;
-            $mail->IsSMTP();
+            $mail->isSMTP();
             $mail->SMTPAuth = TRUE;
-            $mail->SMTPSecure = $this->mail['mail_enc'];
-            $mail->Host = $this->mail['mail_host'];
-            $mail->Port = intval($this->mail['mail_port']);
+            $mail->SMTPSecure = $this->empresa->email_config['mail_enc'];
+            $mail->Host = $this->empresa->email_config['mail_host'];
+            $mail->Port = intval($this->empresa->email_config['mail_port']);
             $mail->Username = $this->empresa->email;
-            if($this->mail['mail_user'] != '')
+            if($this->empresa->email_config['mail_user'] != '')
             {
-               $mail->Username = $this->mail['mail_user'];
+               $mail->Username = $this->empresa->email_config['mail_user'];
             }
             
-            $mail->Password = $this->empresa->email_password;
+            $mail->Password = $this->empresa->email_config['mail_password'];
             $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
             $mail->CharSet = 'UTF-8';
@@ -309,11 +274,11 @@ class admin_empresa extends fs_controller
             $mail->Subject = 'TEST';
             $mail->AltBody = 'TEST';
             $mail->WordWrap = 50;
-            $mail->MsgHTML('TEST');
-            $mail->IsHTML(TRUE);
+            $mail->msgHTML('TEST');
+            $mail->isHTML(TRUE);
             
             $SMTPOptions = array();
-            if($this->mail['mail_low_security'])
+            if($this->empresa->email_config['mail_low_security'])
             {
                $SMTPOptions = array(
                    'ssl' => array(
@@ -324,7 +289,7 @@ class admin_empresa extends fs_controller
                );
             }
             
-            if( !$mail->SmtpConnect($SMTPOptions) )
+            if( !$mail->smtpConnect($SMTPOptions) )
             {
                $this->new_error_msg('No se ha podido conectar por email. ¿La contraseña es correcta?');
                

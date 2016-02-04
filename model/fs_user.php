@@ -252,7 +252,7 @@ class fs_user extends fs_model
          return $agente->get_fullname();
       }
       else
-         return '-';
+         return $this->nick;
    }
    
    public function get_agente_url()

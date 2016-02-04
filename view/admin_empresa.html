@@ -244,37 +244,55 @@
                   <h3 class="panel-title">Configuración de email</h3>
                </div>
                <div class="panel-body">
-                  <div class="container-fluid">
-                     <div class="row">
-                        <div class="col-sm-12">
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <p class="help-block">
+                           Si configuras tu cuenta de email, podrás usarla para enviar documentos.
+                        </p>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <div class="input-group">
+                              <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-envelope"></span>
+                              </span>
+                              <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" placeholder="email" autofocus=""/>
+                           </div>
                            <p class="help-block">
-                              Si configuras tu cuenta de email, podrás usarla para
-                              enviar documentos.
+                              ¿Quieres usar tunombre@tuempresa.com?
+                              Prueba gratis <a href="https://goo.gl/bRFlmv" target="_blank">Google Apps for Work</a>.
                            </p>
                         </div>
                      </div>
-                     <div class="row">
-                        <div class="col-sm-6">
-                           <div class="form-group">
-                              <input class="form-control" type="email" name="email" value="{$fsc->empresa->email}" autocomplete="off" placeholder="email" autofocus=""/>
-                              <p class="help-block">
-                                 ¿Quieres usar tunombre@tuempresa.com?
-                                 Prueba gratis <a href="https://goo.gl/bRFlmv" target="_blank">Google Apps for Work</a>.
-                              </p>
-                           </div>
-                        </div>
-                        <div class="col-sm-6">
-                           <div class="form-group">
-                              <input class="form-control" type="password" name="email_password" value="{$fsc->empresa->email_password}" placeholder="contraseña"/>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <div class="input-group">
+                              <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-eye-close"></span>
+                              </span>
+                              <input class="form-control" type="password" name="mail_password" value="{$fsc->empresa->email_config['mail_password']}" placeholder="contraseña"/>
                            </div>
                         </div>
                      </div>
-                     <div class="row">
-                        <div class="col-sm-12">
-                           <div class="form-group">
-                              Firma:
-                              <textarea class="form-control" name="email_firma">{$fsc->empresa->email_firma}</textarea>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <div class="input-group">
+                              <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-duplicate"></span>
+                              </span>
+                              <input class="form-control" type="text" name="mail_bcc" value="{$fsc->empresa->email_config['mail_bcc']}" placeholder="Enviar copias a"/>
                            </div>
+                           <p class="help-block">Puedes escribir un email para que se envíe copia de todo.</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <div class="form-group">
+                           Firma:
+                           <textarea class="form-control" name="mail_firma">{$fsc->empresa->email_config['mail_firma']}</textarea>
                         </div>
                      </div>
                   </div>
@@ -295,13 +313,18 @@
                      <div class="col-sm-4">
                         <div class="form-group">
                            Host:
-                           <input class="form-control" type="text" name="mail_host" value="{$fsc->mail['mail_host']}" autocomplete="off"/>
+                           <div class="input-group">
+                              <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-globe"></span>
+                              </span>
+                              <input class="form-control" type="text" name="mail_host" value="{$fsc->empresa->email_config['mail_host']}" autocomplete="off"/>
+                           </div>
                         </div>
                      </div>
                      <div class="col-sm-2">
                         <div class="form-group">
                            Puerto:
-                           <input class="form-control" type="number" name="mail_port" value="{$fsc->mail['mail_port']}" autocomplete="off"/>
+                           <input class="form-control" type="number" name="mail_port" value="{$fsc->empresa->email_config['mail_port']}" autocomplete="off"/>
                         </div>
                      </div>
                      <div class="col-sm-3">
@@ -309,16 +332,16 @@
                            Encriptación:
                            <select name="mail_enc" class="form-control">
                               <option value="ssl">SSL</option>
-                              <option value="tls"{if="$fsc->mail['mail_enc']=='tls'"} selected=""{/if}>TLS</option>
+                              <option value="tls"{if="$fsc->empresa->email_config['mail_enc']=='tls'"} selected=""{/if}>TLS</option>
                               <option value="">---</option>
-                              <option value=""{if="$fsc->mail['mail_enc']==''"} selected=""{/if}>Ninguna</option>
+                              <option value=""{if="$fsc->empresa->email_config['mail_enc']==''"} selected=""{/if}>Ninguna</option>
                            </select>
                         </div>
                      </div>
                      <div class="col-sm-3">
                         <div class="form-group">
                            Usuario:
-                           <input class="form-control" type="text" name="mail_user" value="{$fsc->mail['mail_user']}" autocomplete="off"/>
+                           <input class="form-control" type="text" name="mail_user" value="{$fsc->empresa->email_config['mail_user']}" autocomplete="off"/>
                         </div>
                      </div>
                   </div>
@@ -326,7 +349,7 @@
                      <div class="col-sm-12">
                         <div class="checkbox">
                            <label>
-                              {if="$fsc->mail['mail_low_security']"}
+                              {if="$fsc->empresa->email_config['mail_low_security']"}
                               <input type="checkbox" name="mail_low_security" value="TRUE" checked=""/>
                               {else}
                               <input type="checkbox" name="mail_low_security" value="TRUE"/>
@@ -339,6 +362,12 @@
                         </div>
                      </div>
                   </div>
+               </div>
+               <div class="panel-footer">
+                  <p class="help-block">
+                     Si tienes problemas configurando el email de <b>loading.es</b>,
+                     usa el puerto 25 y la encriptación TLS.
+                  </p>
                </div>
             </div>
             
