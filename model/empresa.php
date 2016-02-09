@@ -177,7 +177,7 @@ class empresa extends fs_model
          $this->email_config = array(
              'mail_password' => '',
              'mail_bcc' => '',
-             'mail_firma' => "\n\nEnviado con FacturaScripts",
+             'mail_firma' => "\n---\nEnviado con FacturaScripts",
              'mail_host' => 'smtp.gmail.com',
              'mail_port' => '465',
              'mail_enc' => 'ssl',

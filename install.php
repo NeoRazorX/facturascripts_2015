@@ -18,71 +18,78 @@ function random_string($length = 20)
 function guarda_config($nombre_archivo)
 {
    $archivo = fopen($nombre_archivo, "w");
-   fwrite($archivo, "<?php\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Configuración de la base de datos.\n");
-   fwrite($archivo, " * type: postgresql o mysql (mysql está en fase experimental).\n");
-   fwrite($archivo, " * host: la ip del ordenador donde está la base de datos.\n");
-   fwrite($archivo, " * port: el puerto de la base de datos.\n");
-   fwrite($archivo, " * name: el nombre de la base de datos.\n");
-   fwrite($archivo, " * user: el usuario para conectar a la base de datos\n");
-   fwrite($archivo, " * pass: la contraseña del usuario.\n");
-   fwrite($archivo, " * history: TRUE si quieres ver todas las consultas que se hacen en cada página.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_DB_TYPE', '".$_REQUEST['db_type']."'); /// MYSQL o POSTGRESQL\n");
-   fwrite($archivo, "define('FS_DB_HOST', '".$_REQUEST['db_host']."');\n");
-   fwrite($archivo, "define('FS_DB_PORT', '".$_REQUEST['db_port']."'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
-   fwrite($archivo, "define('FS_DB_NAME', '".$_REQUEST['db_name']."');\n");
-   fwrite($archivo, "define('FS_DB_USER', '".$_REQUEST['db_user']."'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
-   fwrite($archivo, "define('FS_DB_PASS', '".$_REQUEST['db_pass']."');\n");
-   
-   if($_REQUEST['db_type'] == 'MYSQL' AND $_POST['mysql_socket'] != '')
+   if($archivo)
    {
-      fwrite($archivo, "ini_set('mysqli.default_socket', '".$_POST['mysql_socket']."');\n");
+      fwrite($archivo, "<?php\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Configuración de la base de datos.\n");
+      fwrite($archivo, " * type: postgresql o mysql (mysql está en fase experimental).\n");
+      fwrite($archivo, " * host: la ip del ordenador donde está la base de datos.\n");
+      fwrite($archivo, " * port: el puerto de la base de datos.\n");
+      fwrite($archivo, " * name: el nombre de la base de datos.\n");
+      fwrite($archivo, " * user: el usuario para conectar a la base de datos\n");
+      fwrite($archivo, " * pass: la contraseña del usuario.\n");
+      fwrite($archivo, " * history: TRUE si quieres ver todas las consultas que se hacen en cada página.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_DB_TYPE', '".$_REQUEST['db_type']."'); /// MYSQL o POSTGRESQL\n");
+      fwrite($archivo, "define('FS_DB_HOST', '".$_REQUEST['db_host']."');\n");
+      fwrite($archivo, "define('FS_DB_PORT', '".$_REQUEST['db_port']."'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
+      fwrite($archivo, "define('FS_DB_NAME', '".$_REQUEST['db_name']."');\n");
+      fwrite($archivo, "define('FS_DB_USER', '".$_REQUEST['db_user']."'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
+      fwrite($archivo, "define('FS_DB_PASS', '".$_REQUEST['db_pass']."');\n");
+      
+      if($_REQUEST['db_type'] == 'MYSQL' AND $_POST['mysql_socket'] != '')
+      {
+         fwrite($archivo, "ini_set('mysqli.default_socket', '".$_POST['mysql_socket']."');\n");
+      }
+      
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_TMP_NAME', '".random_string()."/');\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_DB_HISTORY', FALSE);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Habilita el modo demo, para pruebas.\n");
+      fwrite($archivo, " * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");
+      fwrite($archivo, " * además deshabilita el límite de una conexión por usuario.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_DEMO', FALSE);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Configuración de memcache.\n");
+      fwrite($archivo, " * Host: la ip del servidor donde está memcached.\n");
+      fwrite($archivo, " * port: el puerto en el que se ejecuta memcached.\n");
+      fwrite($archivo, " * prefix: prefijo para las claves, por si tienes varias instancias de\n");
+      fwrite($archivo, " * FacturaScripts conectadas al mismo servidor memcache.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "define('FS_CACHE_HOST', '".$_REQUEST['cache_host']."');\n");
+      fwrite($archivo, "define('FS_CACHE_PORT', '".$_REQUEST['cache_port']."');\n");
+      fwrite($archivo, "define('FS_CACHE_PREFIX', '".$_REQUEST['cache_prefix']."');\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
+      fwrite($archivo, "define('FS_COOKIES_EXPIRE', 7776000);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
+      fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/// desactiva el poder añadir plugins manualmente\n");
+      fwrite($archivo, "define('FS_DISABLE_ADD_PLUGINS', FALSE);\n");
+      fclose($archivo);
+      
+      header("Location: index.php");
+      exit();
    }
-   
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_TMP_NAME', '".random_string()."/');\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_DB_HISTORY', FALSE);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Habilita el modo demo, para pruebas.\n");
-   fwrite($archivo, " * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");
-   fwrite($archivo, " * además deshabilita el límite de una conexión por usuario.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_DEMO', FALSE);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Configuración de memcache.\n");
-   fwrite($archivo, " * Host: la ip del servidor donde está memcached.\n");
-   fwrite($archivo, " * port: el puerto en el que se ejecuta memcached.\n");
-   fwrite($archivo, " * prefix: prefijo para las claves, por si tienes varias instancias de\n");
-   fwrite($archivo, " * FacturaScripts conectadas al mismo servidor memcache.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "define('FS_CACHE_HOST', '".$_REQUEST['cache_host']."');\n");
-   fwrite($archivo, "define('FS_CACHE_PORT', '".$_REQUEST['cache_port']."');\n");
-   fwrite($archivo, "define('FS_CACHE_PREFIX', '".$_REQUEST['cache_prefix']."');\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
-   fwrite($archivo, "define('FS_COOKIES_EXPIRE', 7776000);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
-   fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/// desactiva el poder añadir plugins manualmente\n");
-   fwrite($archivo, "define('FS_DISABLE_ADD_PLUGINS', FALSE);\n");
-   fclose($archivo);
-   
-   header("Location: index.php");
-   exit();
+   else
+   {
+      $errors[] = "permisos";
+   }
 }
 
 if( file_exists('config.php') )
@@ -244,10 +251,10 @@ $system_info = str_replace('"', "'", $system_info);
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_questions" target="_blank">Preguntas</a></li>
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_errors" target="_blank">Errores</a></li>
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_all" target="_blank">Todo</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_questions" target="_blank">Preguntas</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_errors" target="_blank">Errores</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_colabora" target="_blank">Colabora</a></li>
                      <li class="divider"></li>
                      <li>
                         <a href="#" id="b_feedback">
@@ -261,7 +268,7 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
    </nav>
    
-   <form name="f_feedback" action="//www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
+   <form name="f_feedback" action="https://www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <input type="hidden" name="feedback_type" value="error"/>
       <div class="modal" id="modal_feedback">
@@ -631,7 +638,7 @@ $system_info = str_replace('"', "'", $system_info);
          <div class="col-lg-12 col-md-12 col-sm-12 text-center">
             <hr/>
             <small>
-               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>
+               Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
             </small>
          </div>
       </div>
