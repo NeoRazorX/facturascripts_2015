@@ -188,11 +188,11 @@ class empresa extends fs_model
          /// añadimos compatibilidad hacia atrás
          if( isset($e[0]['email_password']) )
          {
-            $this->email_config['mail_password'] = $e[0]['email_password'];
+            $this->email_password = $this->email_config['mail_password'] = $e[0]['email_password'];
          }
          if( isset($e[0]['email_firma']) )
          {
-            $this->email_config['mail_firma'] = $e[0]['email_firma'];
+            $this->email_firma = $this->email_config['mail_firma'] = $e[0]['email_firma'];
          }
          
          $fsvar = new fs_var();
