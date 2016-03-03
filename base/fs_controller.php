@@ -963,31 +963,35 @@ class fs_controller
    public function system_info()
    {
       $txt = 'facturascripts: '.$this->version()."\n";
-      $txt .= 'os: '.php_uname()."\n";
-      $txt .= 'php: '.phpversion()."\n";
-      $txt .= 'database type: '.FS_DB_TYPE."\n";
-      $txt .= 'database version: '.$this->db->version()."\n";
       
-      if( $this->cache->connected() )
+      if($this->user->logged_on)
       {
-         $txt .= "memcache: YES\n";
-         $txt .= 'memcache version: '.$this->cache->version()."\n";
-      }
-      else
-         $txt .= "memcache: NO\n";
-      
-      if( function_exists('curl_init') )
-      {
-         $txt .= "curl: YES\n";
-      }
-      else
-         $txt .= "curl: NO\n";
-      
-      $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
-      
-      if( isset($_SERVER['REQUEST_URI']) )
-      {
-         $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+         $txt .= 'os: '.php_uname()."\n";
+         $txt .= 'php: '.phpversion()."\n";
+         $txt .= 'database type: '.FS_DB_TYPE."\n";
+         $txt .= 'database version: '.$this->db->version()."\n";
+         
+         if( $this->cache->connected() )
+         {
+            $txt .= "memcache: YES\n";
+            $txt .= 'memcache version: '.$this->cache->version()."\n";
+         }
+         else
+            $txt .= "memcache: NO\n";
+         
+         if( function_exists('curl_init') )
+         {
+            $txt .= "curl: YES\n";
+         }
+         else
+            $txt .= "curl: NO\n";
+         
+         $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
+         
+         if( isset($_SERVER['REQUEST_URI']) )
+         {
+            $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+         }
       }
       
       foreach($this->get_errors() as $e)

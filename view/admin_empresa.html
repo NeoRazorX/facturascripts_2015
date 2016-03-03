@@ -94,7 +94,7 @@
    });
 </script>
 
-<div class="container-fluid">
+<div class='container{if="$fsc->facturacion_base"}-fluid{/if}'>
    <div class="row">
       <div class="col-md-2 col-sm-3"></div>
       <div class="col-md-10 col-sm-9">
@@ -292,7 +292,7 @@
                      <div class="col-sm-12">
                         <div class="form-group">
                            Firma:
-                           <textarea class="form-control" name="mail_firma">{$fsc->empresa->email_config['mail_firma']}</textarea>
+                           <textarea class="form-control" name="mail_firma" rows="4">{$fsc->empresa->email_config['mail_firma']}</textarea>
                         </div>
                      </div>
                   </div>

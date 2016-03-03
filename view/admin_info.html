@@ -1,197 +1,273 @@
 {include="header"}
 
-<div class="container-fluid" style="margin-top: 10px; margin-bottom: 10px;">
+<div class="container-fluid">
    <div class="row">
-      <div class="col-sm-2 col-xs-1">
-         <div class="btn-group hidden-xs">
-            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
-               <span class="glyphicon glyphicon-refresh"></span>
-            </a>
-            {if="$fsc->page->is_default()"}
-            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
-               <span class="glyphicon glyphicon-home"></span>
-            </a>
-            {else}
-            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
-               <span class="glyphicon glyphicon-home"></span>
-            </a>
+      <div class="col-xs-12">
+         <div class="btn-group">
+         {loop="$fsc->extensions"}
+            {if="$value->type=='button'"}
+            <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
             {/if}
+         {/loop}
          </div>
       </div>
-      <div class="col-sm-7 col-xs-9 text-center">
-         <h3 style="margin-top: 0px;">{$fsc->page->title}</h3>
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="page-header">
+            <h1>
+               Información del sistema
+               <span class="btn-group">
+                  <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
+                     <span class="glyphicon glyphicon-refresh"></span>
+                  </a>
+                  {if="$fsc->page->is_default()"}
+                  <a class="btn btn-xs btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+                     <span class="glyphicon glyphicon-home"></span>
+                  </a>
+                  {else}
+                  <a class="btn btn-xs btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+                     <span class="glyphicon glyphicon-home"></span>
+                  </a>
+                  {/if}
+               </span>
+            </h1>
+         </div>
+         <p class='help-block'>
+            Aquí tienes información básica sobre esta instalación de FacturaScripts,
+            base de datos, listado de tablas y el historial de errores con múltiples
+            filtros, para facilitarte el trabajo a la hora de encontrar un fallo.
+         </p>
       </div>
-      <div class="col-sm-3 col-xs-2 text-right">
+   </div>
+   <div class="table-responsive">
+      <table class="table table-hover">
+         <thead>
+            <tr>
+               <th class="text-left">FacturaScripts</th>
+               <th class="text-center">PHP</th>
+               <th class="text-center">Base de datos</th>
+               <th class="text-center">Motor de base de datos</th>
+               <th class="text-right">Caché</th>
+            </tr>
+         </thead>
+         <tr>
+            <td><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&version={$fsc->version()}" target="_blank">{$fsc->version()}</a></td>
+            <td class="text-center">{$fsc->php_version()}</td>
+            <td class="text-center">{$fsc->fs_db_name()}</td>
+            <td class="text-center">{$fsc->fs_db_version()}</td>
+            <td class="text-right">{$fsc->cache_version()}</td>
+         </tr>
+      </table>
+   </div>
+   <div class="row">
+      <div class="col-sm-12 text-right">
          {if="$fsc->allow_delete"}
-         <a class="btn btn-sm btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
+         <a class="btn btn-xs btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
             <span class="glyphicon glyphicon-trash"></span>
             <span class="hidden-xs">&nbsp; Limpiar la cache</span>
          </a>
          {/if}
       </div>
    </div>
-</div>
-
-<div role="tabpanel">
-   <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active">
-         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
-         </a>
-      </li>
-      <li role="presentation">
-         <a href="#history" aria-controls="history" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-            <span class="hidden-xs">&nbsp; Historial</span>
-         </a>
-      </li>
-      <li role="presentation">
-         <a href="#tablas" aria-controls="tablas" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-            <span class="hidden-xs">&nbsp; Tablas</span>
-         </a>
-      </li>
-      <li role="presentation">
-         <a href="#bloqueos" aria-controls="bloqueos" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <span class="hidden-xs">&nbsp; Bloqueos</span>
-         </a>
-      </li>
-   </ul>
-   <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="home">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
+   {if="$fsc->get_locks()"}
+   <div class="row">
+      <div class="col-sm-12">
+         <br/>
+         <div class="panel panel-warning">
+            <div class="panel-heading">
+               <h3 class="panel-title">Bloqueos en la base de datos</h3>
+            </div>
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th class="text-left">Base de datos</th>
+                        <th class="text-left">relname</th>
+                        <th class="text-left">relation</th>
+                        <th class="text-left">transaction ID</th>
+                        <th class="text-left">PID</th>
+                        <th class="text-left">modo</th>
+                        <th class="text-left">granted</th>
+                     </tr>
+                  </thead>
+                  {loop="$fsc->get_locks()"}
                   <tr>
-                     <th class="text-left">FacturaScripts</th>
-                     <th class="text-center">PHP</th>
-                     <th class="text-center">Base de datos</th>
-                     <th class="text-center">Motor de base de datos</th>
-                     <th class="text-right">Caché</th>
+                     <td>{$value.database}</td>
+                     <td>{$value.relname}</td>
+                     <td>{$value.relation}</td>
+                     <td>{$value.transactionid}</td>
+                     <td>{$value.pid}</td>
+                     <td>{$value.mode}</td>
+                     <td>{$value.granted}</td>
                   </tr>
-               </thead>
-               <tr>
-                  <td>
-                     <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&version={$fsc->version()}" target="_blank">{$fsc->version()}</a>
-                  </td>
-                  <td class="text-center">{$fsc->php_version()}</td>
-                  <td class="text-center">{$fsc->fs_db_name()}</td>
-                  <td class="text-center">{$fsc->fs_db_version()}</td>
-                  <td class="text-right">{$fsc->cache_version()}</td>
-               </tr>
-            </table>
-         </div>
-         <div class="panel-group active" id="accordion" style="margin: 10px;">
-            <div class="panel panel-default">
-               <div class="panel-heading">
-                  <h3 class="panel-title">
-                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse_so">Sistema operativo</a>
-                  </h3>
-               </div>
-               <div id="collapse_so" class="panel-collapse collapse in">
-                  <div class="panel-body">{$fsc->uname()}</div>
-                  {if="$fsc->linux()"}
-                  <div class="panel-footer">
-                     <b>Uptime:</b> {$fsc->sys_uptime()}
-                  </div>
-                  {/if}
-               </div>
-            </div>
-
-            {if="$fsc->linux()"}
-            <div class="panel panel-default">
-               <div class="panel-heading">
-                  <h3 class="panel-title">
-                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse_mem">Memoria</a>
-                  </h3>
-               </div>
-               <div id="collapse_mem" class="panel-collapse collapse">
-                  <div class="panel-body"><pre>{$fsc->sys_free()}</pre></div>
-               </div>
-            </div>
-
-            <div class="panel panel-default">
-               <div class="panel-heading">
-                  <h3 class="panel-title">
-                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse_dd">Disco duro</a>
-                  </h3>
-               </div>
-               <div id="collapse_dd" class="panel-collapse collapse">
-                  <div class="panel-body"><pre>{$fsc->sys_df()}</pre></div>
-               </div>
-            </div>
-            {/if}
-         </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="history">
-         <div class="table-responsive">
-            <table class="table table-hover"
-                   data-toggle="table"
-                   data-url="{$fsc->url()}&json=fslog"
-                   data-show-columns="true"
-                   data-search="true"
-                   data-show-refresh="true"
-                   data-show-export="true"
-                   data-pagination="true"
-                   data-page-size="{#FS_ITEM_LIMIT#}"
-                   data-show-header="true"
-                   data-sortable="true"
-                   data-show-footer="true">
-               <thead>
-                  <tr>
-                     <th class="text-left" data-field="usuario" data-sortable="true">Usuario</th>
-                     <th class="text-left" data-field="tipo" data-sortable="true">Tipo</th>
-                     <th class="text-left" data-field="detalle" data-sortable="true">Detalle</th>
-                     <th class="text-left" data-field="ip" data-sortable="true">IP</th>
-                     <th class="text-right" data-field="fecha" data-sortable="true">Fecha</th>
+                  {else}
+                  <tr class="warning">
+                     <td colspan="7">Ningún bloqueo detectado.</td>
                   </tr>
-               </thead>
-            </table>
-         </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="tablas">
-         <div class="container-fluid" style="margin-top: 10px;">
-            <div class="row">
-               {loop="$fsc->get_db_tables()"}
-               <div class="col-md-4">{$value.name}</div>
-               {/loop}
+                  {/loop}
+               </table>
             </div>
-         </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="bloqueos">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
-                  <tr>
-                     <th class="text-left">Base de datos</th>
-                     <th class="text-left">relname</th>
-                     <th class="text-left">relation</th>
-                     <th class="text-left">transaction ID</th>
-                     <th class="text-left">PID</th>
-                     <th class="text-left">modo</th>
-                     <th class="text-left">granted</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->get_locks()"}
-               <tr>
-                  <td>{$value.database}</td>
-                  <td>{$value.relname}</td>
-                  <td>{$value.relation}</td>
-                  <td>{$value.transactionid}</td>
-                  <td>{$value.pid}</td>
-                  <td>{$value.mode}</td>
-                  <td>{$value.granted}</td>
-               </tr>
-               {else}
-               <tr class="bg-warning">
-                  <td colspan="7">Ningún bloqueo detectado.</td>
-               </tr>
-               {/loop}
-            </table>
          </div>
       </div>
    </div>
+   {/if}
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+   <li role="presentation" class="active">
+      <a href="#history" aria-controls="history" role="tab" data-toggle="tab">
+         <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+         <span class="hidden-xs">&nbsp; Historial</span>
+         <span class="badge">{function="count($fsc->resultados)"}</span>
+      </a>
+   </li>
+   <li role="presentation">
+      <a href="#tablas" aria-controls="tablas" role="tab" data-toggle="tab">
+         <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+         <span class="hidden-xs">&nbsp; Tablas</span>
+      </a>
+   </li>
+   {if="$fsc->modulos_eneboo"}
+   <li role="presentation">
+      <a href="#eneboo" aria-controls="eneboo" role="tab" data-toggle="tab">
+         <span class="glyphicon glyphicon-hdd" aria-hidden="true"></span>
+         <span class="hidden-xs">&nbsp; Eneboo</span>
+      </a>
+   </li>
+   {/if}
+</ul>
+<div class="tab-content">
+   <div role="tabpanel" class="tab-pane active" id="history">
+      <form action="{$fsc->url()}" method="post" class="form">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th width="120">Usuario</th>
+                     <th width="160">Tipo</th>
+                     <th>Detalle</th>
+                     <th width="120">IP</th>
+                     <th colspan="2" class="text-right">Fecha</th>
+                  </tr>
+               </thead>
+               <tr>
+                  <td><input type="text" name="b_usuario" value="{$fsc->b_usuario}" class="form-control" placeholder="buscar" autocomplete="off"/></td>
+                  <td>
+                     <div class="input-group">
+                        <input type="text" name="b_tipo" value="{$fsc->b_tipo}" class="form-control" placeholder="buscar" autocomplete="off"/>
+                        <span class="input-group-addon" title="alerta">
+                           {if="$fsc->b_alerta"}
+                           <input type="checkbox" name="b_alerta" value="TRUE" checked="" onchange="this.form.submit()"/>
+                           {else}
+                           <input type="checkbox" name="b_alerta" value="TRUE" onchange="this.form.submit()"/>
+                           {/if}
+                           <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+                        </span>
+                     </div>
+                  </td>
+                  <td>
+                     <div class="input-group">
+                        <input type="text" name="b_detalle" value="{$fsc->b_detalle}" class="form-control" placeholder="buscar" autocomplete="off"/>
+                        <span class="input-group-btn">
+                           <button type="submit" class="btn btn-primary">
+                              <span class="glyphicon glyphicon-search"></span>
+                           </button>
+                        </span>
+                     </div>
+                  </td>
+                  <td><input type="text" name="b_ip" value="{$fsc->b_ip}" class="form-control" placeholder="buscar" autocomplete="off"/></td>
+                  <td width="140">
+                     <input type="text" name="b_desde" value="{$fsc->b_desde}" class="form-control datepicker" placeholder="desde" autocomplete="off" onchange="this.form.submit()"/>
+                  </td>
+                  <td width="140">
+                     <input type="text" name="b_hasta" value="{$fsc->b_hasta}" class="form-control datepicker" placeholder="hasta" autocomplete="off" onchange="this.form.submit()"/>
+                  </td>
+               </tr>
+               {loop="$fsc->resultados"}
+               <tr{if="$value->alerta"} class="danger"{/if}>
+                  <td>{$value->usuario}</td>
+                  <td>{$value->tipo}</td>
+                  <td>{$value->detalle}</td>
+                  <td>{$value->ip}</td>
+                  <td colspan="2" class="text-right">{$value->fecha}</td>
+               </tr>
+               {else}
+               <tr class="warning">
+                  <td colspan="6">Sin resultados.</td>
+               </tr>
+               {/loop}
+            </table>
+         </div>
+      </form>
+   </div>
+   <div role="tabpanel" class="tab-pane" id="tablas">
+      <br/>
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-lg-12 col-sm-12">
+               <p class="help-block">
+                  <span class="glyphicon glyphicon-info-sign"></span>
+                  &nbsp; Recuerda que puedes usar el plugin <b>sql_editor</b> para
+                  hacer consultas sql en la base de datos.
+               </p>
+            </div>
+         </div>
+         <div class="row">
+            {loop="$fsc->get_db_tables()"}
+            <div class="col-lg-3 col-sm-4">{$value.name}</div>
+            {/loop}
+         </div>
+      </div>
+   </div>
+   {if="$fsc->modulos_eneboo"}
+   <div role="tabpanel" class="tab-pane" id="eneboo">
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-sm-6">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <thead>
+                        <tr>
+                           <th>Módulo</th>
+                           <th>Descripción</th>
+                           <th class="text-right">Versión</th>
+                        </tr>
+                     </thead>
+                     {loop="$fsc->modulos_eneboo"}
+                     <tr>
+                        <td>{$value['idmodulo']}</td>
+                        <td>{$value['descripcion']}</td>
+                        <td class="text-right">{$value['version']}</td>
+                     </tr>
+                     {/if}
+                  </table>
+               </div>
+            </div>
+            <div class="col-sm-6">
+               <br/>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Importante</h3>
+                  </div>
+                  <div class="panel-body">
+                     <p class="help-block">
+                        FacturaScripts es compatible con los módulos oficiales 2.3
+                        de Eneboo, no así con las docenas de personalizaciones que hay.
+                        Si necesitas modificaciones, busca un partner de FacturaScripts.
+                     </p>
+                  </div>
+                  <div class="panel-footer">
+                     <a href="https://www.facturascripts.com/comm3/index.php?page=community_feedback&feedback_partner=TRUE" target="_blank" class="btn btn-sm btn-default">
+                        Partners de FacturaScrips
+                     </a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   {/if}
 </div>
 
 {include="footer"}

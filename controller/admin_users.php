@@ -96,4 +96,63 @@ class admin_users extends fs_controller
             $this->new_error_msg("¡Usuario no encontrado!");
       }
    }
+   
+   public function all_pages()
+   {
+      $returnlist = array();
+      
+      /// Obtenemos la lista de páginas. Todas
+      foreach($this->menu as $m)
+      {
+         $m->enabled = FALSE;
+         $m->allow_delete = FALSE;
+         $m->users = array();
+         $returnlist[] = $m;
+      }
+      
+      /// completamos con los permisos de los usuarios
+      foreach($this->user->all() as $user)
+      {
+         if($user->admin)
+         {
+            foreach($returnlist as $i => $value)
+            {
+               $returnlist[$i]->users[$user->nick] = array(
+                   'modify' => TRUE,
+                   'delete' => TRUE,
+               );
+            }
+         }
+         else
+         {
+            foreach($returnlist as $i => $value)
+            {
+               $returnlist[$i]->users[$user->nick] = array(
+                   'modify' => FALSE,
+                   'delete' => FALSE,
+               );
+            }
+            
+            foreach($user->get_accesses() as $a)
+            {
+               foreach($returnlist as $i => $value)
+               {
+                  if($a->fs_page == $value->name)
+                  {
+                     $returnlist[$i]->users[$user->nick]['modify'] = TRUE;
+                     $returnlist[$i]->users[$user->nick]['delete'] = $a->allow_delete;
+                     break;
+                  }
+               }
+            }
+         }
+      }
+      
+      /// ordenamos por nombre
+      usort($returnlist, function($a, $b) {
+         return strcmp($a->name, $b->name);
+      });
+      
+      return $returnlist;
+   }
 }

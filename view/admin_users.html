@@ -53,21 +53,27 @@
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
-         <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
+         <a href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
             <span class="hidden-xs">&nbsp; Usuarios</span>
             <span class="badge">{function="count($fsc->user->all())"}</span>
          </a>
       </li>
       <li role="presentation">
-         <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">
+         <a href="#permisos" aria-controls="permisos" role="tab" data-toggle="tab">
+            <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+            <span class="hidden-xs">&nbsp; Permisos</span>
+         </a>
+      </li>
+      <li role="presentation">
+         <a href="#historial" aria-controls="historial" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
             <span class="hidden-xs">&nbsp; Historial</span>
          </a>
       </li>
    </ul>
    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="home">
+      <div role="tabpanel" class="tab-pane active" id="usuarios">
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -108,7 +114,58 @@
             </div>
          </div>
       </div>
-      <div role="tabpanel" class="tab-pane" id="profile">
+      <div role="tabpanel" class="tab-pane" id="permisos">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-left">Página</th>
+                     {loop="$fsc->user->all()"}
+                     <th colspan="2" class="text-center">
+                        <a href="{$value->url()}">
+                           <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {$value->nick}
+                        </a>
+                     </th>
+                     {/loop}
+                  </tr>
+               </thead>
+               {loop="$fsc->all_pages()"}
+                  <tr>
+                     <td>{$value->name}</td>
+                     {loop="$value->users"}
+                        <td class='text-center{if="$counter%2==0"} info{/if}'>
+                           {if="$value2['modify']"}
+                           <span class="glyphicon glyphicon-edit" aria-hidden="true" title="{$key2} puede editar en {$value1->name}"></span>
+                           {/if}
+                        </td>
+                        <td class='text-center{if="$counter%2==0"} info{/if}'>
+                           {if="$value2['delete']"}
+                           <span class="glyphicon glyphicon-trash" aria-hidden="true" title="{$key2} puede eliminar en {$value1->name}"></span>
+                           {/if}
+                        </td>
+                     {/loop}
+                  </tr>
+               {/if}
+            </table>
+         </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="historial">
+         <div class="container-fluid" style="margin-top: 10px;">
+            <div class="row">
+               <div class="col-sm-8">
+                  <p class="help-block">
+                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                     &nbsp; Puedes ver más detalles desde Admin &gt; Información del sistema.
+                  </p>
+               </div>
+               <div class="col-sm-4 text-right">
+                  <a href="index.php?page=admin_info" class="btn btn-xs btn-default">
+                     <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                     <span class="hidden-xs">&nbsp; Historial completo</span>
+                  </a>
+               </div>
+            </div>
+         </div>
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -125,6 +182,10 @@
                   <td>{$value->detalle}</td>
                   <td>{$value->ip}</td>
                   <td class="text-right">{$value->fecha}</td>
+               </tr>
+               {else}
+               <tr class="warning">
+                  <td colspan="4">Sin resultados.</td>
                </tr>
                {/loop}
             </table>
