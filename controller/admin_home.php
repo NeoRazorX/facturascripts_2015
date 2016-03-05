@@ -469,7 +469,7 @@ class admin_home extends fs_controller
                 'idplugin' => NULL,
                 'name' => $f,
                 'prioridad' => '-',
-                'require' => '',
+                'require' => array(),
                 'update_url' => '',
                 'version' => 0,
                 'version_url' => '',
@@ -494,7 +494,13 @@ class admin_home extends fs_controller
                
                if( isset($ini_file['require']) )
                {
-                  $plugin['require'] = $ini_file['require'];
+                  if($ini_file['require'] != '')
+                  {
+                     foreach(explode(',', $ini_file['require']) as $aux)
+                     {
+                        $plugin['require'][] = $aux;
+                     }
+                  }
                }
                
                if( isset($ini_file['idplugin']) )
@@ -588,12 +594,12 @@ class admin_home extends fs_controller
          {
             $wizard = $pitem['wizard'];
             
-            if($pitem['require'] != '')
+            foreach($pitem['require'] as $req)
             {
-               if( !in_array($pitem['require'], $GLOBALS['plugins']) )
+               if( !in_array($req, $GLOBALS['plugins']) )
                {
                   $install = FALSE;
-                  $this->new_error_msg('Dependencias incumplidas: <b>'.$pitem['require'].'</b>');
+                  $this->new_error_msg('Dependencias incumplidas: <b>'.$req.'</b>');
                }
             }
             break;
@@ -735,11 +741,30 @@ class admin_home extends fs_controller
             $this->new_message('Se han eliminado automáticamente las siguientes páginas: '.join(', ', $eliminadas));
          }
          
+         /// desactivamos los plugins que dependan de este
+         foreach($this->plugin_advanced_list() as $plug)
+         {
+            /// ¿El plugin está activo?
+            if( in_array($plug['name'], $GLOBALS['plugins']) )
+            {
+               /**
+                * Si el plugin que hemos desactivado, es requerido por el plugin
+                * que estamos comprobando, lo desativamos también.
+                */
+               if( in_array($name, $plug['require']) )
+               {
+                  $this->disable_plugin($plug['name']);
+               }
+            }
+         }
+         
          /// borramos los archivos temporales del motor de plantillas
          foreach( scandir(getcwd().'/tmp') as $f)
          {
             if( substr($f, -4) == '.php' )
+            {
                unlink('tmp/'.$f);
+            }
          }
          
          /// limpiamos la caché
