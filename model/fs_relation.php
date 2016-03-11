@@ -19,7 +19,7 @@
  */
 
 /**
- * Description of fs_relation
+ * Este modelo permite relacionar dos elementos de tablas distintas.
  *
  * @author carlos
  */
@@ -129,7 +129,9 @@ class fs_relation extends fs_model
       if($data)
       {
          foreach($data as $d)
+         {
             $rlist[] = new fs_relation($d);
+         }
       }
       
       return $rlist;

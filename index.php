@@ -107,7 +107,11 @@ else
       $tpl = new RainTPL();
       $tpl->assign('fsc', $fsc);
       
-      if( isset($_COOKIE['user']) )
+      if( isset($_POST['user']) )
+      {
+         $tpl->assign('nlogin', $_POST['user']);
+      }
+      else if( isset($_COOKIE['user']) )
       {
          $tpl->assign('nlogin', $_COOKIE['user']);
       }
