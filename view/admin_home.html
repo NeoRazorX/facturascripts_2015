@@ -365,7 +365,21 @@
                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
                      {/if}
                   </td>
-                  <td>{$value->nombre}</td>
+                  <td>
+                     {$value->nombre}
+                     {if="$value->imagen"}
+                     <div style="margin-bottom: 5px"></div>
+                        {if="!$value->zip_link"}
+                        <a href="{$value->link}" target="_blank">
+                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+                        </a>
+                        {else}
+                        <a href="{$value->imagen}" target="_blank">
+                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+                        </a>
+                        {/if}
+                     {/if}
+                  </td>
                   <td>
                      {function="nl2br($value->descripcion)"}<br/>
                      {if="substr($value->zip_link, -4) == '.zip'"}

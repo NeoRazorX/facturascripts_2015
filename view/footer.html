@@ -69,14 +69,28 @@
                   </ol>
                </div>
             </div>
+            <br/>
+            {loop="$fsc->extensions"}
+               {if="$value->type=='minicron'"}
+               <iframe src="index.php?page={$value->from}{$value->params}" width="100%"></iframe>
+               {/if}
+            {/loop}
          </div>
+      </div>
+      {else}
+      <div class="hidden">
+         {loop="$fsc->extensions"}
+            {if="$value->type=='minicron'"}
+            <iframe src="index.php?page={$value->from}{$value->params}"></iframe>
+            {/if}
+         {/loop}
       </div>
       {/if}
       
       <div class="row">
          <div class="col-sm-4 col-xs-6">
             <small>
-               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>.
+               Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>.
             </small>
          </div>
          <div class="col-sm-4 hidden-xs text-center">

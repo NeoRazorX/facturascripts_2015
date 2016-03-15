@@ -107,6 +107,11 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>xid</nombre>
+      <tipo>character varying(30)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
       <nombre>lema</nombre>
       <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>

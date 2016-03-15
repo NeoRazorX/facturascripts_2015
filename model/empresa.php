@@ -4,16 +4,16 @@
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -27,6 +27,7 @@ class empresa extends fs_model
     * @var type 
     */
    public $id;
+   public $xid;
    
    public $stockpedidos;
    
@@ -146,6 +147,7 @@ class empresa extends fs_model
       if($e)
       {
          $this->id = $this->intval($e[0]['id']);
+         $this->xid = $e[0]['xid'];
          $this->stockpedidos = $this->str2bool($e[0]['stockpedidos']);
          $this->contintegrada = $this->str2bool($e[0]['contintegrada']);
          $this->recequivalencia = $this->str2bool($e[0]['recequivalencia']);
@@ -258,6 +260,11 @@ class empresa extends fs_model
       $this->telefono = $this->no_html($this->telefono);
       $this->web = $this->no_html($this->web);
       
+      if( is_null($this->xid) )
+      {
+         $this->xid = $this->random_string(30);
+      }
+      
       if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
       {
          $this->new_error_msg("Nombre de empresa no válido.");
@@ -309,6 +316,7 @@ class empresa extends fs_model
                  .", recequivalencia = ".$this->var2str($this->recequivalencia)
                  .", contintegrada = ".$this->var2str($this->contintegrada)
                  .", stockpedidos = ".$this->var2str($this->stockpedidos)
+                 .", xid = ".$this->var2str($this->xid)
                  .", lema = ".$this->var2str($this->lema)
                  .", horario = ".$this->var2str($this->horario)
                  .", pie_factura = ".$this->var2str($this->pie_factura)
