@@ -182,7 +182,7 @@ class admin_info extends fs_controller
       
       if($this->b_detalle != '')
       {
-         $sql .= $and." detalle LIKE '%".$this->b_detalle."%'";
+         $sql .= $and." lower(detalle) LIKE '%".mb_strtolower($this->b_detalle)."%'";
          $and = ' AND ';
       }
       

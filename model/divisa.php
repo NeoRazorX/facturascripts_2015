@@ -200,17 +200,24 @@ class divisa extends fs_model
       $this->cache->delete('m_divisa_all');
    }
    
+   /**
+    * Devuelve un array con todas las divisas.
+    * @return \divisa
+    */
    public function all()
    {
       $listad = $this->cache->get_array('m_divisa_all');
       if(!$listad)
       {
-         $divisas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY coddivisa ASC;");
-         if($divisas)
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY coddivisa ASC;");
+         if($data)
          {
-            foreach($divisas as $d)
+            foreach($data as $d)
+            {
                $listad[] = new divisa($d);
+            }
          }
+         
          $this->cache->set('m_divisa_all', $listad);
       }
       

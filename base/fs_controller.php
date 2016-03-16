@@ -324,11 +324,26 @@ class fs_controller
     * Muestra un mensaje al usuario
     * @param type $msg mensaje a mostrar
     */
-   public function new_message($msg=FALSE)
+   public function new_message($msg=FALSE, $save=FALSE, $tipo = 'msg')
    {
       if($msg)
       {
          $this->messages[] = str_replace("\n", ' ', $msg);
+         
+         if($save)
+         {
+            $fslog = new fs_log();
+            $fslog->tipo = $tipo;
+            $fslog->detalle = $msg;
+            $fslog->ip = $_SERVER['REMOTE_ADDR'];
+            
+            if($this->user)
+            {
+               $fslog->usuario = $this->user->nick;
+            }
+            
+            $fslog->save();
+         }
       }
    }
    
@@ -1135,6 +1150,15 @@ class fs_controller
       }
       
       return $this->last_changes;
+   }
+   
+   /**
+    * Elimina la lista con los últimos cambios del usuario.
+    */
+   public function clean_last_changes()
+   {
+      $this->last_changes = array();
+      $this->cache->delete('last_changes_'.$this->user->nick);
    }
    
    /**
