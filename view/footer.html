@@ -56,37 +56,35 @@
       </div>
       {/if}
       
-      {if="FS_DB_HISTORY"}
       <div class="row">
          <div class="col-sm-12">
-            <div class="panel panel-default hidden-print">
-               <div class="panel-heading">
-                  <h3 class="panel-title">Consultas SQL:</h3>
+            {if="FS_DB_HISTORY"}
+               <div class="panel panel-default hidden-print">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Consultas SQL:</h3>
+                  </div>
+                  <div class="panel-body">
+                     <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
+                        {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
+                     </ol>
+                  </div>
                </div>
-               <div class="panel-body">
-                  <ol style="font-size: 11px; margin: 0px; padding: 0px 0px 0px 20px;">
-                     {loop="$fsc->get_db_history()"}<li>{$value}</li>{/loop}
-                  </ol>
+               {loop="$fsc->extensions"}
+                  {if="$value->type=='hidden_iframe'"}
+                  <iframe src="index.php?page={$value->from}{$value->params}" width="100%"></iframe>
+                  {/if}
+               {/loop}
+            {else}
+               <div class="hidden">
+               {loop="$fsc->extensions"}
+                  {if="$value->type=='hidden_iframe'"}
+                  <iframe src="index.php?page={$value->from}{$value->params}"></iframe>
+                  {/if}
+               {/loop}
                </div>
-            </div>
-            <br/>
-            {loop="$fsc->extensions"}
-               {if="$value->type=='minicron'"}
-               <iframe src="index.php?page={$value->from}{$value->params}" width="100%"></iframe>
-               {/if}
-            {/loop}
+            {/if}
          </div>
       </div>
-      {else}
-      <div class="hidden">
-         {loop="$fsc->extensions"}
-            {if="$value->type=='minicron'"}
-            <iframe src="index.php?page={$value->from}{$value->params}"></iframe>
-            {/if}
-         {/loop}
-      </div>
-      {/if}
-      
       <div class="row">
          <div class="col-sm-4 col-xs-6">
             <small>

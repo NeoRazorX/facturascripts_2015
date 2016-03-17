@@ -80,7 +80,8 @@ class serie extends fs_model
    public function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf) VALUES ('A','SERIE A',FALSE,'0');";
+      return "INSERT INTO ".$this->table_name." (codserie,descripcion,siniva,irpf) VALUES "
+              . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
    }
    
    public function url()

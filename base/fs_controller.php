@@ -150,7 +150,7 @@ class fs_controller
          $fsext = new fs_extension();
          foreach($fsext->all() as $ext)
          {
-            if($ext->to == $name OR ($ext->type == 'head' AND is_null($ext->to)) )
+            if($ext->to == $name OR ( is_null($ext->to) AND in_array($ext->type,array('head','hidden_iframe')) ) )
             {
                $this->extensions[] = $ext;
             }
