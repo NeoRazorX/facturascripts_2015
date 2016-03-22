@@ -397,13 +397,13 @@
                      <p class="help-block">Sólo sirve para inicializar algunos campos.</p>
                   </div>
                   <div class="col-sm-4">
-                     <a href="{$fsc->serie->url()}">Serie</a>:
+                     <a href="{$fsc->serie->url()}" class="text-capitalize">{#FS_SERIE#}</a>:
                      <select name="codserie" class="form-control">
                      {loop="$fsc->serie->all()"}
                         <option value="{$value->codserie}"{if="$fsc->empresa->codserie == $value->codserie"} selected=""{/if}>{$value->descripcion}</option>
                      {/loop}
                      </select>
-                     <p class="help-block">El {#FS_IRPF#} se define en la serie.</p>
+                     <p class="help-block">El {#FS_IRPF#} se define para cada {#FS_SERIE#}.</p>
                   </div>
                   <div class="col-sm-4">
                      <div class="checkbox">
@@ -476,7 +476,7 @@
                            {else}
                            <input type="checkbox" name="print_alb" value="TRUE"/>
                            {/if}
-                           mostrar albaranes relacionados.
+                           mostrar {#FS_ALBARANES#} relacionados.
                         </label>
                      </div>
                      <div class="checkbox-inline">
@@ -515,6 +515,7 @@
                         <div class="form-group">
                            Lema:
                            <input class="form-control" type="text" name="lema" value="{$fsc->empresa->lema}" autocomplete="off"/>
+                           <p class="help-block">Lema y horario se utilizan solamente en los tickets.</p>
                         </div>
                         <div class="form-group">
                            Horario:

@@ -395,13 +395,15 @@ class admin_home extends fs_controller
       $include = array(
           'factura','facturas','factura_simplificada','factura_rectificativa',
           'albaran','albaranes','pedido','pedidos','presupuesto','presupuestos',
-          'provincia','apartado','cifnif','iva','irpf','numero2'
+          'provincia','apartado','cifnif','iva','irpf','numero2','serie','series'
       );
       
       foreach($GLOBALS['config2'] as $i => $value)
       {
          if( in_array($i, $include) )
+         {
             $clist[] = array('nombre' => $i, 'valor' => $value);
+         }
       }
       
       return $clist;
@@ -932,14 +934,32 @@ class admin_home extends fs_controller
             $res = $zip->open('download.zip');
             if($res === TRUE)
             {
+               $plugins_list = scandir(getcwd().'/plugins');
                $zip->extractTo('plugins/');
                $zip->close();
                unlink('download.zip');
                
-               /// renombramos el directorio
-               if( file_exists('plugins/'.$_GET['download'].'-master') )
+               /// renombramos si es necesario
+               foreach( scandir(getcwd().'/plugins') as $f)
                {
-                  rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
+                  if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                  {
+                     $encontrado2 = FALSE;
+                     foreach($plugins_list as $f2)
+                     {
+                        if($f == $f2)
+                        {
+                           $encontrado2 = TRUE;
+                           break;
+                        }
+                     }
+                     
+                     if(!$encontrado2)
+                     {
+                        rename('plugins/'.$f, 'plugins/'.$_GET['download']);
+                        break;
+                     }
+                  }
                }
                
                $this->new_message('Plugin añadido correctamente.');
@@ -1074,6 +1094,11 @@ class admin_home extends fs_controller
               'url' => 'https://github.com/joenilson/republica_dominicana/archive/master.zip',
               'url_repo' => 'https://github.com/joenilson/republica_dominicana',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>República Dominicana</b>.'
+          ),
+          'venezuela' => array(
+              'url' => 'https://github.com/ConsultoresTecnologicos/FS-LocalizacionVenezuela/archive/master.zip',
+              'url_repo' => 'https://github.com/ConsultoresTecnologicos/FS-LocalizacionVenezuela',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Venezuela</b>.'
           ),
       );
       $fsvar = new fs_var();

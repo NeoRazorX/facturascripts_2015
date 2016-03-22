@@ -69,7 +69,7 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    
    if( !isset($GLOBALS['config2']['check_db_types']) )
    {
-      $GLOBALS['config2']['check_db_types'] = 'false';
+      $GLOBALS['config2']['check_db_types'] = 0;
    }
    
    if( !isset($GLOBALS['config2']['stock_negativo']) )
@@ -122,6 +122,12 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
    {
       $GLOBALS['config2']['db_integer'] = 'INTEGER';
    }
+   
+   if( !isset($GLOBALS['config2']['serie']) )
+   {
+      $GLOBALS['config2']['serie'] = 'serie';
+      $GLOBALS['config2']['series'] = 'series';
+   }
 }
 else
 {
@@ -148,10 +154,12 @@ else
        'iva' => 'IVA',
        'irpf' => 'IRPF',
        'numero2' => 'número 2',
+       'serie' => 'serie',
+       'series' => 'series',
        'cost_is_average' => 1,
        'precio_compra' => 'coste',
        'homepage' => 'admin_home',
-       'check_db_types' => 'false',
+       'check_db_types' => 0,
        'stock_negativo' => 1,
        'ventas_sin_stock' => 1,
        'ip_whitelist' => '*',

@@ -485,8 +485,7 @@
                <div class="row bg-info">
                   <div class="col-md-12 col-sm-12">
                      <h2>
-                        <span class="glyphicon glyphicon-globe"></span>
-                        &nbsp; Traducciones:
+                        <i class="fa fa-language"></i>&nbsp; Traducciones:
                      </h2>
                      <p class="help-block">
                         FACTURA y FACTURAS se traducen únicamente en los documentos de ventas.
@@ -517,10 +516,10 @@
                      <div class="form-group">
                         Comprobaciones en la base de datos:
                         <select name="check_db_types" class="form-control">
-                           <option value="true"{if="$GLOBALS['config2']['check_db_types']=='true'"} selected=''{/if}>
+                           <option value="true"{if="$GLOBALS['config2']['check_db_types']==1"} selected=''{/if}>
                               Comprobar los tipos de las columnas de las tablas
                            </option>
-                           <option value="false"{if="$GLOBALS['config2']['check_db_types']=='false'"} selected=''{/if}>
+                           <option value="false"{if="$GLOBALS['config2']['check_db_types']!=1"} selected=''{/if}>
                               No comprobar los tipos
                            </option>
                         </select>
@@ -570,7 +569,7 @@
                         Algoritmo de nuevo código:
                         <select name="new_codigo" class="form-control">
                            <option value="eneboo"{if="$GLOBALS['config2']['new_codigo']=='eneboo'"} selected=''{/if}>Compatible con Eneboo</option>
-                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + SERIE + NÚMERO</option>
+                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + {#FS_SERIE#} + NÚMERO</option>
                         </select>
                      </div>
                   </div>

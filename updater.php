@@ -34,19 +34,23 @@ class fs_updater
    public $tr_options;
    public $tr_updates;
    public $version;
+   public $xid;
    
+   private $cache;
    private $download_list2;
    private $plugin_updates;
    
    public function __construct()
    {
       $this->btn_fin = FALSE;
+      $this->cache = new fs_cache();
       $this->errores = '';
       $this->mensajes = '';
       $this->plugins = array();
       $this->tr_options = '';
       $this->tr_updates = '';
       $this->version = '';
+      $this->xid = '';
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
@@ -186,6 +190,12 @@ class fs_updater
                   $this->btn_fin = TRUE;
                }
             }
+            
+            $e = $this->cache->get_array('empresa');
+            if($e)
+            {
+               $this->xid = $e[0]['xid'];
+            }
          }
          else
          {
@@ -309,7 +319,7 @@ class fs_updater
    private function actualizar_plugin_pago()
    {
       $url = 'https://www.facturascripts.com/comm3/index.php?page=community_edit_plugin&id='.
-              $_GET['idplugin'].'&key='.$_GET['key'];
+              $_GET['idplugin'].'&xid='.$this->xid.'&key='.$_GET['key'];
       
       /// descargamos el zip
       if( @file_put_contents('update.zip', $this->curl_get_contents($url)) )

@@ -472,7 +472,7 @@ class fs_postgresql
     */
    private function compare_data_types($v1, $v2)
    {
-      if(FS_CHECK_DB_TYPES == 'false')
+      if(FS_CHECK_DB_TYPES != 1)
       {
          return FALSE;
       }

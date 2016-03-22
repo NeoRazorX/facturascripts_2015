@@ -199,6 +199,12 @@ class empresa extends fs_model
          
          $fsvar = new fs_var();
          $this->email_config = $fsvar->array_get($this->email_config, FALSE);
+         
+         if( is_null($this->xid) )
+         {
+            $this->xid = $this->random_string(30);
+            $this->save();
+         }
       }
    }
    
@@ -259,11 +265,6 @@ class empresa extends fs_model
       $this->provincia = $this->no_html($this->provincia);
       $this->telefono = $this->no_html($this->telefono);
       $this->web = $this->no_html($this->web);
-      
-      if( is_null($this->xid) )
-      {
-         $this->xid = $this->random_string(30);
-      }
       
       if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 100 )
       {
