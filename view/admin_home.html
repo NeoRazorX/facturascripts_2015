@@ -433,53 +433,73 @@
                         </select>
                      </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Portada:
-                     <select name="homepage" class="form-control">
-                        {loop="$fsc->paginas"}
-                        <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected=""{/if}>{$value->name}</option>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Portada:
+                        <select name="homepage" class="form-control">
+                           {loop="$fsc->paginas"}
+                           <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected=""{/if}>{$value->name}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Decimales de los totales:
+                        <select name="nf0" class="form-control">
+                        {loop="$fsc->nf0()"}
+                           <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Decimales de los totales:
-                     <select name="nf0" class="form-control">
-                     {loop="$fsc->nf0()"}
-                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Decimales de los precios:
+                        <select name="nf0_art" class="form-control">
+                        {loop="$fsc->nf0()"}
+                           <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0_art']"} selected=""{/if}>{$value}</option>
+                        {/loop}
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Decimales de los precios:
-                     <select name="nf0_art" class="form-control">
-                     {loop="$fsc->nf0()"}
-                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0_art']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
-                  </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Separador para los Decimales:
-                     <select name="nf1" class="form-control">
-                     {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
-                  </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Separador para los Millares:
-                     <select name="nf2" class="form-control">
-                        <option value="">(Ninguno)</option>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Separador para los Decimales:
+                        <select name="nf1" class="form-control">
                         {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected=""{/if}>{$value}</option>
+                           <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected=""{/if}>{$value}</option>
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Símbolo Divisa:
-                     <select name="pos_divisa" class="form-control">
-                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected=""{/if}>123 {$fsc->simbolo_divisa()}</option>
-                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected=""{/if}>{$fsc->simbolo_divisa()}123</option>
-                     </select>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Separador para los Millares:
+                        <select name="nf2" class="form-control">
+                           <option value="">(Ninguno)</option>
+                           {loop="$fsc->nf1()"}
+                           <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected=""{/if}>{$value}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Símbolo Divisa:
+                        <select name="pos_divisa" class="form-control">
+                           <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected=""{/if}>123 {$fsc->simbolo_divisa()}</option>
+                           <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected=""{/if}>{$fsc->simbolo_divisa()}123</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <p class="help-block">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                        La configuración de decimales y separadores de decimales y millares
+                        se aplica únicamente a los listados y formatos de impresión. Para los
+                        campos editables se utiliza la configuración del sistema operativo.
+                     </p>
                   </div>
                </div>
                <div class="row bg-info">
