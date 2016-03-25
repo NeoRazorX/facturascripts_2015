@@ -38,16 +38,14 @@ class admin_empresa extends fs_controller
    public $serie;
    public $pais;
    
-   public $logo;
-   public $facturacion_base;
-   
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Empresa', 'admin', TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Empresa / web', 'admin', TRUE, TRUE);
    }
    
    protected function private_core()
    {
+      /// inicializamos para que se creen las tablas, aunque no vayamos a configurarlo aquí
       $this->almacen = new almacen();
       $this->cuenta_banco = new cuenta_banco();
       $this->divisa = new divisa();
@@ -56,93 +54,7 @@ class admin_empresa extends fs_controller
       $this->serie = new serie();
       $this->pais = new pais();
       
-      $fsvar = new fs_var();
-      
-      /// obtenemos los datos de configuración de impresión
-      $this->impresion = array(
-          'print_ref' => '1',
-          'print_dto' => '1',
-          'print_alb' => '0',
-          'print_formapago' => '1'
-      );
-      $this->impresion = $fsvar->array_get($this->impresion, FALSE);
-      
-      if( isset($_POST['cifnif']) )
-      {
-         /// guardamos los datos de la empresa
-         $this->empresa->nombre = $_POST['nombre'];
-         $this->empresa->nombrecorto = $_POST['nombrecorto'];
-         $this->empresa->cifnif = $_POST['cifnif'];
-         $this->empresa->administrador = $_POST['administrador'];
-         $this->empresa->codpais = $_POST['codpais'];
-         $this->empresa->provincia = $_POST['provincia'];
-         $this->empresa->ciudad = $_POST['ciudad'];
-         $this->empresa->direccion = $_POST['direccion'];
-         $this->empresa->codpostal = $_POST['codpostal'];
-         $this->empresa->telefono = $_POST['telefono'];
-         $this->empresa->fax = $_POST['fax'];
-         $this->empresa->web = $_POST['web'];
-         $this->empresa->email = $_POST['email'];
-         $this->empresa->lema = $_POST['lema'];
-         $this->empresa->horario = $_POST['horario'];
-         $this->empresa->contintegrada = isset($_POST['contintegrada']);
-         $this->empresa->codejercicio = $_POST['codejercicio'];
-         $this->empresa->codserie = $_POST['codserie'];
-         $this->empresa->coddivisa = $_POST['coddivisa'];
-         $this->empresa->codpago = $_POST['codpago'];
-         $this->empresa->codalmacen = $_POST['codalmacen'];
-         $this->empresa->pie_factura = $_POST['pie_factura'];
-         $this->empresa->recequivalencia = isset($_POST['recequivalencia']);
-         
-         /// configuración de email
-         $this->empresa->email_config['mail_password'] = $_POST['mail_password'];
-         $this->empresa->email_config['mail_bcc'] = $_POST['mail_bcc'];
-         $this->empresa->email_config['mail_firma'] = $_POST['mail_firma'];
-         $this->empresa->email_config['mail_host'] = $_POST['mail_host'];
-         $this->empresa->email_config['mail_port'] = intval($_POST['mail_port']);
-         $this->empresa->email_config['mail_enc'] = strtolower($_POST['mail_enc']);
-         $this->empresa->email_config['mail_user'] = $_POST['mail_user'];
-         $this->empresa->email_config['mail_low_security'] = isset($_POST['mail_low_security']);
-         
-         if( $this->empresa->save() )
-         {
-            /// guardamos las opciones por defecto de almacén y forma de pago
-            $this->save_codalmacen($_POST['codalmacen']);
-            $this->save_codpago($_POST['codpago']);
-            
-            $this->new_message('Datos guardados correctamente.');
-            if(!$this->empresa->contintegrada)
-            {
-               $this->new_message('¿Quieres activar la <b>contabilidad integrada</b>?'
-                       . ' Haz clic en la sección <a href="#facturacion">facturación</a>.');
-            }
-            
-            $step = $fsvar->simple_get('install_step');
-            if($step == 2)
-            {
-               $step = 3;
-               $fsvar->simple_save('install_step', $step);
-            }
-            
-            if($step == 3 AND $this->empresa->contintegrada)
-            {
-               $this->new_message('Recuerda que tienes que <a href="index.php?page=contabilidad_ejercicio&cod='.
-                       $this->empresa->codejercicio.'">importar los datos del ejercicio</a>.');
-            }
-            
-            $this->mail_test();
-         }
-         else
-            $this->new_error_msg ('Error al guardar los datos.');
-         
-         /// guardamos los datos de impresión
-         $this->impresion['print_ref'] = ( isset($_POST['print_ref']) ? 1 : 0 );
-         $this->impresion['print_dto'] = ( isset($_POST['print_dto']) ? 1 : 0 );
-         $this->impresion['print_alb'] = ( isset($_POST['print_alb']) ? 1 : 0 );
-         $this->impresion['print_formapago'] = ( isset($_POST['print_formapago']) ? 1 : 0 );
-         $fsvar->array_save($this->impresion);
-      }
-      else if( isset($_POST['nombre']) )
+      if( isset($_POST['nombre']) )
       {
          /// guardamos solamente lo básico, ya que facturacion_base no está activado
          $this->empresa->nombre = $_POST['nombre'];
@@ -167,82 +79,6 @@ class admin_empresa extends fs_controller
          }
          else
             $this->new_error_msg ('Error al guardar los datos.');
-      }
-      else if( isset($_POST['logo']) )
-      {
-         if( is_uploaded_file($_FILES['fimagen']['tmp_name']) )
-         {
-            $this->delete_logo();
-            
-            if( substr( strtolower($_FILES['fimagen']['name']), -3) == 'png' )
-            {
-               copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.png");
-            }
-            else
-            {
-               copy($_FILES['fimagen']['tmp_name'], "tmp/".FS_TMP_NAME."logo.jpg");
-            }
-            
-            $this->new_message('Logotipo guardado correctamente.');
-         }
-      }
-      else if( isset($_GET['delete_logo']) )
-      {
-         $this->delete_logo();
-      }
-      else if( isset($_GET['delete_cuenta']) ) /// eliminar cuenta bancaria
-      {
-         $cuenta = $this->cuenta_banco->get($_GET['delete_cuenta']);
-         if($cuenta)
-         {
-            if( $cuenta->delete() )
-            {
-               $this->new_message('Cuenta bancaria eliminada correctamente.');
-            }
-            else
-               $this->new_error_msg('Imposible eliminar la cuenta bancaria.');
-         }
-         else
-            $this->new_error_msg('Cuenta bancaria no encontrada.');
-      }
-      else if( isset($_POST['iban']) ) /// añadir/modificar cuenta bancaria
-      {
-         if( isset($_POST['codcuenta']) )
-         {
-            $cuentab = $this->cuenta_banco->get($_POST['codcuenta']);
-         }
-         else
-         {
-            $cuentab = new cuenta_banco();
-         }
-         
-         $cuentab->descripcion = $_POST['descripcion'];
-         $cuentab->iban = $_POST['iban'];
-         $cuentab->swift = $_POST['swift'];
-         
-         if( isset($_POST['codsubcuenta']) )
-         {
-            $cuentab->codsubcuenta = $_POST['codsubcuenta'];
-         }
-         
-         if( $cuentab->save() )
-         {
-            $this->new_message('Cuenta bancaria guardada correctamente.');
-         }
-         else
-            $this->new_error_msg('Imposible guardar la cuenta bancaria.');
-      }
-      
-      $this->facturacion_base = in_array('facturacion_base', $GLOBALS['plugins']);
-      
-      $this->logo = FALSE;
-      if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
-      {
-         $this->logo = 'tmp/'.FS_TMP_NAME.'logo.png';
-      }
-      else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
-      {
-         $this->logo = 'tmp/'.FS_TMP_NAME.'logo.jpg';
       }
    }
    
@@ -313,20 +149,6 @@ class admin_empresa extends fs_controller
             $this->new_error_msg('No se encuentra la extensión OpenSSL,'
                     . ' imprescindible para enviar emails.');
          }
-      }
-   }
-   
-   private function delete_logo()
-   {
-      if( file_exists('tmp/'.FS_TMP_NAME.'logo.png') )
-      {
-         unlink('tmp/'.FS_TMP_NAME.'logo.png');
-         $this->new_message('Logotipo borrado correctamente.');
-      }
-      else if( file_exists('tmp/'.FS_TMP_NAME.'logo.jpg') )
-      {
-         unlink('tmp/'.FS_TMP_NAME.'logo.jpg');
-         $this->new_message('Logotipo borrado correctamente.');
       }
    }
 }
