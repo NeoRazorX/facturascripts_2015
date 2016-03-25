@@ -4,16 +4,16 @@
  * Copyright (C) 2015-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -34,19 +34,23 @@ class fs_updater
    public $tr_options;
    public $tr_updates;
    public $version;
+   public $xid;
    
+   private $cache;
    private $download_list2;
    private $plugin_updates;
    
    public function __construct()
    {
       $this->btn_fin = FALSE;
+      $this->cache = new fs_cache();
       $this->errores = '';
       $this->mensajes = '';
       $this->plugins = array();
       $this->tr_options = '';
       $this->tr_updates = '';
       $this->version = '';
+      $this->xid = '';
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
@@ -186,6 +190,12 @@ class fs_updater
                   $this->btn_fin = TRUE;
                }
             }
+            
+            $e = $this->cache->get_array('empresa');
+            if($e)
+            {
+               $this->xid = $e[0]['xid'];
+            }
          }
          else
          {
@@ -309,7 +319,7 @@ class fs_updater
    private function actualizar_plugin_pago()
    {
       $url = 'https://www.facturascripts.com/comm3/index.php?page=community_edit_plugin&id='.
-              $_GET['idplugin'].'&key='.$_GET['key'];
+              $_GET['idplugin'].'&xid='.$this->xid.'&key='.$_GET['key'];
       
       /// descargamos el zip
       if( @file_put_contents('update.zip', $this->curl_get_contents($url)) )

@@ -4,16 +4,16 @@
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -150,7 +150,7 @@ class fs_controller
          $fsext = new fs_extension();
          foreach($fsext->all() as $ext)
          {
-            if($ext->to == $name OR ($ext->type == 'head' AND is_null($ext->to)) )
+            if($ext->to == $name OR ( is_null($ext->to) AND in_array($ext->type,array('head','hidden_iframe')) ) )
             {
                $this->extensions[] = $ext;
             }
@@ -324,11 +324,26 @@ class fs_controller
     * Muestra un mensaje al usuario
     * @param type $msg mensaje a mostrar
     */
-   public function new_message($msg=FALSE)
+   public function new_message($msg=FALSE, $save=FALSE, $tipo = 'msg')
    {
       if($msg)
       {
          $this->messages[] = str_replace("\n", ' ', $msg);
+         
+         if($save)
+         {
+            $fslog = new fs_log();
+            $fslog->tipo = $tipo;
+            $fslog->detalle = $msg;
+            $fslog->ip = $_SERVER['REMOTE_ADDR'];
+            
+            if($this->user)
+            {
+               $fslog->usuario = $this->user->nick;
+            }
+            
+            $fslog->save();
+         }
       }
    }
    
@@ -1135,6 +1150,15 @@ class fs_controller
       }
       
       return $this->last_changes;
+   }
+   
+   /**
+    * Elimina la lista con los últimos cambios del usuario.
+    */
+   public function clean_last_changes()
+   {
+      $this->last_changes = array();
+      $this->cache->delete('last_changes_'.$this->user->nick);
    }
    
    /**

@@ -365,7 +365,21 @@
                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
                      {/if}
                   </td>
-                  <td>{$value->nombre}</td>
+                  <td>
+                     {$value->nombre}
+                     {if="$value->imagen"}
+                     <div style="margin-bottom: 5px"></div>
+                        {if="!$value->zip_link"}
+                        <a href="{$value->link}" target="_blank">
+                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+                        </a>
+                        {else}
+                        <a href="{$value->imagen}" target="_blank">
+                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+                        </a>
+                        {/if}
+                     {/if}
+                  </td>
                   <td>
                      {function="nl2br($value->descripcion)"}<br/>
                      {if="substr($value->zip_link, -4) == '.zip'"}
@@ -419,60 +433,79 @@
                         </select>
                      </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Portada:
-                     <select name="homepage" class="form-control">
-                        {loop="$fsc->paginas"}
-                        <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected=""{/if}>{$value->name}</option>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Portada:
+                        <select name="homepage" class="form-control">
+                           {loop="$fsc->paginas"}
+                           <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected=""{/if}>{$value->name}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Decimales de los totales:
+                        <select name="nf0" class="form-control">
+                        {loop="$fsc->nf0()"}
+                           <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Decimales de los totales:
-                     <select name="nf0" class="form-control">
-                     {loop="$fsc->nf0()"}
-                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Decimales de los precios:
+                        <select name="nf0_art" class="form-control">
+                        {loop="$fsc->nf0()"}
+                           <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0_art']"} selected=""{/if}>{$value}</option>
+                        {/loop}
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Decimales de los precios:
-                     <select name="nf0_art" class="form-control">
-                     {loop="$fsc->nf0()"}
-                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0_art']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
-                  </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Separador para los Decimales:
-                     <select name="nf1" class="form-control">
-                     {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
-                  </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Separador para los Millares:
-                     <select name="nf2" class="form-control">
-                        <option value="">(Ninguno)</option>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Separador para los Decimales:
+                        <select name="nf1" class="form-control">
                         {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected=""{/if}>{$value}</option>
+                           <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected=""{/if}>{$value}</option>
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Símbolo Divisa:
-                     <select name="pos_divisa" class="form-control">
-                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected=""{/if}>123 {$fsc->simbolo_divisa()}</option>
-                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected=""{/if}>{$fsc->simbolo_divisa()}123</option>
-                     </select>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Separador para los Millares:
+                        <select name="nf2" class="form-control">
+                           <option value="">(Ninguno)</option>
+                           {loop="$fsc->nf1()"}
+                           <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected=""{/if}>{$value}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Símbolo Divisa:
+                        <select name="pos_divisa" class="form-control">
+                           <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected=""{/if}>123 {$fsc->simbolo_divisa()}</option>
+                           <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected=""{/if}>{$fsc->simbolo_divisa()}123</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <p class="help-block">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                        La configuración de decimales y separadores de decimales y millares
+                        se aplica únicamente a los listados y formatos de impresión. Para los
+                        campos editables se utiliza la configuración del sistema operativo.
+                     </p>
                   </div>
                </div>
                <div class="row bg-info">
                   <div class="col-md-12 col-sm-12">
                      <h2>
-                        <span class="glyphicon glyphicon-globe"></span>
-                        &nbsp; Traducciones:
+                        <i class="fa fa-language"></i>&nbsp; Traducciones:
                      </h2>
                      <p class="help-block">
                         FACTURA y FACTURAS se traducen únicamente en los documentos de ventas.
@@ -503,10 +536,10 @@
                      <div class="form-group">
                         Comprobaciones en la base de datos:
                         <select name="check_db_types" class="form-control">
-                           <option value="true"{if="$GLOBALS['config2']['check_db_types']=='true'"} selected=''{/if}>
+                           <option value="true"{if="$GLOBALS['config2']['check_db_types']==1"} selected=''{/if}>
                               Comprobar los tipos de las columnas de las tablas
                            </option>
-                           <option value="false"{if="$GLOBALS['config2']['check_db_types']=='false'"} selected=''{/if}>
+                           <option value="false"{if="$GLOBALS['config2']['check_db_types']!=1"} selected=''{/if}>
                               No comprobar los tipos
                            </option>
                         </select>
@@ -556,7 +589,7 @@
                         Algoritmo de nuevo código:
                         <select name="new_codigo" class="form-control">
                            <option value="eneboo"{if="$GLOBALS['config2']['new_codigo']=='eneboo'"} selected=''{/if}>Compatible con Eneboo</option>
-                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + SERIE + NÚMERO</option>
+                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + {#FS_SERIE#} + NÚMERO</option>
                         </select>
                      </div>
                   </div>
