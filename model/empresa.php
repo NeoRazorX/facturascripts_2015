@@ -130,6 +130,18 @@ class empresa extends fs_model
     */
    public $pie_factura;
    
+   /**
+    * Fecha de inicio de la actividad.
+    * @var type 
+    */
+   public $inicio_actividad;
+   
+   /**
+    * Régimen de IVA de la empresa.
+    * @var type 
+    */
+   public $regimeniva;
+   
    public $email_config;
    
    public function __construct()
@@ -174,6 +186,8 @@ class empresa extends fs_model
          $this->lema = $e[0]['lema'];
          $this->horario = $e[0]['horario'];
          $this->pie_factura = $e[0]['pie_factura'];
+         $this->inicio_actividad = date('d-m-Y', strtotime($e[0]['inicioact']));
+         $this->regimeniva = $e[0]['regimeniva'];
          
          /// cargamos las opciones de email por defecto
          $this->email_config = array(
@@ -321,6 +335,8 @@ class empresa extends fs_model
                  .", lema = ".$this->var2str($this->lema)
                  .", horario = ".$this->var2str($this->horario)
                  .", pie_factura = ".$this->var2str($this->pie_factura)
+                 .", inicioact = ".$this->var2str($this->inicio_actividad)
+                 .", regimeniva = ".$this->var2str($this->regimeniva)
                  ."  WHERE id = ".$this->var2str($this->id).";";
             
             return $this->db->exec($sql);
@@ -330,7 +346,8 @@ class empresa extends fs_model
             $sql = "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,
                codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,
                codpais,apartado,provincia,ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,
-               nombrecorto,lema,horario,pie_factura) VALUES (".$this->var2str($this->stockpedidos)
+               nombrecorto,lema,horario,pie_factura,inicioact,regimeniva) VALUES 
+                      (".$this->var2str($this->stockpedidos)
                     .",".$this->var2str($this->contintegrada)
                     .",".$this->var2str($this->recequivalencia)
                     .",".$this->var2str($this->codserie)
@@ -355,7 +372,9 @@ class empresa extends fs_model
                     .",".$this->var2str($this->nombrecorto)
                     .",".$this->var2str($this->lema)
                     .",".$this->var2str($this->horario)
-                    .",".$this->var2str($this->pie_factura).");";
+                    .",".$this->var2str($this->pie_factura)
+                    .",".$this->var2str($this->inicio_actividad)
+                    .",".$this->var2str($this->regimeniva).");";
             
             if( $this->db->exec($sql) )
             {

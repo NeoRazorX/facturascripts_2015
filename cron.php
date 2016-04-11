@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+echo 'Iniciando cron...';
+
 /// accedemos al directorio de FacturaScripts
 chdir(__DIR__);
 
@@ -35,6 +37,7 @@ require_once 'base/fs_default_items.php';
 require_once 'base/fs_model.php';
 require_model('empresa.php');
 require_model('fs_var.php');
+require_model('fs_log.php');
 
 if( $db->connect() )
 {
@@ -64,6 +67,12 @@ if( $db->connect() )
       /// guardamos las variables
       $fsvar->array_save($cron_vars);
       
+      /// indicamos el inicio en el log
+      $fslog = new fs_log();
+      $fslog->tipo = 'cron';
+      $fslog->detalle = 'Ejecutando el cron...';
+      $fslog->save();
+      
       /// establecemos los elementos por defecto
       $fs_default_items = new fs_default_items();
       $empresa = new empresa();
@@ -88,6 +97,12 @@ if( $db->connect() )
             echo "\n***********************";
          }
       }
+      
+      /// indicamos el fin en el log
+      $fslog = new fs_log();
+      $fslog->tipo = 'cron';
+      $fslog->detalle = 'Terminada la ejecución del cron.';
+      $fslog->save();
       
       /// Eliminamos la variable cron_lock puesto que ya hemos terminado
       $cron_vars['cron_lock'] = FALSE;

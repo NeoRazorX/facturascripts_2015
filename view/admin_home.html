@@ -61,7 +61,7 @@
       plugins y usuarios. Pulsa continuar para seguir con la instalación.
    </p>
    <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
-      <span class="glyphicon glyphicon-ok"></span> &nbsp; Continuar
+      <span class="glyphicon glyphicon-ok"></span>&nbsp; Continuar
    </a>
 </div>
 {elseif="$fsc->step=='1'"}
@@ -86,7 +86,10 @@
       este botón.
    </p>
    <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
-      <span class="glyphicon glyphicon-download-alt"></span> &nbsp; Descargar facturacion_base
+      <span class="glyphicon glyphicon-download-alt"></span>&nbsp; Descargar facturacion_base
+   </a>
+   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&skip=TRUE#descargas" class="btn btn-sm btn-warning">
+      <span class="glyphicon glyphicon-remove"></span>&nbsp; No, gracias
    </a>
 </div>
 {else}
@@ -306,7 +309,7 @@
                </tr>
                {else}
                <tr class="warning">
-                  <td colspan="5">No tienes plugin instalados. Mira en la pestaña <b>Descargas</b>.</td>
+                  <td colspan="5">No tienes plugins instalados. Mira en la pestaña <b>Descargas</b>.</td>
                </tr>
                {/loop}
             </table>
@@ -612,24 +615,30 @@
    </div>
 </div>
 
-<div class="modal fade" id="modal_add_plugin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal_add_plugin" tabindex="-1" role="dialog" aria-hidden="true">
    <div class="modal-dialog">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                <span aria-hidden="true">&times;</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Añadir un plugin</h4>
+            <h4 class="modal-title">
+               <i class="fa fa-puzzle-piece"></i>&nbsp; Añadir un plugin
+            </h4>
+            <p class="help-block">
+               Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.
+            </p>
          </div>
          <div class="modal-body">
-            <p>Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.</p>
             <form class="form" action="{$fsc->url()}#plugins" enctype="multipart/form-data" method="post">
                <input type="hidden" name="install" value="TRUE"/>
                <div class="form-group">
                   <input type="file" name="fplugin" accept="application/zip"/>
                </div>
                <p class="help-block">
-                  Este servidor admite un tamaño máximo de {$fsc->get_max_file_upload()} MB
+                  Este servidor admite un tamaño máximo de {$fsc->get_max_file_upload()} MB.
+                  Si el plugin ocupa más, dará error al subirlo, incluso puede que no salga
+                  nada.
                </p>
                <button type="submit" class="btn btn-primary" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir
