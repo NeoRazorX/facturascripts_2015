@@ -66,6 +66,14 @@ class admin_home extends fs_controller
       {
          $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
       }
+      else if( isset($_GET['skip']) )
+      {
+         if($this->step == '1')
+         {
+            $this->step = '2';
+            $fsvar->simple_save('install_step', $this->step);
+         }
+      }
       else if( isset($_POST['modpages']) )
       {
          /// activar/desactivas páginas del menú
@@ -155,13 +163,17 @@ class admin_home extends fs_controller
                $zip->extractTo('plugins/');
                $zip->close();
                $this->new_message('Plugin '.$_FILES['fplugin']['name'].' añadido correctamente. Ya puedes activarlo.');
+               
+               $this->cache->clean();
             }
             else
                $this->new_error_msg('Error al abrir el archivo ZIP. Código: '.$res);
          }
          else
          {
-            $this->new_error_msg('Archivo no encontrado.');
+            $this->new_error_msg('Archivo no encontrado. ¿Pesa más de '
+                    . $this->get_max_file_upload().' MB? Ese es el límite que tienes'
+                    . ' configurado en tu servidor.');
          }
       }
       else if( isset($_GET['download']) )
@@ -1070,9 +1082,14 @@ class admin_home extends fs_controller
               'url_repo' => 'https://github.com/FacturaScripts/argentina',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Argentina</b>.'
           ),
+          'chile' => array(
+              'url' => 'https://github.com/FacturaScripts/chile/archive/master.zip',
+              'url_repo' => 'https://github.com/FacturaScripts/chile',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Chile</b>.'
+          ),
           'colombia' => array(
-              'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
-              'url_repo' => 'https://github.com/salvaWEBco/colombia',
+              'url' => 'https://github.com/FacturaScripts/colombia/archive/master.zip',
+              'url_repo' => 'https://github.com/FacturaScripts/colombia',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
           ),
           'ecuador' => array(

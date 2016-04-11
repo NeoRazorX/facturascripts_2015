@@ -68,7 +68,7 @@ class admin_user extends fs_controller
             $age0->apellidos = $_POST['napellidos'];
             $age0->dnicif = $_POST['ndnicif'];
             $age0->telefono = $_POST['ntelefono'];
-            $age0->email = $_POST['nemail'];
+            $age0->email = strtolower($_POST['nemail']);
             
             if(!$this->user->admin)
             {
@@ -306,7 +306,7 @@ class admin_user extends fs_controller
             }
          }
          
-         $this->suser->email = $_POST['email'];
+         $this->suser->email = strtolower($_POST['email']);
          
          if( isset($_POST['scodagente']) )
          {

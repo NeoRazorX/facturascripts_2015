@@ -161,6 +161,16 @@
       <tipo>character varying(100)</tipo>
       <nulo>YES</nulo>
    </columna>
+   <columna>
+      <nombre>inicioact</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>regimeniva</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>YES</nulo>
+   </columna>
    <restriccion>
       <nombre>empresa_pkey</nombre>
       <consulta>PRIMARY KEY (id)</consulta>

@@ -1207,7 +1207,7 @@ class fs_controller
    {
       $max = intval( ini_get('post_max_size') );
       
-      if( intval(ini_get('upload_max_filesize')) > $max )
+      if( intval(ini_get('upload_max_filesize')) < $max )
       {
          $max = intval(ini_get('upload_max_filesize'));
       }

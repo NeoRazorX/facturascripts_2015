@@ -51,7 +51,7 @@ var provincia_list = [
    {value: 'Melilla'},
    {value: 'Murcia'},
    {value: 'Navarra'},
-   {value: 'Ourensa'},
+   {value: 'Ourense'},
    {value: 'Palencia'},
    {value: 'Las Palmas'},
    {value: 'Pontevedra'},
