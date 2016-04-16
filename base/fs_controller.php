@@ -1,19 +1,19 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -104,7 +104,7 @@ class fs_controller
     * @param type $folder es el menú dónde quieres colocar el acceso directo
     * @param type $admin OBSOLETO
     * @param type $shmenu debe ser TRUE si quieres añadir el acceso directo en el menú
-    * @param type $important debe ser TRUE si quieres que se la primera página que ven los nuevos usuarios
+    * @param type $important debe ser TRUE si quieres que aparezca en el menú de destacado
     */
    public function __construct($name = '', $title = 'home', $folder = '', $admin = FALSE, $shmenu = TRUE, $important = FALSE)
    {
@@ -128,7 +128,16 @@ class fs_controller
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
-         $this->page = new fs_page( array('name'=>$name,'title'=>$title,'folder'=>$folder,'version'=>$this->version(),'show_on_menu'=>$shmenu,'important'=>$important) );
+         $this->page = new fs_page(
+                 array(
+                     'name' => $name,
+                     'title' => $title,
+                     'folder' => $folder,
+                     'version' => $this->version(),
+                     'show_on_menu' => $shmenu,
+                     'important' => $important
+                 )
+         );
          if($name != '')
          {
             $this->page->save();
@@ -141,7 +150,7 @@ class fs_controller
          $fsext = new fs_extension();
          foreach($fsext->all() as $ext)
          {
-            if($ext->to == $name OR ($ext->type == 'head' AND is_null($ext->to)) )
+            if($ext->to == $name OR ( is_null($ext->to) AND in_array($ext->type,array('head','hidden_iframe')) ) )
             {
                $this->extensions[] = $ext;
             }
@@ -212,6 +221,18 @@ class fs_controller
                if( isset($_REQUEST['query']) )
                {
                   $this->query = $_REQUEST['query'];
+               }
+               
+               /// quitamos extensiones de páginas a las que el usuario no tenga acceso
+               foreach($this->extensions as $i => $value)
+               {
+                  if($value->type != 'config')
+                  {
+                     if( !$this->user->have_access_to($value->from) )
+                     {
+                        unset($this->extensions[$i]);
+                     }
+                  }
                }
                
                $this->private_core();
@@ -303,11 +324,26 @@ class fs_controller
     * Muestra un mensaje al usuario
     * @param type $msg mensaje a mostrar
     */
-   public function new_message($msg=FALSE)
+   public function new_message($msg=FALSE, $save=FALSE, $tipo = 'msg')
    {
       if($msg)
       {
          $this->messages[] = str_replace("\n", ' ', $msg);
+         
+         if($save)
+         {
+            $fslog = new fs_log();
+            $fslog->tipo = $tipo;
+            $fslog->detalle = $msg;
+            $fslog->ip = $_SERVER['REMOTE_ADDR'];
+            
+            if($this->user)
+            {
+               $fslog->usuario = $this->user->nick;
+            }
+            
+            $fslog->save();
+         }
       }
    }
    
@@ -483,10 +519,15 @@ class fs_controller
          else
          {
             $user = $this->user->get($_POST['user']);
-            $password = strtolower($_POST['password']);
+            $password = $_POST['password'];
             if($user)
             {
-               if( $user->password == sha1($password) )
+               /**
+                * En versiones anteriores se guardaban las contraseñas siempre en
+                * minúsculas, por eso, para dar compatibilidad comprobamos también
+                * en minúsculas.
+                */
+               if( $user->password == sha1($password) OR $user->password == sha1( mb_strtolower($password, 'UTF8') ) )
                {
                   $user->new_logkey();
                   
@@ -636,7 +677,9 @@ class fs_controller
       foreach($this->menu as $m)
       {
          if($m->folder!='' AND $m->show_on_menu AND !in_array($m->folder, $folders) )
+         {
             $folders[] = $m->folder;
+         }
       }
       return $folders;
    }
@@ -652,7 +695,9 @@ class fs_controller
       foreach($this->menu as $p)
       {
          if($f == $p->folder AND $p->show_on_menu AND !in_array($p, $pages) )
+         {
             $pages[] = $p;
+         }
       }
       return $pages;
    }
@@ -689,18 +734,13 @@ class fs_controller
                
                /*
                 * Cuando un usuario no tiene asignada una página por defecto,
-                * se selecciona la primera página importante a la que tiene acceso.
+                * se selecciona la primera página del menú.
                 */
                foreach($this->menu as $p)
                {
                   if($p->show_on_menu)
                   {
                      $page = $p->name;
-                  }
-                  
-                  if($p->important)
-                  {
-                     break;
                   }
                }
             }
@@ -938,31 +978,35 @@ class fs_controller
    public function system_info()
    {
       $txt = 'facturascripts: '.$this->version()."\n";
-      $txt .= 'os: '.php_uname()."\n";
-      $txt .= 'php: '.phpversion()."\n";
-      $txt .= 'database type: '.FS_DB_TYPE."\n";
-      $txt .= 'database version: '.$this->db->version()."\n";
       
-      if( $this->cache->connected() )
+      if($this->user->logged_on)
       {
-         $txt .= "memcache: YES\n";
-         $txt .= 'memcache version: '.$this->cache->version()."\n";
-      }
-      else
-         $txt .= "memcache: NO\n";
-      
-      if( function_exists('curl_init') )
-      {
-         $txt .= "curl: YES\n";
-      }
-      else
-         $txt .= "curl: NO\n";
-      
-      $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
-      
-      if( isset($_SERVER['REQUEST_URI']) )
-      {
-         $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+         $txt .= 'os: '.php_uname()."\n";
+         $txt .= 'php: '.phpversion()."\n";
+         $txt .= 'database type: '.FS_DB_TYPE."\n";
+         $txt .= 'database version: '.$this->db->version()."\n";
+         
+         if( $this->cache->connected() )
+         {
+            $txt .= "memcache: YES\n";
+            $txt .= 'memcache version: '.$this->cache->version()."\n";
+         }
+         else
+            $txt .= "memcache: NO\n";
+         
+         if( function_exists('curl_init') )
+         {
+            $txt .= "curl: YES\n";
+         }
+         else
+            $txt .= "curl: NO\n";
+         
+         $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
+         
+         if( isset($_SERVER['REQUEST_URI']) )
+         {
+            $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+         }
       }
       
       foreach($this->get_errors() as $e)
@@ -1007,13 +1051,13 @@ class fs_controller
    /**
     * Devuelve un string con el precio en el formato predefinido y con la
     * divisa seleccionada (o la predeterminada).
-    * 
     * @param type $precio
     * @param type $coddivisa
     * @param type $simbolo
+    * @param type $dec nº de decimales
     * @return type
     */
-   public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE)
+   public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE, $dec=FS_NF0)
    {
       if($coddivisa === FALSE)
       {
@@ -1024,19 +1068,19 @@ class fs_controller
       {
          if($simbolo)
          {
-            return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$this->simbolo_divisa($coddivisa);
+            return number_format($precio, $dec, FS_NF1, FS_NF2).' '.$this->simbolo_divisa($coddivisa);
          }
          else
-            return number_format($precio, FS_NF0, FS_NF1, FS_NF2).' '.$coddivisa;
+            return number_format($precio, $dec, FS_NF1, FS_NF2).' '.$coddivisa;
       }
       else
       {
          if($simbolo)
          {
-            return $this->simbolo_divisa($coddivisa).number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+            return $this->simbolo_divisa($coddivisa).number_format($precio, $dec, FS_NF1, FS_NF2);
          }
          else
-            return $coddivisa.' '.number_format($precio, FS_NF0, FS_NF1, FS_NF2);
+            return $coddivisa.' '.number_format($precio, $dec, FS_NF1, FS_NF2);
       }
    }
    
@@ -1109,6 +1153,15 @@ class fs_controller
    }
    
    /**
+    * Elimina la lista con los últimos cambios del usuario.
+    */
+   public function clean_last_changes()
+   {
+      $this->last_changes = array();
+      $this->cache->delete('last_changes_'.$this->user->nick);
+   }
+   
+   /**
     * Devuelve TRUE si hay actualizaciones pendientes (sólo si eres admin).
     * @return boolean
     */
@@ -1144,5 +1197,21 @@ class fs_controller
       
       /// si no está en los plugins estará en el núcleo
       return 'view/js/'.$filename;
+   }
+   
+   /**
+    * Devuelve el tamaño máximo permitido para subir archivos.
+    * @return type
+    */
+   public function get_max_file_upload()
+   {
+      $max = intval( ini_get('post_max_size') );
+      
+      if( intval(ini_get('upload_max_filesize')) < $max )
+      {
+         $max = intval(ini_get('upload_max_filesize'));
+      }
+      
+      return $max;
    }
 }

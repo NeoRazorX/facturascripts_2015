@@ -1,19 +1,19 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -28,20 +28,29 @@ require_once 'base/fs_cache.php';
 class fs_updater
 {
    public $btn_fin;
-   private $download_list2;
    public $errores;
    public $mensajes;
-   private $plugin_updates;
+   public $plugins;
    public $tr_options;
    public $tr_updates;
+   public $version;
+   public $xid;
+   
+   private $cache;
+   private $download_list2;
+   private $plugin_updates;
    
    public function __construct()
    {
       $this->btn_fin = FALSE;
+      $this->cache = new fs_cache();
       $this->errores = '';
       $this->mensajes = '';
+      $this->plugins = array();
       $this->tr_options = '';
       $this->tr_updates = '';
+      $this->version = '';
+      $this->xid = '';
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
@@ -79,13 +88,12 @@ class fs_updater
             }
             else
                $this->errores = 'Error al guardar la clave.';
-            
-            
          }
          
          if($this->errores == '')
          {
             $version_actual = file_get_contents('VERSION');
+            $this->version = $version_actual;
             $nueva_version = @$this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
             if( floatval($version_actual) < floatval($nueva_version) )
             {
@@ -181,6 +189,12 @@ class fs_updater
                           . ' <a href="index.php?page=admin_home&updated=TRUE">Volver</a></td></tr>';
                   $this->btn_fin = TRUE;
                }
+            }
+            
+            $e = $this->cache->get_array('empresa');
+            if($e)
+            {
+               $this->xid = $e[0]['xid'];
             }
          }
          else
@@ -305,7 +319,7 @@ class fs_updater
    private function actualizar_plugin_pago()
    {
       $url = 'https://www.facturascripts.com/comm3/index.php?page=community_edit_plugin&id='.
-              $_GET['idplugin'].'&key='.$_GET['key'];
+              $_GET['idplugin'].'&xid='.$this->xid.'&key='.$_GET['key'];
       
       /// descargamos el zip
       if( @file_put_contents('update.zip', $this->curl_get_contents($url)) )
@@ -343,14 +357,20 @@ class fs_updater
               $_GET['idplugin'].'&name='.$_GET['name'].'">¿Clave incorrecta?</a>';
    }
 
-   private function recurse_copy($src, $dst) {
+   private function recurse_copy($src, $dst)
+   {
       $dir = opendir($src);
       @mkdir($dst);
-      while (false !== ( $file = readdir($dir))) {
-         if (( $file != '.' ) && ( $file != '..' )) {
-            if (is_dir($src . '/' . $file)) {
+      while(false !== ( $file = readdir($dir)))
+      {
+         if(( $file != '.' ) && ( $file != '..' ))
+         {
+            if(is_dir($src . '/' . $file))
+            {
                $this->recurse_copy($src . '/' . $file, $dst . '/' . $file);
-            } else {
+            }
+            else
+            {
                copy($src . '/' . $file, $dst . '/' . $file);
             }
          }
@@ -358,23 +378,30 @@ class fs_updater
       closedir($dir);
    }
 
-   private function delTree($dir) {
+   private function delTree($dir)
+   {
       $files = array_diff(scandir($dir), array('.', '..'));
-      foreach ($files as $file) {
+      foreach($files as $file)
+      {
          (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
       }
       return rmdir($dir);
    }
 
-   private function __getAllSubDirectories($base_dir) {
+   private function __getAllSubDirectories($base_dir)
+   {
       $directories = array();
 
-      foreach (scandir($base_dir) as $file) {
-         if ($file == '.' || $file == '..')
+      foreach(scandir($base_dir) as $file)
+      {
+         if($file == '.' || $file == '..')
+         {
             continue;
+         }
 
          $dir = $base_dir . DIRECTORY_SEPARATOR . $file;
-         if (is_dir($dir)) {
+         if( is_dir($dir) )
+         {
             $directories[] = $dir;
             $directories = array_merge($directories, $this->__getAllSubDirectories($dir));
          }
@@ -383,11 +410,14 @@ class fs_updater
       return $directories;
    }
 
-   private function __areWritable($dirlist) {
+   private function __areWritable($dirlist)
+   {
       $notwritable = array();
 
-      foreach ($dirlist as $dir) {
-         if (!is_writable($dir)) {
+      foreach ($dirlist as $dir)
+      {
+         if( !is_writable($dir) )
+         {
             $notwritable[] = $dir;
          }
       }
@@ -491,6 +521,8 @@ class fs_updater
                    'idplugin' => NULL,
                    'private_key' => FALSE
                );
+               
+               $this->plugins[] = $plugin['name'];
                
                if( file_exists('plugins/' . $f . '/facturascripts.ini') )
                {
@@ -637,7 +669,12 @@ $updater = new fs_updater();
          <div class="row">
             <div class="col-sm-12">
                <div class="page-header">
-                  <h1>Actualizador de FacturaScripts</h1>
+                  <h1>
+                     <a href="index.php?page=admin_home&updated=TRUE" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                     </a>
+                     Actualizador de FacturaScripts
+                  </h1>
                </div>
             </div>
          </div>
@@ -665,9 +702,10 @@ $updater = new fs_updater();
          <div class="row">
             <div class="col-sm-12">
                <p class="help-block">
-                  Este actualizador permite actualizar tanto el núcleo de FacturaScripts como sus plugins,
-                  incluso los de pago y los privados. Si hay una actualización del núcleo tendrás
-                  que actualizar antes de poder ver si hay también actualizaciones de plugins.
+                  Este actualizador permite actualizar <b>tanto el núcleo</b> de FacturaScripts
+                  <b>como sus plugins</b>, incluso los de pago y los privados.
+                  Si hay una actualización del núcleo tendrás que actualizar antes de poder ver si
+                  también hay actualizaciones de plugins.
                </p>
                <br/>
             </div>
@@ -771,6 +809,35 @@ $updater = new fs_updater();
          }
       }
       ?>
+      <br/><br/>
+      <div class="container">
+         <div class="row">
+            <div class="col-sm-2">
+               <a href="https://www.facturascripts.com/promo" target="_blank" class="thumbnail">
+                  <img src='http://i.imgur.com/5XRa2Cm.png' alt="adminlte"/>
+               </a>
+            </div>
+            <div class="col-sm-10">
+               <p class="help-block">
+                  Hemos trabajado en un <b>nuevo diseño</b> para dar un aspecto más moderno a FacturaScripts,
+                  con un nuevo menú lateral, buscador integrado, más visibilidad del usuario,
+                  más y mejores iconos y un largo etcétera. Este es el resultado.
+               </p>
+            </div>
+         </div>
+      </div>
       <div class="text-center">;-)</div>
+      <?php
+      if(!FS_DEMO)
+      {
+         $url = 'https://www.facturascripts.com/comm3/index.php?page=community_stats'
+                 . '&add=TRUE&version='.$updater->version.'&plugins='.join(',', $updater->plugins);
+         ?>
+         <div style="display: none;">
+            <iframe src="<?php echo $url; ?>" height="0"></iframe>
+         </div>
+         <?php
+      }
+      ?>
    </body>
 </html>

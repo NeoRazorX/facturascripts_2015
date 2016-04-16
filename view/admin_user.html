@@ -27,7 +27,9 @@
       $("#b_eliminar_usuario").click(function(event) {
          event.preventDefault();
          if( confirm("¿Realmente desea eliminar el usuario?") )
+         {
             window.location.href = 'index.php?page=admin_users&delete={$fsc->suser->nick}';
+         }
       });
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
@@ -40,15 +42,15 @@
 <form class="form" role="form" id="f_user_pages" action="{$fsc->url()}" method="post">
    <input type="hidden" name="modupages" value="TRUE"/>
    <div class="container-fluid">
-      <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
-         <div class="col-sm-8">
+      <div class="row" style="margin-bottom: 10px;">
+         <div class="col-xs-6">
             <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="recargar la página">
                <span class="glyphicon glyphicon-refresh"></span>
             </a>
             <a class="btn btn-sm btn-default" href="index.php?page=admin_users">
-               <span class="glyphicon glyphicon-arrow-left"></span> &nbsp; Usuarios
+               <span class="glyphicon glyphicon-arrow-left"></span>
+               <span class="hidden-xs">&nbsp; Usuarios</span>
             </a>
-            
             <div class="btn-group">
             {loop="$fsc->extensions"}
                {if="$value->type=='button'"}
@@ -57,15 +59,20 @@
             {/loop}
             </div>
          </div>
-         <div class="col-sm-4 text-right">
+         <div class="col-xs-6 text-right">
+            <a class="btn btn-sm btn-success" href="index.php?page=admin_users#nuevo" title="Nuevo usuario">
+               <span class="glyphicon glyphicon-plus"></span>
+            </a>
             <div class="btn-group">
-               {if="$fsc->user->nick != $fsc->suser->nick AND $fsc->allow_delete"}
+               {if="$fsc->allow_delete"}
                <a href="#" id="b_eliminar_usuario" class="btn btn-sm btn-danger">
-                  <span class="glyphicon glyphicon-trash"></span> &nbsp; Eliminar
+                  <span class="glyphicon glyphicon-trash"></span>
+                  <span class="hidden-xs hidden-sm">&nbsp; Eliminar</span>
                </a>
                {/if}
                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  <span class="hidden-xs">&nbsp; Guardar</span>
                </button>
             </div>
          </div>
@@ -77,7 +84,7 @@
                <input class="form-control" type="text" name="snick" value="{$fsc->suser->nick}" disabled="disabled"/>
                <div class="checkbox">
                   <label>
-                     <input type="checkbox" name="sadmin" value="TRUE"{if="$fsc->suser->admin"} checked="checked"{/if}/>
+                     <input type="checkbox" name="sadmin" value="TRUE"{if="$fsc->suser->admin"} checked=""{/if}/>
                      Administrador
                   </label>
                </div>
@@ -86,8 +93,8 @@
          <div class="col-sm-2">
             <div class="form-group">
                Contraseña:
-               <input class="form-control" type="password" name="spassword" maxlength="12" placeholder="nueva contraseña"/>
-               <input class="form-control" type="password" name="spassword2" maxlength="12" placeholder="repite la contraseña"/>
+               <input class="form-control" type="password" name="spassword" maxlength="32" placeholder="nueva contraseña"/>
+               <input class="form-control" type="password" name="spassword2" maxlength="32" placeholder="repite la contraseña"/>
             </div>
          </div>
          <div class="col-sm-2">
@@ -100,6 +107,7 @@
             <div class="form-group">
                <a href="{$fsc->agente->url()}">Empleado</a>:
                <select name="scodagente" class="form-control">
+               {if="$fsc->user->admin"}
                   <option value="">Ninguno</option>
                   <option value="">------</option>
                   {loop="$fsc->agente->all()"}
@@ -109,10 +117,19 @@
                      <option value="{$value->codagente}">{$value->get_fullname()}</option>
                      {/if}
                   {/loop}
+               {else}
+                  {loop="$fsc->agente->all()"}
+                     {if="$fsc->suser->codagente==$value->codagente"}
+                     <option value="{$value->codagente}" selected="">{$value->get_fullname()}</option>
+                     {/if}
+                  {/loop}
+               {/if}
                </select>
+               {if="$fsc->user->admin"}
                <p class="help-block">
                   <a id="b_nuevo_agente" href="#">Crear un nuevo empleado y asignarlo a este usuario</a>
                </p>
+               {/if}
             </div>
          </div>
          <div class="col-sm-2">
@@ -133,7 +150,7 @@
          </div>
          <div class="col-sm-2">
             <div class="form-group">
-               Plantilla CSS:
+               Estilo visual:
                <select name="css" class="form-control">
                   {loop="$fsc->extensions"}
                      {if="$value->type=='css'"}
@@ -176,55 +193,86 @@
                <table class="table table-hover">
                   <thead>
                      <tr>
-                        <th width="100">Autorizado</th>
                         <th class="text-left">Página</th>
                         <th class="text-left">Menú</th>
+                        <th class="text-center">Ver / Modificar</th>
+                        <th></th>
                         <th class="text-center">Permiso de eliminación</th>
                      </tr>
                   </thead>
-                  {if="!$fsc->suser->admin"}
+                  {if="$fsc->suser->admin"}
+                  <tr class="success">
+                     <td colspan="5">
+                        <span class="glyphicon glyphicon-ok"></span> &nbsp;
+                        Los administradores tienen acceso a cualquier página.
+                     </td>
+                  </tr>
+                  {elseif="!$fsc->user->admin"}
                      {loop="$fsc->all_pages()"}
-                     <tr{if="$value->enabled"} class="{if="$value->allow_delete"}bg-success{else}bg-warning{/if}"{/if}>
-                        <td class="text-center">
-                           <input type="checkbox" id="enabled_{$counter}" name="enabled[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')"{if="$value->enabled"} checked="checked"{/if}/>
-                        </td>
+                     <tr{if="$value->enabled"} class="{if="$value->allow_delete"}success{else}warning{/if}"{/if}>
                         <td>{$value->name}</td>
-                        <td>{$value->folder} » {$value->title}</td>
+                        <td>
+                           {if="$value->important"}
+                           <span class="glyphicon glyphicon-star"></span> » {$value->title}
+                           {elseif="$value->show_on_menu"}
+                           <span class="text-capitalize">{$value->folder}</span> » {$value->title}
+                           {else}
+                           -
+                           {/if}
+                        </td>
                         <td class="text-center">
-                           <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"{if="$value->allow_delete"} checked="checked"{/if} title="el usuario tiene permisos para eliminar en esta página"/>
+                           {if="$value->enabled"}
+                           <span class="glyphicon glyphicon-check"></span>
+                           {else}
+                           <span class="glyphicon glyphicon-lock"></span>
+                           {/if}
+                        </td>
+                        <td class="text-center"></td>
+                        <td class="text-center">
+                           {if="$value->allow_delete"}
+                           <span class="glyphicon glyphicon-check"></span>
+                           {else}
+                           <span class="glyphicon glyphicon-lock"></span>
+                           {/if}
                         </td>
                      </tr>
                      {/loop}
                   {else}
-                  <tr class="success">
-                     <td colspan="4">
-                        Los administradores tienen acceso a cualquier página.
-                     </td>
-                  </tr>
+                     {loop="$fsc->all_pages()"}
+                     <tr{if="$value->enabled"} class="{if="$value->allow_delete"}success{else}warning{/if}"{/if}>
+                        <td>{$value->name}</td>
+                        <td>
+                           {if="$value->important"}
+                           <span class="glyphicon glyphicon-star"></span> » {$value->title}
+                           {elseif="$value->show_on_menu"}
+                           <span class="text-capitalize">{$value->folder}</span> » {$value->title}
+                           {else}
+                           -
+                           {/if}
+                        </td>
+                        <td class="text-center">
+                           <input type="checkbox" id="enabled_{$counter}" name="enabled[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')"{if="$value->enabled"} checked=""{/if}/>
+                        </td>
+                        <td class="text-center">
+                           {if="$counter==0"}
+                           <div class="btn-group">
+                              <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                                 <span class="glyphicon glyphicon-check"></span>
+                              </button>
+                              <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                                 <span class="glyphicon glyphicon-unchecked"></span>
+                              </button>
+                           </div>
+                           {/if}
+                        </td>
+                        <td class="text-center">
+                           <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"{if="$value->allow_delete"} checked=""{/if} title="el usuario tiene permisos para eliminar en esta página"/>
+                        </td>
+                     </tr>
+                     {/loop}
                   {/if}
                </table>
             </div>
-            {if="!$fsc->suser->admin"}
-            <div class="container-fluid">
-               <div class="row">
-                  <div class="col-lg-6 col-md-6 col-sm-6">
-                     <div class="btn-group">
-                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
-                           <span class="glyphicon glyphicon-check"></span>
-                        </button>
-                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
-                           <span class="glyphicon glyphicon-unchecked"></span>
-                        </button>
-                     </div>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-6 text-right">
-                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
-                     </button>
-                  </div>
-               </div>
-            </div>
-            {/if}
          </div>
          <div role="tabpanel" class="tab-pane" id="profile">
             <div class="table-responsive">
@@ -243,7 +291,22 @@
                   </tr>
                </table>
             </div>
-            <h2 style="padding-left: 10px;">Anterior:</h2>
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-sm-8">
+                     <p class="help-block">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                        &nbsp; Puedes ver más detalles desde Admin &gt; Información del sistema.
+                     </p>
+                  </div>
+                  <div class="col-sm-4 text-right">
+                     <a href="index.php?page=admin_info" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                        <span class="hidden-xs">&nbsp; Historial completo</span>
+                     </a>
+                  </div>
+               </div>
+            </div>
             <div class="table-responsive">
                <table class="table table-hover">
                   <thead>
@@ -262,7 +325,7 @@
                      <td class="text-right">{$value->fecha}</td>
                   </tr>
                   {else}
-                  <tr class="bg-warning">
+                  <tr class="warning">
                      <td colspan="4">Sin resultados.</td>
                   </tr>
                   {/loop}
@@ -272,7 +335,7 @@
          {loop="$fsc->extensions"}
             {if="$value->type=='tab'"}
             <div role="tabpanel" class="tab-pane" id="ext_{$value->name}">
-               <iframe src="index.php?page={$value->from}{$value->params}&snick={$fsc->suser->nick}" width="100%" height="600" frameborder="0"></iframe>
+               <iframe src="index.php?page={$value->from}{$value->params}&snick={$fsc->suser->nick}" width="100%" height="2000" frameborder="0"></iframe>
             </div>
             {/if}
          {/loop}
@@ -286,42 +349,45 @@
          <div class="modal-content">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-               <h4 class="modal-title">Nuevo empleado</h4>
+               <h4 class="modal-title">
+                  <span class="glyphicon glyphicon-user"></span> &nbsp; Nuevo empleado
+               </h4>
+               <p class="help-block">Se creará un empleado y se asignará a este usuario.</p>
             </div>
             <div class="modal-body">
                <div class="form-group">
-                  <label for="nnombre" class="col-lg-2 col-md-2 col-sm-2 control-label">Nombre</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
-                     <input class="form-control" type="text" name="nnombre" autocomplete="off"/>
+                  <label for="nnombre" class="col-sm-2 control-label">Nombre</label>
+                  <div class="col-sm-10">
+                     <input class="form-control" type="text" name="nnombre" autocomplete="off" required=""/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="napellidos" class="col-lg-2 col-md-2 col-sm-2 control-label">Apellidos</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
+                  <label for="napellidos" class="col-sm-2 control-label">Apellidos</label>
+                  <div class="col-sm-10">
                      <input class="form-control" type="text" name="napellidos" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="ndnicif" class="col-lg-2 col-md-2 col-sm-2 control-label">{#FS_CIFNIF#}</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
+                  <label for="ndnicif" class="col-sm-2 control-label">{#FS_CIFNIF#}</label>
+                  <div class="col-sm-10">
                      <input class="form-control" type="text" name="ndnicif" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="ntelefono" class="col-lg-2 col-md-2 col-sm-2 control-label">Teléfono</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
+                  <label for="ntelefono" class="col-sm-2 control-label">Teléfono</label>
+                  <div class="col-sm-10">
                      <input class="form-control" type="text" name="ntelefono" autocomplete="off"/>
                   </div>
                </div>
                <div class="form-group">
-                  <label for="nemail" class="col-lg-2 col-md-2 col-sm-2 control-label">Email</label>
-                  <div class="col-lg-10 col-md-10 col-sm-10">
+                  <label for="nemail" class="col-sm-2 control-label">Email</label>
+                  <div class="col-sm-10">
                      <input class="form-control" type="text" name="nemail" autocomplete="off"/>
                   </div>
                </div>
             </div>
             <div class="modal-footer">
-               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+               <button class="btn btn-sm btn-primary" type="submit">
                   <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
                </button>
             </div>

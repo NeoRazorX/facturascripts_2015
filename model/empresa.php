@@ -1,19 +1,19 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -27,6 +27,7 @@ class empresa extends fs_model
     * @var type 
     */
    public $id;
+   public $xid;
    
    public $stockpedidos;
    
@@ -42,15 +43,52 @@ class empresa extends fs_model
     * @var type 
     */
    public $recequivalencia;
+   
+   /**
+    * Código de la serie por defecto.
+    * @var type 
+    */
    public $codserie;
+   
+   /**
+    * Código del almacén predeterminado.
+    * @var type 
+    */
    public $codalmacen;
+   
+   /**
+    * Código de la forma de pago predeterminada.
+    * @var type 
+    */
    public $codpago;
+   
+   /**
+    * Código de la divisa predeterminada.
+    * @var type 
+    */
    public $coddivisa;
+   
+   /**
+    * Código del ejercicio predeterminado.
+    * @var type 
+    */
    public $codejercicio;
+   
    public $web;
    public $email;
+   
+   /**
+    * @deprecated since version 2015.053
+    * @var type 
+    */
    public $email_firma;
+   
+   /**
+    * @deprecated since version 2015.053
+    * @var type 
+    */
    public $email_password;
+   
    public $fax;
    public $telefono;
    public $codpais;
@@ -59,6 +97,11 @@ class empresa extends fs_model
    public $ciudad;
    public $codpostal;
    public $direccion;
+   
+   /**
+    * Nombre del administrador de la empresa.
+    * @var type 
+    */
    public $administrador;
    
    /**
@@ -66,12 +109,40 @@ class empresa extends fs_model
     * @var type 
     */
    public $codedi;
+   
    public $cifnif;
+   
    public $nombre;
+   
+   /**
+    *
+    * @var type Nombre a mostrar en el menú de facturaScripts.
+    */
    public $nombrecorto;
+   
    public $lema;
+   
    public $horario;
+   
+   /**
+    * Texto al pié de las facturas de venta.
+    * @var type 
+    */
    public $pie_factura;
+   
+   /**
+    * Fecha de inicio de la actividad.
+    * @var type 
+    */
+   public $inicio_actividad;
+   
+   /**
+    * Régimen de IVA de la empresa.
+    * @var type 
+    */
+   public $regimeniva;
+   
+   public $email_config;
    
    public function __construct()
    {
@@ -88,6 +159,7 @@ class empresa extends fs_model
       if($e)
       {
          $this->id = $this->intval($e[0]['id']);
+         $this->xid = $e[0]['xid'];
          $this->stockpedidos = $this->str2bool($e[0]['stockpedidos']);
          $this->contintegrada = $this->str2bool($e[0]['contintegrada']);
          $this->recequivalencia = $this->str2bool($e[0]['recequivalencia']);
@@ -98,8 +170,6 @@ class empresa extends fs_model
          $this->codejercicio = $e[0]['codejercicio'];
          $this->web = $e[0]['web'];
          $this->email = $e[0]['email'];
-         $this->email_firma = $e[0]['email_firma'];
-         $this->email_password = $e[0]['email_password'];
          $this->fax = $e[0]['fax'];
          $this->telefono = $e[0]['telefono'];
          $this->codpais = $e[0]['codpais'];
@@ -116,6 +186,39 @@ class empresa extends fs_model
          $this->lema = $e[0]['lema'];
          $this->horario = $e[0]['horario'];
          $this->pie_factura = $e[0]['pie_factura'];
+         $this->inicio_actividad = date('d-m-Y', strtotime($e[0]['inicioact']));
+         $this->regimeniva = $e[0]['regimeniva'];
+         
+         /// cargamos las opciones de email por defecto
+         $this->email_config = array(
+             'mail_password' => '',
+             'mail_bcc' => '',
+             'mail_firma' => "\n---\nEnviado con FacturaScripts",
+             'mail_host' => 'smtp.gmail.com',
+             'mail_port' => '465',
+             'mail_enc' => 'ssl',
+             'mail_user' => '',
+             'mail_low_security' => FALSE,
+         );
+         
+         /// añadimos compatibilidad hacia atrás
+         if( isset($e[0]['email_password']) )
+         {
+            $this->email_password = $this->email_config['mail_password'] = $e[0]['email_password'];
+         }
+         if( isset($e[0]['email_firma']) )
+         {
+            $this->email_firma = $this->email_config['mail_firma'] = $e[0]['email_firma'];
+         }
+         
+         $fsvar = new fs_var();
+         $this->email_config = $fsvar->array_get($this->email_config, FALSE);
+         
+         if( is_null($this->xid) )
+         {
+            $this->xid = $this->random_string(30);
+            $this->save();
+         }
       }
    }
    
@@ -123,12 +226,12 @@ class empresa extends fs_model
    {
       $this->clean_cache();
       $e = mt_rand(1, 9999);
-      return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,
-         codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,
-         ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario) VALUES
-         (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',NULL,NULL,
-         NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z', 
-         'Empresa ".$e." S.L.', 'E-".$e."','','');";
+      return "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,"
+              ."codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,"
+              ."ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)"
+              ."VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
+              ."NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa ".$e." S.L.',"
+              ."'E-".$e."','','');";
    }
    
    public function url()
@@ -138,11 +241,7 @@ class empresa extends fs_model
    
    public function can_send_mail()
    {
-      if( !isset($this->email) OR !isset($this->email_password) )
-      {
-         return FALSE;
-      }
-      else if( $this->email_password != '' )
+      if($this->email AND $this->email_config['mail_password'])
       {
          return TRUE;
       }
@@ -173,8 +272,6 @@ class empresa extends fs_model
       $this->codpostal = $this->no_html($this->codpostal);
       $this->direccion = $this->no_html($this->direccion);
       $this->email = $this->no_html($this->email);
-      $this->email_firma = $this->no_html($this->email_firma);
-      $this->email_password = $this->no_html($this->email_password);
       $this->fax = $this->no_html($this->fax);
       $this->horario = $this->no_html($this->horario);
       $this->lema = $this->no_html($this->lema);
@@ -205,6 +302,10 @@ class empresa extends fs_model
       {
          $this->clean_cache();
          
+         /// guardamos la configuración de email
+         $fsvar = new fs_var();
+         $fsvar->array_save($this->email_config);
+         
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)
@@ -221,8 +322,6 @@ class empresa extends fs_model
                  .", telefono = ".$this->var2str($this->telefono)
                  .", fax = ".$this->var2str($this->fax)
                  .", email = ".$this->var2str($this->email)
-                 .", email_firma = ".$this->var2str($this->email_firma)
-                 .", email_password = ".$this->var2str($this->email_password)
                  .", web = ".$this->var2str($this->web)
                  .", codejercicio = ".$this->var2str($this->codejercicio)
                  .", coddivisa = ".$this->var2str($this->coddivisa)
@@ -232,9 +331,12 @@ class empresa extends fs_model
                  .", recequivalencia = ".$this->var2str($this->recequivalencia)
                  .", contintegrada = ".$this->var2str($this->contintegrada)
                  .", stockpedidos = ".$this->var2str($this->stockpedidos)
+                 .", xid = ".$this->var2str($this->xid)
                  .", lema = ".$this->var2str($this->lema)
                  .", horario = ".$this->var2str($this->horario)
                  .", pie_factura = ".$this->var2str($this->pie_factura)
+                 .", inicioact = ".$this->var2str($this->inicio_actividad)
+                 .", regimeniva = ".$this->var2str($this->regimeniva)
                  ."  WHERE id = ".$this->var2str($this->id).";";
             
             return $this->db->exec($sql);
@@ -242,9 +344,10 @@ class empresa extends fs_model
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (stockpedidos,contintegrada,recequivalencia,codserie,
-               codalmacen,codpago,coddivisa,codejercicio,web,email,email_firma,email_password,fax,telefono,
+               codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,
                codpais,apartado,provincia,ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,
-               nombrecorto,lema,horario,pie_factura) VALUES (".$this->var2str($this->stockpedidos)
+               nombrecorto,lema,horario,pie_factura,inicioact,regimeniva) VALUES 
+                      (".$this->var2str($this->stockpedidos)
                     .",".$this->var2str($this->contintegrada)
                     .",".$this->var2str($this->recequivalencia)
                     .",".$this->var2str($this->codserie)
@@ -254,8 +357,6 @@ class empresa extends fs_model
                     .",".$this->var2str($this->codejercicio)
                     .",".$this->var2str($this->web)
                     .",".$this->var2str($this->email)
-                    .",".$this->var2str($this->email_firma)
-                    .",".$this->var2str($this->email_password)
                     .",".$this->var2str($this->fax)
                     .",".$this->var2str($this->telefono)
                     .",".$this->var2str($this->codpais)
@@ -271,7 +372,9 @@ class empresa extends fs_model
                     .",".$this->var2str($this->nombrecorto)
                     .",".$this->var2str($this->lema)
                     .",".$this->var2str($this->horario)
-                    .",".$this->var2str($this->pie_factura).");";
+                    .",".$this->var2str($this->pie_factura)
+                    .",".$this->var2str($this->inicio_actividad)
+                    .",".$this->var2str($this->regimeniva).");";
             
             if( $this->db->exec($sql) )
             {

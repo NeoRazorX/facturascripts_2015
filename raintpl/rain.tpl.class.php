@@ -941,13 +941,13 @@ class RainTpl_NotFoundException extends RainTpl_Exception
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title>FacturaScripts</title>
-      <meta name="description" content="FacturaScripts es un software libre bajo licencia GNU/AGPL." />
+      <meta name="description" content="FacturaScripts es un software libre bajo licencia GNU/LGPL." />
    </head>
    <body>
       <h1>$message</h1>
       <p>
          Si necesitas ayuda, recuerda que
-         <a target="_blank" href="http://www.facturascripts.com">la comunidad FacturaScripts</a>
+         <a target="_blank" href="https://www.facturascripts.com">la comunidad FacturaScripts</a>
          está para ayudarte.
       </p>
    </body>

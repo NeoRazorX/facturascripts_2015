@@ -1,21 +1,156 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * Simple file cache
+ *
+ * This class is great for those who can't use apc or memcached in their proyects.
+ *
+ * @author Emilio Cobos (emiliocobos.net) <ecoal95@gmail.com> and github contributors
+ * @version 1.0.1
+ * @link http://emiliocobos.net/php-cache/
+ *
+ */
+class php_file_cache
+{
+   /**
+	 * Configuration
+	 *
+	 * @access private
+	 */
+	private static $config;
+   
+   public function __construct()
+   {
+      self::$config = array(
+          'cache_path' => 'tmp/'.FS_TMP_NAME.'cache',
+          'expires' => 180,
+      );
+      
+      if( !file_exists(self::$config['cache_path']) )
+      {
+         @mkdir(self::$config['cache_path']);
+      }
+   }
+   
+	/**
+	 * Get a route to the file associated to that key.
+	 *
+	 * @access public
+	 * @param string $key
+	 * @return string the filename of the php file
+	 */
+	public function get_route($key)
+   {
+		return self::$config['cache_path'] . '/' . md5($key) . '.php';
+	}
+   
+	/**
+	 * Get the data associated with a key
+	 *
+	 * @access public
+	 * @param string $key
+	 * @return mixed the content you put in, or null if expired or not found
+	 */
+	public function get($key, $raw = false, $custom_time = NULL)
+   {
+		if( !$this->file_expired($file = $this->get_route($key), $custom_time))
+      {
+			$content = file_get_contents($file);
+			return $raw ? $content : unserialize($content);
+		}
+      
+		return NULL;
+	}
+   
+	/**
+	 * Put content into the cache
+	 *
+	 * @access public
+	 * @param string $key
+	 * @param mixed $content the the content you want to store
+	 * @param bool $raw whether if you want to store raw data or not. If it is true, $content *must* be a string
+	 * @return bool whether if the operation was successful or not
+	 */
+	public function put($key, $content, $raw = FALSE)
+   {
+		$dest_file_name = $this->get_route($key);
+		/** Use a unique temporary filename to make writes atomic with rewrite */
+		$temp_file_name = str_replace( ".php", uniqid("-" , true).".php", $dest_file_name );
+		$ret = @file_put_contents($temp_file_name, $raw ? $content : serialize($content));
+		if( $ret !== FALSE)
+      {
+			return @rename($temp_file_name, $dest_file_name);
+		}
+		@unlink($temp_file_name);
+		return false;
+	}
+   
+	/**
+	 * Delete data from cache
+	 *
+	 * @access public
+	 * @param string $key
+	 * @return bool true if the data was removed successfully
+	 */
+	public function delete($key)
+   {
+		return @unlink( $this->get_route($key) );
+	}
+   
+	/**
+	 * Flush all cache
+	 *
+	 * @access public
+	 * @return bool always true
+	 */
+	public function flush()
+   {
+		$cache_files = glob(self::$config['cache_path'] . '/*.php', GLOB_NOSORT);
+		foreach ($cache_files as $file)
+      {
+			@unlink($file);
+		}
+		return TRUE;
+	}
+   
+	/**
+	 * Check if a file has expired or not.
+	 *
+	 * @access public
+	 * @param $file the rout to the file
+	 * @param int $time the number of minutes it was set to expire
+	 * @return bool if the file has expired or not
+	 */
+	public function file_expired($file, $time = NULL)
+   {
+		if( !file_exists($file) )
+      {
+			return TRUE;
+		}
+      else
+      {
+         return (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
+      }
+	}
+}
+
 
 /**
  * Clase para concectar e interactuar con memcache.
@@ -23,6 +158,7 @@
 class fs_cache
 {
    private static $memcache;
+   private static $php_file_cache;
    private static $connected;
    private static $error;
    private static $error_msg;
@@ -57,6 +193,8 @@ class fs_cache
                instalar Memcache</a> y activarlo en el php.ini';
          }
       }
+      
+      self::$php_file_cache = new php_file_cache();
    }
    
    public function error()
@@ -77,44 +215,36 @@ class fs_cache
       }
    }
    
-   public function set($key, $object, $expire=5400, $json=FALSE)
+   public function set($key, $object, $expire=5400)
    {
       if(self::$connected)
       {
          self::$memcache->set(FS_CACHE_PREFIX.$key, $object, FALSE, $expire);
       }
-      else if($json)
+      else
       {
-         file_put_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key, json_encode($object) );
+         self::$php_file_cache->put($key, $object);
       }
    }
    
-   public function get($key, $json=FALSE)
+   public function get($key)
    {
       if(self::$connected)
       {
          return self::$memcache->get(FS_CACHE_PREFIX.$key);
       }
-      else if($json)
-      {
-         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,99) != 0 )
-         {
-            return json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key), TRUE );
-         }
-         else
-            return FALSE;
-      }
       else
-         return FALSE;
+      {
+         return self::$php_file_cache->get($key);
+      }
    }
    
    /**
     * Devuelve un array almacenado en cache
     * @param type $key
-    * @param type $json
     * @return type
     */
-   public function get_array($key, $json=FALSE)
+   public function get_array($key)
    {
       $aa = array();
       
@@ -126,11 +256,12 @@ class fs_cache
             $aa = $a;
          }
       }
-      else if($json)
+      else
       {
-         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,99) != 0 )
+         $a = self::$php_file_cache->get($key);
+         if($a)
          {
-            $aa = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key), TRUE );
+            $aa = $a;
          }
       }
       
@@ -142,10 +273,9 @@ class fs_cache
     * de que si no se encuentra en cache, se pone $error a true.
     * @param type $key
     * @param type $error
-    * @param type $json
     * @return type
     */
-   public function get_array2($key, &$error, $json=FALSE)
+   public function get_array2($key, &$error)
    {
       $aa = array();
       $error = TRUE;
@@ -159,37 +289,29 @@ class fs_cache
             $error = FALSE;
          }
       }
-      else if($json)
+      else
       {
-         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) AND mt_rand(0,99) != 0 )
+         $a = self::$php_file_cache->get($key);
+         if( is_array($a) )
          {
-            $a = json_decode( file_get_contents('tmp/'.FS_TMP_NAME.'memcache_'.$key), TRUE );
-            if( is_array($a) )
-            {
-               $aa = $a;
-               $error = FALSE;
-            }
+            $aa = $a;
+            $error = FALSE;
          }
       }
       
       return $aa;
    }
    
-   public function delete($key, $json=FALSE)
+   public function delete($key)
    {
       if(self::$connected)
       {
          return self::$memcache->delete(FS_CACHE_PREFIX.$key);
       }
-      else if($json)
-      {
-         if( file_exists('tmp/'.FS_TMP_NAME.'memcache_'.$key) )
-         {
-            return unlink('tmp/'.FS_TMP_NAME.'memcache_'.$key);
-         }
-      }
       else
-         return FALSE;
+      {
+         return self::$php_file_cache->delete($key);
+      }
    }
    
    public function delete_multi($keys)
@@ -204,7 +326,12 @@ class fs_cache
          return self::$memcache->deleteMulti($keys);
       }
       else
-         return FALSE;
+      {
+         foreach($keys as $i => $value)
+         {
+            return self::$php_file_cache->delete($value);
+         }
+      }
    }
    
    public function clean()
@@ -215,17 +342,7 @@ class fs_cache
       }
       else
       {
-         $done = FALSE;
-         foreach( scandir(getcwd().'/tmp/'.FS_TMP_NAME) as $f)
-         {
-            if( substr($f, 0, 9) == 'memcache_' )
-            {
-               unlink('tmp/'.FS_TMP_NAME.$f);
-               $done = TRUE;
-            }
-         }
-         
-         return $done;
+         return self::$php_file_cache->flush();
       }
    }
    
@@ -233,10 +350,12 @@ class fs_cache
    {
       if(self::$connected)
       {
-         return self::$memcache->getVersion();
+         return 'Memcache '.self::$memcache->getVersion();
       }
       else
-         return '-';
+      {
+         return 'Files';
+      }
    }
    
    public function connected()

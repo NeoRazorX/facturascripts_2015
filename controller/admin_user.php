@@ -1,19 +1,19 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -21,6 +21,7 @@ class admin_user extends fs_controller
 {
    public $agente;
    public $allow_delete;
+   public $allow_modify;
    public $user_log;
    public $suser;
    
@@ -34,7 +35,10 @@ class admin_user extends fs_controller
       $this->share_extensions();
       
       /// ¿El usuario tiene permiso para eliminar en esta página?
-      $this->allow_delete = $this->user->allow_delete_on(__CLASS__);
+      $this->allow_delete = $this->user->admin;
+      
+      /// ¿El usuario tiene permiso para modificar en esta página?
+      $this->allow_modify = $this->user->admin;
       
       $this->agente = new agente();
       
@@ -48,16 +52,29 @@ class admin_user extends fs_controller
       {
          $this->page->title = $this->suser->nick;
          
+         /// ¿Estamos modificando nuestro usuario?
+         if($this->suser->nick == $this->user->nick)
+         {
+            $this->allow_modify = TRUE;
+            $this->allow_delete = FALSE;
+         }
+         
          if( isset($_POST['nnombre']) )
          {
+            /// Nuevo empleado
             $age0 = new agente();
             $age0->codagente = $age0->get_new_codigo();
             $age0->nombre = $_POST['nnombre'];
             $age0->apellidos = $_POST['napellidos'];
             $age0->dnicif = $_POST['ndnicif'];
             $age0->telefono = $_POST['ntelefono'];
-            $age0->email = $_POST['nemail'];
-            if( $age0->save() )
+            $age0->email = strtolower($_POST['nemail']);
+            
+            if(!$this->user->admin)
+            {
+               $this->new_error_msg('Solamente un administrador puede crear y asignar un empleado desde aquí.');
+            }
+            else if( $age0->save() )
             {
                $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
                $this->suser->codagente = $age0->codagente;
@@ -150,6 +167,11 @@ class admin_user extends fs_controller
             }
          }
       }
+      
+      /// ordenamos por nombre
+      usort($returnlist, function($a, $b) {
+         return strcmp($a->name, $b->name);
+      });
       
       return $returnlist;
    }
@@ -266,14 +288,14 @@ class admin_user extends fs_controller
    
    private function modificar_user()
    {
-      if($this->suser->admin AND !$this->user->admin)
-      {
-         $this->new_error_msg('No puedes modificar los datos de un administrador.');
-      }
-      else if(FS_DEMO AND $this->user->nick != $this->suser->nick)
+      if(FS_DEMO AND $this->user->nick != $this->suser->nick)
       {
          $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
             Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
+      }
+      else if(!$this->allow_modify)
+      {
+         $this->new_error_msg('No tienes permiso para modificar estos datos.');
       }
       else
       {
@@ -292,7 +314,7 @@ class admin_user extends fs_controller
             }
          }
          
-         $this->suser->email = $_POST['email'];
+         $this->suser->email = strtolower($_POST['email']);
          
          if( isset($_POST['scodagente']) )
          {
@@ -342,7 +364,11 @@ class admin_user extends fs_controller
          }
          else if( $this->suser->save() )
          {
-            if( !$this->suser->admin )
+            if(!$this->user->admin)
+            {
+               /// si no eres administrador, no puedes cambiar los permisos
+            }
+            else if(!$this->suser->admin)
             {
                /// para cada página, comprobamos si hay que darle acceso o no
                foreach($this->all_pages() as $p)
@@ -378,6 +404,12 @@ class admin_user extends fs_controller
                   {
                      /// la página ha sido marcada como autorizada.
                      $a->save();
+                     
+                     if( is_null($this->suser->fs_page) AND $p->show_on_menu )
+                     {
+                        $this->suser->fs_page = $p->name;
+                        $this->suser->save();
+                     }
                   }
                   else
                   {

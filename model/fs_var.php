@@ -1,19 +1,19 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -76,13 +76,15 @@ class fs_var extends fs_model
       
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET ".$comillas."varchar".$comillas." = ".$this->var2str($this->varchar).
-                 " WHERE name = ".$this->var2str($this->name).";";
+         $sql = "UPDATE ".$this->table_name." SET "
+                 .$comillas."varchar".$comillas." = ".$this->var2str($this->varchar)
+                 ." WHERE name = ".$this->var2str($this->name).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (name,".$comillas."varchar".$comillas.") VALUES
-            (".$this->var2str($this->name).",".$this->var2str($this->varchar).");";
+         $sql = "INSERT INTO ".$this->table_name." (name,".$comillas."varchar".$comillas.")
+            VALUES (".$this->var2str($this->name)
+                 .",".$this->var2str($this->varchar).");";
       }
       
       return $this->db->exec($sql);
@@ -101,7 +103,9 @@ class fs_var extends fs_model
       if($vars)
       {
          foreach($vars as $v)
+         {
             $vlist[] = new fs_var($v);
+         }
       }
       
       return $vlist;
@@ -133,7 +137,9 @@ class fs_var extends fs_model
    {
       $comillas = '';
       if( strtolower(FS_DB_TYPE) == 'mysql' )
+      {
          $comillas = '`';
+      }
       
       if( $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";") )
       {
@@ -172,16 +178,27 @@ class fs_var extends fs_model
     */
    public function array_get($array, $replace=TRUE)
    {
-      foreach($array as $i => $value)
+      /// obtenemos todos los resultados y seleccionamos los que necesitamos
+      $data = $this->db->select("SELECT * FROM ".$this->table_name.";");
+      if($data)
       {
-         $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($i).";");
-         if($data)
+         foreach($array as $i => $value)
          {
-            $array[$i] = $data[0]['varchar'];
-         }
-         else if($replace)
-         {
-            $array[$i] = FALSE;
+            $encontrado = FALSE;
+            foreach($data as $d)
+            {
+               if($d['name'] == $i)
+               {
+                  $array[$i] = $d['varchar'];
+                  $encontrado = TRUE;
+                  break;
+               }
+            }
+            
+            if($replace AND !$encontrado)
+            {
+               $array[$i] = FALSE;
+            }
          }
       }
       
@@ -202,7 +219,10 @@ class fs_var extends fs_model
       {
          if($value === FALSE)
          {
-            $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($i).";");
+            if( !$this->simple_delete($i) )
+            {
+               $done = FALSE;
+            }
          }
          else
          {

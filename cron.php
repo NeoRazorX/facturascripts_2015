@@ -1,21 +1,23 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+echo 'Iniciando cron...';
 
 /// accedemos al directorio de FacturaScripts
 chdir(__DIR__);
@@ -35,6 +37,7 @@ require_once 'base/fs_default_items.php';
 require_once 'base/fs_model.php';
 require_model('empresa.php');
 require_model('fs_var.php');
+require_model('fs_log.php');
 
 if( $db->connect() )
 {
@@ -64,6 +67,12 @@ if( $db->connect() )
       /// guardamos las variables
       $fsvar->array_save($cron_vars);
       
+      /// indicamos el inicio en el log
+      $fslog = new fs_log();
+      $fslog->tipo = 'cron';
+      $fslog->detalle = 'Ejecutando el cron...';
+      $fslog->save();
+      
       /// establecemos los elementos por defecto
       $fs_default_items = new fs_default_items();
       $empresa = new empresa();
@@ -88,6 +97,12 @@ if( $db->connect() )
             echo "\n***********************";
          }
       }
+      
+      /// indicamos el fin en el log
+      $fslog = new fs_log();
+      $fslog->tipo = 'cron';
+      $fslog->detalle = 'Terminada la ejecución del cron.';
+      $fslog->save();
       
       /// Eliminamos la variable cron_lock puesto que ya hemos terminado
       $cron_vars['cron_lock'] = FALSE;

@@ -1,24 +1,35 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 class admin_info extends fs_controller
 {
+   public $allow_delete;
+   public $b_alerta;
+   public $b_desde;
+   public $b_detalle;
+   public $b_hasta;
+   public $b_ip;
+   public $b_tipo;
+   public $b_usuario;
+   public $modulos_eneboo;
+   public $resultados;
+   
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
@@ -26,11 +37,21 @@ class admin_info extends fs_controller
    
    protected function private_core()
    {
+      $this->share_extensions();
+      
+      /// ¿El usuario tiene permiso para eliminar en esta página?
+      $this->allow_delete = $this->user->admin;
+      
       /**
        * Cargamos las variables del cron
        */
       $fsvar = new fs_var();
-      $cron_vars = $fsvar->array_get( array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE) );
+      $cron_vars = $fsvar->array_get(
+              array(
+                  'cron_exists' => FALSE,
+                  'cron_lock' => FALSE,
+                  'cron_error' => FALSE)
+      );
       
       if( isset($_GET['fix']) )
       {
@@ -44,7 +65,9 @@ class admin_info extends fs_controller
          foreach( scandir(getcwd().'/tmp') as $f)
          {
             if( substr($f, -4) == '.php' )
+            {
                unlink('tmp/'.$f);
+            }
          }
          
          if( $this->cache->clean() )
@@ -54,40 +77,41 @@ class admin_info extends fs_controller
       }
       else if( !$cron_vars['cron_exists'] )
       {
-         $this->new_advice('Nunca se ha ejecutado el <a href="http://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
+         $this->new_advice('Nunca se ha ejecutado el'
+                 . ' <a href="http://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
                  . ' te perderás algunas características interesantes de FacturaScripts.');
       }
       else if( $cron_vars['cron_error'] )
       {
-         $this->new_error_msg('Parece que ha habido un error con el cron. Haz clic <a href="'.$this->url().'&fix=TRUE">aquí</a> para corregirlo.');
+         $this->new_error_msg('Parece que ha habido un error con el cron. Haz clic <a href="'.$this->url()
+                 .'&fix=TRUE">aquí</a> para corregirlo.');
       }
       else if( $cron_vars['cron_lock'] )
       {
          $this->new_advice('Se está ejecutando el cron.');
       }
       
-      if( isset($_REQUEST['json']) )
+      $this->b_alerta = '';
+      $this->b_desde = '';
+      $this->b_detalle = '';
+      $this->b_hasta = '';
+      $this->b_ip = '';
+      $this->b_tipo = '';
+      $this->b_usuario = '';
+      
+      if( isset($_POST['b_desde']) )
       {
-         /// desactivamos el motor de plantillas
-         $this->template = FALSE;
-         
-         $fslog = new fs_log();
-         echo json_encode( $fslog->all(0, 10000) );
+         $this->b_alerta = isset($_POST['b_alerta']);
+         $this->b_desde = $_POST['b_desde'];
+         $this->b_detalle = $_POST['b_detalle'];
+         $this->b_hasta = $_POST['b_hasta'];
+         $this->b_ip = $_POST['b_ip'];
+         $this->b_tipo = $_POST['b_tipo'];
+         $this->b_usuario = $_POST['b_usuario'];
       }
-      else
-      {
-         $this->share_extensions();
-      }
-   }
-   
-   public function linux()
-   {
-      return (php_uname('s') == 'Linux');
-   }
-   
-   public function uname()
-   {
-      return php_uname();
+      
+      $this->buscar_en_log();
+      $this->modulos_eneboo();
    }
    
    public function php_version()
@@ -98,21 +122,6 @@ class admin_info extends fs_controller
    public function cache_version()
    {
       return $this->cache->version();
-   }
-   
-   public function sys_uptime()
-   {
-      system('uptime');
-   }
-   
-   public function sys_df()
-   {
-      system('df -h');
-   }
-   
-   public function sys_free()
-   {
-      system('free -m');
    }
    
    public function fs_db_name()
@@ -137,16 +146,90 @@ class admin_info extends fs_controller
    
    private function share_extensions()
    {
-      $fsext = new fs_extension();
-      $fsext->name = 'bootstrap-table';
-      $fsext->from = __CLASS__;
-      $fsext->to = __CLASS__;
-      $fsext->type = 'head';
-      $fsext->text = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css"/>
-   <!-- Latest compiled and minified JavaScript -->
-   <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script>
-   <!-- Latest compiled and minified Locales -->
-   <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-es-SP.min.js"></script>';
-      $fsext->save();
+      foreach($this->extensions as $ext)
+      {
+         if($ext->name == 'bootstrap-table')
+         {
+            $ext->delete();
+         }
+      }
+   }
+   
+   private function buscar_en_log()
+   {
+      $this->resultados = array();
+      
+      $sql = "SELECT * FROM fs_logs";
+      $and = ' WHERE ';
+      
+      if($this->b_usuario != '')
+      {
+         $sql .= $and.' usuario = '.$this->empresa->var2str($this->b_usuario);
+         $and = ' AND ';
+      }
+      
+      if($this->b_tipo != '')
+      {
+         $sql .= $and.' tipo = '.$this->empresa->var2str($this->b_tipo);
+         $and = ' AND ';
+      }
+      
+      if($this->b_alerta != '')
+      {
+         $sql .= $and.' alerta';
+         $and = ' AND ';
+      }
+      
+      if($this->b_detalle != '')
+      {
+         $sql .= $and." lower(detalle) LIKE '%".mb_strtolower($this->b_detalle)."%'";
+         $and = ' AND ';
+      }
+      
+      if($this->b_ip != '')
+      {
+         $sql .= $and." ip LIKE '".$this->b_ip."%'";
+         $and = ' AND ';
+      }
+      
+      if($this->b_desde != '')
+      {
+         $sql .= $and.' fecha >= '.$this->empresa->var2str($this->b_desde);
+         $and = ' AND ';
+      }
+      
+      if($this->b_hasta != '')
+      {
+         $sql .= $and.' fecha <= '.$this->empresa->var2str($this->b_hasta);
+         $and = ' AND ';
+      }
+      
+      $sql .= ' ORDER BY fecha DESC';
+      
+      $data = $this->db->select_limit($sql, 1000, 0);
+      if($data)
+      {
+         foreach($data as $d)
+         {
+            $this->resultados[] = new fs_log($d);
+         }
+      }
+   }
+   
+   private function modulos_eneboo()
+   {
+      $this->modulos_eneboo = array();
+      
+      if( $this->db->table_exists('flmodules') )
+      {
+         $data = $this->db->select("SELECT * FROM flmodules ORDER BY idarea ASC, descripcion ASC;");
+         if($data)
+         {
+            foreach($data as $d)
+            {
+               $this->modulos_eneboo[] = $d;
+            }
+         }
+      }
    }
 }

@@ -1,19 +1,19 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2015  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * GNU Lesser General Public License for more details.
  * 
- * You should have received a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -31,7 +31,7 @@ class admin_home extends fs_controller
    
    public function __construct()
    {
-      parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE, TRUE);
+      parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE);
    }
    
    protected function private_core()
@@ -65,6 +65,14 @@ class admin_home extends fs_controller
       else if( !$this->user->admin )
       {
          $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
+      }
+      else if( isset($_GET['skip']) )
+      {
+         if($this->step == '1')
+         {
+            $this->step = '2';
+            $fsvar->simple_save('install_step', $this->step);
+         }
       }
       else if( isset($_POST['modpages']) )
       {
@@ -155,9 +163,17 @@ class admin_home extends fs_controller
                $zip->extractTo('plugins/');
                $zip->close();
                $this->new_message('Plugin '.$_FILES['fplugin']['name'].' añadido correctamente. Ya puedes activarlo.');
+               
+               $this->cache->clean();
             }
             else
                $this->new_error_msg('Error al abrir el archivo ZIP. Código: '.$res);
+         }
+         else
+         {
+            $this->new_error_msg('Archivo no encontrado. ¿Pesa más de '
+                    . $this->get_max_file_upload().' MB? Ese es el límite que tienes'
+                    . ' configurado en tu servidor.');
          }
       }
       else if( isset($_GET['download']) )
@@ -391,13 +407,15 @@ class admin_home extends fs_controller
       $include = array(
           'factura','facturas','factura_simplificada','factura_rectificativa',
           'albaran','albaranes','pedido','pedidos','presupuesto','presupuestos',
-          'provincia','apartado','cifnif','iva','irpf','numero2'
+          'provincia','apartado','cifnif','iva','irpf','numero2','serie','series'
       );
       
       foreach($GLOBALS['config2'] as $i => $value)
       {
          if( in_array($i, $include) )
+         {
             $clist[] = array('nombre' => $i, 'valor' => $value);
+         }
       }
       
       return $clist;
@@ -429,7 +447,7 @@ class admin_home extends fs_controller
     */
    public function nf0()
    {
-      return array(0, 1, 2, 3, 4);
+      return array(0, 1, 2, 3, 4, 5);
    }
    
    /**
@@ -465,7 +483,7 @@ class admin_home extends fs_controller
                 'idplugin' => NULL,
                 'name' => $f,
                 'prioridad' => '-',
-                'require' => '',
+                'require' => array(),
                 'update_url' => '',
                 'version' => 0,
                 'version_url' => '',
@@ -490,7 +508,13 @@ class admin_home extends fs_controller
                
                if( isset($ini_file['require']) )
                {
-                  $plugin['require'] = $ini_file['require'];
+                  if($ini_file['require'] != '')
+                  {
+                     foreach(explode(',', $ini_file['require']) as $aux)
+                     {
+                        $plugin['require'][] = $aux;
+                     }
+                  }
                }
                
                if( isset($ini_file['idplugin']) )
@@ -584,12 +608,12 @@ class admin_home extends fs_controller
          {
             $wizard = $pitem['wizard'];
             
-            if($pitem['require'] != '')
+            foreach($pitem['require'] as $req)
             {
-               if( !in_array($pitem['require'], $GLOBALS['plugins']) )
+               if( !in_array($req, $GLOBALS['plugins']) )
                {
                   $install = FALSE;
-                  $this->new_error_msg('Dependencias incumplidas: <b>'.$pitem['require'].'</b>');
+                  $this->new_error_msg('Dependencias incumplidas: <b>'.$req.'</b>');
                }
             }
             break;
@@ -731,11 +755,30 @@ class admin_home extends fs_controller
             $this->new_message('Se han eliminado automáticamente las siguientes páginas: '.join(', ', $eliminadas));
          }
          
+         /// desactivamos los plugins que dependan de este
+         foreach($this->plugin_advanced_list() as $plug)
+         {
+            /// ¿El plugin está activo?
+            if( in_array($plug['name'], $GLOBALS['plugins']) )
+            {
+               /**
+                * Si el plugin que hemos desactivado, es requerido por el plugin
+                * que estamos comprobando, lo desativamos también.
+                */
+               if( in_array($name, $plug['require']) )
+               {
+                  $this->disable_plugin($plug['name']);
+               }
+            }
+         }
+         
          /// borramos los archivos temporales del motor de plantillas
          foreach( scandir(getcwd().'/tmp') as $f)
          {
             if( substr($f, -4) == '.php' )
+            {
                unlink('tmp/'.$f);
+            }
          }
          
          /// limpiamos la caché
@@ -889,22 +932,6 @@ class admin_home extends fs_controller
    }
    
    /**
-    * Devuelve el tamaño máximo permitido para subir archivos.
-    * @return type
-    */
-   public function get_max_file_upload()
-   {
-      $max = intval( ini_get('post_max_size') );
-      
-      if( intval(ini_get('upload_max_filesize')) > $max )
-      {
-         $max = intval(ini_get('upload_max_filesize'));
-      }
-      
-      return $max;
-   }
-   
-   /**
     * Descarga un plugin de la lista de plugins fijos.
     */
    private function download1()
@@ -919,14 +946,32 @@ class admin_home extends fs_controller
             $res = $zip->open('download.zip');
             if($res === TRUE)
             {
+               $plugins_list = scandir(getcwd().'/plugins');
                $zip->extractTo('plugins/');
                $zip->close();
                unlink('download.zip');
                
-               /// renombramos el directorio
-               if( file_exists('plugins/'.$_GET['download'].'-master') )
+               /// renombramos si es necesario
+               foreach( scandir(getcwd().'/plugins') as $f)
                {
-                  rename('plugins/'.$_GET['download'].'-master', 'plugins/'.$_GET['download']);
+                  if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                  {
+                     $encontrado2 = FALSE;
+                     foreach($plugins_list as $f2)
+                     {
+                        if($f == $f2)
+                        {
+                           $encontrado2 = TRUE;
+                           break;
+                        }
+                     }
+                     
+                     if(!$encontrado2)
+                     {
+                        rename('plugins/'.$f, 'plugins/'.$_GET['download']);
+                        break;
+                     }
+                  }
                }
                
                $this->new_message('Plugin añadido correctamente.');
@@ -1037,9 +1082,14 @@ class admin_home extends fs_controller
               'url_repo' => 'https://github.com/FacturaScripts/argentina',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Argentina</b>.'
           ),
+          'chile' => array(
+              'url' => 'https://github.com/FacturaScripts/chile/archive/master.zip',
+              'url_repo' => 'https://github.com/FacturaScripts/chile',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Chile</b>.'
+          ),
           'colombia' => array(
-              'url' => 'https://github.com/salvaWEBco/colombia/archive/master.zip',
-              'url_repo' => 'https://github.com/salvaWEBco/colombia',
+              'url' => 'https://github.com/FacturaScripts/colombia/archive/master.zip',
+              'url_repo' => 'https://github.com/FacturaScripts/colombia',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Colombia</b>.'
           ),
           'ecuador' => array(
@@ -1056,6 +1106,16 @@ class admin_home extends fs_controller
               'url' => 'https://github.com/NeoRazorX/peru/archive/master.zip',
               'url_repo' => 'https://github.com/NeoRazorX/peru',
               'description' => 'Plugin de adaptación de FacturaScripts a <b>Perú</b>.'
+          ),
+          'republica_dominicana' => array(
+              'url' => 'https://github.com/joenilson/republica_dominicana/archive/master.zip',
+              'url_repo' => 'https://github.com/joenilson/republica_dominicana',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>República Dominicana</b>.'
+          ),
+          'venezuela' => array(
+              'url' => 'https://github.com/ConsultoresTecnologicos/FS-LocalizacionVenezuela/archive/master.zip',
+              'url_repo' => 'https://github.com/ConsultoresTecnologicos/FS-LocalizacionVenezuela',
+              'description' => 'Plugin de adaptación de FacturaScripts a <b>Venezuela</b>.'
           ),
       );
       $fsvar = new fs_var();

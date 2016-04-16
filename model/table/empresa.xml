@@ -86,16 +86,6 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
-      <nombre>email_firma</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>email_password</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
       <nombre>fax</nombre>
       <tipo>character varying(20)</tipo>
       <nulo>YES</nulo>
@@ -114,6 +104,11 @@
    <columna>
       <nombre>idprovincia</nombre>
       <tipo>integer</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>xid</nombre>
+      <tipo>character varying(30)</tipo>
       <nulo>YES</nulo>
    </columna>
    <columna>
@@ -164,6 +159,16 @@
    <columna>
       <nombre>web</nombre>
       <tipo>character varying(100)</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>inicioact</nombre>
+      <tipo>date</tipo>
+      <nulo>YES</nulo>
+   </columna>
+   <columna>
+      <nombre>regimeniva</nombre>
+      <tipo>character varying(20)</tipo>
       <nulo>YES</nulo>
    </columna>
    <restriccion>

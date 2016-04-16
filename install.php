@@ -18,68 +18,78 @@ function random_string($length = 20)
 function guarda_config($nombre_archivo)
 {
    $archivo = fopen($nombre_archivo, "w");
-   fwrite($archivo, "<?php\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Configuración de la base de datos.\n");
-   fwrite($archivo, " * type: postgresql o mysql (mysql está en fase experimental).\n");
-   fwrite($archivo, " * host: la ip del ordenador donde está la base de datos.\n");
-   fwrite($archivo, " * port: el puerto de la base de datos.\n");
-   fwrite($archivo, " * name: el nombre de la base de datos.\n");
-   fwrite($archivo, " * user: el usuario para conectar a la base de datos\n");
-   fwrite($archivo, " * pass: la contraseña del usuario.\n");
-   fwrite($archivo, " * history: TRUE si quieres ver todas las consultas que se hacen en cada página.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_DB_TYPE', '".$_REQUEST['db_type']."'); /// MYSQL o POSTGRESQL\n");
-   fwrite($archivo, "define('FS_DB_HOST', '".$_REQUEST['db_host']."');\n");
-   fwrite($archivo, "define('FS_DB_PORT', '".$_REQUEST['db_port']."'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
-   fwrite($archivo, "define('FS_DB_NAME', '".$_REQUEST['db_name']."');\n");
-   fwrite($archivo, "define('FS_DB_USER', '".$_REQUEST['db_user']."'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
-   fwrite($archivo, "define('FS_DB_PASS', '".$_REQUEST['db_pass']."');\n");
-   
-   if($_REQUEST['db_type'] == 'MYSQL' AND $_POST['mysql_socket'] != '')
+   if($archivo)
    {
-      fwrite($archivo, "ini_set('mysqli.default_socket', '".$_POST['mysql_socket']."');\n");
+      fwrite($archivo, "<?php\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Configuración de la base de datos.\n");
+      fwrite($archivo, " * type: postgresql o mysql (mysql está en fase experimental).\n");
+      fwrite($archivo, " * host: la ip del ordenador donde está la base de datos.\n");
+      fwrite($archivo, " * port: el puerto de la base de datos.\n");
+      fwrite($archivo, " * name: el nombre de la base de datos.\n");
+      fwrite($archivo, " * user: el usuario para conectar a la base de datos\n");
+      fwrite($archivo, " * pass: la contraseña del usuario.\n");
+      fwrite($archivo, " * history: TRUE si quieres ver todas las consultas que se hacen en cada página.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_DB_TYPE', '".$_REQUEST['db_type']."'); /// MYSQL o POSTGRESQL\n");
+      fwrite($archivo, "define('FS_DB_HOST', '".$_REQUEST['db_host']."');\n");
+      fwrite($archivo, "define('FS_DB_PORT', '".$_REQUEST['db_port']."'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
+      fwrite($archivo, "define('FS_DB_NAME', '".$_REQUEST['db_name']."');\n");
+      fwrite($archivo, "define('FS_DB_USER', '".$_REQUEST['db_user']."'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
+      fwrite($archivo, "define('FS_DB_PASS', '".$_REQUEST['db_pass']."');\n");
+      
+      if($_REQUEST['db_type'] == 'MYSQL' AND $_POST['mysql_socket'] != '')
+      {
+         fwrite($archivo, "ini_set('mysqli.default_socket', '".$_POST['mysql_socket']."');\n");
+      }
+      
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_TMP_NAME', '".random_string()."/');\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_DB_HISTORY', FALSE);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Habilita el modo demo, para pruebas.\n");
+      fwrite($archivo, " * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");
+      fwrite($archivo, " * además deshabilita el límite de una conexión por usuario.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "define('FS_DEMO', FALSE);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/*\n");
+      fwrite($archivo, " * Configuración de memcache.\n");
+      fwrite($archivo, " * Host: la ip del servidor donde está memcached.\n");
+      fwrite($archivo, " * port: el puerto en el que se ejecuta memcached.\n");
+      fwrite($archivo, " * prefix: prefijo para las claves, por si tienes varias instancias de\n");
+      fwrite($archivo, " * FacturaScripts conectadas al mismo servidor memcache.\n");
+      fwrite($archivo, " */\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "define('FS_CACHE_HOST', '".$_REQUEST['cache_host']."');\n");
+      fwrite($archivo, "define('FS_CACHE_PORT', '".$_REQUEST['cache_port']."');\n");
+      fwrite($archivo, "define('FS_CACHE_PREFIX', '".$_REQUEST['cache_prefix']."');\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
+      fwrite($archivo, "define('FS_COOKIES_EXPIRE', 7776000);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
+      fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/// desactiva el poder añadir plugins manualmente\n");
+      fwrite($archivo, "define('FS_DISABLE_ADD_PLUGINS', FALSE);\n");
+      fclose($archivo);
+      
+      header("Location: index.php");
+      exit();
    }
-   
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_TMP_NAME', '".random_string()."/');\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_DB_HISTORY', FALSE);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Habilita el modo demo, para pruebas.\n");
-   fwrite($archivo, " * Este modo permite hacer login con cualquier usuario y la contraseña demo,\n");
-   fwrite($archivo, " * además deshabilita el límite de una conexión por usuario.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "define('FS_DEMO', FALSE);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/*\n");
-   fwrite($archivo, " * Configuración de memcache.\n");
-   fwrite($archivo, " * Host: la ip del servidor donde está memcached.\n");
-   fwrite($archivo, " * port: el puerto en el que se ejecuta memcached.\n");
-   fwrite($archivo, " * prefix: prefijo para las claves, por si tienes varias instancias de\n");
-   fwrite($archivo, " * FacturaScripts conectadas al mismo servidor memcache.\n");
-   fwrite($archivo, " */\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "define('FS_CACHE_HOST', '".$_REQUEST['cache_host']."');\n");
-   fwrite($archivo, "define('FS_CACHE_PORT', '".$_REQUEST['cache_port']."');\n");
-   fwrite($archivo, "define('FS_CACHE_PREFIX', '".$_REQUEST['cache_prefix']."');\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
-   fwrite($archivo, "define('FS_COOKIES_EXPIRE', 7776000);\n");
-   fwrite($archivo, "\n");
-   fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
-   fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
-   fclose($archivo);
-   
-   header("Location: index.php");
-   exit();
+   else
+   {
+      $errors[] = "permisos";
+   }
 }
 
 if( file_exists('config.php') )
@@ -207,10 +217,11 @@ $system_info = str_replace('"', "'", $system_info);
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>FacturaScripts</title>
-   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
+   <link rel="stylesheet" href="view/font-awesome/css/font-awesome.min.css" />
    <link rel="stylesheet" href="view/css/datepicker.css" />
    <link rel="stylesheet" href="view/css/custom.css" />
    <script type="text/javascript" src="view/js/jquery.min.js"></script>
@@ -225,14 +236,13 @@ $system_info = str_replace('"', "'", $system_info);
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-               <span class="sr-only">Toggle navigation</span>
+               <span class="sr-only">Menú</span>
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="index.php">FacturaScripts</a>
          </div>
-         
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                <li>
@@ -241,10 +251,10 @@ $system_info = str_replace('"', "'", $system_info);
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_questions" target="_blank">Preguntas</a></li>
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_errors" target="_blank">Errores</a></li>
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
-                     <li><a href="//www.facturascripts.com/comm3/index.php?page=community_all" target="_blank">Todo</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_questions" target="_blank">Preguntas</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_errors" target="_blank">Errores</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
+                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_colabora" target="_blank">Colabora</a></li>
                      <li class="divider"></li>
                      <li>
                         <a href="#" id="b_feedback">
@@ -258,7 +268,7 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
    </nav>
    
-   <form name="f_feedback" action="//www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
+   <form name="f_feedback" action="https://www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <input type="hidden" name="feedback_type" value="error"/>
       <div class="modal" id="modal_feedback">
@@ -321,27 +331,27 @@ $system_info = str_replace('"', "'", $system_info);
             messages: {
                db_host: {
                            required: "El campo es obligatorio.",
-                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
                         },
                db_port: {
                            required: "El campo es obligatorio.",
-                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
                         },
                db_name: {
                            required: "El campo es obligatorio.",
-                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
                         },
                db_user: {
                            required: "El campo es obligatorio.",
-                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
                         },
                cache_host: {
                            required: "El campo es obligatorio.",
-                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
                         },
                cache_port: {
                            required: "El campo es obligatorio.",
-                           minlength: jQuery.format("Requiere mínimo {0} carácteres!")
+                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
                         },
             }
          });
@@ -350,15 +360,18 @@ $system_info = str_replace('"', "'", $system_info);
    
    <div class="container">
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-sm-12">
             <div class="page-header">
-               <h1>Bienvenido al instalador de FacturaScripts <?php echo file_get_contents('VERSION'); ?></h1>
+               <h1>
+                  Bienvenido al instalador de FacturaScripts
+                  <small><?php echo file_get_contents('VERSION'); ?></small>
+               </h1>
             </div>
          </div>
       </div>
       
       <div class="row">
-         <div class="col-lg-12">
+         <div class="col-sm-12">
             <?php
             foreach($errors as $err)
             {
@@ -526,109 +539,166 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
       
       <div class="row">
-         <div class="col-lg-10">
-            <h3>Antes de empezar...</h3>
-            <p>
+         <div class="col-sm-10">
+            <b>Antes de empezar...</b>
+            <p class="help-block">
                Recuerda que tienes el menú de ayuda arriba a la derecha. Si encuentras cualquier problema,
                haz clic en <b>informar...</b> y describe tu duda, sugerencia o el error que has encontrado.
                No sabemos hacer software perfecto, pero con tu ayuda nos podemos acercar cada vez más ;-)
-            </p>
-            <p>
+               <br/><br/>
                Y si quieres saber más, no olvides seguir a nuestro desarrollador principal
                en su canal de youtube.
             </p>
-            <a href="https://www.youtube.com/user/NeoRazorX" target="_blank" class="btn btn-sm btn-danger">
+            <a href="https://www.youtube.com/user/NeoRazorX" target="_blank" class="btn btn-sm btn-default">
                <span class="glyphicon glyphicon-facetime-video"></span> &nbsp; FacturaScripts en YouTube
             </a>
          </div>
-         <div class="col-lg-2">
+         <div class="col-sm-2">
             <div class="thumbnail">
                <img src="view/img/help-menu.png" alt="ayuda"/>
             </div>
          </div>
       </div>
       
-      <div class="row">
-         <div class="col-lg-12">
-            <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form" role="form" method="post">
-               <div class="panel panel-primary">
-                  <div class="panel-heading">
-                     <h3 class="panel-title">
-                        <span class="badge">1</span> &nbsp; Configuración de la base de datos
-                     </h3>
-                  </div>
-                  <div class="panel-body">
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+      <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form" role="form" method="post">
+         <div class="row">
+            <div class="col-sm-12">
+               <ul class="nav nav-tabs" role="tablist">
+                  <li role="presentation" class="active">
+                     <a href="#db" aria-controls="db" role="tab" data-toggle="tab">
+                        <i class="fa fa-database"></i>&nbsp;
+                        Base de datos
+                     </a>
+                  </li>
+                  <li role="presentation">
+                     <a href="#cache" aria-controls="cache" role="tab" data-toggle="tab">
+                        <i class="fa fa-tachometer"></i>&nbsp;
+                        Memcached
+                     </a>
+                  </li>
+                  <li role="presentation">
+                     <a href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
+                        <i class="fa fa-file-text-o"></i>&nbsp;
+                        Licencia
+                     </a>
+                  </li>
+               </ul>
+               <br/>
+            </div>
+         </div>
+         <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="db">
+               <div class="row">
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Tipo de servidor SQL:
                         <select name="db_type" class="form-control" onchange="change_db_type()">
                            <option value="MYSQL"<?php if($db_type=='MYSQL') { echo ' selected=""'; } ?>>MySQL</option>
                            <option value="POSTGRESQL"<?php if($db_type=='POSTGRESQL') { echo ' selected=""'; } ?>>PostgreSQL</option>
                         </select>
                      </div>
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+                  </div>
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Servidor:
                         <input class="form-control" type="text" name="db_host" value="<?php echo $db_host; ?>" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+                  </div>
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Puerto:
                         <input class="form-control" type="number" name="db_port" value="<?php echo $db_port; ?>" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Nombre base de datos:
                         <input class="form-control" type="text" name="db_name" value="<?php echo $db_name; ?>" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+                  </div>
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Usuario:
                         <input class="form-control" type="text" name="db_user" value="<?php echo $db_user; ?>" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+                  </div>
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Contraseña:
                         <input class="form-control" type="password" name="db_pass" value="" autocomplete="off"/>
                      </div>
-                     <div id="mysql_socket" class="form-group col-lg-4 col-md-4 col-sm-4">
-                        Socket (opcional):
-                        <input class="form-control" type="text" name="mysql_socket" value="" autocomplete="off"/>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-4">
+                     <div id="mysql_socket" class="form-group">
+                        Socket:
+                        <input class="form-control" type="text" name="mysql_socket" value="" placeholder="opcional" autocomplete="off"/>
+                        <p class="help-block">
+                           Solamente en algunos hostings es necesario especificar el socket de MySQL.
+                        </p>
                      </div>
                   </div>
                </div>
-                  
-               <div class="panel panel-info" id="panel_configuracion_inicial_cache">
-                  <div class="panel-heading">
-                     <h3 class="panel-title">
-                        <span class="badge">2</span> &nbsp; Configuración Memcache (opcional)
-                     </h3>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="cache">
+               <div class="row">
+                  <div class="col-sm-12">
+                     <p class="help-block">
+                        Este apartado es totalmente <b>opcional</b>. Si tienes instalado memcached,
+                        puedes especificar aquí la ruta, puerto y prefijo a utilizar. Si no,
+                        déjalo como está.
+                     </p>
                   </div>
-                  <div class="panel-body">
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+               </div>
+               <div class="row">
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Servidor:
                         <input class="form-control" type="text" name="cache_host" value="localhost" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+                  </div>
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Puerto:
                         <input class="form-control" type="number" name="cache_port" value="11211" autocomplete="off"/>
                      </div>
-                     <div class="form-group col-lg-4 col-md-4 col-sm-4">
+                  </div>
+                  <div class="col-sm-4">
+                     <div class="form-group">
                         Prefijo:
                         <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(8) ?>_" autocomplete="off"/>
                      </div>
                   </div>
                </div>
-               
-               <div class="text-right">
-                  <button id="submit_button" class="btn btn-sm btn-primary" type="submit">
-                     <span class="glyphicon glyphicon-floppy-disk"></span>
-                     &nbsp; Guardar y empezar
-                  </button>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="licencia">
+               <div class="row">
+                  <div class="col-sm-12">
+                     <div class="form-group">
+                        <iframe src="COPYING" width="100%" height="600"></iframe>
+                     </div>
+                  </div>
                </div>
-            </form>
+            </div>
          </div>
-      </div>
+         <div class="row">
+            <div class="col-sm-12 text-right">
+               <button id="submit_button" class="btn btn-sm btn-primary" type="submit">
+                  <span class="glyphicon glyphicon-ok"></span>
+                  &nbsp; Aceptar
+               </button>
+            </div>
+         </div>
+      </form>
       
       <div class="row" style="margin-bottom: 20px;">
-         <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+         <div class="col-sm-12 text-center">
             <hr/>
             <small>
-               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>
+               © 2013-2016 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
             </small>
          </div>
       </div>

@@ -51,39 +51,45 @@
 {if="!$fsc->step"}
 <div class="well">
    <div class="page-header" style="margin-top: 0px;">
-      <h1>¡Bienvenido a FacturaScripts {$fsc->version()}!</h1>
+      <h1>
+         Bienvenido a FacturaScripts
+         <small>{$fsc->version()}</small>
+      </h1>
    </div>
-   <p>
+   <p class="help-block">
       Ya tienes instalado el núcleo. Como ves, el núcleo permite gestionar páginas,
-      plugins y usuarios.
+      plugins y usuarios. Pulsa continuar para seguir con la instalación.
    </p>
    <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
-      <span class="glyphicon glyphicon-ok"></span> &nbsp; Continuar
+      <span class="glyphicon glyphicon-ok"></span>&nbsp; Continuar
    </a>
 </div>
 {elseif="$fsc->step=='1'"}
 <div class="well">
    <div class="page-header" style="margin-top: 0px;">
-      <h1>Plugins</h1>
+      <h1>
+         <i class="fa fa-puzzle-piece"></i> Plugins
+      </h1>
    </div>
-   <p>
+   <p class="help-block">
       El núcleo solamente se encarga de la gestión de usuarios, plugins y páginas.
       Para todo lo demás tienes los plugins.
       En la pestaña <b>descargas</b> tienes disponibles los principales plugins.
       Elige los que necesites. Hay de todo y la lista se actualiza periódicamente.
-   </p>
-   <p>
+      <br/>
       Los plugins instalados los tienes en la pestaña <b>plugins</b>. Puedes añadir
       plugins manualmente, si lo deseas, y también puedes activar o desactivar,
       incluso eliminarlos.
-   </p>
-   <p>
+      <br/>
       Además, toda la facturación y contabilidad básica ha sido movida al plugin
       <b>facturacion_base</b>. Puedes descargarlo automáticamente e instalarlo pulsando
       este botón.
    </p>
    <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
-      <span class="glyphicon glyphicon-download-alt"></span> &nbsp; Descargar facturacion_base
+      <span class="glyphicon glyphicon-download-alt"></span>&nbsp; Descargar facturacion_base
+   </a>
+   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&skip=TRUE#descargas" class="btn btn-sm btn-warning">
+      <span class="glyphicon glyphicon-remove"></span>&nbsp; No, gracias
    </a>
 </div>
 {else}
@@ -127,13 +133,13 @@
    <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
          <a href="#t_paginas" aria-controls="t_paginas" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-object-align-top"></span>
+            <i class="fa fa-check-square"></i>
             <span class="hidden-xs">&nbsp; Menú</span>
          </a>
       </li>
       <li role="presentation">
          <a href="#t_plugins" aria-controls="t_plugins" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-dashboard"></span>
+            <i class="fa fa-puzzle-piece"></i>
             <span class="hidden-xs">&nbsp; Plugins</span>
          </a>
       </li>
@@ -175,7 +181,7 @@
                         {/loop}
                         -->
                         {if="$sin_activar>0"}
-                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Hay {$sin_activar} página(s) no activa(s).">
+                        <button class="btn btn-sm btn-warning" type="button" onclick="fs_marcar_todo()" title="Hay {$sin_activar} página(s) no activa(s).">
                            <b>{$sin_activar}</b>
                         </button>
                         {/if}
@@ -196,27 +202,31 @@
                      <tr>
                         <th class="text-left">Página</th>
                         <th class="text-left">Menú</th>
-                        <th class="text-left">Versión</th>
-                        <th class="text-center">Importante</th>
                         <th class="text-center">Existe</th>
                      </tr>
                   </thead>
                   {loop="$fsc->paginas"}
                   <tr{if="!$value->exists"} class="danger"{/if}>
                      <td>
-                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked="checked"{/if}/>
+                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked=""{/if}/>
                         &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
                      </td>
                      <td>
-                        {if="$value->show_on_menu"}
+                        {if="$value->important"}
+                        <span class="glyphicon glyphicon-star"></span> » {$value->title}
+                        {elseif="$value->show_on_menu"}
                         <span class="text-capitalize">{$value->folder}</span> » {$value->title}
                         {else}
                         -
                         {/if}
                      </td>
-                     <td>{$value->version}</td>
-                     <td class="text-center">{if="$value->important"}<span class="glyphicon glyphicon-ok"></span>{/if}</td>
-                     <td class="text-center">{if="$value->exists"}<span class="glyphicon glyphicon-ok"></span>{/if}</td>
+                     <td class="text-center">
+                        {if="$value->exists"}
+                        <span class="glyphicon glyphicon-ok"></span>
+                        {else}
+                        <span class="glyphicon glyphicon-exclamation-sign" title="No se encuentra el controlador o pertenece a un plugin inactivo"></span>
+                        {/if}
+                     </td>
                   </tr>
                   {/loop}
                </table>
@@ -299,7 +309,7 @@
                </tr>
                {else}
                <tr class="warning">
-                  <td colspan="5">No tienes plugin instalados. Mira en la pestaña <b>Descargas</b>.</td>
+                  <td colspan="5">No tienes plugins instalados. Mira en la pestaña <b>Descargas</b>.</td>
                </tr>
                {/loop}
             </table>
@@ -358,7 +368,21 @@
                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
                      {/if}
                   </td>
-                  <td>{$value->nombre}</td>
+                  <td>
+                     {$value->nombre}
+                     {if="$value->imagen"}
+                     <div style="margin-bottom: 5px"></div>
+                        {if="!$value->zip_link"}
+                        <a href="{$value->link}" target="_blank">
+                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+                        </a>
+                        {else}
+                        <a href="{$value->imagen}" target="_blank">
+                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+                        </a>
+                        {/if}
+                     {/if}
+                  </td>
                   <td>
                      {function="nl2br($value->descripcion)"}<br/>
                      {if="substr($value->zip_link, -4) == '.zip'"}
@@ -412,52 +436,79 @@
                         </select>
                      </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Portada:
-                     <select name="homepage" class="form-control">
-                        {loop="$fsc->paginas"}
-                        <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected=""{/if}>{$value->name}</option>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Portada:
+                        <select name="homepage" class="form-control">
+                           {loop="$fsc->paginas"}
+                           <option value="{$value->name}"{if="$value->name==$GLOBALS['config2']['homepage']"} selected=""{/if}>{$value->name}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Decimales de los totales:
+                        <select name="nf0" class="form-control">
+                        {loop="$fsc->nf0()"}
+                           <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Decimales:
-                     <select name="nf0" class="form-control">
-                     {loop="$fsc->nf0()"}
-                        <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Decimales de los precios:
+                        <select name="nf0_art" class="form-control">
+                        {loop="$fsc->nf0()"}
+                           <option value="{$value}"{if="$value==$GLOBALS['config2']['nf0_art']"} selected=""{/if}>{$value}</option>
+                        {/loop}
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Separador para los Decimales:
-                     <select name="nf1" class="form-control">
-                     {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected=""{/if}>{$value}</option>
-                     {/loop}
-                     </select>
-                  </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Separador para los Millares:
-                     <select name="nf2" class="form-control">
-                        <option value="">(Ninguno)</option>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Separador para los Decimales:
+                        <select name="nf1" class="form-control">
                         {loop="$fsc->nf1()"}
-                        <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected=""{/if}>{$value}</option>
+                           <option value="{$key}"{if="$key==$GLOBALS['config2']['nf1']"} selected=""{/if}>{$value}</option>
                         {/loop}
-                     </select>
+                        </select>
+                     </div>
                   </div>
-                  <div class="form-group col-md-3 col-sm-3">
-                     Símbolo Divisa:
-                     <select name="pos_divisa" class="form-control">
-                        <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected=""{/if}>123 {$fsc->simbolo_divisa()}</option>
-                        <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected=""{/if}>{$fsc->simbolo_divisa()}123</option>
-                     </select>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Separador para los Millares:
+                        <select name="nf2" class="form-control">
+                           <option value="">(Ninguno)</option>
+                           {loop="$fsc->nf1()"}
+                           <option value="{$key}"{if="$key==$GLOBALS['config2']['nf2']"} selected=""{/if}>{$value}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <div class="form-group">
+                        Símbolo Divisa:
+                        <select name="pos_divisa" class="form-control">
+                           <option value="right"{if="$GLOBALS['config2']['pos_divisa']=='right'"} selected=""{/if}>123 {$fsc->simbolo_divisa()}</option>
+                           <option value="left"{if="$GLOBALS['config2']['pos_divisa']=='left'"} selected=""{/if}>{$fsc->simbolo_divisa()}123</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3 col-sm-3">
+                     <p class="help-block">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                        La configuración de decimales y separadores de decimales y millares
+                        se aplica únicamente a los listados y formatos de impresión. Para los
+                        campos editables se utiliza la configuración del sistema operativo.
+                     </p>
                   </div>
                </div>
                <div class="row bg-info">
                   <div class="col-md-12 col-sm-12">
                      <h2>
-                        <span class="glyphicon glyphicon-globe"></span>
-                        &nbsp; Traducciones:
+                        <i class="fa fa-language"></i>&nbsp; Traducciones:
                      </h2>
                      <p class="help-block">
                         FACTURA y FACTURAS se traducen únicamente en los documentos de ventas.
@@ -488,13 +539,17 @@
                      <div class="form-group">
                         Comprobaciones en la base de datos:
                         <select name="check_db_types" class="form-control">
-                           <option value="true"{if="$GLOBALS['config2']['check_db_types']=='true'"} selected=''{/if}>
+                           <option value="true"{if="$GLOBALS['config2']['check_db_types']==1"} selected=''{/if}>
                               Comprobar los tipos de las columnas de las tablas
                            </option>
-                           <option value="false"{if="$GLOBALS['config2']['check_db_types']=='false'"} selected=''{/if}>
+                           <option value="false"{if="$GLOBALS['config2']['check_db_types']!=1"} selected=''{/if}>
                               No comprobar los tipos
                            </option>
                         </select>
+                        <p class="help-block">
+                           Tendrás que <a href="index.php?page=admin_info">limpiar la caché</a>
+                           para que comiencen las comprobaciones.
+                        </p>
                      </div>
                   </div>
                   <div class="col-md-3 col-sm-3">
@@ -537,7 +592,7 @@
                         Algoritmo de nuevo código:
                         <select name="new_codigo" class="form-control">
                            <option value="eneboo"{if="$GLOBALS['config2']['new_codigo']=='eneboo'"} selected=''{/if}>Compatible con Eneboo</option>
-                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + SERIE + NÚMERO</option>
+                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + {#FS_SERIE#} + NÚMERO</option>
                         </select>
                      </div>
                   </div>
@@ -560,24 +615,30 @@
    </div>
 </div>
 
-<div class="modal fade" id="modal_add_plugin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal_add_plugin" tabindex="-1" role="dialog" aria-hidden="true">
    <div class="modal-dialog">
       <div class="modal-content">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                <span aria-hidden="true">&times;</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Añadir un plugin</h4>
+            <h4 class="modal-title">
+               <i class="fa fa-puzzle-piece"></i>&nbsp; Añadir un plugin
+            </h4>
+            <p class="help-block">
+               Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.
+            </p>
          </div>
          <div class="modal-body">
-            <p>Si tienes un plugin en un archivo .zip, puedes subirlo e instalarlo desde aquí.</p>
             <form class="form" action="{$fsc->url()}#plugins" enctype="multipart/form-data" method="post">
                <input type="hidden" name="install" value="TRUE"/>
                <div class="form-group">
                   <input type="file" name="fplugin" accept="application/zip"/>
                </div>
                <p class="help-block">
-                  Este servidor admite un tamaño máximo de {$fsc->get_max_file_upload()} MB
+                  Este servidor admite un tamaño máximo de {$fsc->get_max_file_upload()} MB.
+                  Si el plugin ocupa más, dará error al subirlo, incluso puede que no salga
+                  nada.
                </p>
                <button type="submit" class="btn btn-primary" onclick="this.disabled=true;this.form.submit();">
                   <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir

@@ -3,7 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{if="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</title>
-   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
@@ -50,20 +50,16 @@
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-               <span class="sr-only">Toggle navigation</span>
+               <span class="sr-only">Menú</span>
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
-            {if="FS_DEMO"}
-            <a class="navbar-brand" href="index.php">DEMO</a>
-            {elseif="$fsc->empresa->nombrecorto"}
-            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombrecorto}</a>
-            {else}
-            <a class="navbar-brand" href="index.php">{$fsc->empresa->nombre}</a>
-            {/if}
+            <a class="navbar-brand" href="index.php">
+               <span class="glyphicon glyphicon-lock"></span> &nbsp;
+               {if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}
+            </a>
          </div>
-         
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                <li>
@@ -137,7 +133,7 @@
                            {else}
                            <div class="form-group">
                               <select name="user" class="form-control input-lg" onchange="document.f_login.password.focus()">
-                              {loop name="$fsc->user->all()"}
+                              {loop="$fsc->user->all()"}
                                  {if="$value->nick == $nlogin"}
                                  <option value="{$value->nick}" selected="">{$value->nick}</option>
                                  {else}
@@ -147,7 +143,7 @@
                               </select>
                            </div>
                            <div class="form-group">
-                              <input type="password" class="form-control input-lg" name="password" maxlength="12" placeholder="Contraseña"/>
+                              <input type="password" class="form-control input-lg" name="password" maxlength="32" placeholder="Contraseña"/>
                               <p class="help-block">
                                  <a href="#" id="b_new_password">¿Has olvidado la contraseña?</a>
                               </p>
@@ -183,9 +179,9 @@
                   <div class="form-group">
                      <label>Usuario</label>
                      <select name="user" class="form-control">
-                     {loop name="$fsc->user->all()"}
+                     {loop="$fsc->user->all()"}
                         {if="$value->nick == $nlogin"}
-                        <option value="{$value->nick}" selected>{$value->nick}</option>
+                        <option value="{$value->nick}" selected="">{$value->nick}</option>
                         {else}
                         <option value="{$value->nick}">{$value->nick}</option>
                         {/if}
@@ -194,17 +190,17 @@
                   </div>
                   <div class="form-group">
                      <label>Nueva contraseña</label>
-                     <input type="password" class="form-control" name="new_password" maxlength="12" placeholder="Nueva contraseña" required=""/>
-                     <input type="password" class="form-control" name="new_password2" maxlength="12" placeholder="Repite la nueva contraseña" required=""/>
+                     <input type="password" class="form-control" name="new_password" maxlength="32" placeholder="Nueva contraseña" required=""/>
+                     <input type="password" class="form-control" name="new_password2" maxlength="32" placeholder="Repite la nueva contraseña" required=""/>
                   </div>
                   <div class="form-group">
                      <label>Contraseña de la base de datos</label>
-                     <input type="password" class="form-control" name="db_password" placeholder="Contraseña de la base de datos" required=""/>
+                     <input type="password" class="form-control" name="db_password" placeholder="Contraseña de la base de datos"/>
                   </div>
                </div>
                <div class="modal-footer">
                   <button type="submit" class="btn btn-sm btn-warning">
-                     <span class="glyphicon glyphicon-wrench"></span> &nbsp; Cambiar
+                     <span class="glyphicon glyphicon-wrench"></span>&nbsp; Cambiar
                   </button>
                </div>
             </form>
@@ -237,7 +233,7 @@
       <div class="row">
          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
             <small>
-               Creado con <a target="_blank" href="//www.facturascripts.com">FacturaScripts</a>.
+               Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>.
             </small>
          </div>
          <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs text-center">

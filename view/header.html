@@ -3,17 +3,19 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->page->title} &lsaquo; {if="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</title>
-   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" href="{$fsc->user->css}" />
+   <link rel="stylesheet" href="view/font-awesome/css/font-awesome.min.css" />
    <link rel="stylesheet" href="view/css/datepicker.css" />
    <link rel="stylesheet" href="view/css/custom.css" />
    <script type="text/javascript" src="view/js/jquery.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
    <script type="text/javascript" src="view/js/jquery.autocomplete.min.js"></script>
+   <script type="text/javascript" src="view/js/jquery-ui.min.js"></script>
    <script type="text/javascript" src="view/js/base.js"></script>
    <script type="text/javascript">
       function show_precio(precio)
@@ -38,14 +40,14 @@
       <div class="container-fluid">
          <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-               <span class="sr-only">Toggle navigation</span>
+               <span class="sr-only">Menú</span>
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="index.php">
                <span class="glyphicon glyphicon-home"></span> &nbsp;
-               {if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}
+               <span class="hidden-sm">{if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</span>
             </a>
          </div>
          
@@ -53,7 +55,13 @@
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
                <li class="dropdown{if="$value1==$fsc->page->folder"} active{/if}">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="text-transform: capitalize;">{$value1}</a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                     {if="$value1=='admin'"}
+                     <span class="glyphicon glyphicon-wrench" title="Administración"></span>
+                     {else}
+                     <span class="text-capitalize">{$value1}</span>
+                     {/if}
+                  </a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->pages($value1)"}
                      <li{if="$value2->showing()"} class="active"{/if}><a href="{$value2->url()}">{$value2->title}</a></li>
@@ -61,6 +69,25 @@
                   </ul>
                </li>
                {/loop}
+               {if="count($GLOBALS['plugins'])>0"}
+               <li class="dropdown hidden-sm">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" title="Acceso rápido">
+                     <span class="glyphicon glyphicon-star"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                     {$menu_ar_vacio=TRUE}
+                     {loop="$fsc->user->get_menu()"}
+                        {if="$value->important"}
+                        <li><a href="{$value->url()}">{$value->title}</a></li>
+                        {$menu_ar_vacio=FALSE}
+                        {/if}
+                     {/loop}
+                     {if="$menu_ar_vacio"}
+                     <li><a href="#">Vacío</a></li>
+                     {/if}
+                  </ul>
+               </li>
+               {/if}
             </ul>
             
             <ul class="nav navbar-nav navbar-right">
@@ -96,7 +123,7 @@
                </li>
                {/if}
                
-               <li>
+               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
                      <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
                      <span class="visible-xs">Ayuda</span>
@@ -117,7 +144,11 @@
                      <span class="visible-xs">Usuario</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="{$fsc->user->url()}">Usuario: {$fsc->user->nick}</a></li>
+                     <li>
+                        <a href="{$fsc->user->url()}">
+                           <span class="glyphicon glyphicon-user"></span> &nbsp; {$fsc->user->nick}
+                        </a>
+                     </li>
                      <li class="divider"></li>
                      <li>
                         <a href="{$fsc->url()}&logout=TRUE">
@@ -154,3 +185,19 @@
    {/if}
    
    {include="feedback"}
+   
+   <div class="modal fade" id="modal_iframe" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+               <h4 class="modal-title">Modal title</h4>
+            </div>
+            <iframe src="" width="100%" height="600" frameBorder="0">
+               Este navegador no soporta frames.
+            </iframe>
+         </div>
+      </div>
+   </div>
