@@ -1251,16 +1251,15 @@ class fs_controller
       if(file_exists($file))
       {
          // Registrar la extension
-
+         $name = preg_replace("#[^a-z0-9]#", "_", $filename);
          $fsext0 = new fs_extension(array(
-             'name' => $filename,
+             'name' => $name,
              'page_from' => $this->page->name,
-             'page_to' => '',
+             'page_to' => NULL,
              'type' => 'head',
-             'text' => '<style href="' . $file .'" rel="stylesheet"></style>',
+             'text' => '<link href="' . $file .'" rel="stylesheet"></link>',
              'params' => ''
          ));
-
          return $fsext0->save();
 
       }
