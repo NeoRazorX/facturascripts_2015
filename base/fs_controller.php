@@ -235,6 +235,8 @@ class fs_controller
                   }
                }
                
+               $this->include_composer();
+               
                $this->private_core();
             }
          }
@@ -1303,5 +1305,20 @@ class fs_controller
       // En nuestro caso e = 9999 que sera el numero máximo que se encuentre entre los puntos de la verison (ex: 12.0.1).
       $a = array_map(function($b) use(&$n) { return $b * pow(9999, $n--); }, $a);
       return array_sum($a);
+   }
+
+   /**
+    * Busca los plugins que tengan composer e incluye el archivo de "autoload"
+    * @return string
+    */
+   private function include_composer()
+   {
+      foreach($GLOBALS['plugins'] as $plugin)
+      {
+         if( file_exists('plugins/'.$plugin.'/vendor/autoload.php') )
+         {
+            require_once ('plugins/'.$plugin.'/vendor/autoload.php');
+         }
+      }
    }
 }
