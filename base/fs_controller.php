@@ -1175,7 +1175,7 @@ class fs_controller
       else
          return FALSE;
    }
-   
+
    /**
     * Busca en la lista de plugins activos, en orden inverso de prioridad
     * (el último plugin activo tiene más prioridad que el primero)
@@ -1194,7 +1194,7 @@ class fs_controller
             return 'plugins/'.$plugin.'/view/js/'.$filename;
          }
       }
-      
+
       /// si no está en los plugins estará en el núcleo
       return 'view/js/'.$filename;
    }
@@ -1213,5 +1213,97 @@ class fs_controller
       }
       
       return $max;
+   }
+
+   /**
+    * Busca en la lista de plugins activos, en orden inverso de prioridad
+    * (el último plugin activo tiene más prioridad que el primero)
+    * y nos devuelve la ruta del archivo css que le solicitamos.
+    * Así usamos el archivo del plugin con mayor prioridad.
+    * @param type $filename
+    * @return type
+    */
+   public function get_css_location($filename)
+   {
+      $found = FALSE;
+      foreach($GLOBALS['plugins'] as $plugin)
+      {
+         if( file_exists('plugins/'.$plugin.'/view/css/'.$filename) )
+         {
+            return 'plugins/'.$plugin.'/view/css/'.$filename;
+         }
+      }
+
+      /// si no está en los plugins estará en el núcleo
+      return 'view/css/'.$filename;
+   }
+
+   /**
+    * Busca y registra la extensión para colocar el css en el head y
+    * devuelve true en caso de éxito, false en cualquier otro caso.
+    * Busca en orden inverso de prioridad.
+    * @param $filename
+    * @return bool
+    */
+   public function registrar_extension_css($filename)
+   {
+      $file = $this->get_css_location($filename);
+      if(file_exists($file))
+      {
+         // Registrar la extension
+
+         $fsext0 = new fs_extension(array(
+             'name' => $filename,
+             'page_from' => $this->page->name,
+             'page_to' => '',
+             'type' => 'head',
+             'text' => '<style href="' . $file .'" rel="stylesheet"></style>',
+             'params' => ''
+         ));
+
+         return $fsext0->save();
+
+      }
+      return false;
+   }
+
+   /**
+    * Comprueba que la version de facturascripts sea mayor o
+    * igual a la indicada en $minima.
+    * Devuelve true en caso de que la version sea mayor o igual,
+    * en el caso contrario añade un mensaje y devuelve false.
+    * @param $minima
+    * @return bool
+    */
+   public function require_fs_version($minima)
+   {
+      $actual = $this->version();
+      $min = $this->parse_version($minima);
+      $current = $this->parse_version($actual);
+      if($current >= $min)
+      {
+         return true;
+      }
+      else
+      {
+         $this->new_error_msg("Este controlador requiere una version mínima de $minima y tienes instalada la version $actual, porfavor actualice cuanto antes.");
+         return false;
+      }
+   }
+
+   /**
+    * Parsea una version y devuelve el número entero asociada a la misma.
+    * @param $version
+    * @return number
+    */
+   private function parse_version($version)
+   {
+      $a = explode(".", $version);
+      $n = count($a) - 1;
+      // Aplicamos la teoría de los números: (b1 * (e ^ n)) +  (b2 * (e ^ ( n - 1 ))) + ...
+      // En nuestro caso e = 9999 que sera el numero máximo que se encuentre entre los puntos de la verison (ex: 12.0.1).
+      $a = array_map(function($b) use(&$n) { return $b * pow(9999, $n--); }, $a);
+      print_r($a);
+      return array_sum($a);
    }
 }
