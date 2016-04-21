@@ -539,10 +539,10 @@
                      <div class="form-group">
                         Comprobaciones en la base de datos:
                         <select name="check_db_types" class="form-control">
-                           <option value="true"{if="$GLOBALS['config2']['check_db_types']==1"} selected=''{/if}>
+                           <option value="1"{if="$GLOBALS['config2']['check_db_types']==1"} selected=''{/if}>
                               Comprobar los tipos de las columnas de las tablas
                            </option>
-                           <option value="false"{if="$GLOBALS['config2']['check_db_types']!=1"} selected=''{/if}>
+                           <option value="0"{if="$GLOBALS['config2']['check_db_types']!=1"} selected=''{/if}>
                               No comprobar los tipos
                            </option>
                         </select>
@@ -600,12 +600,12 @@
                <div class="row" style="margin-top: 20px;">
                   <div class="col-md-6 col-sm-6">
                      <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{$fsc->url()}&caca={$fsc->random_string(4)}&reset=TRUE#avanzado'">
-                        <span class="glyphicon glyphicon-trash"></span> &nbsp; Reiniciar
+                        <span class="glyphicon glyphicon-trash"></span>&nbsp; Reiniciar
                      </button>
                   </div>
                   <div class="col-md-6 col-sm-6 text-right">
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                        <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; Guardar
                      </button>
                   </div>
                </div>
@@ -641,7 +641,7 @@
                   nada.
                </p>
                <button type="submit" class="btn btn-primary" onclick="this.disabled=true;this.form.submit();">
-                  <span class="glyphicon glyphicon-import" aria-hidden="true"></span> &nbsp; Añadir
+                  <span class="glyphicon glyphicon-import" aria-hidden="true"></span>&nbsp; Añadir
                </button>
             </form>
          </div>
