@@ -182,12 +182,12 @@ abstract class fs_model
    {
       return self::$errors;
    }
-
+   
    public function clean_errors()
    {
       self::$errors = array();
    }
-
+   
    /**
     * Esta función es llamada al crear una tabla.
     * Permite insertar valores en la tabla.
