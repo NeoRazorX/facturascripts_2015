@@ -1303,7 +1303,6 @@ class fs_controller
       // Aplicamos la teoría de los números: (b1 * (e ^ n)) +  (b2 * (e ^ ( n - 1 ))) + ...
       // En nuestro caso e = 9999 que sera el numero máximo que se encuentre entre los puntos de la verison (ex: 12.0.1).
       $a = array_map(function($b) use(&$n) { return $b * pow(9999, $n--); }, $a);
-      print_r($a);
       return array_sum($a);
    }
 }
