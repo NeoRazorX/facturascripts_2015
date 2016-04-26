@@ -49,10 +49,13 @@ function require_model($name)
          }
       }
       
-      if( !$found AND file_exists('model/'.$name) )
+      if( !$found )
       {
-         require_once 'model/'.$name;
-         $GLOBALS['models'][] = $name;
+         if( file_exists('model/'.$name) )
+         {
+            require_once 'model/'.$name;
+            $GLOBALS['models'][] = $name;
+         }
       }
    }
 }
@@ -123,7 +126,9 @@ abstract class fs_model
       $this->default_items = new fs_default_items();
       
       if( !self::$errors )
+      {
          self::$errors = array();
+      }
       
       if( !self::$checked_tables )
       {
@@ -183,6 +188,9 @@ abstract class fs_model
       return self::$errors;
    }
    
+   /**
+    * Vacía la lista de errores.
+    */
    public function clean_errors()
    {
       self::$errors = array();

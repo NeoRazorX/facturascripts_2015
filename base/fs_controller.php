@@ -235,8 +235,6 @@ class fs_controller
                   }
                }
                
-               $this->include_composer();
-               
                $this->private_core();
             }
          }
@@ -1215,19 +1213,5 @@ class fs_controller
       }
       
       return $max;
-   }
-   
-   /**
-    * Busca los plugins que tengan composer e incluye el archivo de "autoload".
-    */
-   private function include_composer()
-   {
-      foreach($GLOBALS['plugins'] as $plugin)
-      {
-         if( file_exists('plugins/'.$plugin.'/vendor/autoload.php') )
-         {
-            require_once('plugins/'.$plugin.'/vendor/autoload.php');
-         }
-      }
    }
 }
