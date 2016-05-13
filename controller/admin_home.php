@@ -614,7 +614,18 @@ class admin_home extends fs_controller
                if( !in_array($req, $GLOBALS['plugins']) )
                {
                   $install = FALSE;
-                  $this->new_error_msg('Dependencias incumplidas: <b>'.$req.'</b>');
+                  $txt = 'Dependencias incumplidas: <b>'.$req.'</b>';
+                  
+                  foreach($this->download_list2 as $value)
+                  {
+                     if($value->nombre == $req)
+                     {
+                        $txt .= '. Puedes descargar este plugin desde la <b>pestaña descargas</b>.';
+                        break;
+                     }
+                  }
+                  
+                  $this->new_error_msg($txt);
                }
             }
             break;

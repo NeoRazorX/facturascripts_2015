@@ -182,7 +182,7 @@ class admin_info extends fs_controller
       
       if($this->b_detalle != '')
       {
-         $sql .= $and." lower(detalle) LIKE '%".mb_strtolower($this->b_detalle)."%'";
+         $sql .= $and." lower(detalle) LIKE '%".mb_strtolower($this->b_detalle, 'UTF8')."%'";
          $and = ' AND ';
       }
       
@@ -206,7 +206,7 @@ class admin_info extends fs_controller
       
       $sql .= ' ORDER BY fecha DESC';
       
-      $data = $this->db->select_limit($sql, 1000, 0);
+      $data = $this->db->select_limit($sql, 500, 0);
       if($data)
       {
          foreach($data as $d)

@@ -475,6 +475,16 @@ class fs_mysql
                      $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].';';
                   }
                   
+                  if($col2['is_nullable'] != $col['nulo'])
+                  {
+                     if($col['nulo'] == 'YES')
+                     {
+                        $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NULL;';
+                     }
+                     else
+                        $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NOT NULL;';
+                  }
+                  
                   if( !$this->compare_defaults($col2['column_default'], $col['defecto']) )
                   {
                      if( is_null($col['defecto']) )
@@ -500,16 +510,6 @@ class fs_mysql
                         else
                            $consulta .= 'ALTER TABLE '.$table_name.' ALTER `'.$col['nombre'].'` SET DEFAULT '.$col['defecto'].";";
                      }
-                  }
-                  
-                  if($col2['is_nullable'] != $col['nulo'])
-                  {
-                     if($col['nulo'] == 'YES')
-                     {
-                        $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NULL;';
-                     }
-                     else
-                        $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].' NOT NULL;';
                   }
                   
                   $encontrada = TRUE;
