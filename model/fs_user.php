@@ -309,20 +309,13 @@ class fs_user extends fs_model
     */
    public function have_access_to($page_name)
    {
-      if($this->admin OR FS_DEMO)
+      $status = FALSE;
+      foreach($this->get_menu() as $m)
       {
-         $status = TRUE;
-      }
-      else
-      {
-         $status = FALSE;
-         foreach($this->get_menu() as $m)
+         if($m->name == $page_name)
          {
-            if($m->name == $page_name)
-            {
-               $status = TRUE;
-               break;
-            }
+            $status = TRUE;
+            break;
          }
       }
       

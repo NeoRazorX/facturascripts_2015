@@ -115,6 +115,10 @@ else if( !extension_loaded('openssl') )
 {
    $errors[] = "openssl";
 }
+else if( !extension_loaded('zip') )
+{
+   $errors[] = "ziparchive";
+}
 else if( !is_writable( getcwd() ) )
 {
    $errors[] = "permisos";
@@ -465,6 +469,31 @@ $system_info = str_replace('"', "'", $system_info);
                      con uno de estos empaquetados Apache+PHP+MySQL no traiga de serie OpenSSL.
                      <a href="#" data-toggle="modal" data-target="#modal_feedback">Informanos</a>
                      de qué tienes instalado e intentaremos ofrecerte la mejor solución.
+                  </p>
+               </div>
+            </div>
+                  <?php
+               }
+               else if($err == 'ziparchive')
+               {
+                  ?>
+            <div class="panel panel-danger">
+               <div class="panel-heading">
+                  No se encuentra la extensión ZipArchive:
+               </div>
+               <div class="panel-body">
+                  <p>
+                     FacturaScripts necesita la extensión ZipArchive para poder
+                     descomprimir plugins y actualizaciones.
+                  </p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (en Linux):</h4>
+                  <p>Instala el paquete php-zip.</p>
+                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
+                  <p>
+                     Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
+                     Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
+                     Nosotros recomendamos
+                     <a href="http://www.loading.es/clientes/aff.php?aff=857" target="_blank">Loading.es</a>
                   </p>
                </div>
             </div>

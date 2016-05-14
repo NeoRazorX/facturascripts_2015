@@ -1175,7 +1175,7 @@ class fs_controller
       else
          return FALSE;
    }
-   
+
    /**
     * Busca en la lista de plugins activos, en orden inverso de prioridad
     * (el último plugin activo tiene más prioridad que el primero)
@@ -1194,7 +1194,7 @@ class fs_controller
             return 'plugins/'.$plugin.'/view/js/'.$filename;
          }
       }
-      
+
       /// si no está en los plugins estará en el núcleo
       return 'view/js/'.$filename;
    }

@@ -192,8 +192,9 @@ class admin_home extends fs_controller
          if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
          {
             unlink('tmp/'.FS_TMP_NAME.'config2.ini');
-            $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'#avanzado">aquí</a> para continuar.');
          }
+         
+         $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'#avanzado">aquí</a> para continuar.', TRUE);
       }
       else
       {

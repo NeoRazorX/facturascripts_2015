@@ -53,6 +53,7 @@ if( $db->connect() )
                }
                
                $ejecutada = TRUE;
+               break;
             }
          }
          

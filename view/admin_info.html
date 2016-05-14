@@ -2,20 +2,10 @@
 
 <div class="container-fluid">
    <div class="row">
-      <div class="col-xs-12">
-         <div class="btn-group">
-         {loop="$fsc->extensions"}
-            {if="$value->type=='button'"}
-            <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
-            {/if}
-         {/loop}
-         </div>
-      </div>
-   </div>
-   <div class="row">
       <div class="col-sm-12">
-         <div class="page-header">
+         <div class="page-header" style="margin-bottom: 0px;">
             <h1>
+               <i class="fa fa-server" aria-hidden="true"></i>
                Información del sistema
                <span class="btn-group">
                   <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
@@ -32,12 +22,12 @@
                   {/if}
                </span>
             </h1>
+            <p class='help-block'>
+               Aquí tienes información básica sobre esta instalación de FacturaScripts,
+               base de datos, listado de tablas y el historial de errores con múltiples
+               filtros, para facilitarte el trabajo a la hora de encontrar un fallo.
+            </p>
          </div>
-         <p class='help-block'>
-            Aquí tienes información básica sobre esta instalación de FacturaScripts,
-            base de datos, listado de tablas y el historial de errores con múltiples
-            filtros, para facilitarte el trabajo a la hora de encontrar un fallo.
-         </p>
       </div>
    </div>
    <div class="table-responsive">
@@ -61,7 +51,16 @@
       </table>
    </div>
    <div class="row">
-      <div class="col-sm-12 text-right">
+      <div class="col-xs-8">
+         <div class="btn-group">
+         {loop="$fsc->extensions"}
+            {if="$value->type=='button'"}
+            <a href="index.php?page={$value->from}{$value->params}" class="btn btn-xs btn-default">{$value->text}</a>
+            {/if}
+         {/loop}
+         </div>
+      </div>
+      <div class="col-xs-4 text-right">
          {if="$fsc->allow_delete"}
          <a class="btn btn-xs btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
             <span class="glyphicon glyphicon-trash"></span>
