@@ -10,8 +10,8 @@ Options -Indexes
    ExpiresActive On
    ExpiresDefault                          "access plus 1 week"
    ExpiresByType text/css                  "access plus 1 week"
-   ExpiresByType application/javascript    "access plus 1 week"
-   ExpiresByType text/javascript           "access plus 1 week"
+   ExpiresByType application/javascript    "access plus 1 day"
+   ExpiresByType text/javascript           "access plus 1 day"
    <FilesMatch "\.(php|cgi)$">
       ExpiresActive Off
    </FilesMatch>

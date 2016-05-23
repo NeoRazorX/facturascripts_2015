@@ -57,7 +57,8 @@
                <li class="dropdown{if="$value1==$fsc->page->folder"} active{/if}">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                      {if="$value1=='admin'"}
-                     <span class="glyphicon glyphicon-wrench" title="Administración"></span>
+                     <span class="glyphicon glyphicon-wrench hidden-xs" title="Administración"></span>
+                     <span class="text-capitalize visible-xs">{$value1}</span>
                      {else}
                      <span class="text-capitalize">{$value1}</span>
                      {/if}
@@ -134,7 +135,7 @@
                      <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
                      <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_colabora" target="_blank">Colabora</a></li>
                      <li class="divider"></li>
-                     <li><a href="#" id="b_feedback"><span class="glyphicon glyphicon-send"></span> &nbsp; Informar...</a></li>
+                     <li><a href="#" id="b_feedback"><span class="glyphicon glyphicon-send"></span>&nbsp; Informar...</a></li>
                   </ul>
                </li>
                
@@ -146,13 +147,13 @@
                   <ul class="dropdown-menu">
                      <li>
                         <a href="{$fsc->user->url()}">
-                           <span class="glyphicon glyphicon-user"></span> &nbsp; {$fsc->user->nick}
+                           <span class="glyphicon glyphicon-user"></span>&nbsp; {$fsc->user->nick}
                         </a>
                      </li>
                      <li class="divider"></li>
                      <li>
                         <a href="{$fsc->url()}&logout=TRUE">
-                           <span class="glyphicon glyphicon-log-out"></span> &nbsp; Cerrar sesión
+                           <span class="glyphicon glyphicon-log-out"></span>&nbsp; Cerrar sesión
                         </a>
                      </li>
                   </ul>
