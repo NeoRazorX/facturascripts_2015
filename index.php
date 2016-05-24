@@ -19,6 +19,24 @@
 
 /// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
 
+/// registramos una función para capturar los fatal error
+register_shutdown_function( "fatal_handler" );
+
+function fatal_handler()
+{
+   $error = error_get_last();
+   if($error !== NULL)
+   {
+      echo "<h1>Error fatal</h1>"
+         . "<ul>"
+              . "<li><b>Tipo:</b> " . $error["type"]."</li>"
+              . "<li><b>Archivo:</b> " . $error["file"]."</li>"
+              . "<li><b>Línea:</b> " . $error["line"]."</li>"
+              . "<li><b>Mensaje:</b> " . $error["message"]."</li>"
+         . "</ul>";
+   }
+}
+
 if( !file_exists('config.php') )
 {
    /// si no hay config.php redirigimos al instalador
@@ -48,12 +66,27 @@ else
    {
       /// primero buscamos en los plugins
       $found = FALSE;
+      $fsc_error = FALSE;
       foreach($GLOBALS['plugins'] as $plugin)
       {
          if( file_exists('plugins/'.$plugin.'/controller/'.$pagename.'.php') )
          {
             require_once 'plugins/'.$plugin.'/controller/'.$pagename.'.php';
-            $fsc = new $pagename();
+            
+            try
+            {
+               $fsc = new $pagename();
+            }
+            catch(Exception $e)
+            {
+               echo "<h1>Error fatal</h1>"
+                  . "<ul>"
+                       . "<li><b>Código:</b> " . $e->getCode()."</li>"
+                       . "<li><b>Mensage:</b> " . $e->getMessage()."</li>"
+                  . "</ul>";
+               $fsc_error = TRUE;
+            }
+            
             $found = TRUE;
             break;
          }
@@ -72,9 +105,12 @@ else
             }
             catch(Exception $e)
             {
-               echo "<h1>Error fatal</h1>";
-               echo "Mensage: " . $e->getMessage();
-               echo "Código: " . $e->getCode();
+               echo "<h1>Error fatal</h1>"
+                  . "<ul>"
+                       . "<li><b>Código:</b> " . $e->getCode()."</li>"
+                       . "<li><b>Mensage:</b> " . $e->getMessage()."</li>"
+                  . "</ul>";
+               $fsc_error = TRUE;
             }
          }
          else
@@ -95,7 +131,7 @@ else
       $fsc->select_default_page();
    }
    
-   if($fsc->template)
+   if($fsc->template AND !$fsc_error)
    {
       /// configuramos rain.tpl
       raintpl::configure('base_url', NULL);
