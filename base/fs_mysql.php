@@ -653,7 +653,11 @@ class fs_mysql
       
       if($c_old)
       {
-         /// comprobamos una a una las viejas
+         /**
+          * comprobamos una a una las viejas, si hay que eliminar una,
+          * tendremos que eliminar todas para evitar problemas.
+          */
+         $eliminar = FALSE;
          foreach($c_old as $col)
          {
             $encontrado = FALSE;
@@ -661,7 +665,7 @@ class fs_mysql
             {
                foreach($c_nuevas as $col2)
                {
-                  if($col['restriccion'] == $col2['nombre'])
+                  if($col['restriccion'] == 'PRIMARY' OR $col['restriccion'] == $col2['nombre'])
                   {
                      $encontrado = TRUE;
                      break;
@@ -671,16 +675,32 @@ class fs_mysql
             
             if(!$encontrado)
             {
-               /// eliminamos la restriccion
+               $eliminar = TRUE;
+               break;
+            }
+         }
+         
+         /// eliminamos todas las restricciones
+         if($eliminar)
+         {
+            /// eliminamos antes las claves ajenas y luego los unique, evita problemas
+            foreach($c_old as $col)
+            {
                if($col['tipo'] == 'FOREIGN KEY')
                {
                   $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
                }
-               else if($col['tipo'] == 'UNIQUE')
+            }
+            
+            foreach($c_old as $col)
+            {
+               if($col['tipo'] == 'UNIQUE')
                {
-                  $consulta .= 'ALTER TABLE '.$table_name.' DROP index '.$col['restriccion'].';';
+                  $consulta .= 'ALTER TABLE '.$table_name.' DROP INDEX '.$col['restriccion'].';';
                }
             }
+            
+            $c_old = array();
          }
       }
       
