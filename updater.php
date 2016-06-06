@@ -814,7 +814,7 @@ $updater = new fs_updater();
          <div class="row">
             <div class="col-sm-2">
                <a href="https://www.facturascripts.com/promo" target="_blank" class="thumbnail">
-                  <img src='http://i.imgur.com/5XRa2Cm.png' alt="adminlte"/>
+                  <img src='https://i.imgur.com/5XRa2Cm.png' alt="adminlte"/>
                </a>
             </div>
             <div class="col-sm-10">

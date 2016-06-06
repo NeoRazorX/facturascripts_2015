@@ -111,7 +111,15 @@ class php_file_cache
 	 */
 	public function delete($key)
    {
-		return @unlink( $this->get_route($key) );
+      $ruta = $this->get_route($key);
+      if( file_exists($ruta) )
+      {
+         return @unlink($ruta);
+      }
+		else
+      {
+         return TRUE;
+      }
 	}
    
 	/**
