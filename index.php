@@ -19,9 +19,6 @@
 
 /// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
 
-/// registramos una función para capturar los fatal error
-register_shutdown_function( "fatal_handler" );
-
 function fatal_handler()
 {
    $error = error_get_last();
@@ -50,6 +47,16 @@ else
    
    require_once 'base/fs_controller.php';
    require_once 'raintpl/rain.tpl.class.php';
+   
+   if(FS_DB_HISTORY)
+   {
+      /**
+       * Si está activado el historial SQL, registramos además la función para
+       * capturar los fatal error. Información importante a la hora de depurar
+       * errores.
+       */
+      register_shutdown_function( "fatal_handler" );
+   }
    
    /// ¿Qué controlador usar?
    $pagename = '';
