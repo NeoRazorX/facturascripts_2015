@@ -25,6 +25,7 @@
       <nombre>fecha</nombre>
       <tipo>timestamp</tipo>
       <nulo>NO</nulo>
+      <defecto>CURRENT_TIMESTAMP</defecto>
    </columna>
    <columna>
       <nombre>usuario</nombre>

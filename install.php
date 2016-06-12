@@ -255,10 +255,11 @@ $system_info = str_replace('"', "'", $system_info);
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_questions" target="_blank">Preguntas</a></li>
-                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_errors" target="_blank">Errores</a></li>
-                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
-                     <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_colabora" target="_blank">Colabora</a></li>
+                     <li><a href="https://www.facturascripts.com/noticias" target="_blank">Noticias</a></li>
+                     <li><a href="https://www.facturascripts.com/preguntas" target="_blank">Preguntas</a></li>
+                     <li><a href="https://www.facturascripts.com/errores" target="_blank">Errores</a></li>
+                     <li><a href="https://www.facturascripts.com/ideas" target="_blank">Ideas</a></li>
+                     <li><a href="https://www.facturascripts.com/foro" target="_blank">Todo</a></li>
                      <li class="divider"></li>
                      <li>
                         <a href="#" id="b_feedback">
@@ -281,6 +282,11 @@ $system_info = str_replace('"', "'", $system_info);
                <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                   <h4 class="modal-title">¿Necesitas ayuda?</h4>
+                  <p class="help-block">
+                     Usa este formulario para informarnos. Se adjunta información
+                     adicional como la versión de FacturaScripts que usas, listado
+                     de plugins activos, versión de php, etc...
+                  </p>
                </div>
                <div class="modal-body">
                   <div class="form-group">
@@ -288,13 +294,17 @@ $system_info = str_replace('"', "'", $system_info);
                      <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6"></textarea>
                   </div>
                   <div class="form-group">
-                     <label for="exampleInputEmail1">Tu email</label>
-                     <input type="email" class="form-control" id="exampleInputEmail1" name="feedback_email" placeholder="Introduce tu email"/>
+                     <div class="input-group">
+                        <span class="input-group-addon">
+                           <span class="glyphicon glyphicon-envelope"></span>
+                        </span>
+                        <input type="email" class="form-control" name="feedback_email" placeholder="Introduce tu email"/>
+                     </div>
                   </div>
                </div>
                <div class="modal-footer">
                   <button type="submit" class="btn btn-sm btn-primary">
-                     <span class="glyphicon glyphicon-send"></span> &nbsp; Enviar
+                     <span class="glyphicon glyphicon-send"></span>&nbsp; Enviar
                   </button>
                </div>
             </div>

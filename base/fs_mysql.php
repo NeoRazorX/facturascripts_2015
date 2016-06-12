@@ -238,8 +238,9 @@ class fs_mysql
       if($aux)
       {
          foreach($aux as $a)
+         {
             $indices[] = array('name' => $a['Key_name']);
-         
+         }
       }
       
       return $indices;
@@ -279,7 +280,9 @@ class fs_mysql
          {
             $resultado = array();
             while( $row = $filas->fetch_array(MYSQLI_ASSOC) )
+            {
                $resultado[] = $row;
+            }
             $filas->free();;
          }
          else
@@ -316,7 +319,9 @@ class fs_mysql
          {
             $resultado = array();
             while($row = $filas->fetch_array(MYSQLI_ASSOC) )
+            {
                $resultado[] = $row;
+            }
             $filas->free();
          }
          else
@@ -554,7 +559,7 @@ class fs_mysql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
       $consulta = str_replace('now()', "'00:00'", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'".date('Y-m-d')." 00:00:00'", $consulta);
       $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta;
@@ -614,7 +619,7 @@ class fs_mysql
       {
          return TRUE;
       }
-      else if($v1 == 'CURRENT_TIMESTAMP' AND $v2 == '00:00')
+      else if($v1 == 'CURRENT_TIMESTAMP' AND $v2 == "'".date('Y-m-d')." 00:00:00'")
       {
          return TRUE;
       }
@@ -648,7 +653,11 @@ class fs_mysql
       
       if($c_old)
       {
-         /// comprobamos una a una las viejas
+         /**
+          * comprobamos una a una las viejas, si hay que eliminar una,
+          * tendremos que eliminar todas para evitar problemas.
+          */
+         $eliminar = FALSE;
          foreach($c_old as $col)
          {
             $encontrado = FALSE;
@@ -656,7 +665,7 @@ class fs_mysql
             {
                foreach($c_nuevas as $col2)
                {
-                  if($col['restriccion'] == $col2['nombre'])
+                  if($col['restriccion'] == 'PRIMARY' OR $col['restriccion'] == $col2['nombre'])
                   {
                      $encontrado = TRUE;
                      break;
@@ -664,11 +673,34 @@ class fs_mysql
                }
             }
             
-            if(!$encontrado AND $col['tipo'] == 'FOREIGN KEY')
+            if(!$encontrado)
             {
-               /// eliminamos la restriccion
-               $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
+               $eliminar = TRUE;
+               break;
             }
+         }
+         
+         /// eliminamos todas las restricciones
+         if($eliminar)
+         {
+            /// eliminamos antes las claves ajenas y luego los unique, evita problemas
+            foreach($c_old as $col)
+            {
+               if($col['tipo'] == 'FOREIGN KEY')
+               {
+                  $consulta .= 'ALTER TABLE '.$table_name.' DROP FOREIGN KEY '.$col['restriccion'].';';
+               }
+            }
+            
+            foreach($c_old as $col)
+            {
+               if($col['tipo'] == 'UNIQUE')
+               {
+                  $consulta .= 'ALTER TABLE '.$table_name.' DROP INDEX '.$col['restriccion'].';';
+               }
+            }
+            
+            $c_old = array();
          }
       }
       
@@ -690,10 +722,17 @@ class fs_mysql
                }
             }
             
-            if(!$encontrado AND substr($col['consulta'], 0, 11) == 'FOREIGN KEY')
+            if(!$encontrado)
             {
                /// añadimos la restriccion
-               $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
+               if( substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
+               {
+                  $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
+               }
+               else if( substr($col['consulta'], 0, 6) == 'UNIQUE' )
+               {
+                  $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
+               }
             }
          }
       }
@@ -702,7 +741,7 @@ class fs_mysql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
       $consulta = str_replace('now()', "'00:00'", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'".date('Y-m-d')." 00:00:00'", $consulta);
       $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta;
@@ -768,7 +807,7 @@ class fs_mysql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
       $consulta = str_replace('now()', "'00:00'", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'".date('Y-m-d')." 00:00:00'", $consulta);
       $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta.' '.$this->generate_table_constraints($xml_restricciones).' ) '
@@ -796,7 +835,7 @@ class fs_mysql
       $consulta = str_replace('::character varying', '', $consulta);
       $consulta = str_replace('without time zone', '', $consulta);
       $consulta = str_replace('now()', "'00:00'", $consulta);
-      $consulta = str_replace('CURRENT_TIMESTAMP', "'00:00'", $consulta);
+      $consulta = str_replace('CURRENT_TIMESTAMP', "'".date('Y-m-d')." 00:00:00'", $consulta);
       $consulta = str_replace('CURRENT_DATE', date("'Y-m-d'"), $consulta);
       
       return $consulta;
