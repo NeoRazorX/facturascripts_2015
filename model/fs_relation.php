@@ -21,7 +21,7 @@
 /**
  * Este modelo permite relacionar dos elementos de tablas distintas.
  *
- * @author carlos
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_relation extends fs_model
 {
@@ -90,7 +90,7 @@ class fs_relation extends fs_model
                  .", table2 = ".$this->var2str($this->table2)
                  .", id2 = ".$this->var2str($this->id2)
                  .", return_url = ".$this->var2str($this->return_url)
-                 ." WHERE id = ".$this->var2str($this->id).";";
+                 ."  WHERE id = ".$this->var2str($this->id).";";
          
          return $this->db->exec($sql);
       }

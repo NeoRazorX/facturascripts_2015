@@ -47,7 +47,7 @@ function guarda_config($nombre_archivo)
       fwrite($archivo, "/*\n");
       fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
       fwrite($archivo, " */\n");
-      fwrite($archivo, "define('FS_TMP_NAME', '".random_string()."/');\n");
+      fwrite($archivo, "define('FS_TMP_NAME', '".random_string(20)."/');\n");
       fwrite($archivo, "\n");
       fwrite($archivo, "/*\n");
       fwrite($archivo, " * En cada ejecución muestra todas las sentencias SQL utilizadas.\n");
@@ -79,8 +79,14 @@ function guarda_config($nombre_archivo)
       fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
       fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
       fwrite($archivo, "\n");
+      fwrite($archivo, "/// desactiva el poder modificar plugins (añadir,descargar y eliminar)\n");
+      fwrite($archivo, "define('FS_DISABLE_MOD_PLUGINS', FALSE);\n");
+      fwrite($archivo, "\n");
       fwrite($archivo, "/// desactiva el poder añadir plugins manualmente\n");
       fwrite($archivo, "define('FS_DISABLE_ADD_PLUGINS', FALSE);\n");
+      fwrite($archivo, "\n");
+      fwrite($archivo, "/// desactiva el poder eliminar plugins manualmente\n");
+      fwrite($archivo, "define('FS_DISABLE_RM_PLUGINS', FALSE);\n");
       fclose($archivo);
       
       header("Location: index.php");
@@ -225,7 +231,7 @@ $system_info = str_replace('"', "'", $system_info);
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
-   <link rel="stylesheet" href="view/font-awesome/css/font-awesome.min.css" />
+   <link rel="stylesheet" href="view/css/font-awesome.min.css" />
    <link rel="stylesheet" href="view/css/datepicker.css" />
    <link rel="stylesheet" href="view/css/custom.css" />
    <script type="text/javascript" src="view/js/jquery.min.js"></script>
@@ -249,21 +255,41 @@ $system_info = str_replace('"', "'", $system_info);
          </div>
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-               <li>
+               <li class="bg-primary">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
                      <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="https://www.facturascripts.com/noticias" target="_blank">Noticias</a></li>
-                     <li><a href="https://www.facturascripts.com/preguntas" target="_blank">Preguntas</a></li>
-                     <li><a href="https://www.facturascripts.com/errores" target="_blank">Errores</a></li>
-                     <li><a href="https://www.facturascripts.com/ideas" target="_blank">Ideas</a></li>
-                     <li><a href="https://www.facturascripts.com/foro" target="_blank">Todo</a></li>
+                     <li>
+                        <a href="https://www.facturascripts.com/documentacion" target="_blank">
+                           <i class="fa fa-book" aria-hidden="true"></i>&nbsp; Documentación
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/noticias" target="_blank">
+                           <i class="fa fa-newspaper-o" aria-hidden="true"></i>&nbsp; Noticias
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/preguntas" target="_blank">
+                           <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp; Preguntas
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/errores" target="_blank">
+                           <i class="fa fa-bug" aria-hidden="true"></i>&nbsp; Errores
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/ideas" target="_blank">
+                           <i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp; Ideas
+                        </a>
+                     </li>
                      <li class="divider"></li>
                      <li>
                         <a href="#" id="b_feedback">
-                           <span class="glyphicon glyphicon-send"></span> &nbsp; Informar...
+                           <i class="fa fa-send" aria-hidden="true"></i>&nbsp; Informar...
                         </a>
                      </li>
                   </ul>
@@ -377,6 +403,7 @@ $system_info = str_replace('"', "'", $system_info);
          <div class="col-sm-12">
             <div class="page-header">
                <h1>
+                  <i class="fa fa-cloud-upload" aria-hidden="true"></i>
                   Bienvenido al instalador de FacturaScripts
                   <small><?php echo file_get_contents('VERSION'); ?></small>
                </h1>

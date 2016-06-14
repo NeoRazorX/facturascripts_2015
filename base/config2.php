@@ -22,6 +22,11 @@ if( !defined('FS_TMP_NAME') )
    define('FS_TMP_NAME', '');
 }
 
+if( !defined('FS_PATH') )
+{
+   define('FS_PATH', '');
+}
+
 if(FS_TMP_NAME != '' AND !file_exists('tmp/'.FS_TMP_NAME) )
 {
    if( !file_exists('tmp') )
@@ -192,7 +197,12 @@ if( !file_exists('plugins') )
 $GLOBALS['plugins'] = array();
 if( file_exists('tmp/enabled_plugins.list') )
 {
-   $list = explode(',', file_get_contents('tmp/enabled_plugins.list'));
+   rename('tmp/enabled_plugins.list', 'tmp/'.FS_TMP_NAME.'enabled_plugins.list');
+}
+
+if( file_exists('tmp/'.FS_TMP_NAME.'enabled_plugins.list') )
+{
+   $list = explode(',', file_get_contents('tmp/'.FS_TMP_NAME.'enabled_plugins.list'));
    if($list)
    {
       foreach($list as $f)

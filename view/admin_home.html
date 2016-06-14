@@ -110,16 +110,18 @@
             </a>
             {/if}
          </div>
+         {if="!$fsc->disable_mod_plugins"}
+         <a class='btn btn-sm {if="$fsc->check_for_updates()"}btn-info{else}btn-default{/if}' href='updater.php' title='Actualizador'>
+            <span class="glyphicon glyphicon-upload"></span>
+            <span class="hidden-xs">&nbsp; Actualizador</span>
+         </a>
+         {/if}
          <div class="btn-group">
-            <a class="btn btn-sm {if="$fsc->check_for_updates()"}btn-info{else}btn-default{/if}" href="updater.php" title="Actualizador">
-               <span class="glyphicon glyphicon-upload"></span>
-               <span class="hidden-xs">&nbsp; Actualizador</span>
-            </a>
-            {loop="$fsc->extensions"}
-               {if="$value->type=='button'"}
-               <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
-               {/if}
-            {/loop}
+         {loop="$fsc->extensions"}
+            {if="$value->type=='button'"}
+            <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
+            {/if}
+         {/loop}
          </div>
       </div>
       <div class="col-xs-6 text-right">
@@ -143,6 +145,7 @@
             <span class="hidden-xs">&nbsp; Plugins</span>
          </a>
       </li>
+      {if="!$fsc->disable_mod_plugins"}
       <li role="presentation">
          <a href="#t_descargas" aria-controls="t_descargas" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-download-alt"></span>
@@ -152,6 +155,7 @@
             {/if}
          </a>
       </li>
+      {/if}
       <li role="presentation">
          <a href="#t_avanzado" aria-controls="t_avanzado" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-wrench"></span>
@@ -300,16 +304,23 @@
                            <span class="glyphicon glyphicon-remove"></span> &nbsp; Incompatible
                         </a>
                         {/if}
+                        {if="!$fsc->disable_rm_plugins"}
                         <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
                            <span class="glyphicon glyphicon-trash"></span>
                         </a>
+                        {/if}
                      </div>
                      {/if}
                   </td>
                </tr>
                {else}
                <tr class="warning">
-                  <td colspan="5">No tienes plugins instalados. Mira en la pestaña <b>Descargas</b>.</td>
+                  <td colspan="5">
+                     No tienes plugins instalados.
+                     {if="!$fsc->disable_mod_plugins"}
+                     Mira en la pestaña <b>Descargas</b>.
+                     {/if}
+                  </td>
                </tr>
                {/loop}
             </table>
@@ -317,17 +328,18 @@
          <div class="container-fluid">
             <div class="row">
                <div class="col-xs-12">
-                  <div class="btn-group">
-                     <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        <span class="hidden-xs">&nbsp; Añadir</span>
-                     </a>
-                  </div>
+                  {if="!$fsc->disable_add_plugins"}
+                  <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
+                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                     <span class="hidden-xs">&nbsp; Añadir</span>
+                  </a>
+                  {/if}
                </div>
             </div>
          </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="t_descargas">
+         {if="!$fsc->disable_mod_plugins"}
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -415,6 +427,7 @@
                {/loop}
             </table>
          </div>
+         {/if}
       </div>
       <div role="tabpanel" class="tab-pane" id="t_avanzado">
          <form class="form" action="{$fsc->url()}&caca={$fsc->random_string(4)}#avanzado" method="post">

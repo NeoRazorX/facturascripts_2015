@@ -26,6 +26,9 @@ require_once 'base/fs_default_items.php';
  * Esta función sirve para cargar modelos, y sobre todo, para cargarlos
  * desde la carpeta plugins, así se puede personalizar aún más el comportamiento
  * de FacturaScripts.
+ * 
+ * No se producirá ningún error en caso de que el archivo no se encuentre.
+ * @param string $name nombre del archivo que se desea cargar.
  */
 function require_model($name)
 {
@@ -63,6 +66,8 @@ function require_model($name)
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
  * comprueba la estructura de la tabla y de ser necesario la crea o adapta.
+ * 
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 abstract class fs_model
 {
@@ -161,6 +166,9 @@ abstract class fs_model
       }
    }
    
+   /**
+    * Limpia la lista de tablas comprobadas.
+    */
    protected function clean_checked_tables()
    {
       self::$checked_tables = array();
@@ -262,6 +270,12 @@ abstract class fs_model
          return "'" . $this->db->escape_string($v) . "'";
    }
    
+   /**
+    * Convierte una variable con contenido binario a texto.
+    * Lo hace en base64.
+    * @param type $v
+    * @return string
+    */
    protected function bin2str($v)
    {
       if( is_null($v) )
@@ -272,6 +286,12 @@ abstract class fs_model
          return "'".base64_encode($v)."'";
    }
    
+   /**
+    * Convierte un texto a binario.
+    * Lo hace con base64.
+    * @param type $v
+    * @return type
+    */
    protected function str2bin($v)
    {
       if( is_null($v) )
@@ -294,6 +314,12 @@ abstract class fs_model
       return ($v == 't' OR $v == '1');
    }
    
+   /**
+    * Devuelve el valor entero de la variable $s,
+    * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
+    * @param type $s
+    * @return type
+    */
    public function intval($s)
    {
       if( is_null($s) )
@@ -318,6 +344,14 @@ abstract class fs_model
          return( bccomp( (string)$f1, (string)$f2, $precision ) == 0 );
    }
    
+   /**
+    * Devuelve un array() con todas las fechas entre $first y $last.
+    * @param type $first
+    * @param type $last
+    * @param type $step
+    * @param type $format
+    * @return type
+    */
    protected function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y' )
    {
       $dates = array();
@@ -354,6 +388,11 @@ abstract class fs_model
       return trim($newt);
    }
    
+   /**
+    * Devuelve una cadena de texto aleatorio de longitud $length
+    * @param type $length
+    * @return type
+    */
    protected function random_string($length = 10)
    {
       return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);

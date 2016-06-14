@@ -35,6 +35,8 @@ require_model('fs_var.php');
 /**
  * La clase principal de la que deben heredar todos los controladores
  * (las páginas) de FacturaScripts.
+ * 
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_controller
 {
@@ -1187,8 +1189,21 @@ class fs_controller
    {
       if($this->user->admin)
       {
-         $fsvar = new fs_var();
-         return $fsvar->simple_get('updates');
+         $desactivado = FALSE;
+         if( defined('FS_DISABLE_MOD_PLUGINS') )
+         {
+            $desactivado = FS_DISABLE_MOD_PLUGINS;
+         }
+         
+         if($desactivado)
+         {
+            return FALSE;
+         }
+         else
+         {
+            $fsvar = new fs_var();
+            return $fsvar->simple_get('updates');
+         }
       }
       else
          return FALSE;
@@ -1209,12 +1224,12 @@ class fs_controller
       {
          if( file_exists('plugins/'.$plugin.'/view/js/'.$filename) )
          {
-            return 'plugins/'.$plugin.'/view/js/'.$filename;
+            return FS_PATH.'plugins/'.$plugin.'/view/js/'.$filename;
          }
       }
 
       /// si no está en los plugins estará en el núcleo
-      return 'view/js/'.$filename;
+      return FS_PATH.'view/js/'.$filename;
    }
    
    /**

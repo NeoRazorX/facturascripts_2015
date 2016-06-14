@@ -1,7 +1,8 @@
 <?php
 /*
  * This file is part of FacturaSctipts
- * Copyright (C) 2013-2016  Salvador Merino  salvaweb.co@gmail.com
+ * Copyright (C) 2013         Salvador Merino      salvaweb.co@gmail.com
+ * Copyright (C) 2013-2016    Carlos García Gómez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +19,10 @@
  */
 
 /**
- * Clase para almacenar el historial de acciones de los usuarios.
+ * Clase para almacenar el historial de acciones de los usuarios y eventos del sistema.
+ * Accesible desde admin -> información del sistema.
  *
- * @author salvador
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_log extends fs_model
 {

@@ -23,6 +23,7 @@
  * This class is great for those who can't use apc or memcached in their proyects.
  *
  * @author Emilio Cobos (emiliocobos.net) <ecoal95@gmail.com> and github contributors
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  * @version 1.0.1
  * @link http://emiliocobos.net/php-cache/
  *
@@ -162,6 +163,7 @@ class php_file_cache
 
 /**
  * Clase para concectar e interactuar con memcache.
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_cache
 {
