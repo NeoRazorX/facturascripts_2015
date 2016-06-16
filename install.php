@@ -255,7 +255,7 @@ $system_info = str_replace('"', "'", $system_info);
          </div>
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-               <li class="bg-primary">
+               <li>
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
                      <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
                      <span class="visible-xs">Ayuda</span>

@@ -186,13 +186,13 @@ class admin_info extends fs_controller
       
       if($this->b_detalle != '')
       {
-         $sql .= $and." lower(detalle) LIKE '%".mb_strtolower($this->b_detalle, 'UTF8')."%'";
+         $sql .= $and." lower(detalle) LIKE '%".$this->empresa->no_html(mb_strtolower($this->b_detalle, 'UTF8'))."%'";
          $and = ' AND ';
       }
       
       if($this->b_ip != '')
       {
-         $sql .= $and." ip LIKE '".$this->b_ip."%'";
+         $sql .= $and." ip LIKE '".$this->empresa->no_html($this->b_ip)."%'";
          $and = ' AND ';
       }
       

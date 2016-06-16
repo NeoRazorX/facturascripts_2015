@@ -999,33 +999,36 @@ class fs_controller
    {
       $txt = 'facturascripts: '.$this->version()."\n";
       
-      if($this->user->logged_on)
+      if( $this->db->connect() )
       {
-         $txt .= 'os: '.php_uname()."\n";
-         $txt .= 'php: '.phpversion()."\n";
-         $txt .= 'database type: '.FS_DB_TYPE."\n";
-         $txt .= 'database version: '.$this->db->version()."\n";
-         
-         if( $this->cache->connected() )
+         if($this->user->logged_on)
          {
-            $txt .= "memcache: YES\n";
-            $txt .= 'memcache version: '.$this->cache->version()."\n";
-         }
-         else
-            $txt .= "memcache: NO\n";
-         
-         if( function_exists('curl_init') )
-         {
-            $txt .= "curl: YES\n";
-         }
-         else
-            $txt .= "curl: NO\n";
-         
-         $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
-         
-         if( isset($_SERVER['REQUEST_URI']) )
-         {
-            $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+            $txt .= 'os: '.php_uname()."\n";
+            $txt .= 'php: '.phpversion()."\n";
+            $txt .= 'database type: '.FS_DB_TYPE."\n";
+            $txt .= 'database version: '.$this->db->version()."\n";
+            
+            if( $this->cache->connected() )
+            {
+               $txt .= "memcache: YES\n";
+               $txt .= 'memcache version: '.$this->cache->version()."\n";
+            }
+            else
+               $txt .= "memcache: NO\n";
+            
+            if( function_exists('curl_init') )
+            {
+               $txt .= "curl: YES\n";
+            }
+            else
+               $txt .= "curl: NO\n";
+            
+            $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
+            
+            if( isset($_SERVER['REQUEST_URI']) )
+            {
+               $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+            }
          }
       }
       
