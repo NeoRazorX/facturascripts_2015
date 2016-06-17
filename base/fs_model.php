@@ -64,6 +64,24 @@ function require_model($name)
 }
 
 /**
+ * Devuelve el nombre de la clase del objeto, pero sin el namespace.
+ * @param type $object
+ * @return type
+ */
+function get_class_name($object = NULL)
+{
+   $name = get_class($object);
+   
+   $pos = strrpos($name, '\\');
+   if($pos !== FALSE)
+   {
+      $name = substr($name, $pos + 1);
+   }
+   
+   return $name;
+}
+
+/**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
  * comprueba la estructura de la tabla y de ser necesario la crea o adapta.
  * 

@@ -735,7 +735,7 @@ $system_info = str_replace('"', "'", $system_info);
                   <div class="col-sm-4">
                      <div class="form-group">
                         Prefijo:
-                        <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(8) ?>_" autocomplete="off"/>
+                        <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(8); ?>_" autocomplete="off"/>
                      </div>
                   </div>
                </div>
@@ -744,7 +744,7 @@ $system_info = str_replace('"', "'", $system_info);
                <div class="row">
                   <div class="col-sm-12">
                      <div class="form-group">
-                        <iframe src="COPYING" width="100%" height="600"></iframe>
+                        <pre><?php echo file_get_contents('COPYING'); ?></pre>
                      </div>
                   </div>
                </div>
@@ -753,8 +753,7 @@ $system_info = str_replace('"', "'", $system_info);
          <div class="row">
             <div class="col-sm-12 text-right">
                <button id="submit_button" class="btn btn-sm btn-primary" type="submit">
-                  <span class="glyphicon glyphicon-ok"></span>
-                  &nbsp; Aceptar
+                  <span class="glyphicon glyphicon-ok"></span>&nbsp; Aceptar
                </button>
             </div>
          </div>
