@@ -18,7 +18,9 @@
  */
 
 /**
- * Clase para conectar a MySQL
+ * Clase para conectar a MySQL.
+ * 
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_mysql
 {

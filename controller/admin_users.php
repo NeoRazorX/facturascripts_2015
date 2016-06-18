@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Controlador de admin -> users.
+ * @author Carlos García Gómez <neorazorx@gmail.com>
+ */
 class admin_users extends fs_controller
 {
    public $agente;

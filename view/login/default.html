@@ -7,11 +7,11 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
-   <link rel="stylesheet" href="view/css/custom.css" />
-   <script type="text/javascript" src="view/js/jquery.min.js"></script>
-   <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
-   <script type="text/javascript" src="view/js/jquery.ui.shake.js"></script>
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/bootstrap-yeti.min.css" />
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/custom.css" />
+   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.min.js"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.ui.shake.js"></script>
    <script type="text/javascript">
       {if="FS_DEMO"}
          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -113,13 +113,13 @@
                         <div class="col-sm-5">
                            <div class="thumbnail hidden-sm hidden-xs">
                               {if="FS_DEMO"}
-                              <img src="view/img/logo.png" alt="logo"/>
+                              <img src="{#FS_PATH#}view/img/logo.png" alt="logo"/>
                               {elseif="file_exists('tmp/'.FS_TMP_NAME.'logo.png')"}
-                              <img src="tmp/{#FS_TMP_NAME#}logo.png" alt="{$fsc->empresa->nombre}"/>
+                              <img src="{#FS_PATH#}tmp/{#FS_TMP_NAME#}logo.png" alt="{$fsc->empresa->nombre}"/>
                               {elseif="file_exists('tmp/'.FS_TMP_NAME.'logo.jpg')"}
-                              <img src="tmp/{#FS_TMP_NAME#}logo.jpg" alt="{$fsc->empresa->nombre}"/>
+                              <img src="{#FS_PATH#}tmp/{#FS_TMP_NAME#}logo.jpg" alt="{$fsc->empresa->nombre}"/>
                               {else}
-                              <img src="view/img/logo.png" alt="logo"/>
+                              <img src="{#FS_PATH#}view/img/logo.png" alt="logo"/>
                               {/if}
                            </div>
                         </div>

@@ -18,7 +18,9 @@
  */
 
 /**
- * Elemento del menú de FacturaScripts.
+ * Elemento del menú de FacturaScripts, cada uno se corresponde con un controlador.
+ *
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_page extends fs_model
 {
@@ -64,7 +66,9 @@ class fs_page extends fs_model
          
          $this->version = NULL;
          if( isset($p['version']) )
+         {
             $this->version = $p['version'];
+         }
          
          $this->show_on_menu = $this->str2bool($p['show_on_menu']);
          $this->important = $this->str2bool($p['important']);
@@ -146,21 +150,27 @@ class fs_page extends fs_model
    public function save()
    {
       $this->clean_cache();
+      
       if( $this->exists() )
       {
-         $sql = "UPDATE ".$this->table_name." SET title = ".$this->var2str($this->title).",
-            folder = ".$this->var2str($this->folder).", version = ".$this->var2str($this->version).",
-            show_on_menu = ".$this->var2str($this->show_on_menu).",
-            important = ".$this->var2str($this->important)."
-            WHERE name = ".$this->var2str($this->name).";";
+         $sql = "UPDATE ".$this->table_name." SET title = ".$this->var2str($this->title)
+                 .", folder = ".$this->var2str($this->folder)
+                 .", version = ".$this->var2str($this->version)
+                 .", show_on_menu = ".$this->var2str($this->show_on_menu)
+                 .", important = ".$this->var2str($this->important)
+                 ."  WHERE name = ".$this->var2str($this->name).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu,important)
-            VALUES (".$this->var2str($this->name).",".$this->var2str($this->title).",
-            ".$this->var2str($this->folder).",".$this->var2str($this->version).",
-            ".$this->var2str($this->show_on_menu).",".$this->var2str($this->important).");";
+         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu,important) VALUES "
+                 . "(".$this->var2str($this->name)
+                 . ",".$this->var2str($this->title)
+                 . ",".$this->var2str($this->folder)
+                 . ",".$this->var2str($this->version)
+                 . ",".$this->var2str($this->show_on_menu)
+                 . ",".$this->var2str($this->important).");";
       }
+      
       return $this->db->exec($sql);
    }
    
@@ -184,7 +194,9 @@ class fs_page extends fs_model
          if($pages)
          {
             foreach($pages as $p)
+            {
                $pagelist[] = new fs_page($p);
+            }
          }
          $this->cache->set('m_fs_page_all', $pagelist);
       }

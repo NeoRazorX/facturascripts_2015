@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Controlador de admin -> información del sistema.
+ * @author Carlos García Gómez <neorazorx@gmail.com>
+ */
 class admin_info extends fs_controller
 {
    public $allow_delete;
@@ -62,11 +66,11 @@ class admin_info extends fs_controller
       else if( isset($_GET['clean_cache']) )
       {
          /// borramos los archivos php del directorio tmp
-         foreach( scandir(getcwd().'/tmp') as $f)
+         foreach( scandir(getcwd().'/tmp/'.FS_TMP_NAME) as $f)
          {
             if( substr($f, -4) == '.php' )
             {
-               unlink('tmp/'.$f);
+               unlink('tmp/'.FS_TMP_NAME.$f);
             }
          }
          
@@ -182,13 +186,13 @@ class admin_info extends fs_controller
       
       if($this->b_detalle != '')
       {
-         $sql .= $and." lower(detalle) LIKE '%".mb_strtolower($this->b_detalle, 'UTF8')."%'";
+         $sql .= $and." lower(detalle) LIKE '%".$this->empresa->no_html(mb_strtolower($this->b_detalle, 'UTF8'))."%'";
          $and = ' AND ';
       }
       
       if($this->b_ip != '')
       {
-         $sql .= $and." ip LIKE '".$this->b_ip."%'";
+         $sql .= $and." ip LIKE '".$this->empresa->no_html($this->b_ip)."%'";
          $and = ' AND ';
       }
       

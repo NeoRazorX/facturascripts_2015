@@ -23,7 +23,9 @@ require_model('fs_access.php');
 require_model('fs_page.php');
 
 /**
- * Usuario de facturaScripts. Puede estar asociado a un agente.
+ * Usuario de FacturaScripts. Puede estar asociado a un agente.
+ *
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_user extends fs_model
 {
@@ -536,6 +538,10 @@ class fs_user extends fs_model
       }
    }
    
+   /**
+    * Devuelve la lista completa de usuarios de FacturaScripts.
+    * @return \fs_user
+    */
    public function all()
    {
       $userlist = $this->cache->get_array('m_fs_user_all');

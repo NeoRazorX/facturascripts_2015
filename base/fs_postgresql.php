@@ -19,6 +19,8 @@
 
 /**
  * Clase para conectar a PostgreSQL
+ * 
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_postgresql
 {

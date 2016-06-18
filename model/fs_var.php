@@ -19,6 +19,8 @@
 
 /**
  * Una clase genérica para consultar o almacenar en la base de datos pares clave/valor.
+ *
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_var extends fs_model
 {

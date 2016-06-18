@@ -73,9 +73,13 @@ function bround($dVal, $iDec=2)
    $iEvenOddDigit = floor($dVal*pow(10.0,$iDec))-floor($dVal*pow(10.0,$iDec-1))*10.0;
    
    if( abs($dWorking - 5.0) < $dFuzz )
+   {
       $iRoundup = ($iEvenOddDigit & 1) ? 1 : 0;
+   }
    else
+   {
       $iRoundup = ($dWorking>5.0) ? 1 : 0;
+   }
    
    return $iSign*((floor($dVal*pow(10.0,$iDec))+$iRoundup)/pow(10.0,$iDec));
 }

@@ -20,6 +20,8 @@
 /**
  * Define que un usuario tiene acceso a una página concreta
  * y si tiene permisos de eliminación en esa página.
+ *
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_access extends fs_model
 {

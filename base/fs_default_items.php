@@ -21,6 +21,8 @@
  * Esta clase sólo sirve para que los modelos sepan que elementos son los
  * predeterminados para la sesión. Pero para guardar los valores hay que usar
  * las funciones fs_controller::save_lo_que_sea()
+ * 
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_default_items
 {

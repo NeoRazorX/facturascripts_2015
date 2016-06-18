@@ -69,11 +69,11 @@ else
       $pagename = FS_HOMEPAGE;
    }
    
+   $fsc_error = FALSE;
    if($pagename != '')
    {
       /// primero buscamos en los plugins
       $found = FALSE;
-      $fsc_error = FALSE;
       foreach($GLOBALS['plugins'] as $plugin)
       {
          if( file_exists('plugins/'.$plugin.'/controller/'.$pagename.'.php') )
@@ -148,7 +148,7 @@ else
       /// ¿Se puede escribir sobre la carpeta temporal?
       if( is_writable('tmp') )
       {
-         raintpl::configure('cache_dir', 'tmp/');
+         raintpl::configure('cache_dir', 'tmp/'.FS_TMP_NAME);
       }
       else
       {

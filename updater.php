@@ -25,6 +25,10 @@ if( !file_exists('config.php') )
 require_once 'config.php';
 require_once 'base/fs_cache.php';
 
+/**
+ * Controlador del actualizador de FacturaScripts.
+ * @author Carlos García Gómez <neorazorx@gmail.com>
+ */
 class fs_updater
 {
    public $btn_fin;
@@ -219,7 +223,7 @@ class fs_updater
          if( @file_put_contents('update.zip', $this->curl_get_contents($url)) )
          {
             $zip = new ZipArchive();
-            $zip_status = $zip->open('update.zip');
+            $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
             
             if($zip_status === TRUE)
             {
@@ -263,7 +267,7 @@ class fs_updater
          if( @file_put_contents('update.zip', $this->curl_get_contents($plugin_ini['update_url'])) )
          {
             $zip = new ZipArchive();
-            $zip_status = $zip->open('update.zip');
+            $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
             
             if($zip_status === TRUE)
             {
@@ -325,7 +329,7 @@ class fs_updater
       if( @file_put_contents('update.zip', $this->curl_get_contents($url)) )
       {
          $zip = new ZipArchive();
-         $zip_status = $zip->open('update.zip');
+         $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
          
          if($zip_status === TRUE)
          {
@@ -638,11 +642,11 @@ class fs_updater
       $cache->clean();
 
       /// borramos los archivos temporales del motor de plantillas
-      foreach(scandir(getcwd() . '/tmp') as $f)
+      foreach(scandir(getcwd() . '/tmp/'.FS_TMP_NAME) as $f)
       {
          if(substr($f, -4) == '.php')
          {
-            unlink('tmp/' . $f);
+            unlink('tmp/'.FS_TMP_NAME.$f);
          }
       }
    }

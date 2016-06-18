@@ -35,6 +35,8 @@ require_model('fs_var.php');
 /**
  * La clase principal de la que deben heredar todos los controladores
  * (las páginas) de FacturaScripts.
+ * 
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_controller
 {
@@ -997,33 +999,36 @@ class fs_controller
    {
       $txt = 'facturascripts: '.$this->version()."\n";
       
-      if($this->user->logged_on)
+      if( $this->db->connect() )
       {
-         $txt .= 'os: '.php_uname()."\n";
-         $txt .= 'php: '.phpversion()."\n";
-         $txt .= 'database type: '.FS_DB_TYPE."\n";
-         $txt .= 'database version: '.$this->db->version()."\n";
-         
-         if( $this->cache->connected() )
+         if($this->user->logged_on)
          {
-            $txt .= "memcache: YES\n";
-            $txt .= 'memcache version: '.$this->cache->version()."\n";
-         }
-         else
-            $txt .= "memcache: NO\n";
-         
-         if( function_exists('curl_init') )
-         {
-            $txt .= "curl: YES\n";
-         }
-         else
-            $txt .= "curl: NO\n";
-         
-         $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
-         
-         if( isset($_SERVER['REQUEST_URI']) )
-         {
-            $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+            $txt .= 'os: '.php_uname()."\n";
+            $txt .= 'php: '.phpversion()."\n";
+            $txt .= 'database type: '.FS_DB_TYPE."\n";
+            $txt .= 'database version: '.$this->db->version()."\n";
+            
+            if( $this->cache->connected() )
+            {
+               $txt .= "memcache: YES\n";
+               $txt .= 'memcache version: '.$this->cache->version()."\n";
+            }
+            else
+               $txt .= "memcache: NO\n";
+            
+            if( function_exists('curl_init') )
+            {
+               $txt .= "curl: YES\n";
+            }
+            else
+               $txt .= "curl: NO\n";
+            
+            $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
+            
+            if( isset($_SERVER['REQUEST_URI']) )
+            {
+               $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
+            }
          }
       }
       
@@ -1187,8 +1192,21 @@ class fs_controller
    {
       if($this->user->admin)
       {
-         $fsvar = new fs_var();
-         return $fsvar->simple_get('updates');
+         $desactivado = FALSE;
+         if( defined('FS_DISABLE_MOD_PLUGINS') )
+         {
+            $desactivado = FS_DISABLE_MOD_PLUGINS;
+         }
+         
+         if($desactivado)
+         {
+            return FALSE;
+         }
+         else
+         {
+            $fsvar = new fs_var();
+            return $fsvar->simple_get('updates');
+         }
       }
       else
          return FALSE;
@@ -1209,12 +1227,12 @@ class fs_controller
       {
          if( file_exists('plugins/'.$plugin.'/view/js/'.$filename) )
          {
-            return 'plugins/'.$plugin.'/view/js/'.$filename;
+            return FS_PATH.'plugins/'.$plugin.'/view/js/'.$filename;
          }
       }
 
       /// si no está en los plugins estará en el núcleo
-      return 'view/js/'.$filename;
+      return FS_PATH.'view/js/'.$filename;
    }
    
    /**

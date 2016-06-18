@@ -26,9 +26,9 @@ else
    require_once 'base/fs_postgresql.php';
 
 /**
- * Description of fs_db2
+ * Clase genérica de acceso a la base de datos, ya sea MySQL o PostgreSQL.
  *
- * @author carlos
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_db2
 {

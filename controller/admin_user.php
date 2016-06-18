@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Controlador para modificar el perfil del usuario.
+ * @author Carlos García Gómez <neorazorx@gmail.com>
+ */
 class admin_user extends fs_controller
 {
    public $agente;

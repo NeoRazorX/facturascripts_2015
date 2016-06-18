@@ -22,6 +22,8 @@
  * sin necesidad de un reemplazo completo.
  * Los tipos soportados depende de cada página, pero suelen ser:
  * head, css, button y tab.
+ *
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_extension extends fs_model
 {

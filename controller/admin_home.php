@@ -19,9 +19,13 @@
 
 /**
  * Panel de control de FacturaScripts.
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class admin_home extends fs_controller
 {
+   public $disable_mod_plugins;
+   public $disable_add_plugins;
+   public $disable_rm_plugins;
    public $download_list;
    public $download_list2;
    public $last_download_check;
@@ -37,6 +41,29 @@ class admin_home extends fs_controller
    protected function private_core()
    {
       $this->check_htaccess();
+      
+      $this->disable_mod_plugins = FALSE;
+      $this->disable_add_plugins = FALSE;
+      $this->disable_rm_plugins = FALSE;
+      if( defined('FS_DISABLE_MOD_PLUGINS') )
+      {
+         $this->disable_mod_plugins = FS_DISABLE_MOD_PLUGINS;
+         $this->disable_add_plugins = FS_DISABLE_MOD_PLUGINS;
+         $this->disable_rm_plugins = FS_DISABLE_MOD_PLUGINS;
+      }
+      
+      if(!$this->disable_mod_plugins)
+      {
+         if( defined('FS_DISABLE_ADD_PLUGINS') )
+         {
+            $this->disable_add_plugins = FS_DISABLE_ADD_PLUGINS;
+         }
+         
+         if( defined('FS_DISABLE_RM_PLUGINS') )
+         {
+            $this->disable_rm_plugins = FS_DISABLE_RM_PLUGINS;
+         }
+      }
       
       $this->get_download_list();
       $fsvar = new fs_var();
@@ -129,7 +156,11 @@ class admin_home extends fs_controller
       else if( isset($_GET['delete_plugin']) )
       {
          /// eliminar plugin
-         if( is_writable('plugins/'.$_GET['delete_plugin']) )
+         if($this->disable_rm_plugins)
+         {
+            $this->new_error_msg('No tienes permiso para eliminar plugins.');
+         }
+         else if( is_writable('plugins/'.$_GET['delete_plugin']) )
          {
             if( $this->delTree('plugins/'.$_GET['delete_plugin']) )
             {
@@ -143,21 +174,15 @@ class admin_home extends fs_controller
       }
       else if( isset($_POST['install']) )
       {
-         $disabled = FALSE;
-         if( defined('FS_DISABLE_ADD_PLUGINS') )
-         {
-            $disabled = FS_DISABLE_ADD_PLUGINS;
-         }
-         
          /// instalar plugin (copiarlo y descomprimirlo)
-         if($disabled)
+         if($this->disable_add_plugins)
          {
             $this->new_error_msg('La subida de plugins está desactivada.');
          }
          else if( is_uploaded_file($_FILES['fplugin']['tmp_name']) )
          {
             $zip = new ZipArchive();
-            $res = $zip->open($_FILES['fplugin']['tmp_name']);
+            $res = $zip->open($_FILES['fplugin']['tmp_name'], ZipArchive::CHECKCONS);
             if($res === TRUE)
             {
                $zip->extractTo('plugins/');
@@ -178,13 +203,27 @@ class admin_home extends fs_controller
       }
       else if( isset($_GET['download']) )
       {
-         /// descargamos un plugin de la lista fija
-         $this->download1();
+         if($this->disable_mod_plugins)
+         {
+            $this->new_error_msg('No tienes permiso para descargar plugins.');
+         }
+         else
+         {
+            /// descargamos un plugin de la lista fija
+            $this->download1();
+         }
       }
       else if( isset($_GET['download2']) )
       {
-         /// descargamos un plugin de la lista de la comunidad
-         $this->download2();
+         if($this->disable_mod_plugins)
+         {
+            $this->new_error_msg('No tienes permiso para descargar plugins.');
+         }
+         else
+         {
+            /// descargamos un plugin de la lista de la comunidad
+            $this->download2();
+         }
       }
       else if( isset($_GET['reset']) )
       {
@@ -376,7 +415,9 @@ class admin_home extends fs_controller
          $new_fsc = new $page->name(); /// cargamos el controlador asociado
          
          if( !$new_fsc->page->save() )
+         {
             $this->new_error_msg("Imposible guardar la página ".$page->name);
+         }
          
          unset($new_fsc);
       }
@@ -471,10 +512,19 @@ class admin_home extends fs_controller
    public function plugin_advanced_list()
    {
       $plugins = array();
+      $disabled = array();
+      
+      if( defined('FS_DISABLED_PLUGINS') )
+      {
+         foreach( explode(',', FS_DISABLED_PLUGINS) as $aux )
+         {
+            $disabled[] = $aux;
+         }
+      }
       
       foreach( scandir(getcwd().'/plugins') as $f)
       {
-         if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+         if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..' AND !in_array($f, $disabled) )
          {
             $plugin = array(
                 'compatible' => FALSE,
@@ -636,7 +686,7 @@ class admin_home extends fs_controller
       {
          array_unshift($GLOBALS['plugins'], $name);
          
-         if( file_put_contents('tmp/enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
+         if( file_put_contents('tmp/'.FS_TMP_NAME.'enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
          {
             if($wizard)
             {
@@ -698,14 +748,14 @@ class admin_home extends fs_controller
     */
    private function disable_plugin($name)
    {
-      if( file_exists('tmp/enabled_plugins.list') )
+      if( file_exists('tmp/'.FS_TMP_NAME.'enabled_plugins.list') )
       {
          if( in_array($name, $this->plugins()) )
          {
             if( count($GLOBALS['plugins']) == 1 AND $GLOBALS['plugins'][0] == $name )
             {
                $GLOBALS['plugins'] = array();
-               unlink('tmp/enabled_plugins.list');
+               unlink('tmp/'.FS_TMP_NAME.'enabled_plugins.list');
                
                $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
             }
@@ -720,7 +770,7 @@ class admin_home extends fs_controller
                   }
                }
                
-               if( file_put_contents('tmp/enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
+               if( file_put_contents('tmp/'.FS_TMP_NAME.'enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
                {
                   $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
                }
@@ -785,11 +835,11 @@ class admin_home extends fs_controller
          }
          
          /// borramos los archivos temporales del motor de plantillas
-         foreach( scandir(getcwd().'/tmp') as $f)
+         foreach( scandir(getcwd().'/tmp/'.FS_TMP_NAME) as $f)
          {
             if( substr($f, -4) == '.php' )
             {
-               unlink('tmp/'.$f);
+               unlink('tmp/'.FS_TMP_NAME.$f);
             }
          }
          
@@ -955,7 +1005,7 @@ class admin_home extends fs_controller
          if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
          {
             $zip = new ZipArchive();
-            $res = $zip->open('download.zip');
+            $res = $zip->open('download.zip', ZipArchive::CHECKCONS);
             if($res === TRUE)
             {
                $plugins_list = scandir(getcwd().'/plugins');
@@ -1026,7 +1076,7 @@ class admin_home extends fs_controller
             if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
             {
                $zip = new ZipArchive();
-               $res = $zip->open('download.zip');
+               $res = $zip->open('download.zip', ZipArchive::CHECKCONS);
                if($res === TRUE)
                {
                   $plugins_list = scandir(getcwd().'/plugins');
