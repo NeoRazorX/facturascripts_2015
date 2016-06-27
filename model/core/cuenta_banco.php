@@ -34,6 +34,11 @@ class cuenta_banco extends \fs_model
    public $descripcion;
    public $iban;
    public $swift;
+   
+   /**
+    * Código de la subcuenta de contabilidad
+    * @var type 
+    */
    public $codsubcuenta;
    
    public function __construct($c = FALSE)
@@ -86,22 +91,35 @@ class cuenta_banco extends \fs_model
       }
    }
    
+   /**
+    * Devuelve la URL donde ver/modificar los datos de esta cuenta bancaria
+    * @return string
+    */
    public function url()
    {
       return 'index.php?page=admin_empresa#cuentasb';
    }
    
+   /**
+    * Devuelve la cuenta bancaria con codcuenta = $cod
+    * @param type $cod
+    * @return boolean|\cuenta_banco
+    */
    public function get($cod)
    {
       $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcuenta = ".$this->var2str($cod).";");
       if($data)
       {
-         return new cuenta_banco($data[0]);
+         return new \cuenta_banco($data[0]);
       }
       else
          return FALSE;
    }
    
+   /**
+    * Devuelve un nuevo código para una cuenta bancaria
+    * @return int
+    */
    private function get_new_codigo()
    {
       $sql = "SELECT MAX(".$this->db->sql_to_int('codcuenta').") as cod FROM ".$this->table_name.";";
@@ -114,6 +132,10 @@ class cuenta_banco extends \fs_model
          return 1;
    }
    
+   /**
+    * Devuelve TRUE si la cuenta bancaria existe
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->codcuenta) )
@@ -124,6 +146,10 @@ class cuenta_banco extends \fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codcuenta = ".$this->var2str($this->codcuenta).";");
    }
    
+   /**
+    * Guarda los datos en la base de datos.
+    * @return type
+    */
    public function save()
    {
       $this->descripcion = $this->no_html($this->descripcion);
@@ -150,11 +176,19 @@ class cuenta_banco extends \fs_model
       return $this->db->exec($sql);
    }
    
+   /**
+    * Elimina esta cuenta bancaria
+    * @return type
+    */
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codcuenta = ".$this->var2str($this->codcuenta).";");
    }
    
+   /**
+    * Devuelve un array con todas las cuentas bancarias de la empresa
+    * @return \cuenta_banco
+    */
    public function all_from_empresa()
    {
       $clist = array();
@@ -163,12 +197,19 @@ class cuenta_banco extends \fs_model
       if($data)
       {
          foreach($data as $d)
-            $clist[] = new cuenta_banco($d);
+         {
+            $clist[] = new \cuenta_banco($d);
+         }
       }
       
       return $clist;
    }
    
+   /**
+    * Calcula el IBAN a partir de la cuenta bancaria del cliente CCC
+    * @param type $ccc
+    * @return type
+    */
    public function calcular_iban($ccc)
    {
       $codpais = substr($this->empresa->codpais, 0, 2);

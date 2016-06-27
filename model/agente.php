@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__.'/core/agente.php';
+require_once 'model/core/agente.php';
 
 /**
  * El agente/empleado es el que se asocia a un albarán, factura o caja.

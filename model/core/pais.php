@@ -56,6 +56,7 @@ class pais extends \fs_model
          $this->codiso = $p['codiso'];
          if($p['codiso'] == '')
          {
+            /// si no se ha rellenado codiso, intentamos usar esta lista
             $codigos = array(
                 'ESP' => 'ES',
                 'ARG' => 'AR',
@@ -112,6 +113,10 @@ class pais extends \fs_model
               . " ('VEN','VE','Venezuela');";
    }
    
+   /**
+    * Devuelve la URL donde ver/modificar los datos
+    * @return string
+    */
    public function url()
    {
       if( is_null($this->codpais) )
@@ -122,33 +127,51 @@ class pais extends \fs_model
          return 'index.php?page=admin_paises#'.$this->codpais;
    }
    
+   /**
+    * Devuelve TRUE si el pais es el predeterminado de la empresa
+    * @return type
+    */
    public function is_default()
    {
       return ( $this->codpais == $this->default_items->codpais() );
    }
    
+   /**
+    * Devuelve el pais con codpais = $cod
+    * @param type $cod
+    * @return boolean|\FacturaScripts\model\pais
+    */
    public function get($cod)
    {
       $pais = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = ".$this->var2str($cod).";");
       if($pais)
       {
-         return new pais($pais[0]);
+         return new \pais($pais[0]);
       }
       else
          return FALSE;
    }
    
+   /**
+    * Devuelve el pais con codido = $cod
+    * @param type $cod
+    * @return \pais|boolean
+    */
    public function get_by_iso($cod)
    {
       $pais = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codiso = ".$this->var2str($cod).";");
       if($pais)
       {
-         return new pais($pais[0]);
+         return new \pais($pais[0]);
       }
       else
          return FALSE;
    }
    
+   /**
+    * Devuelve TRUE si el pais existe
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->codpais) )
@@ -159,6 +182,10 @@ class pais extends \fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpais = ".$this->var2str($this->codpais).";");
    }
    
+   /**
+    * Comprueba los datos del pais, devuelve TRUE si son correctos
+    * @return boolean
+    */
    public function test()
    {
       $status = FALSE;
@@ -180,6 +207,10 @@ class pais extends \fs_model
       return $status;
    }
    
+   /**
+    * Guarda los datos en la base de datos
+    * @return boolean
+    */
    public function save()
    {
       if( $this->test() )
@@ -206,28 +237,45 @@ class pais extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Elimina el pais (de la base de datos ... por ahora)
+    * @return type
+    */
    public function delete()
    {
       $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpais = ".$this->var2str($this->codpais).";");
    }
    
+   /**
+    * Limpia la caché
+    */
    private function clean_cache()
    {
       $this->cache->delete('m_pais_all');
    }
    
+   /**
+    * Devuelve un array con todos los paises
+    * @return \pais
+    */
    public function all()
    {
+      /// Leemos la lista de la caché
       $listap = $this->cache->get_array('m_pais_all');
-      if( !$listap )
+      if(!$listap)
       {
-         $paises = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpais ASC;");
-         if($paises)
+         /// si no encontramos los datos en caché, leemos de la base de datos
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpais ASC;");
+         if($data)
          {
-            foreach($paises as $p)
-               $listap[] = new pais($p);
+            foreach($data as $p)
+            {
+               $listap[] = new \pais($p);
+            }
          }
+         
+         /// guardamos la lista en caché
          $this->cache->set('m_pais_all', $listap);
       }
       

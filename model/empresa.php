@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__.'/core/empresa.php';
+require_once 'model/core/empresa.php';
 
 /**
  * Esta clase almacena los principales datos de la empresa.

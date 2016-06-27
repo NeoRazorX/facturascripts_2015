@@ -608,23 +608,29 @@ class fs_controller
     */
    private function log_out($rmuser = FALSE)
    {
-      /// borramos las cookies
-      setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
+      $path = '/';
       if( isset($_SERVER['REQUEST_URI']) )
       {
          $aux = parse_url( str_replace('/index.php', '', $_SERVER['REQUEST_URI']) );
-         setcookie('logkey', '', time()-FS_COOKIES_EXPIRE, $aux['path'].'/');
+         $path = $aux['path'];
+         if( substr($path, -1) != '/' )
+         {
+            $path .= '/';
+         }
+      }
+      
+      /// borramos las cookies
+      if( isset($_COOKIE['logkey']) )
+      {
+         setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
+         setcookie('logkey', '', time()-FS_COOKIES_EXPIRE, $path);
       }
       
       /// ¿Eliminamos la cookie del usuario?
-      if($rmuser)
+      if( $rmuser AND isset($_COOKIE['user']) )
       {
          setcookie('user', '', time()-FS_COOKIES_EXPIRE);
-         if( isset($_SERVER['REQUEST_URI']) )
-         {
-            $aux = parse_url( str_replace('/index.php', '', $_SERVER['REQUEST_URI']) );
-            setcookie('user', '', time()-FS_COOKIES_EXPIRE, $aux['path'].'/');
-         }
+         setcookie('user', '', time()-FS_COOKIES_EXPIRE, $path);
       }
       
       /// guardamos el evento en el log
@@ -1122,6 +1128,56 @@ class fs_controller
       }
       else
          return number_format($num, $decimales, FS_NF1, FS_NF2);
+   }
+   
+   /**
+    * Convierte el precio en euros a la divisa preterminada de la empresa
+    * @param type $precio
+    * @return type
+    */
+   public function euro_convert($precio)
+   {
+      if($this->empresa->coddivisa == 'EUR')
+      {
+         return $precio;
+      }
+      else
+      {
+         $div0 = new divisa();
+         $divisa = $div0->get($this->empresa->coddivisa);
+         if($divisa)
+         {
+            return $precio * $divisa->tasaconv;
+         }
+         else
+            return $precio;
+      }
+   }
+   
+   /**
+    * Convierte un precio de la divisa_desde a la divisa especificada
+    * @param type $precio
+    * @param type $coddivisa_desde
+    * @param type $coddivisa
+    * @return type
+    */
+   public function divisa_convert($precio, $coddivisa_desde, $coddivisa)
+   {
+      if($coddivisa_desde != $coddivisa)
+      {
+         $div0 = new divisa();
+         $divisa_desde = $div0->get($coddivisa_desde);
+         if($divisa_desde)
+         {
+            $divisa = $div0->get($coddivisa);
+            if($divisa)
+            {
+               $precio = $precio / $divisa_desde->tasaconv * $divisa->tasaconv;
+            }
+         }
+      }
+      
+      return $precio;
    }
    
    /**

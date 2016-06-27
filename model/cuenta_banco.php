@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__.'/core/cuenta_banco.php';
+require_once 'model/core/cuenta_banco.php';
 
 /**
  * Una cuenta bancaria de la propia empresa.
