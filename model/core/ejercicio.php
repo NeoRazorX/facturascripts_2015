@@ -124,6 +124,11 @@ class ejercicio extends \fs_model
       return Date('Y', strtotime($this->fechainicio));
    }
    
+   /**
+    * Devuelve un nuevo código para un ejercicio
+    * @param type $cod
+    * @return string
+    */
    public function get_new_codigo($cod = '0001')
    {
       if( !$this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($cod).";") )
@@ -142,6 +147,10 @@ class ejercicio extends \fs_model
       }
    }
    
+   /**
+    * Devuelve la url donde ver/modificar estos datos
+    * @return string
+    */
    public function url()
    {
       if( is_null($this->codejercicio) )
@@ -152,6 +161,10 @@ class ejercicio extends \fs_model
          return 'index.php?page=contabilidad_ejercicio&cod='.$this->codejercicio;
    }
    
+   /**
+    * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
+    * @return type
+    */
    public function is_default()
    {
       return ( $this->codejercicio == $this->default_items->codejercicio() );
@@ -159,6 +172,9 @@ class ejercicio extends \fs_model
    
    /**
     * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
+    * @param type $fecha
+    * @param type $show_error
+    * @return type
     */
    public function get_best_fecha($fecha, $show_error=FALSE)
    {
@@ -190,12 +206,17 @@ class ejercicio extends \fs_model
       }
    }
    
+   /**
+    * Devuelve el ejercicio con codejercicio = $cod
+    * @param type $cod
+    * @return boolean|\ejercicio
+    */
    public function get($cod)
    {
       $ejercicio = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($cod).";");
       if($ejercicio)
       {
-         return new ejercicio($ejercicio[0]);
+         return new \ejercicio($ejercicio[0]);
       }
       else
          return FALSE;
@@ -204,6 +225,10 @@ class ejercicio extends \fs_model
    /**
     * Devuelve el ejercicio para la fecha indicada.
     * Si no existe, lo crea.
+    * @param type $fecha
+    * @param type $solo_abierto
+    * @param type $crear
+    * @return boolean|\ejercicio
     */
    public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE)
    {
@@ -213,7 +238,7 @@ class ejercicio extends \fs_model
       $data = $this->db->select($sql);
       if($data)
       {
-         $eje = new ejercicio($data[0]);
+         $eje = new \ejercicio($data[0]);
          if( $eje->abierto() OR !$solo_abierto )
          {
             return $eje;
@@ -223,7 +248,7 @@ class ejercicio extends \fs_model
       }
       else if($crear)
       {
-         $eje = new ejercicio();
+         $eje = new \ejercicio();
          $eje->codejercicio = $eje->get_new_codigo( Date('Y', strtotime($fecha)) );
          $eje->nombre = Date('Y', strtotime($fecha));
          $eje->fechainicio = Date('1-1-Y', strtotime($fecha));
@@ -244,6 +269,10 @@ class ejercicio extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Devuelve TRUE si el ejercico existe
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->codejercicio) )
@@ -257,6 +286,10 @@ class ejercicio extends \fs_model
       }
    }
    
+   /**
+    * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
+    * @return boolean
+    */
    public function test()
    {
       $status = FALSE;
@@ -287,6 +320,10 @@ class ejercicio extends \fs_model
       return $status;
    }
    
+   /**
+    * Comprueba más datos del ejercicio, devuelve TRUE si está todo correcto
+    * @return boolean
+    */
    public function full_test()
    {
       $status = TRUE;
@@ -342,6 +379,10 @@ class ejercicio extends \fs_model
       return $status;
    }
    
+   /**
+    * Guarda los datos en la base de datos
+    * @return boolean
+    */
    public function save()
    {
       if( $this->test() )
@@ -383,48 +424,77 @@ class ejercicio extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Elimina el ejercicio
+    * @return type
+    */
    public function delete()
    {
       $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codejercicio = ".$this->var2str($this->codejercicio).";");
    }
    
+   /**
+    * Limpiamos la caché
+    */
    private function clean_cache()
    {
       $this->cache->delete('m_ejercicio_all');
       $this->cache->delete('m_ejercicio_all_abiertos');
    }
    
+   /**
+    * Devuelve un array con todos los ejercicios
+    * @return \ejercicio
+    */
    public function all()
    {
+      /// leemos la lista de la caché
       $listae = $this->cache->get_array('m_ejercicio_all');
-      if( !$listae )
+      if(!$listae)
       {
-         $ejercicios = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY fechainicio DESC;");
-         if($ejercicios)
+         /// si no está en caché, leemos de la base de datos
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY fechainicio DESC;");
+         if($data)
          {
-            foreach($ejercicios as $e)
-               $listae[] = new ejercicio($e);
+            foreach($data as $e)
+            {
+               $listae[] = new \ejercicio($e);
+            }
          }
+         
+         /// guardamos la lista en caché
          $this->cache->set('m_ejercicio_all', $listae);
       }
+      
       return $listae;
    }
    
+   /**
+    * Devuelve un array con todos los ejercicio abiertos
+    * @return \ejercicio
+    */
    public function all_abiertos()
    {
+      /// leemos la lista de la caché
       $listae = $this->cache->get_array('m_ejercicio_all_abiertos');
       if( !$listae )
       {
-         $ejercicios = $this->db->select("SELECT * FROM ".$this->table_name."
-            WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;");
-         if($ejercicios)
+         /// si no está en caché, leemos de la base de datos
+         $sql = "SELECT * FROM ".$this->table_name." WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
+         $data = $this->db->select($sql);
+         if($data)
          {
-            foreach($ejercicios as $e)
-               $listae[] = new ejercicio($e);
+            foreach($data as $e)
+            {
+               $listae[] = new \ejercicio($e);
+            }
          }
+         
+         /// guardamos la lista en caché
          $this->cache->set('m_ejercicio_all_abiertos', $listae);
       }
+      
       return $listae;
    }
 }

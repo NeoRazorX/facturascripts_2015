@@ -91,47 +91,57 @@ class divisa extends \fs_model
    public function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('EUR','EUROS','1','978','€');".
-         "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('ARS','PESOS (ARG)','10.83','32','$');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('CLP','PESOS (CLP)','755.73','152','$');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('COP','PESOS (COP)','2573','170','$');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('USD','DÓLARES EE.UU.','1.36','840','$');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('MXN','PESOS (MXN)','18.1','484','$');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('PAB','BALBOAS','38.17','590','B');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('PEN','NUEVOS SOLES','3.52','604','S/.');".
-           "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)
-         VALUES ('VEF','BOLÍVARES','38.17','937','Bs');";
+      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)"
+              ." VALUES ('EUR','EUROS','1','978','€')"
+              .",('ARS','PESOS (ARG)','10.83','32','$')"
+              .",('CLP','PESOS (CLP)','755.73','152','$')"
+              .",('COP','PESOS (COP)','2573','170','$')"
+              .",('USD','DÓLARES EE.UU.','1.36','840','$')"
+              .",('MXN','PESOS (MXN)','18.1','484','$')"
+              .",('PAB','BALBOAS','38.17','590','B')"
+              .",('PEN','NUEVOS SOLES','3.52','604','S/.')"
+              .",('VEF','BOLÍVARES','38.17','937','Bs')"
+              .",('GBP','LIBRAS ESTERLINAS','0.8076','826','£')";
    }
    
+   /**
+    * Devuelve la url donde ver/modificar estos datos
+    * @return string
+    */
    public function url()
    {
       return 'index.php?page=admin_divisas';
    }
    
+   /**
+    * Devuelve TRUE si esta es la divisa predeterminada de la empresa
+    * @return type
+    */
    public function is_default()
    {
       return ( $this->coddivisa == $this->default_items->coddivisa() );
    }
    
+   /**
+    * Devuelve la divisa con coddivsa = $cod
+    * @param type $cod
+    * @return boolean|\FacturaScripts\model\divisa
+    */
    public function get($cod)
    {
       $divisa = $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($cod).";");
       if($divisa)
       {
-         return new divisa($divisa[0]);
+         return new \divisa($divisa[0]);
       }
       else
          return FALSE;
    }
    
+   /**
+    * Devuelve TRUE si la divisa existe
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->coddivisa) )
@@ -142,10 +152,15 @@ class divisa extends \fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
+   /**
+    * Comprueba los datos de la divisa, devuelve TRUE si son correctos
+    * @return boolean
+    */
    public function test()
    {
       $status = FALSE;
       $this->descripcion = $this->no_html($this->descripcion);
+      $this->simbolo = $this->no_html($this->simbolo);
       
       if( !preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa) )
       {
@@ -161,6 +176,10 @@ class divisa extends \fs_model
       return $status;
    }
    
+   /**
+    * Guarda los datos en la base de datos
+    * @return boolean
+    */
    public function save()
    {
       if( $this->test() )
@@ -193,12 +212,19 @@ class divisa extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Elimina esta divisa
+    * @return type
+    */
    public function delete()
    {
       $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE coddivisa = ".$this->var2str($this->coddivisa).";");
    }
    
+   /**
+    * Limpiamos la caché
+    */
    private function clean_cache()
    {
       $this->cache->delete('m_divisa_all');
@@ -210,18 +236,21 @@ class divisa extends \fs_model
     */
    public function all()
    {
+      /// leemos la lista de la caché
       $listad = $this->cache->get_array('m_divisa_all');
       if(!$listad)
       {
+         /// si no está en caché, leemos de la base de datos
          $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY coddivisa ASC;");
          if($data)
          {
             foreach($data as $d)
             {
-               $listad[] = new divisa($d);
+               $listad[] = new \divisa($d);
             }
          }
          
+         /// guardamos la lista en caché
          $this->cache->set('m_divisa_all', $listad);
       }
       

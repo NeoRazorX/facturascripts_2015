@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__.'/core/ejercicio.php';
+require_once 'model/core/ejercicio.php';
 
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...

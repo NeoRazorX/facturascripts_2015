@@ -88,6 +88,10 @@ class serie extends \fs_model
               . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
    }
    
+   /**
+    * Devuelve la url donde ver/modificar la serie
+    * @return string
+    */
    public function url()
    {
       if( is_null($this->codserie) )
@@ -98,6 +102,10 @@ class serie extends \fs_model
          return 'index.php?page=contabilidad_series#'.$this->codserie;
    }
    
+   /**
+    * Devuelve TRUE si la serie es la predeterminada de la empresa
+    * @return type
+    */
    public function is_default()
    {
       return ( $this->codserie == $this->default_items->codserie() );
@@ -113,12 +121,16 @@ class serie extends \fs_model
       $serie = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = ".$this->var2str($cod).";");
       if($serie)
       {
-         return new serie($serie[0]);
+         return new \serie($serie[0]);
       }
       else
          return FALSE;
    }
    
+   /**
+    * Devuelve TRUE si la serie existe
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->codserie) )
@@ -129,6 +141,10 @@ class serie extends \fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codserie = ".$this->var2str($this->codserie).";");
    }
    
+   /**
+    * Comprueba los datos de la serie, devuelve TRUE si son correctos
+    * @return boolean
+    */
    public function test()
    {
       $status = FALSE;
@@ -155,6 +171,10 @@ class serie extends \fs_model
       return $status;
    }
    
+   /**
+    * Guarda los datos en la base de datos
+    * @return boolean
+    */
    public function save()
    {
       if( $this->test() )
@@ -168,7 +188,7 @@ class serie extends \fs_model
                     .", irpf = ".$this->var2str($this->irpf)
                     .", codejercicio = ".$this->var2str($this->codejercicio)
                     .", numfactura = ".$this->var2str($this->numfactura)
-                    ." WHERE codserie = ".$this->var2str($this->codserie).";";
+                    ."  WHERE codserie = ".$this->var2str($this->codserie).";";
          }
          else
          {
@@ -187,28 +207,45 @@ class serie extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Elimina la serie
+    * @return type
+    */
    public function delete()
    {
       $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codserie = ".$this->var2str($this->codserie).";");
    }
    
+   /**
+    * Limpia la caché
+    */
    private function clean_cache()
    {
       $this->cache->delete('m_serie_all');
    }
    
+   /**
+    * Devuelve un array con todas las series
+    * @return \serie
+    */
    public function all()
    {
+      /// leemos la lista de la caché
       $serielist = $this->cache->get_array('m_serie_all');
       if(!$serielist)
       {
-         $series = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codserie ASC;");
-         if($series)
+         /// si no encontramos los datos en la caché, leemos de la base de datos
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codserie ASC;");
+         if($data)
          {
-            foreach($series as $s)
-               $serielist[] = new serie($s);
+            foreach($data as $s)
+            {
+               $serielist[] = new \serie($s);
+            }
          }
+         
+         /// guardamos la lista en caché
          $this->cache->set('m_serie_all', $serielist);
       }
       

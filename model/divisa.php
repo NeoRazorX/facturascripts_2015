@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__.'/core/divisa.php';
+require_once 'model/core/divisa.php';
 
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.

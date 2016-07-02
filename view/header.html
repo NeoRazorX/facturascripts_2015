@@ -18,13 +18,22 @@
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery-ui.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/base.js"></script>
    <script type="text/javascript">
-      function show_precio(precio)
+      function show_precio(precio, coddivisa)
       {
-         {if="FS_POS_DIVISA=='right'"}
-         return number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}')+' {$fsc->simbolo_divisa()}';
-         {else}
-         return '{$fsc->simbolo_divisa()}'+number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}');
-         {/if}
+         coddivisa || ( coddivisa = '{$fsc->empresa->coddivisa}' );
+         
+         if(coddivisa == '{$fsc->empresa->coddivisa}')
+         {
+            {if="FS_POS_DIVISA=='right'"}
+            return number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}')+' {$fsc->simbolo_divisa()}';
+            {else}
+            return '{$fsc->simbolo_divisa()}'+number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}');
+            {/if}
+         }
+         else
+         {
+            return number_format(precio, {#FS_NF0#}, '{#FS_NF1#}', '{#FS_NF2#}');
+         }
       }
       function show_numero(numero)
       {

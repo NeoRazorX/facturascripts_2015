@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__.'/core/serie.php';
+require_once 'model/core/serie.php';
 
 /**
  * Una serie de facturación o contabilidad, para agrupar documentos de compra y/o venta

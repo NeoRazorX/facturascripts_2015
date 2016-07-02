@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__.'/core/almacen.php';
+require_once 'model/core/almacen.php';
 
 /**
  * El almacén donde están físicamente los artículos.

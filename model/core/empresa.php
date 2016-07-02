@@ -21,18 +21,23 @@ namespace FacturaScripts\model;
 
 /**
  * Esta clase almacena los principales datos de la empresa.
+ * Solamente se puede manejar una empresa en cada base de datos.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class empresa extends \fs_model
 {
    /**
-    * Clave primaria.
-    * @var type 
+    * Clave primaria. Integer.
+    * @var integer 
     */
    public $id;
    public $xid;
    
+   /**
+    * Todavía sin uso.
+    * @var type 
+    */
    public $stockpedidos;
    
    /**
@@ -119,13 +124,21 @@ class empresa extends \fs_model
    public $nombre;
    
    /**
-    *
+    * Nombre corto de la empresa, para mostrar en el menú
     * @var type Nombre a mostrar en el menú de facturaScripts.
     */
    public $nombrecorto;
    
+   /**
+    * Lema de la empresa
+    * @var type 
+    */
    public $lema;
    
+   /**
+    * Horario de apertura
+    * @var type 
+    */
    public $horario;
    
    /**
@@ -238,11 +251,19 @@ class empresa extends \fs_model
               ."'E-".$e."','','');";
    }
    
+   /**
+    * Devuelve la url donde ver/modificar los datos
+    * @return string
+    */
    public function url()
    {
       return 'index.php?page=admin_empresa';
    }
    
+   /**
+    * Devuelve TRUE si están definidos el email y la contraseña
+    * @return boolean
+    */
    public function can_send_mail()
    {
       if($this->email AND $this->email_config['mail_password'])
@@ -253,6 +274,10 @@ class empresa extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Devuelve TRUE si existe
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->id) )
@@ -263,6 +288,10 @@ class empresa extends \fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE id = ".$this->var2str($this->id).";");
    }
    
+   /**
+    * Comprueba los datos de la empresa, devuelve TRUE si está todo correcto
+    * @return boolean
+    */
    public function test()
    {
       $status = FALSE;
@@ -300,6 +329,10 @@ class empresa extends \fs_model
       return $status;
    }
    
+   /**
+    * Guarda los datos en la base de datos
+    * @return boolean
+    */
    public function save()
    {
       if( $this->test() )
@@ -401,6 +434,9 @@ class empresa extends \fs_model
       return FALSE;
    }
    
+   /**
+    * Limpia la caché
+    */
    public function clean_cache()
    {
       $this->cache->delete('empresa');

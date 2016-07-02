@@ -27,59 +27,58 @@ namespace FacturaScripts\model;
 class almacen extends \fs_model
 {
    /**
-    * Todavía sin uso.
-    * @var type 
-    */
-   public $observaciones;
-   public $contacto;
-   public $fax;
-   public $telefono;
-   public $codpais;
-   public $provincia;
-   public $poblacion;
-   public $apartado;
-   public $codpostal;
-   public $direccion;
-   public $nombre;
-   
-   /**
     * Clave primaria. Varchar (4).
     * @var type 
     */
    public $codalmacen;
+   
+   public $nombre;
+   public $codpais;
+   public $provincia;
+   public $poblacion;
+   public $codpostal;
+   public $direccion;
+   public $contacto;
+   public $fax;
+   public $telefono;
+   
+   /**
+    * Todavía sin uso.
+    * @var type 
+    */
+   public $observaciones;
    
    public function __construct($a = FALSE)
    {
       parent::__construct('almacenes');
       if($a)
       {
-         $this->observaciones = $a['observaciones'];
-         $this->contacto = $a['contacto'];
-         $this->fax = $a['fax'];
-         $this->telefono = $a['telefono'];
+         $this->codalmacen = $a['codalmacen'];
+         $this->nombre = $a['nombre'];
          $this->codpais = $a['codpais'];
          $this->provincia = $a['provincia'];
          $this->poblacion = $a['poblacion'];
-         $this->apartado = $a['apartado'];
          $this->codpostal = $a['codpostal'];
          $this->direccion = $a['direccion'];
-         $this->nombre = $a['nombre'];
-         $this->codalmacen = $a['codalmacen'];
+         $this->contacto = $a['contacto'];
+         $this->fax = $a['fax'];
+         $this->telefono = $a['telefono'];
+         $this->observaciones = $a['observaciones'];
+         
       }
       else
       {
-         $this->observaciones = '';
-         $this->contacto = '';
-         $this->fax = '';
-         $this->telefono = '';
+         $this->codalmacen = NULL;
+         $this->nombre = '';
          $this->codpais = NULL;
          $this->provincia = NULL;
          $this->poblacion = NULL;
-         $this->apartado = NULL;
          $this->codpostal = '';
          $this->direccion = '';
-         $this->nombre = '';
-         $this->codalmacen = NULL;
+         $this->contacto = '';
+         $this->fax = '';
+         $this->telefono = '';
+         $this->observaciones = '';
       }
    }
 
@@ -90,6 +89,10 @@ class almacen extends \fs_model
          VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
    }
    
+   /**
+    * Devuelve la URL para ver/modificar los datos de este almacén
+    * @return string
+    */
    public function url()
    {
       if( is_null($this->codalmacen) )
@@ -100,22 +103,35 @@ class almacen extends \fs_model
          return 'index.php?page=admin_almacenes#'.$this->codalmacen;
    }
    
+   /**
+    * Devuelve TRUE si este es almacén predeterminado de la empresa.
+    * @return type
+    */
    public function is_default()
    {
       return ( $this->codalmacen == $this->default_items->codalmacen() );
    }
    
+   /**
+    * Devuelve el almacén con codalmacen = $cod
+    * @param type $cod
+    * @return \almacen|boolean
+    */
    public function get($cod)
    {
       $almacen = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($cod).";");
       if($almacen)
       {
-         return new almacen($almacen[0]);
+         return new \almacen($almacen[0]);
       }
       else
          return FALSE;
    }
    
+   /**
+    * Devuelve TRUE si el almacén existe
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->codalmacen) )
@@ -126,6 +142,10 @@ class almacen extends \fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
+   /**
+    * Comprueba los datos del almacén, devuelve TRUE si son correctos
+    * @return boolean
+    */
    public function test()
    {
       $status = FALSE;
@@ -154,6 +174,10 @@ class almacen extends \fs_model
       return $status;
    }
    
+   /**
+    * Guarda los datos en la base de datos
+    * @return boolean
+    */
    public function save()
    {
       if( $this->test() )
@@ -161,23 +185,31 @@ class almacen extends \fs_model
          $this->clean_cache();
          if( $this->exists() )
          {
-            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).",
-               codpais = ".$this->var2str($this->codpais).", provincia = ".$this->var2str($this->provincia).",
-               poblacion = ".$this->var2str($this->poblacion).", direccion = ".$this->var2str($this->direccion).",
-               codpostal = ".$this->var2str($this->codpostal).", telefono = ".$this->var2str($this->telefono).",
-               fax = ".$this->var2str($this->fax).", contacto = ".$this->var2str($this->contacto)."
-               WHERE codalmacen = ".$this->var2str($this->codalmacen).";";
+            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre)
+                    .", codpais = ".$this->var2str($this->codpais)
+                    .", provincia = ".$this->var2str($this->provincia)
+                    .", poblacion = ".$this->var2str($this->poblacion)
+                    .", direccion = ".$this->var2str($this->direccion)
+                    .", codpostal = ".$this->var2str($this->codpostal)
+                    .", telefono = ".$this->var2str($this->telefono)
+                    .", fax = ".$this->var2str($this->fax)
+                    .", contacto = ".$this->var2str($this->contacto)
+                    ."  WHERE codalmacen = ".$this->var2str($this->codalmacen).";";
          }
          else
          {
             $sql = "INSERT INTO ".$this->table_name." (codalmacen,nombre,codpais,provincia,
                poblacion,direccion,codpostal,telefono,fax,contacto) VALUES
-               (".$this->var2str($this->codalmacen).",".$this->var2str($this->nombre).",
-               ".$this->var2str($this->codpais).",".$this->var2str($this->provincia).",
-               ".$this->var2str($this->poblacion).",
-               ".$this->var2str($this->direccion).",".$this->var2str($this->codpostal).",
-               ".$this->var2str($this->telefono).",".$this->var2str($this->fax).",
-               ".$this->var2str($this->contacto).");";
+                      (".$this->var2str($this->codalmacen)
+                    .",".$this->var2str($this->nombre)
+                    .",".$this->var2str($this->codpais)
+                    .",".$this->var2str($this->provincia)
+                    .",".$this->var2str($this->poblacion)
+                    .",".$this->var2str($this->direccion)
+                    .",".$this->var2str($this->codpostal)
+                    .",".$this->var2str($this->telefono)
+                    .",".$this->var2str($this->fax)
+                    .",".$this->var2str($this->contacto).");";
          }
          return $this->db->exec($sql);
       }
@@ -185,30 +217,48 @@ class almacen extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Elimina el almacén
+    * @return type
+    */
    public function delete()
    {
       $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codalmacen = ".$this->var2str($this->codalmacen).";");
    }
    
+   /**
+    * Limpiamos la caché
+    */
    private function clean_cache()
    {
       $this->cache->delete('m_almacen_all');
    }
    
+   /**
+    * Devuelve un array con todos los almacenes
+    * @return \almacen
+    */
    public function all()
    {
+      /// leemos esta lista de la caché
       $listaa = $this->cache->get_array('m_almacen_all');
-      if( !$listaa )
+      if(!$listaa)
       {
-         $almacenes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codalmacen ASC;");
-         if($almacenes)
+         /// si no está en caché, leemos de la base de datos
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codalmacen ASC;");
+         if($data)
          {
-            foreach($almacenes as $a)
-               $listaa[] = new almacen($a);
+            foreach($data as $a)
+            {
+               $listaa[] = new \almacen($a);
+            }
          }
+         
+         /// guardamos la lista en caché
          $this->cache->set('m_almacen_all', $listaa);
       }
+      
       return $listaa;
    }
 }

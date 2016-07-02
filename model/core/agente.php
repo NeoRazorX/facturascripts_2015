@@ -47,6 +47,7 @@ class agente extends \fs_model
     * @var type 
     */
    public $coddepartamento;
+   
    public $email;
    public $fax;
    public $telefono;
@@ -68,6 +69,10 @@ class agente extends \fs_model
     */
    public $cargo;
    
+   /**
+    * Cuenta bancaria
+    * @var type 
+    */
    public $banco;
    
    /**
@@ -175,11 +180,19 @@ class agente extends \fs_model
          VALUES ('1','Paco','Pepe','00000014Z');";
    }
    
+   /**
+    * Devuelve nombre + apellidos del agente.
+    * @return type
+    */
    public function get_fullname()
    {
       return $this->nombre." ".$this->apellidos;
    }
    
+   /**
+    * Genera un nuevo código de agente
+    * @return int
+    */
    public function get_new_codigo()
    {
       $sql = "SELECT MAX(".$this->db->sql_to_int('codagente').") as cod FROM ".$this->table_name.";";
@@ -192,6 +205,10 @@ class agente extends \fs_model
          return 1;
    }
    
+   /**
+    * Devuelve la url donde se pueden ver/modificar estos datos
+    * @return string
+    */
    public function url()
    {
       if( is_null($this->codagente) )
@@ -202,17 +219,26 @@ class agente extends \fs_model
          return "index.php?page=admin_agente&cod=".$this->codagente;
    }
    
+   /**
+    * Devuelve el empleado/agente con codagente = $cod
+    * @param type $cod
+    * @return \agente|boolean
+    */
    public function get($cod)
    {
       $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($cod).";");
       if($a)
       {
-         return new agente($a[0]);
+         return new \agente($a[0]);
       }
       else
          return FALSE;
    }
    
+   /**
+    * Devuelve TRUE si el agente/empleado existe, false en caso contrario
+    * @return boolean
+    */
    public function exists()
    {
       if( is_null($this->codagente) )
@@ -223,22 +249,26 @@ class agente extends \fs_model
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
    }
    
+   /**
+    * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
+    * @return boolean
+    */
    public function test()
    {
       $status = FALSE;
       
-      $this->codagente = trim($this->codagente);
       $this->nombre = $this->no_html($this->nombre);
       $this->apellidos = $this->no_html($this->apellidos);
       $this->dnicif = $this->no_html($this->dnicif);
+      $this->cargo = $this->no_html($this->cargo);
       $this->telefono = $this->no_html($this->telefono);
       $this->email = $this->no_html($this->email);
+      $this->provincia = $this->no_html($this->provincia);
+      $this->ciudad = $this->no_html($this->ciudad);
+      $this->direccion = $this->no_html($this->direccion);
+      $this->seg_social = $this->no_html($this->seg_social);
       
-      if( strlen($this->codagente) < 1 OR strlen($this->codagente) > 10 )
-      {
-         $this->new_error_msg("Código de agente no válido. Debe tener entre 1 y 10 caracteres.");
-      }
-      else if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
+      if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
       {
          $this->new_error_msg("El nombre de empleado no puede superar los 50 caracteres.");
       }
@@ -252,6 +282,10 @@ class agente extends \fs_model
       return $status;
    }
    
+   /**
+    * Guarda los datos en la base de datos
+    * @return boolean
+    */
    public function save()
    {
       if( $this->test() )
@@ -279,6 +313,11 @@ class agente extends \fs_model
          }
          else
          {
+            if( is_null($this->codagente) )
+            {
+               $this->codagente = $this->get_new_codigo();
+            }
+            
             $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,
                email,cargo,provincia,ciudad,direccion,f_nacimiento,f_alta,f_baja,seg_social,banco,porcomision)
                VALUES (".$this->var2str($this->codagente).
@@ -305,28 +344,45 @@ class agente extends \fs_model
          return FALSE;
    }
    
+   /**
+    * Elimina este empleado/agente
+    * @return type
+    */
    public function delete()
    {
       $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
    }
    
+   /**
+    * Limpiamos la caché
+    */
    private function clean_cache()
    {
       $this->cache->delete('m_agente_all');
    }
    
+   /**
+    * Devuelve un array con todos los agentes/empleados.
+    * @return \agente
+    */
    public function all()
    {
+      /// leemos esta lista de la caché
       $listagentes = $this->cache->get_array('m_agente_all');
       if(!$listagentes)
       {
-         $agentes = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
-         if($agentes)
+         /// si no está en caché, leemos de la base de datos
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
+         if($data)
          {
-            foreach($agentes as $a)
-               $listagentes[] = new agente($a);
+            foreach($data as $a)
+            {
+               $listagentes[] = new \agente($a);
+            }
          }
+         
+         /// guardamos la lista en caché
          $this->cache->set('m_agente_all', $listagentes);
       }
       
