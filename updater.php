@@ -54,7 +54,13 @@ class fs_updater
       $this->tr_options = '';
       $this->tr_updates = '';
       $this->version = '';
+      
       $this->xid = '';
+      $e = $this->cache->get_array('empresa');
+      if($e)
+      {
+         $this->xid = $e[0]['xid'];
+      }
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
@@ -193,12 +199,6 @@ class fs_updater
                           . ' <a href="index.php?page=admin_home&updated=TRUE">Volver</a></td></tr>';
                   $this->btn_fin = TRUE;
                }
-            }
-            
-            $e = $this->cache->get_array('empresa');
-            if($e)
-            {
-               $this->xid = $e[0]['xid'];
             }
          }
          else

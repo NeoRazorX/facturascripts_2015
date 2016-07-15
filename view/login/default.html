@@ -8,6 +8,7 @@
    <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" href="{#FS_PATH#}view/css/bootstrap-yeti.min.css" />
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/font-awesome.min.css" />
    <link rel="stylesheet" href="{#FS_PATH#}view/css/custom.css" />
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap.min.js"></script>
@@ -68,12 +69,33 @@
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_questions" target="_blank">Preguntas</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_errors" target="_blank">Errores</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_ideas" target="_blank">Sugerencias</a></li>
-                     <li><a href="{#FS_COMMUNITY_URL#}/index.php?page=community_colabora" target="_blank">Colabora</a></li>
+                     <li>
+                        <a href="https://www.facturascripts.com/documentacion" target="_blank">
+                           <i class="fa fa-book" aria-hidden="true"></i>&nbsp; Documentación
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/noticias" target="_blank">
+                           <i class="fa fa-newspaper-o" aria-hidden="true"></i>&nbsp; Noticias
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/preguntas" target="_blank">
+                           <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp; Preguntas
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/errores" target="_blank">
+                           <i class="fa fa-bug" aria-hidden="true"></i>&nbsp; Errores
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.facturascripts.com/ideas" target="_blank">
+                           <i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp; Ideas
+                        </a>
+                     </li>
                      <li class="divider"></li>
-                     <li><a href="#" id="b_feedback"><span class="glyphicon glyphicon-send"></span> &nbsp; Informar...</a></li>
+                     <li><a href="#" id="b_feedback"><span class="glyphicon glyphicon-send"></span>&nbsp; Informar...</a></li>
                   </ul>
                </li>
             </ul>
@@ -127,8 +149,8 @@
                            {if="FS_DEMO"}
                            <input type="hidden" name="password" value="demo"/>
                            <div class="form-group">
-                              Escribe tu nombre:
-                              <input type="text" class="form-control input-lg" name="user" maxlength="12" placeholder="Escribe tu nombre" autocomplete="off"/>
+                              Bienvenido a la demo de FacturaScripts, escribe tu email para continuar:
+                              <input type="text" class="form-control input-lg" name="user" placeholder="Escribe tu email" autocomplete="off"/>
                            </div>
                            {else}
                            <div class="form-group">

@@ -210,7 +210,22 @@ $(document).ready(function() {
    $('.clickableRow').mousedown(function(event) {
       if(event.which === 1)
       {
-         parent.document.location = $(this).attr("href");
+         var target = $(this).attr('target');
+         if(typeof target !== typeof undefined && target !== false)
+         {
+            if(target == '_blank')
+            {
+               window.open( $(this).attr("href") );
+            }
+            else
+            {
+               parent.document.location = $(this).attr("href");
+            }
+         }
+         else
+         {
+            parent.document.location = $(this).attr("href");
+         }
       }
    });
    $(".cancel_clickable").mousedown(function(event) {

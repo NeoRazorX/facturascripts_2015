@@ -1,61 +1,63 @@
-   <hr style="margin-top: 50px;" class="hidden-print"/>
-   
-   <div class="container-fluid hidden-print" style="margin-bottom: 10px;">
-      {if="FS_DEMO"}
-      <div class="well" style="margin-bottom: 20px;">
-         <div class="row">
-            <div class="col-sm-3">
-               <h3>Índice de ayuda:</h3>
-               <ul>
-                  <li>
-                     <a href="https://www.facturascripts.com/comm3/index.php?page=community_questions#instalacion">Instalación.</a>
-                     <ul>
-                        <li>
-                           <a href="https://www.facturascripts.com/comm3/index.php?page=community_item&id=370">Instalación sobre Linux.</a>
-                        </li>
-                        <li>
-                           <a href="https://www.facturascripts.com/comm3/index.php?page=community_item&tag=eneboo">Eneboo / Abanq.</a>
-                        </li>
-                     </ul>
-                  </li>
-                  <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_questions#primerospasos">Primeros pasos.</a></li>
-                  <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_questions#menuventas">El menú ventas.</a></li>
-                  <li><a href="https://www.facturascripts.com/comm3/index.php?page=community_questions#menucompras">El menú compras.</a></li>
-               </ul>
-            </div>
-            <div class="col-sm-6">
+   {if="FS_DEMO"}
+   <br/>
+   <div class="container-fluid hidden-print bg-info">
+      <div class="row">
+         <div class="col-sm-12">
+            <div class="page-header">
                <h3>
-                  <a href="https://www.facturascripts.com/store">Tienda de plugins</a>:
+                  <i class="fa fa-question-circle" aria-hidden="true"></i>
+                  ¿Te ha convencido?
                </h3>
-               <ul>
-                  <li>
-                     <a href="https://www.facturascripts.com/store/producto/plantillas-pdf/">Plantillas PDF</a>:
-                     permite personalizar los documentos PDF de facturas, albaranes, pedidos y presupuestos.
-                  </li>
-                  <li>
-                     <a href="https://www.facturascripts.com/store/producto/prestashop/">PrestaShop</a>:
-                     sincroniza tu catálogo de artículos con tu tienda PrestaShop y consulta los pedidos
-                  a golpe de clic. Todo sin salir de FacturaScripts.
-                  </li>
-                  <li>
-                     <a href="https://www.facturascripts.com/store/producto/plugin-woocommerce/">WooCommerce</a>:
-                     importa a golpe de clic tus pedidos, clientes y artículos de tu tienda WooCommerce.
-                  </li>
-                  <li>
-                     <a href="https://www.facturascripts.com/store">Más...</a>
-                  </li>
-               </ul>
-            </div>
-            <div class="col-sm-3">
-               <h3>¿Te ha convencido?</h3>
-               <a href="https://www.facturascripts.com/comm3/index.php?page=community_download" class="btn btn-lg btn-primary">
-                  <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
-               </a>
+               <p class="help-block">
+                  Esta demo sirve para tener una idea rápida de cómo funciona FacturaScripts,
+                  con un número reducido de plugins activos y muchas opciones desactivadas.
+                  Ten en cuenta que hay docenas de personas usando esta demo a la vez.
+               </p>
             </div>
          </div>
       </div>
-      {/if}
-      
+      <div class="row">
+         <div class="col-sm-3">
+            <b>Plugins instalados:</b>
+            <ul>
+               {loop="$GLOBALS['plugins']"}
+               <li>
+                  <a href='https://www.facturascripts.com/plugin/{$value}' target='_blank'>{$value}</a>
+               </li>
+               {/loop}
+            </ul>
+         </div>
+         <div class="col-sm-6">
+            <b>Ventajas:</b>
+            <ul>
+               <li>Trabaja desde cualquier PC, tablet o smartphone.</li>
+               <li>Formularios sencillos con las opciones imprescindibles.</li>
+               <li>Software libre con actualizaciones constantes.</li>
+               <li>Más de 50 plugins con un desarrollo muy activo.</li>
+               <li>Soporte profesional a tu disposición a través de los Partners.</li>
+            </ul>
+         </div>
+         <div class="col-sm-3">
+            <a href='https://www.facturascripts.com/descargar?ref={function="base64_encode($fsc->user->email)"}' target="_blank" class="btn btn-lg btn-block btn-primary">
+               <i class="fa fa-download" aria-hidden="true"></i>&nbsp; Descargar
+            </a>
+            <i class="fa fa-cloud" aria-hidden="true"></i>
+            <i class="fa fa-windows" aria-hidden="true"></i>
+            <i class="fa fa-linux" aria-hidden="true"></i>
+            <i class="fa fa-apple" aria-hidden="true"></i>
+            Disponible para todas las plataformas.
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-sm-12">
+            <br/><br/><br/>
+         </div>
+      </div>
+   </div>
+   {else}
+   <hr style="margin-top: 50px;" class="hidden-print"/>
+   
+   <div class="container-fluid hidden-print" style="margin-bottom: 10px;">
       <div class="row">
          <div class="col-sm-12">
             {if="FS_DB_HISTORY"}
@@ -103,5 +105,6 @@
          </div>
       </div>
    </div>
+   {/if}
 </body>
 </html>

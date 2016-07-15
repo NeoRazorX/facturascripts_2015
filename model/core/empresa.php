@@ -275,6 +275,70 @@ class empresa extends \fs_model
    }
    
    /**
+    * Devuelve un objeto PHPMailer con la configuración ya preparada.
+    * @return \PHPMailer
+    */
+   public function new_mail()
+   {
+      $mail = new \PHPMailer();
+      $mail->CharSet = 'UTF-8';
+      $mail->WordWrap = 50;
+      $mail->isSMTP();
+      $mail->SMTPAuth = TRUE;
+      $mail->SMTPSecure = $this->email_config['mail_enc'];
+      $mail->Host = $this->email_config['mail_host'];
+      $mail->Port = intval($this->email_config['mail_port']);
+      
+      $mail->Username = $this->email;
+      if($this->email_config['mail_user'] != '')
+      {
+         $mail->Username = $this->email_config['mail_user'];
+      }
+      
+      $mail->Password = $this->email_config['mail_password'];
+      $mail->From = $this->email;
+      
+      if($this->email_config['mail_bcc'])
+      {
+         $mail->addBCC($this->email_config['mail_bcc']);
+      }
+      
+      return $mail;
+   }
+   
+   /**
+    * Devuelve un array con las opciones para $mail->smtpConnect) de PHPMailer
+    * @return array
+    */
+   public function smtp_options()
+   {
+      $SMTPOptions = array();
+      
+      if($this->email_config['mail_low_security'])
+      {
+         $SMTPOptions = array(
+             'ssl' => array(
+                 'verify_peer' => false,
+                 'verify_peer_name' => false,
+                 'allow_self_signed' => true
+             )
+         );
+      }
+      
+      return $SMTPOptions;
+   }
+   
+   /**
+    * Función llamada al enviar correctamente un email
+    * @param \PHPMailer $mail
+    */
+   public function save_mail($mail)
+   {
+      /// tu código aquí
+      /// $mail es el email ya enviado (es un objeto PHPMailer)
+   }
+   
+   /**
     * Devuelve TRUE si existe
     * @return boolean
     */

@@ -489,33 +489,46 @@ class fs_controller
       }
       else if( isset($_POST['user']) AND isset($_POST['password']) )
       {
-         if( FS_DEMO ) /// en el modo demo nos olvidamos de la contraseña
+         if(FS_DEMO) /// en el modo demo nos olvidamos de la contraseña
          {
-            $user = $this->user->get($_POST['user']);
-            if( !$user )
+            if( filter_var($_POST['user'], FILTER_VALIDATE_EMAIL) )
             {
-               $user = new fs_user();
-               $user->nick = $_POST['user'];
-               $user->set_password('demo');
+               $aux = explode('@', $_POST['user']);
+               $nick = substr($aux[0], 0, 12);
                
-               /// creamos un agente para asociarlo
-               $agente = new agente();
-               $agente->codagente = $agente->get_new_codigo();
-               $agente->nombre = $_POST['user'];
-               $agente->apellidos = 'Demo';
-               if( $agente->save() )
+               $user = $this->user->get($nick);
+               if( !$user )
                {
-                  $user->codagente = $agente->codagente;
+                  $user = new fs_user();
+                  $user->nick = $nick;
+                  $user->set_password('demo');
+                  $user->email = $_POST['user'];
+                  
+                  /// creamos un agente para asociarlo
+                  $agente = new agente();
+                  $agente->codagente = $agente->get_new_codigo();
+                  $agente->nombre = $nick;
+                  $agente->apellidos = 'Demo';
+                  $agente->email = $_POST['user'];
+                  
+                  if( $agente->save() )
+                  {
+                     $user->codagente = $agente->codagente;
+                  }
+               }
+               
+               $user->new_logkey();
+               if( $user->save() )
+               {
+                  setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
+                  setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
+                  $this->user = $user;
+                  $this->load_menu();
                }
             }
-            
-            $user->new_logkey();
-            if( $user->save() )
+            else
             {
-               setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
-               setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
-               $this->user = $user;
-               $this->load_menu();
+               $this->new_error_msg('Email no válido');
             }
          }
          else
@@ -560,7 +573,7 @@ class fs_controller
                }
                else
                {
-                  $this->new_error_msg('¡Contraseña incorrecta!');
+                  $this->new_error_msg('¡Contraseña incorrecta! ('.$_POST['user'].')', 'login', TRUE);
                   $this->banear_ip($ips);
                }
             }
@@ -612,10 +625,13 @@ class fs_controller
       if( isset($_SERVER['REQUEST_URI']) )
       {
          $aux = parse_url( str_replace('/index.php', '', $_SERVER['REQUEST_URI']) );
-         $path = $aux['path'];
-         if( substr($path, -1) != '/' )
+         if( isset($aux['path']) )
          {
-            $path .= '/';
+            $path = $aux['path'];
+            if( substr($path, -1) != '/' )
+            {
+               $path .= '/';
+            }
          }
       }
       
@@ -767,6 +783,10 @@ class fs_controller
                   if($p->show_on_menu)
                   {
                      $page = $p->name;
+                     if($p->important)
+                     {
+                        break;
+                     }
                   }
                }
             }
@@ -1014,6 +1034,11 @@ class fs_controller
             $txt .= 'database type: '.FS_DB_TYPE."\n";
             $txt .= 'database version: '.$this->db->version()."\n";
             
+            if(FS_FOREIGN_KEYS == 0)
+            {
+               $txt .= "foreign keys: NO\n";
+            }
+            
             if( $this->cache->connected() )
             {
                $txt .= "memcache: YES\n";
@@ -1030,6 +1055,11 @@ class fs_controller
                $txt .= "curl: NO\n";
             
             $txt .= 'plugins: '.join(',', $GLOBALS['plugins'])."\n";
+            
+            if( $this->check_for_updates() )
+            {
+               $txt .= "updated: NO\n";
+            }
             
             if( isset($_SERVER['REQUEST_URI']) )
             {
@@ -1283,12 +1313,12 @@ class fs_controller
       {
          if( file_exists('plugins/'.$plugin.'/view/js/'.$filename) )
          {
-            return FS_PATH.'plugins/'.$plugin.'/view/js/'.$filename;
+            return FS_PATH.'plugins/'.$plugin.'/view/js/'.$filename.'?updated='.date('YmdH');
          }
       }
 
       /// si no está en los plugins estará en el núcleo
-      return FS_PATH.'view/js/'.$filename;
+      return FS_PATH.'view/js/'.$filename.'?updated='.date('YmdH');
    }
    
    /**

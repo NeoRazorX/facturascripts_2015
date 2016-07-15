@@ -92,43 +92,16 @@ class admin_empresa extends fs_controller
          /// Es imprescindible OpenSSL para enviar emails con los principales proveedores
          if( extension_loaded('openssl') )
          {
-            $mail = new PHPMailer();
+            $mail = $this->empresa->new_mail();
             $mail->Timeout = 3;
-            $mail->isSMTP();
-            $mail->SMTPAuth = TRUE;
-            $mail->SMTPSecure = $this->empresa->email_config['mail_enc'];
-            $mail->Host = $this->empresa->email_config['mail_host'];
-            $mail->Port = intval($this->empresa->email_config['mail_port']);
-            $mail->Username = $this->empresa->email;
-            if($this->empresa->email_config['mail_user'] != '')
-            {
-               $mail->Username = $this->empresa->email_config['mail_user'];
-            }
-            
-            $mail->Password = $this->empresa->email_config['mail_password'];
-            $mail->From = $this->empresa->email;
             $mail->FromName = $this->user->nick;
-            $mail->CharSet = 'UTF-8';
             
             $mail->Subject = 'TEST';
             $mail->AltBody = 'TEST';
-            $mail->WordWrap = 50;
             $mail->msgHTML('TEST');
             $mail->isHTML(TRUE);
             
-            $SMTPOptions = array();
-            if($this->empresa->email_config['mail_low_security'])
-            {
-               $SMTPOptions = array(
-                   'ssl' => array(
-                       'verify_peer' => false,
-                       'verify_peer_name' => false,
-                       'allow_self_signed' => true
-                   )
-               );
-            }
-            
-            if( !$mail->smtpConnect($SMTPOptions) )
+            if( !$mail->smtpConnect($this->empresa->smtp_options()) )
             {
                $this->new_error_msg('No se ha podido conectar por email. ¿La contraseña es correcta?');
                
