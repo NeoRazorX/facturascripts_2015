@@ -90,7 +90,7 @@
                {loop="$fsc->user->all()"}
                <tr class='clickableRow{if="$value->show_last_login()=='-'"} warning{/if}' href='{$value->url()}'>
                   <td><a href="{$value->url()}">{$value->nick}</a></td>
-                  <td>{$value->email}</td>
+                  <td>{if="FS_DEMO"}XXX@XXX.com{else}{$value->email}{/if}</td>
                   <td>{$value->get_agente_fullname()}</td>
                   <td class="text-center">
                      {if="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}

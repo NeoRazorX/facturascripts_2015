@@ -102,7 +102,11 @@
          <div class="col-sm-2">
             <div class="form-group">
                Email:
+               {if="FS_DEMO"}
+               <input type="text" name="email" class="form-control" autocomplete="off"/>
+               {else}
                <input type="text" name="email" value="{$fsc->suser->email}" class="form-control" autocomplete="off"/>
+               {/if}
             </div>
          </div>
          <div class="col-sm-2">
@@ -320,7 +324,7 @@
                      </tr>
                   </thead>
                   {loop="$fsc->user_log"}
-                  <tr{if="$value->alerta"} class="bg-danger"{/if}>
+                  <tr{if="$value->alerta"} class="danger"{/if}>
                      <td>{$value->tipo}</td>
                      <td>{$value->detalle}</td>
                      <td>{$value->ip}</td>

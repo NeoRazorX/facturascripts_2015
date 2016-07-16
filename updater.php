@@ -617,14 +617,14 @@ class fs_updater
          /**
           * Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.
           */
-         $this->download_list2 = $cache->get('download_list');
+         $this->download_list2 = $cache->get('download_list2');
          if(!$this->download_list2)
          {
             $json = @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json2=TRUE', 5);
             if($json)
             {
                $this->download_list2 = json_decode($json);
-               $cache->set('download_list', $this->download_list2);
+               $cache->set('download_list2', $this->download_list2);
             }
             else
             {
