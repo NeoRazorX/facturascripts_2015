@@ -495,6 +495,10 @@ class fs_controller
             {
                $aux = explode('@', $_POST['user']);
                $nick = substr($aux[0], 0, 12);
+               if($nick == 'admin')
+               {
+                  $nick .= $this->random_string(7);
+               }
                
                $user = $this->user->get($nick);
                if( !$user )
