@@ -35,9 +35,6 @@ class admin_users extends fs_controller
    {
       $this->agente = new agente();
       
-      $fslog = new fs_log();
-      $this->historial = $fslog->all_by('login');
-      
       if( isset($_POST['nnick']) )
       {
          $nu = $this->user->get($_POST['nnick']);
@@ -47,7 +44,7 @@ class admin_users extends fs_controller
          }
          else if(!$this->user->admin)
          {
-            $this->new_error_msg('Solamente un administrador puede crear usuarios.');
+            $this->new_error_msg('Solamente un administrador puede crear usuarios.', TRUE, 'login', TRUE);
          }
          else
          {
@@ -68,6 +65,7 @@ class admin_users extends fs_controller
                
                if( $nu->save() )
                {
+                  $this->new_message('Usuario '.$nu->nick.' creado correctamente.', TRUE, 'login', TRUE);
                   Header('location: index.php?page=admin_user&snick=' . $nu->nick);
                }
                else
@@ -87,11 +85,11 @@ class admin_users extends fs_controller
             }
             else if(!$this->user->admin)
             {
-               $this->new_error_msg("Solamente un administrador puede eliminar usuarios.");
+               $this->new_error_msg("Solamente un administrador puede eliminar usuarios.", 'login', TRUE);
             }
             else if( $nu->delete() )
             {
-               $this->new_message("Usuario ".$nu->nick." eliminado correctamente.");
+               $this->new_message("Usuario ".$nu->nick." eliminado correctamente.", TRUE, 'login', TRUE);
             }
             else
                $this->new_error_msg("¡Imposible eliminar al usuario!");
@@ -99,6 +97,9 @@ class admin_users extends fs_controller
          else
             $this->new_error_msg("¡Usuario no encontrado!");
       }
+      
+      $fslog = new fs_log();
+      $this->historial = $fslog->all_by('login');
    }
    
    public function all_pages()

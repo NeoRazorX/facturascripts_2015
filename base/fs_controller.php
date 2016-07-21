@@ -326,7 +326,7 @@ class fs_controller
     * Muestra un mensaje al usuario
     * @param type $msg mensaje a mostrar
     */
-   public function new_message($msg=FALSE, $save=FALSE, $tipo = 'msg')
+   public function new_message($msg=FALSE, $save=FALSE, $tipo = 'msg', $alerta = FALSE)
    {
       if($msg)
       {
@@ -338,6 +338,7 @@ class fs_controller
             $fslog->tipo = $tipo;
             $fslog->detalle = $msg;
             $fslog->ip = $_SERVER['REMOTE_ADDR'];
+            $fslog->alerta = $alerta;
             
             if($this->user)
             {

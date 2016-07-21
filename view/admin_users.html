@@ -59,12 +59,14 @@
             <span class="badge">{function="count($fsc->user->all())"}</span>
          </a>
       </li>
+      {if="!FS_DEMO"}
       <li role="presentation">
          <a href="#permisos" aria-controls="permisos" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
             <span class="hidden-xs">&nbsp; Permisos</span>
          </a>
       </li>
+      {/if}
       <li role="presentation">
          <a href="#historial" aria-controls="historial" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
@@ -171,6 +173,7 @@
                <thead>
                   <tr>
                      <th class="text-left">Usuario</th>
+                     <th></th>
                      <th class="text-left">Detalle</th>
                      <th class="text-left">IP</th>
                      <th class="text-right">Fecha</th>
@@ -179,13 +182,18 @@
                {loop="$fsc->historial"}
                <tr{if="$value->alerta"} class="danger"{/if}>
                   <td><a href="index.php?page=admin_user&snick={$value->usuario}">{$value->usuario}</a></td>
+                  <td class="text-right">
+                     {if="$value->alerta"}
+                     <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Podría ser importante"></span>
+                     {/if}
+                  </td>
                   <td>{$value->detalle}</td>
                   <td>{$value->ip}</td>
                   <td class="text-right">{$value->fecha}</td>
                </tr>
                {else}
                <tr class="warning">
-                  <td colspan="4">Sin resultados.</td>
+                  <td colspan="5">Sin resultados.</td>
                </tr>
                {/loop}
             </table>

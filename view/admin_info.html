@@ -187,7 +187,12 @@
                <tr{if="$value->alerta"} class="danger"{/if}>
                   <td>{$value->usuario}</td>
                   <td>{$value->tipo}</td>
-                  <td>{$value->detalle}</td>
+                  <td>
+                     {if="$value->alerta"}
+                     <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Podría ser importante"></span>&nbsp;
+                     {/if}
+                     {$value->detalle}
+                  </td>
                   <td>{$value->ip}</td>
                   <td colspan="2" class="text-right">{$value->fecha}</td>
                </tr>

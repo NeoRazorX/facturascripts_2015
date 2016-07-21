@@ -281,9 +281,12 @@
                      <p>{$value['description']}</p>
                      {if="$value['wizard']!='' AND $value['enabled']"}
                      <a href="index.php?page={$value['wizard']}" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> &nbsp; Configurar
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp; Configurar
                      </a>
                      {/if}
+                     <a href="https://www.facturascripts.com/plugin/{$value['name']}" target="_blank" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp; más información
+                     </a>
                   </td>
                   <td class="text-right">
                      <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&plugin={$value['name']}&version={$value['version']}" target="_blank">

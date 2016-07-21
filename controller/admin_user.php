@@ -301,7 +301,10 @@ class admin_user extends fs_controller
          {
             if($_POST['spassword'] == $_POST['spassword2'])
             {
-               $this->suser->set_password($_POST['spassword']);
+               if( $this->suser->set_password($_POST['spassword']) )
+               {
+                  $this->new_message('Se ha cambiado la contraseña del usuario '.$this->suser->nick, TRUE, 'login', TRUE);
+               }
             }
             else
             {
