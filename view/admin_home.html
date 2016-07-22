@@ -85,9 +85,15 @@
       <b>facturacion_base</b>. Puedes descargarlo automáticamente e instalarlo pulsando
       este botón.
    </p>
+   {if="file_exists('plugins/facturacion_base')"}
+   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable=facturacion_base#plugins" class="btn btn-sm btn-info">
+      <span class="glyphicon glyphicon-ok"></span>&nbsp; Activar facturacion_base
+   </a>
+   {else}
    <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
       <span class="glyphicon glyphicon-download-alt"></span>&nbsp; Descargar facturacion_base
    </a>
+   {/if}
    <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&skip=TRUE#descargas" class="btn btn-sm btn-warning">
       <span class="glyphicon glyphicon-remove"></span>&nbsp; No, gracias
    </a>
@@ -150,9 +156,6 @@
          <a href="#t_descargas" aria-controls="t_descargas" role="tab" data-toggle="tab">
             <span class="glyphicon glyphicon-download-alt"></span>
             <span class="hidden-xs">&nbsp; Descargas</span>
-            {if="$fsc->new_downloads>0"}
-            <span class="badge" title="Hay {$fsc->new_downloads} nuevas descargas">{$fsc->new_downloads}</span>
-            {/if}
          </a>
       </li>
       {/if}
@@ -350,57 +353,58 @@
                      <th></th>
                   </tr>
                </thead>
-               {loop="$fsc->download_list"}
-               <tr{if="file_exists('plugins/'.$key)"} class="success"{/if}>
-                  <td class="text-right">
-                     <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="Destacado"></span>
-                  </td>
-                  <td>{$key}</td>
-                  <td>
-                     {$value['description']}<br/>
-                     <a href="{$value['url_repo']}" target="_blank">Web del proyecto</a>.
-                  </td>
-                  <td class="text-right">
-                     {if="file_exists('plugins/'.$key)"}
-                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> &nbsp; Instalado
-                     </a>
-                     {else}
-                     <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}#plugins" class="btn btn-xs btn-primary">
-                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> &nbsp; Descargar
-                     </a>
-                     {/if}
-                  </td>
-               </tr>
-               {/loop}
-               {loop="$fsc->download_list2"}
-               <tr{if="file_exists('plugins/'.$value->nombre)"} class="success"{elseif="!$value->estable"} class="danger"{elseif="$value->nuevo"} class="info"{/if}>
-                  <td>
-                     {if="!$value->estable"}
-                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" title="Todavía en desarrollo. Inestable."></span>
-                     {/if}
-                  </td>
-                  <td>
-                     {$value->nombre}
-                     {if="$value->imagen"}
-                     <div style="margin-bottom: 5px"></div>
-                        {if="!$value->zip_link"}
-                        <a href="{$value->link}" target="_blank">
-                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+               {if="!$fsc->download_list2"}
+                  {loop="$fsc->download_list"}
+                  <tr{if="file_exists('plugins/'.$key)"} class="success"{/if}>
+                     <td class="text-right">
+                        <span class="glyphicon glyphicon-bookmark" aria-hidden="true" title="Destacado"></span>
+                     </td>
+                     <td>{$key}</td>
+                     <td>
+                        {$value['description']}<br/>
+                        <a href="{$value['url_repo']}" target="_blank">Web del proyecto</a>.
+                     </td>
+                     <td class="text-right">
+                        {if="file_exists('plugins/'.$key)"}
+                        <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
+                           <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp; Instalado
                         </a>
                         {else}
-                        <a href="{$value->imagen}" target="_blank">
-                           <img src="{$value->imagen}" alt="{$value->nombre}" width="80"/>
+                        <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$key}#plugins" class="btn btn-xs btn-primary">
+                           <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>&nbsp; Descargar
                         </a>
                         {/if}
+                     </td>
+                  </tr>
+                  {/loop}
+               {/if}
+               {loop="$fsc->download_list2"}
+               <tr{if="file_exists('plugins/'.$value->nombre)"} class="warning"{elseif="!$value->estable"} class="danger"{elseif="$value->tipo=='gratis'"} class="success"{/if}>
+                  <td class="text-center" width='80'>
+                     {if="$value->imagen"}
+                        {if="!$value->zip_link"}
+                        <a href="{$value->link}" target="_blank" class="thumbnail">
+                           <img src="{$value->imagen}" alt="{$value->nombre}"/>
+                        </a>
+                        {else}
+                        <a href="https://www.facturascripts.com/plugin/{$value->nombre}" target="_blank" class="thumbnail">
+                           <img src="{$value->imagen}" alt="{$value->nombre}"/>
+                        </a>
+                        {/if}
+                     {else}
+                     <i class="fa fa-puzzle-piece fa-3x" aria-hidden="true"></i>
                      {/if}
+                  </td>
+                  <td>
+                     {$value->nombre}<br/>
+                     {if="!$value->estable"}
+                     <span class="label label-danger" title="inestable: no lo instales a menos que sepas lo que haces">inestable</span>
+                     {/if}
+                     v{$value->version}
                   </td>
                   <td>
                      {function="nl2br($value->descripcion)"}<br/>
-                     {if="substr($value->zip_link, -4) == '.zip'"}
-                     <a href="{$value->link}" target="_blank">Web del proyecto</a>. &nbsp;
-                     {/if}
-                     Autor: {$value->nick}.
+                     Última modificación: {$value->ultima_modificacion}
                   </td>
                   <td class="text-right">
                      {if="file_exists('plugins/'.$value->nombre)"}
@@ -425,6 +429,13 @@
                   </td>
                </tr>
                {/loop}
+               <tr>
+                  <td colspan="4">
+                     <a href="https://www.facturascripts.com/plugins" target="_blank" class="btn btn-block btn-info">
+                        Más plugins...
+                     </a>
+                  </td>
+               </tr>
             </table>
          </div>
          {/if}
@@ -545,6 +556,10 @@
                         <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
                         &nbsp; Desarrollo:
                      </h2>
+                     <p class='help-block'>
+                        Estos son parametros de configuración sensibles de FacturaScripts. No
+                        los modifiques si no sabes lo que haces.
+                     </p>
                   </div>
                </div>
                <div class="row bg-warning">
@@ -573,13 +588,19 @@
                      </div>
                   </div>
                   <div class="col-md-2 col-sm-2">
-                     <div class="form-group">
+                     <div class="form-group{if="$GLOBALS['config2']['foreign_keys']==0"} has-warning{/if}">
                         Comprobar claves ajenas:
                         <select name="foreign_keys" class="form-control">
                            <option value="1"{if="$GLOBALS['config2']['foreign_keys']==1"} selected=''{/if}>Si</option>
                            <option value="0"{if="$GLOBALS['config2']['foreign_keys']==0"} selected=''{/if}>No</option>
                         </select>
-                        <p class="help-block">Sólo se puede desactivar en MySQL.</p>
+                        <p class="help-block">
+                           {if="strtolower(FS_DB_TYPE)=='mysql'"}
+                           Peligro: no tocar si no sabes lo que haces.
+                           {else}
+                           Sólo se puede desactivar en MySQL.
+                           {/if}
+                        </p>
                      </div>
                   </div>
                   <div class="col-md-4 col-sm-4">

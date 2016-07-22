@@ -28,8 +28,6 @@ class admin_home extends fs_controller
    public $disable_rm_plugins;
    public $download_list;
    public $download_list2;
-   public $last_download_check;
-   public $new_downloads;
    public $paginas;
    public $step;
    
@@ -1184,17 +1182,6 @@ class admin_home extends fs_controller
       $this->step = $fsvar->simple_get('install_step');
       
       /**
-        * Usamos last_download_check para almacenar la última vez que vimos las descargas.
-        * Así podemos saber qué descargas son nuevas.
-        */
-      $this->last_download_check = $fsvar->simple_get('last_download_check');
-      if(!$this->last_download_check)
-      {
-         $this->last_download_check = Date('d-m-Y', strtotime('-1week'));
-      }
-      $this->new_downloads = 0;
-      
-      /**
        * Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.
        */
       $this->download_list2 = $this->cache->get('download_list');
@@ -1212,18 +1199,6 @@ class admin_home extends fs_controller
             $this->download_list2 = array();
          }
       }
-      foreach($this->download_list2 as $i => $di)
-      {
-         $this->download_list2[$i]->nuevo = FALSE;
-         if( strtotime($di->creado) > strtotime($this->last_download_check) )
-         {
-            $this->new_downloads++;
-            $this->download_list2[$i]->nuevo = TRUE;
-         }
-      }
-      /// ahora nos guardamos last_download_check
-      $this->last_download_check = Date('d-m-Y', strtotime('-1week'));
-      $fsvar->simple_save('last_download_check', $this->last_download_check);
    }
    
    private function check_htaccess()

@@ -46,7 +46,7 @@ if( $db->connect() )
    
    if($cron_vars['cron_lock'])
    {
-      echo "ERROR: Ya hay un cron en ejecución. Si crees que es un error,"
+      echo "\nERROR: Ya hay un cron en ejecución. Si crees que es un error,"
       . " ve a Admin > Información del sistema para solucionar el problema.";
       
       /// marcamos el error en el cron
@@ -110,6 +110,11 @@ if( $db->connect() )
    
    /// guardamos las variables
    $fsvar->array_save($cron_vars);
+   
+   foreach($db->get_errors() as $err)
+   {
+      echo "\nERROR: ".$err."\n";
+   }
    
    $db->close();
 }
