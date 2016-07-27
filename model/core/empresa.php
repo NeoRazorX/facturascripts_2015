@@ -297,6 +297,7 @@ class empresa extends \fs_model
       
       $mail->Password = $this->email_config['mail_password'];
       $mail->From = $this->email;
+      $mail->FromName = $this->nombre;
       
       if($this->email_config['mail_bcc'])
       {
