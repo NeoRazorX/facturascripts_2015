@@ -79,7 +79,7 @@ function guarda_config($nombre_archivo)
       fwrite($archivo, "/// el número de elementos a mostrar en pantalla\n");
       fwrite($archivo, "define('FS_ITEM_LIMIT', 50);\n");
       fwrite($archivo, "\n");
-      fwrite($archivo, "/// desactiva el poder modificar plugins (añadir,descargar y eliminar)\n");
+      fwrite($archivo, "/// desactiva el poder modificar plugins (añadir, descargar y eliminar)\n");
       fwrite($archivo, "define('FS_DISABLE_MOD_PLUGINS', FALSE);\n");
       fwrite($archivo, "\n");
       fwrite($archivo, "/// desactiva el poder añadir plugins manualmente\n");
@@ -151,22 +151,22 @@ else if( isset($_REQUEST['db_type']) )
          {
             // Comprobamos que la BD exista, de lo contrario la creamos
             $db_selected = mysqli_select_db($connection, $_REQUEST['db_name']);
-            if(!$db_selected)
+            if($db_selected)
+            {
+               guarda_config($nombre_archivo);
+            }
+            else
             {
                $sqlCrearBD = "CREATE DATABASE `".$_REQUEST['db_name']."`;";
-               if( !mysqli_query($connection, $sqlCrearBD) )
+               if( mysqli_query($connection, $sqlCrearBD) )
+               {
+                  guarda_config($nombre_archivo);
+               }
+               else
                {
                   $errors[] = "db_mysql";
                   $errors2[] = mysqli_error($connection);
                }
-               else
-               {
-                  guarda_config($nombre_archivo);
-               }
-            }
-            else
-            {
-               guarda_config($nombre_archivo);
             }
          }
       }
@@ -180,11 +180,30 @@ else if( isset($_REQUEST['db_type']) )
    {
       if( function_exists('pg_connect') )
       {
-         $connection = @pg_connect('host='.$_REQUEST['db_host'].' dbname='.$_REQUEST['db_name'].' port='.$_REQUEST['db_port'].
-                 ' user='.$_REQUEST['db_user'].' password='.$_REQUEST['db_pass'] );
+         $connection = @pg_connect('host='.$_REQUEST['db_host'].' port='.$_REQUEST['db_port'].' user='.$_REQUEST['db_user'].' password='.$_REQUEST['db_pass'] );
          if($connection)
          {
-            guarda_config($nombre_archivo);
+            // Comprobamos que la BD exista, de lo contrario la creamos
+            $connection2 = @pg_connect('host='.$_REQUEST['db_host'].' port='.$_REQUEST['db_port'].' dbname='.$_REQUEST['db_name']
+                    .' user='.$_REQUEST['db_user'].' password='.$_REQUEST['db_pass'] );
+            
+            if($connection2)
+            {
+               guarda_config($nombre_archivo);
+            }
+            else
+            {
+               $sqlCrearBD = "CREATE DATABASE ".$_REQUEST['db_name'].";";
+               if( pg_query($connection, $sqlCrearBD) )
+               {
+                  guarda_config($nombre_archivo);
+               }
+               else
+               {
+                  $errors[] = "db_postgresql";
+                  $errors2[] = 'Error al crear la base de datos.';
+               }
+            }
          }
          else
          {

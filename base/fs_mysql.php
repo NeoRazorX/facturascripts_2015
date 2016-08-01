@@ -285,7 +285,7 @@ class fs_mysql
             {
                $resultado[] = $row;
             }
-            $filas->free();;
+            $filas->free();
          }
          else
             self::$errors[] = self::$link->error;
