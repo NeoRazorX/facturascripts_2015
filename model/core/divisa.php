@@ -60,14 +60,6 @@ class divisa extends \fs_model
          $this->coddivisa = $d['coddivisa'];
          $this->descripcion = $d['descripcion'];
          $this->tasaconv = floatval($d['tasaconv']);
-         
-         if( is_null($d['tasaconv_compra']) )
-         {
-            $this->tasaconv_compra = floatval($d['tasaconv']);
-         }
-         else
-            $this->tasaconv_compra = floatval($d['tasaconv_compra']);
-         
          $this->codiso = $d['codiso'];
          $this->simbolo = $d['simbolo'];
          
@@ -76,6 +68,16 @@ class divisa extends \fs_model
             $this->simbolo = '€';
             $this->save();
          }
+         
+         if( is_null($d['tasaconv_compra']) )
+         {
+            $this->tasaconv_compra = floatval($d['tasaconv']);
+            
+            /// forzamos guardar para asegurarnos que siempre hay una tasa para compras
+            $this->save();
+         }
+         else
+            $this->tasaconv_compra = floatval($d['tasaconv_compra']);
       }
       else
       {
@@ -91,17 +93,17 @@ class divisa extends \fs_model
    public function install()
    {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,codiso,simbolo)"
-              ." VALUES ('EUR','EUROS','1','978','€')"
-              .",('ARS','PESOS (ARG)','10.83','32','$')"
-              .",('CLP','PESOS (CLP)','755.73','152','$')"
-              .",('COP','PESOS (COP)','2573','170','$')"
-              .",('USD','DÓLARES EE.UU.','1.36','840','$')"
-              .",('MXN','PESOS (MXN)','18.1','484','$')"
-              .",('PAB','BALBOAS','38.17','590','B')"
-              .",('PEN','NUEVOS SOLES','3.52','604','S/.')"
-              .",('VEF','BOLÍVARES','38.17','937','Bs')"
-              .",('GBP','LIBRAS ESTERLINAS','0.8076','826','£')";
+      return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
+              ." VALUES ('EUR','EUROS','1','1','978','€')"
+              .",('ARS','PESOS (ARG)','10.83','10.83','32','$')"
+              .",('CLP','PESOS (CLP)','755.73','755.73','152','$')"
+              .",('COP','PESOS (COP)','2573','2573','170','$')"
+              .",('USD','DÓLARES EE.UU.','1.36','1.36','840','$')"
+              .",('MXN','PESOS (MXN)','18.1','18.1','484','$')"
+              .",('PAB','BALBOAS','38.17','38.17','590','B')"
+              .",('PEN','NUEVOS SOLES','3.52','3.52','604','S/.')"
+              .",('VEF','BOLÍVARES','38.17','38.17','937','Bs')"
+              .",('GBP','LIBRAS ESTERLINAS','0.8076','0.8076','826','£')";
    }
    
    /**
@@ -170,6 +172,14 @@ class divisa extends \fs_model
       {
          $this->new_error_msg("Código ISO no válido.");
       }
+      else if($this->tasaconv == 0)
+      {
+         $this->new_error_msg('La tasa de conversión no puede ser 0.');
+      }
+      else if($this->tasaconv_compra == 0)
+      {
+         $this->new_error_msg('La tasa de conversión para compras no puede ser 0.');
+      }
       else
          $status = TRUE;
       
@@ -193,7 +203,7 @@ class divisa extends \fs_model
                     ", tasaconv_compra = ".$this->var2str($this->tasaconv_compra).
                     ", codiso = ".$this->var2str($this->codiso).
                     ", simbolo = ".$this->var2str($this->simbolo).
-                    " WHERE coddivisa = ".$this->var2str($this->coddivisa).";";
+                    "  WHERE coddivisa = ".$this->var2str($this->coddivisa).";";
          }
          else
          {

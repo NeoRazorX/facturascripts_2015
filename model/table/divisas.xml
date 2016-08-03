@@ -43,6 +43,7 @@
    <columna>
       <nombre>tasaconv_compra</nombre>
       <tipo>double precision</tipo>
+      <nulo>NO</nulo>
    </columna>
    <restriccion>
       <nombre>divisas_pkey</nombre>
