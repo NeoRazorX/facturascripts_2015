@@ -318,6 +318,7 @@
                   <thead>
                      <tr>
                         <th class="text-left">Tipo</th>
+                        <th></th>
                         <th class="text-left">Detalle</th>
                         <th class="text-left">IP</th>
                         <th class="text-right">Fecha</th>
@@ -326,13 +327,18 @@
                   {loop="$fsc->user_log"}
                   <tr{if="$value->alerta"} class="danger"{/if}>
                      <td>{$value->tipo}</td>
+                     <td class="text-right">
+                     {if="$value->alerta"}
+                     <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Podría ser importante"></span>
+                     {/if}
+                  </td>
                      <td>{$value->detalle}</td>
                      <td>{$value->ip}</td>
                      <td class="text-right">{$value->fecha}</td>
                   </tr>
                   {else}
                   <tr class="warning">
-                     <td colspan="4">Sin resultados.</td>
+                     <td colspan="5">Sin resultados.</td>
                   </tr>
                   {/loop}
                </table>

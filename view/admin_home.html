@@ -281,9 +281,12 @@
                      <p>{$value['description']}</p>
                      {if="$value['wizard']!='' AND $value['enabled']"}
                      <a href="index.php?page={$value['wizard']}" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> &nbsp; Configurar
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp; Configurar
                      </a>
                      {/if}
+                     <a href="https://www.facturascripts.com/plugin/{$value['name']}" target="_blank" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp; más información
+                     </a>
                   </td>
                   <td class="text-right">
                      <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&plugin={$value['name']}&version={$value['version']}" target="_blank">
@@ -392,7 +395,9 @@
                         </a>
                         {/if}
                      {else}
-                     <i class="fa fa-puzzle-piece fa-3x" aria-hidden="true"></i>
+                     <a href="https://www.facturascripts.com/plugin/{$value->nombre}" target="_blank" class="btn btn-block btn-default">
+                        <i class="fa fa-puzzle-piece fa-3x" aria-hidden="true"></i>
+                     </a>
                      {/if}
                   </td>
                   <td>
@@ -432,7 +437,7 @@
                <tr>
                   <td colspan="4">
                      <a href="https://www.facturascripts.com/plugins" target="_blank" class="btn btn-block btn-info">
-                        Más plugins...
+                        <i class="fa fa-puzzle-piece"></i>&nbsp; Más plugins...
                      </a>
                   </td>
                </tr>

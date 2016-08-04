@@ -160,7 +160,7 @@ class cuenta_banco extends \fs_model
                  ", iban = ".$this->var2str($this->iban).
                  ", swift = ".$this->var2str($this->swift).
                  ", codsubcuenta = ".$this->var2str($this->codsubcuenta).
-                 " WHERE codcuenta = ".$this->var2str($this->codcuenta).";";
+                 "  WHERE codcuenta = ".$this->var2str($this->codcuenta).";";
       }
       else
       {
@@ -183,6 +183,11 @@ class cuenta_banco extends \fs_model
    public function delete()
    {
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codcuenta = ".$this->var2str($this->codcuenta).";");
+   }
+   
+   public function all()
+   {
+      return $this->all_from_empresa();
    }
    
    /**
