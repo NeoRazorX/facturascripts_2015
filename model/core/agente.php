@@ -42,17 +42,9 @@ class agente extends \fs_model
    public $nombre;
    public $apellidos;
    
-   /**
-    * Todavía sin uso.
-    * @var type 
-    */
-   public $coddepartamento;
-   
    public $email;
-   public $fax;
    public $telefono;
    public $codpostal;
-   public $codpais;
    public $provincia;
    public $ciudad;
    public $direccion;
@@ -99,12 +91,6 @@ class agente extends \fs_model
     */
    public $porcomision;
    
-   /**
-    * Todavía sin uso.
-    * @var type 
-    */
-   public $irpf;
-   
    public function __construct($a=FALSE)
    {
       parent::__construct('agentes');
@@ -114,17 +100,13 @@ class agente extends \fs_model
          $this->nombre = $a['nombre'];
          $this->apellidos = $a['apellidos'];
          $this->dnicif = $a['dnicif'];
-         $this->coddepartamento = $a['coddepartamento'];
          $this->email = $a['email'];
-         $this->fax = $a['fax'];
          $this->telefono = $a['telefono'];
          $this->codpostal = $a['codpostal'];
-         $this->codpais = $a['codpais'];
          $this->provincia = $a['provincia'];
          $this->ciudad = $a['ciudad'];
          $this->direccion = $a['direccion'];
          $this->porcomision = floatval($a['porcomision']);
-         $this->irpf = floatval($a['irpf']);
          $this->seg_social = $a['seg_social'];
          $this->banco = $a['banco'];
          $this->cargo =$a['cargo'];
@@ -153,17 +135,13 @@ class agente extends \fs_model
          $this->nombre = '';
          $this->apellidos = '';
          $this->dnicif = '';
-         $this->coddepartamento = NULL;
          $this->email = NULL;
-         $this->fax = NULL;
          $this->telefono = NULL;
          $this->codpostal = NULL;
-         $this->codpais = NULL;
          $this->provincia = NULL;
          $this->ciudad = NULL;
          $this->direccion = NULL;
          $this->porcomision = 0;
-         $this->irpf = 0;
          $this->seg_social = NULL;
          $this->banco = NULL;
          $this->cargo = NULL;
@@ -257,16 +235,18 @@ class agente extends \fs_model
    {
       $status = FALSE;
       
-      $this->nombre = $this->no_html($this->nombre);
       $this->apellidos = $this->no_html($this->apellidos);
-      $this->dnicif = $this->no_html($this->dnicif);
+      $this->banco = $this->no_html($this->banco);
       $this->cargo = $this->no_html($this->cargo);
-      $this->telefono = $this->no_html($this->telefono);
-      $this->email = $this->no_html($this->email);
-      $this->provincia = $this->no_html($this->provincia);
       $this->ciudad = $this->no_html($this->ciudad);
+      $this->codpostal = $this->no_html($this->codpostal);
       $this->direccion = $this->no_html($this->direccion);
+      $this->dnicif = $this->no_html($this->dnicif);
+      $this->email = $this->no_html($this->email);
+      $this->nombre = $this->no_html($this->nombre);
+      $this->provincia = $this->no_html($this->provincia);
       $this->seg_social = $this->no_html($this->seg_social);
+      $this->telefono = $this->no_html($this->telefono);
       
       if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
       {
@@ -303,6 +283,7 @@ class agente extends \fs_model
                     ", provincia = ".$this->var2str($this->provincia).
                     ", ciudad = ".$this->var2str($this->ciudad).
                     ", direccion = ".$this->var2str($this->direccion).
+                    ", codpostal = ".$this->var2str($this->codpostal).
                     ", f_nacimiento = ".$this->var2str($this->f_nacimiento).
                     ", f_alta = ".$this->var2str($this->f_alta).
                     ", f_baja = ".$this->var2str($this->f_baja).
@@ -319,8 +300,8 @@ class agente extends \fs_model
             }
             
             $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,
-               email,cargo,provincia,ciudad,direccion,f_nacimiento,f_alta,f_baja,seg_social,banco,porcomision)
-               VALUES (".$this->var2str($this->codagente).
+               email,cargo,provincia,ciudad,direccion,codpostal,f_nacimiento,f_alta,f_baja,seg_social,
+               banco,porcomision) VALUES (".$this->var2str($this->codagente).
                     ",".$this->var2str($this->nombre).
                     ",".$this->var2str($this->apellidos).
                     ",".$this->var2str($this->dnicif).
@@ -330,6 +311,7 @@ class agente extends \fs_model
                     ",".$this->var2str($this->provincia).
                     ",".$this->var2str($this->ciudad).
                     ",".$this->var2str($this->direccion).
+                    ",".$this->var2str($this->codpostal).
                     ",".$this->var2str($this->f_nacimiento).
                     ",".$this->var2str($this->f_alta).
                     ",".$this->var2str($this->f_baja).

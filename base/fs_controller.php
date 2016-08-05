@@ -645,6 +645,10 @@ class fs_controller
       {
          setcookie('logkey', '', time()-FS_COOKIES_EXPIRE);
          setcookie('logkey', '', time()-FS_COOKIES_EXPIRE, $path);
+         if($path != '/')
+         {
+            setcookie('logkey', '', time()-FS_COOKIES_EXPIRE, '/');
+         }
       }
       
       /// ¿Eliminamos la cookie del usuario?
