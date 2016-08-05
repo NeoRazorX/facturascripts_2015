@@ -60,7 +60,7 @@
       Ya tienes instalado el núcleo. Como ves, el núcleo permite gestionar páginas,
       plugins y usuarios. Pulsa continuar para seguir con la instalación.
    </p>
-   <a href="#" class="btn btn-sm btn-info" onclick="fs_marcar_todo();f_enable_pages.submit();">
+   <a href="#" class="btn btn-sm btn-primary" onclick="fs_marcar_todo();f_enable_pages.submit();">
       <span class="glyphicon glyphicon-ok"></span>&nbsp; Continuar
    </a>
 </div>
@@ -86,11 +86,11 @@
       este botón.
    </p>
    {if="file_exists('plugins/facturacion_base')"}
-   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable=facturacion_base#plugins" class="btn btn-sm btn-info">
+   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable=facturacion_base#plugins" class="btn btn-sm btn-primary">
       <span class="glyphicon glyphicon-ok"></span>&nbsp; Activar facturacion_base
    </a>
    {else}
-   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-info">
+   <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download=facturacion_base#plugins" class="btn btn-sm btn-primary">
       <span class="glyphicon glyphicon-download-alt"></span>&nbsp; Descargar facturacion_base
    </a>
    {/if}
@@ -534,7 +534,7 @@
                      </p>
                   </div>
                </div>
-               <div class="row bg-info">
+               <div class="row bg-success">
                   <div class="col-md-12 col-sm-12">
                      <h2>
                         <i class="fa fa-language"></i>&nbsp; Traducciones:
@@ -545,7 +545,7 @@
                      </p>
                   </div>
                </div>
-               <div class="row bg-info">
+               <div class="row bg-success">
                   {loop="$fsc->traducciones()"}
                   <div class="col-md-2 col-sm-3">
                      <div class="form-group">
