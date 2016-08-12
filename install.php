@@ -634,7 +634,7 @@ $system_info = str_replace('"', "'", $system_info);
                Y si quieres saber más, no olvides seguir a nuestro desarrollador principal
                en su canal de youtube.
             </p>
-            <a href="https://www.youtube.com/user/NeoRazorX" target="_blank" class="btn btn-sm btn-default">
+            <a href="https://www.youtube.com/watch?v=JWzGkOBP_d4" target="_blank" class="btn btn-sm btn-danger">
                <span class="glyphicon glyphicon-facetime-video"></span> &nbsp; FacturaScripts en YouTube
             </a>
          </div>
