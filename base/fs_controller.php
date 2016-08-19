@@ -1170,26 +1170,35 @@ class fs_controller
    }
    
    /**
-    * Convierte el precio en euros a la divisa preterminada de la empresa
+    * Convierte el precio en euros a la divisa preterminada de la empresa.
+    * Por defecto usa las tasas de conversión actuales, pero si se especifica
+    * coddivisa y tasaconv las usará.
     * @param type $precio
+    * @param type $coddivisa
+    * @param type $tasaconv
     * @return type
     */
-   public function euro_convert($precio)
+   public function euro_convert($precio, $coddivisa = NULL, $tasaconv = NULL)
    {
       if($this->empresa->coddivisa == 'EUR')
       {
          return $precio;
       }
-      else
+      else if($coddivisa AND $tasaconv)
       {
-         $div0 = new divisa();
-         $divisa = $div0->get($this->empresa->coddivisa);
-         if($divisa)
+         if($this->empresa->coddivisa == $coddivisa)
          {
-            return $precio * $divisa->tasaconv;
+            return $precio * $tasaconv;
          }
          else
-            return $precio;
+         {
+            $original = $precio * $tasaconv;
+            return $this->divisa_convert($original, $coddivisa, $this->empresa->coddivisa);
+         }
+      }
+      else
+      {
+         return $this->divisa_convert($precio, 'EUR', $this->empresa->coddivisa);
       }
    }
    

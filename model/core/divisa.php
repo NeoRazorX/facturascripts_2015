@@ -95,15 +95,16 @@ class divisa extends \fs_model
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
               ." VALUES ('EUR','EUROS','1','1','978','€')"
-              .",('ARS','PESOS (ARG)','10.83','10.83','32','$')"
-              .",('CLP','PESOS (CLP)','755.73','755.73','152','$')"
-              .",('COP','PESOS (COP)','2573','2573','170','$')"
-              .",('USD','DÓLARES EE.UU.','1.36','1.36','840','$')"
-              .",('MXN','PESOS (MXN)','18.1','18.1','484','$')"
-              .",('PAB','BALBOAS','38.17','38.17','590','B')"
-              .",('PEN','NUEVOS SOLES','3.52','3.52','604','S/.')"
-              .",('VEF','BOLÍVARES','38.17','38.17','937','Bs')"
-              .",('GBP','LIBRAS ESTERLINAS','0.8076','0.8076','826','£')";
+              .",('ARS','PESOS (ARG)','16.684','16.684','32','$')"
+              .",('CLP','PESOS (CLP)','741.81','741.81','152','$')"
+              .",('COP','PESOS (COP)','3286.82','3286.82','170','$')"
+              .",('DOP','PESOS DOMINICANOS','51.944','51.944','214','RD$')"
+              .",('GBP','LIBRAS ESTERLINAS','0.865','0.865','826','£')"
+              .",('MXN','PESOS (MXN)','20.478','20.478','484','$')"
+              .",('PAB','BALBOAS','1.128','1.128','590','B')"
+              .",('PEN','NUEVOS SOLES','3.736','3.736','604','S/.')"
+              .",('USD','DÓLARES EE.UU.','1.129','1.129','840','$')"
+              .",('VEF','BOLÍVARES','11.234','11.234','937','Bs')";
    }
    
    /**

@@ -115,7 +115,7 @@ else if( !extension_loaded('simplexml') )
    $errors[] = "simplexml";
    $errors2[] = 'No se encuentra la extensión simplexml en tu instalación de PHP.'
            . ' Debes instalarla o activarla.';
-   $errors2[] = 'Si usas Red Hat o derivados, instala el paquete php-xml.';
+   $errors2[] = 'Linux: instala el paquete <b>php-xml</b> y reinicia el Apache.';
 }
 else if( !extension_loaded('openssl') )
 {
@@ -193,7 +193,7 @@ else if( isset($_REQUEST['db_type']) )
             }
             else
             {
-               $sqlCrearBD = "CREATE DATABASE ".$_REQUEST['db_name'].";";
+               $sqlCrearBD = 'CREATE DATABASE "'.$_REQUEST['db_name'].'";';
                if( pg_query($connection, $sqlCrearBD) )
                {
                   guarda_config($nombre_archivo);
@@ -447,10 +447,16 @@ $system_info = str_replace('"', "'", $system_info);
                      La carpeta de FacturaScripts no tiene permisos de escritura. Sin esos
                      permisos, no funcionará FacturaScripts.
                   </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (si usas Linux):</h4>
+                  <h3>
+                     <i class="fa fa-linux" aria-hidden="true"></i> Linux
+                  </h3>
                   <pre>sudo chmod -R o+w <?php echo dirname(__FILE__); ?></pre>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (instalación en hosting):</h4>
-                  <p>Intenta dar permisos de escritura desde el cliente FTP o desde el cPanel.</p>
+                  <h3>
+                     <i class="fa fa-globe" aria-hidden="true"></i> Hosting
+                  </h3>
+                  <p class="help-block">
+                     Intenta dar permisos de escritura desde el cliente <b>FTP</b> o desde el <b>cPanel</b>.
+                  </p>
                </div>
             </div>
                   <?php
@@ -464,13 +470,24 @@ $system_info = str_replace('"', "'", $system_info);
                </div>
                <div class="panel-body">
                   <p>
-                     FacturaScripts necesita PHP 5.3 o superior, y tú estás usando <?php echo phpversion() ?>.
+                     FacturaScripts necesita PHP <b>5.3</b> o superior.
+                     Tú estás usando la versión <b><?php echo phpversion() ?></b>.
                   </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución:</h4>
-                  <p>
-                     Muchos hostings ofrecen PHP 5.1, 5.2 y 5.3. Pero hay que seleccionar PHP 5.3
-                     desde el panel de control.
-                  </p>
+                  <h3>Soluciones:</h3>
+                  <ul>
+                     <li>
+                        <p class="help-block">
+                           Muchos hostings ofrecen <b>varias versiones de PHP</b>. Ve al panel de control
+                           de tu hosting y selecciona la versión de PHP más alta.
+                        </p>
+                     </li>
+                     <li>
+                        <p class="help-block">
+                           Busca un proveedor de hosting más completo, que son la mayoría. Mira en nuestra sección de
+                           <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                        </p>
+                     </li>
+                  </ul>
                </div>
             </div>
                   <?php
@@ -487,14 +504,20 @@ $system_info = str_replace('"', "'", $system_info);
                      FacturaScripts necesita la extensión mbstring para poder trabajar con caracteres
                      no europeos (chinos, coreanos, japonenes y rusos).
                   </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (en Linux):</h4>
-                  <p>Instala el paquete php-mbstring.</p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
-                  <p>
+                  <h3>
+                     <i class="fa fa-linux" aria-hidden="true"></i> Linux
+                  </h3>
+                  <p class="help-block">
+                     Instala el paquete <b>php-mbstring</b> y reinicia el Apache.
+                  </p>
+                  <h3>
+                     <i class="fa fa-globe" aria-hidden="true"></i> Hosting
+                  </h3>
+                  <p class="help-block">
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                      Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
-                     Nosotros recomendamos
-                     <a href="http://www.loading.es/clientes/aff.php?aff=857" target="_blank">Loading.es</a>
+                     Mira en nuestra sección de
+                     <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
                   </p>
                </div>
             </div>
@@ -512,19 +535,41 @@ $system_info = str_replace('"', "'", $system_info);
                      FacturaScripts necesita la extensión OpenSSL para poder descargar plugins,
                      actualizaciones y enviar emails.
                   </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
-                  <p>
+                  <h3>
+                     <i class="fa fa-globe" aria-hidden="true"></i> Hosting
+                  </h3>
+                  <p class="help-block">
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                      Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
-                     Nosotros recomendamos
-                     <a href="http://www.loading.es/clientes/aff.php?aff=857" target="_blank">Loading.es</a>
+                     Mira en nuestra sección de
+                     <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
                   </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Servidor personal:</h4>
-                  <p>
-                     Es muy raro que en una instalación propia de PHP ya sea en Linux o en Windows
-                     con uno de estos empaquetados Apache+PHP+MySQL no traiga de serie OpenSSL.
-                     <a href="#" data-toggle="modal" data-target="#modal_feedback">Informanos</a>
-                     de qué tienes instalado e intentaremos ofrecerte la mejor solución.
+                  <h3>
+                     <i class="fa fa-windows" aria-hidden="true"></i> Windows
+                  </h3>
+                  <p class="help-block">
+                     Ofrecemos una versión de FacturaScripts para Windows <b>con todo</b> el software necesario
+                     (como OpenSSL) ya incluido de serie. Puedes encontrala en nuestra sección de
+                     <a href="https://www.facturascripts.com/descargar?windows=TRUE" target="_blank">descargas</a>.
+                     Si decides utilizar <b>un empaquetado distinto</b>, y este no incluye lo necesario, deberás
+                     buscar ayuda en los foros o el soporte de los creadores de ese empaquetado.
+                  </p>
+                  <h3>
+                     <i class="fa fa-linux" aria-hidden="true"></i> Linux
+                  </h3>
+                  <p class="help-block">
+                     Es muy raro que una instalación propia de PHP en Linux no incluya OpenSSL.
+                     Intenta instalar el paquete <b>php-openssl</b> con tu gestor de paquetes
+                     y reinicia el Apache. Para más información consulta la ayuda o los foros
+                     de la distribución Linux que utilices.
+                  </p>
+                  <h3>
+                     <i class="fa fa-apple" aria-hidden="true"></i> Mac
+                  </h3>
+                  <p class="help-block">
+                     Es raro que un empaquetado Apache+PHP+MySQL para Mac no incluya OpenSSL.
+                     Nosotros ofrecemos varios empaquetados con todo lo necesario en nuestra sección de
+                     <a href="https://www.facturascripts.com/descargar?mac=TRUE" target="_blank">descargas</a>.
                   </p>
                </div>
             </div>
@@ -542,14 +587,18 @@ $system_info = str_replace('"', "'", $system_info);
                      FacturaScripts necesita la extensión ZipArchive para poder
                      descomprimir plugins y actualizaciones.
                   </p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Solución (en Linux):</h4>
-                  <p>Instala el paquete php-zip.</p>
-                  <h4 style="margin-top: 20px; margin-bottom: 5px;">Hosting:</h4>
-                  <p>
+                  <h3>
+                     <i class="fa fa-linux" aria-hidden="true"></i> Linux
+                  </h3>
+                  <p class="help-block">Instala el paquete <b>php-zip</b> y reinicia el Apache.</p>
+                  <h3>
+                     <i class="fa fa-globe" aria-hidden="true"></i> Hosting
+                  </h3>
+                  <p class="help-block">
                      Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                      Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
-                     Nosotros recomendamos
-                     <a href="http://www.loading.es/clientes/aff.php?aff=857" target="_blank">Loading.es</a>
+                     Mira en nuestra sección de
+                     <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
                   </p>
                </div>
             </div>
