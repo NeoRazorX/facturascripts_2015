@@ -110,6 +110,7 @@ class pais extends \fs_model
               . " ('PRI','PR','Puerto Rico'),"
               . " ('PRY','PY','Paraguay'),"
               . " ('URY','UY','Uruguay'),"
+              . " ('USA','US','Estados Unidos'),"
               . " ('VEN','VE','Venezuela');";
    }
    
