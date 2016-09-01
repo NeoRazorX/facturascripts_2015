@@ -171,7 +171,7 @@ class fs_updater
                                 . '<td class="text-right">'
                                 . '<div class="btn-group">'
                                 . '<a href="#" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#modal_key_'.$plugin['name'].'">'
-                                . '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> &nbsp; Añadir clave'
+                                . '<i class="fa fa-key" aria-hidden="true"></i>&nbsp; Añadir clave'
                                 . '</a>'
                                 . '</div>'
                                 . '</td></tr>';
@@ -187,7 +187,7 @@ class fs_updater
                           . $plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank">'.$plugin['new_version'].'</a></td>'
                           . '<td class="text-right">'
                           . '<a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">'
-                          . '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Actualizar'
+                          . '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp; Actualizar'
                           . '</a>'
                           . '</td></tr>';
                   }
@@ -665,25 +665,28 @@ $updater = new fs_updater();
       <meta name="generator" content="FacturaScripts" />
       <link rel="shortcut icon" href="view/img/favicon.ico" />
       <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
+      <link rel="stylesheet" href="view/css/font-awesome.min.css" />
       <script type="text/javascript" src="view/js/jquery.min.js"></script>
       <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
    </head>
    <body>
-      <div class="container">
+      <br/>
+      <div class="container-fluid">
          <div class="row">
             <div class="col-sm-12">
+               <a href="index.php?page=admin_home&updated=TRUE" class="btn btn-sm btn-default">
+                  <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                  <span class="hidden-xs">&nbsp; Panel de control</span>
+               </a>
+               <a href="https://www.facturascripts.com/comm3/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-default">
+                  <i class="fa fa-key" aria-hidden="true"></i>
+                  <span class="hidden-xs">&nbsp; Claves</span>
+               </a>
                <div class="page-header">
                   <h1>
-                     <a href="index.php?page=admin_home&updated=TRUE" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                     </a>
-                     Actualizador de FacturaScripts
+                     <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Actualizador de FacturaScripts
                   </h1>
                </div>
-            </div>
-         </div>
-         <div class="row">
-            <div class="col-sm-12">
                <?php
                if($updater->errores != '')
                {
@@ -704,7 +707,7 @@ $updater = new fs_updater();
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-9">
                <p class="help-block">
                   Este actualizador permite actualizar <b>tanto el núcleo</b> de FacturaScripts
                   <b>como sus plugins</b>, incluso los de pago y los privados.
@@ -712,10 +715,6 @@ $updater = new fs_updater();
                   también hay actualizaciones de plugins.
                </p>
                <br/>
-            </div>
-         </div>
-         <div class="row">
-            <div class="col-sm-12">
                <ul class="nav nav-tabs" role="tablist">
                   <li role="presentation" class="active">
                      <a href="#actualizaciones" aria-controls="actualizaciones" role="tab" data-toggle="tab">
@@ -762,6 +761,26 @@ $updater = new fs_updater();
                   </div>
                </div>
             </div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-2">
+               <a href="https://www.facturascripts.com/promo" target="_blank" class="thumbnail" style="margin-bottom: 0px;">
+                  <img src='https://i.imgur.com/5XRa2Cm.png' alt="adminlte"/>
+               </a>
+               <p class="help-block">
+                  Hemos trabajado en un <b>nuevo diseño</b> para dar un aspecto más moderno a FacturaScripts,
+                  con un nuevo menú lateral, buscador integrado, más visibilidad del usuario,
+                  más y mejores iconos y un largo etcétera. Este es el resultado.
+               </p>
+               <br/>
+               <a href="https://www.facturascripts.com/ideas#mejoras" target="_blank" class="btn btn-block btn-default">
+                  <i class="fa fa-toggle-off fa-3x" aria-hidden="true"></i>
+                  <br/>Mejoras
+               </a>
+               <p class="help-block">
+                  Tenemos una serie de mejoras en el horno que te pueden interesar,
+                  pero necesitan financiación ¿Te apuntas? Sólo necesitas <b>5 €</b>.
+               </p>
+            </div>
          </div>
       </div>
       <?php
@@ -778,7 +797,9 @@ $updater = new fs_updater();
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                            <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title">Añadir clave de actualización</h4>
+                        <h4 class="modal-title">
+                           <i class="fa fa-key" aria-hidden="true"></i> Añadir clave de actualización
+                        </h4>
                         <p class="help-block">Imprescindible para actualizar el plugin <b><?php echo $plug['name']; ?></b>.</p>
                      </div>
                      <div class="modal-body">
@@ -786,13 +807,17 @@ $updater = new fs_updater();
                            <div class="col-xs-12">
                               <div class="form-group">
                                  Clave:
-                                 <input type="text" name="key" class="form-control" autocomplete="off" autofocus/>
+                                 <input type="text" name="key" class="form-control" autocomplete="off" autofocus=""/>
+                                 <p class="help-block">
+                                    ¿No sabes cual es tu clave? Puedes consultarla pulsando el botón
+                                    <b>ver mis claves</b>.
+                                 </p>
                               </div>
                            </div>
                         </div>
                         <div class="row">
                            <div class="col-xs-6">
-                              <a href="https://www.facturascripts.com/comm3/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-default">
+                              <a href="https://www.facturascripts.com/comm3/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-warning">
                                  <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                  <span class="hidden-xs">&nbsp; Ver mis claves</span>
                               </a>
@@ -814,22 +839,6 @@ $updater = new fs_updater();
       }
       ?>
       <br/><br/>
-      <div class="container">
-         <div class="row">
-            <div class="col-sm-2">
-               <a href="https://www.facturascripts.com/promo" target="_blank" class="thumbnail">
-                  <img src='https://i.imgur.com/5XRa2Cm.png' alt="adminlte"/>
-               </a>
-            </div>
-            <div class="col-sm-10">
-               <p class="help-block">
-                  Hemos trabajado en un <b>nuevo diseño</b> para dar un aspecto más moderno a FacturaScripts,
-                  con un nuevo menú lateral, buscador integrado, más visibilidad del usuario,
-                  más y mejores iconos y un largo etcétera. Este es el resultado.
-               </p>
-            </div>
-         </div>
-      </div>
       <div class="text-center">;-)</div>
       <?php
       if(!FS_DEMO)
