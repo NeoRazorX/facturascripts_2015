@@ -477,7 +477,7 @@ class fs_mysql
             {
                if($col2['column_name'] == $col['nombre'])
                {
-                  if( $this->compare_data_types($col2['data_type'], $col['tipo']) )
+                  if( !$this->compare_data_types($col2['data_type'], $col['tipo']) )
                   {
                      $consulta .= 'ALTER TABLE '.$table_name.' MODIFY `'.$col['nombre'].'` '.$col['tipo'].';';
                   }
@@ -568,7 +568,7 @@ class fs_mysql
    }
    
    /**
-    * Compara los tipos de de datos de una columna. Devuelve TRUE si son distintos.
+    * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
     * @param type $v1
     * @param type $v2
     * @return boolean
@@ -577,27 +577,59 @@ class fs_mysql
    {
       if(FS_CHECK_DB_TYPES != 1)
       {
-         return FALSE;
+         return TRUE;
       }
-      else if( strtolower($v2) == 'serial')
+      else if( strtolower($v2) == 'serial' )
       {
-         return FALSE;
+         return TRUE;
       }
       else if($v1 == 'tinyint(1)' AND $v2 == 'boolean')
       {
-         return FALSE;
+         return TRUE;
       }
-      else if( substr($v1, 0, 6) == 'double' AND $v2 == 'double precision')
+      else if( substr($v1, 0, 4) == 'int(' AND $v2 == 'INTEGER' )
       {
-         return FALSE;
+         return TRUE;
+      }
+      else if( substr($v1, 0, 6) == 'double' AND $v2 == 'double precision' )
+      {
+         return TRUE;
       }
       else if( substr($v1, 0, 4) == 'time' AND substr($v2, 0, 4) == 'time' )
       {
-         return FALSE;
+         return TRUE;
       }
-      else if($v1 != $v2)
+      else if( substr($v1, 0, 8) == 'varchar(' AND substr($v2, 0, 18) == 'character varying(' )
+      {
+         /// comprobamos las longitudes
+         if( substr($v1, 8, -1) == substr($v2, 18, -1) )
+         {
+            return TRUE;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      else if( substr($v1, 0, 5) == 'char(' AND substr($v2, 0, 18) == 'character varying(' )
+      {
+         /// comprobamos las longitudes
+         if( substr($v1, 5, -1) == substr($v2, 18, -1) )
+         {
+            return TRUE;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      else if($v1 == $v2)
       {
          return TRUE;
+      }
+      else
+      {
+         return FALSE;
       }
    }
    
@@ -609,7 +641,11 @@ class fs_mysql
     */
    private function compare_defaults($v1, $v2)
    {
-      if( in_array($v1, array('0', 'false', 'FALSE')) )
+      if($v1 == $v2)
+      {
+         return TRUE;
+      }
+      else if( in_array($v1, array('0', 'false', 'FALSE')) )
       {
          return in_array($v2, array('0', 'false', 'FALSE'));
       }
@@ -617,15 +653,19 @@ class fs_mysql
       {
          return in_array($v2, array('1', 'true', 'true'));
       }
-      else if($v1 == 'now()' AND $v2 == '00:00')
+      else if($v1 == '00:00:00' AND $v2 == 'now()' )
       {
          return TRUE;
       }
-      else if($v1 == 'CURRENT_TIMESTAMP' AND $v2 == "'".date('Y-m-d')." 00:00:00'")
+      else if( $v1 == date('Y-m-d').' 00:00:00' AND $v2 == 'CURRENT_TIMESTAMP' )
       {
          return TRUE;
       }
       else if( $v1 == 'CURRENT_DATE' AND $v2 == date("'Y-m-d'") )
+      {
+         return TRUE;
+      }
+      else if( substr($v2, 0, 8) == 'nextval(' )
       {
          return TRUE;
       }
@@ -636,7 +676,14 @@ class fs_mysql
          $v1 = str_replace("'", '', $v1);
          $v2 = str_replace("'", '', $v2);
          
-         return($v1 == $v2);
+         if($v1 == $v2)
+         {
+            return TRUE;
+         }
+         else
+         {
+            return FALSE;
+         }
       }
    }
    

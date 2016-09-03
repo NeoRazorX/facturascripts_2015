@@ -412,7 +412,7 @@ class fs_postgresql
             {
                if($col2['column_name'] == $col['nombre'])
                {
-                  if( $this->compare_data_types($col2['data_type'], $col['tipo']) )
+                  if( !$this->compare_data_types($col2, $col['tipo']) )
                   {
                      $consulta .= 'ALTER TABLE '.$table_name.' ALTER COLUMN "'.$col['nombre'].'" TYPE '.$col['tipo'].';';
                   }
@@ -467,7 +467,7 @@ class fs_postgresql
    }
    
    /**
-    * Compara los tipos de de datos de una columna. Devuelve TRUE si son distintos.
+    * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
     * @param type $v1
     * @param type $v2
     * @return boolean
@@ -476,19 +476,27 @@ class fs_postgresql
    {
       if(FS_CHECK_DB_TYPES != 1)
       {
-         return FALSE;
+         return TRUE;
       }
-      else if( strtolower($v2) == 'serial')
-      {
-         return FALSE;
-      }
-      else if( substr($v1, 0, 4) == 'time' AND substr($v2, 0, 4) == 'time' )
-      {
-         return FALSE;
-      }
-      else if($v1 != $v2)
+      else if( strtolower($v2) == 'serial' )
       {
          return TRUE;
+      }
+      else if( substr($v1['data_type'], 0, 4) == 'time' AND substr($v2, 0, 4) == 'time' )
+      {
+         return TRUE;
+      }
+      else if($v1['data_type'] == $v2)
+      {
+         return TRUE;
+      }
+      else if($v1['data_type'].'('.$v1['character_maximum_length'].')' == $v2)
+      {
+         return TRUE;
+      }
+      else
+      {
+         return FALSE;
       }
    }
    
