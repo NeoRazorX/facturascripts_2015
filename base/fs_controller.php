@@ -285,24 +285,27 @@ class fs_controller
     * Muestra al usuario un mensaje de error
     * @param type $msg el mensaje a mostrar
     */
-   public function new_error_msg($msg = FALSE, $tipo = 'error', $alerta = FALSE)
+   public function new_error_msg($msg = FALSE, $tipo = 'error', $alerta = FALSE, $guardar = TRUE)
    {
       if($msg)
       {
          $this->errors[] = str_replace("\n", ' ', $msg);
          
-         $fslog = new fs_log();
-         $fslog->tipo = $tipo;
-         $fslog->detalle = $msg;
-         $fslog->ip = $_SERVER['REMOTE_ADDR'];
-         $fslog->alerta = $alerta;
-         
-         if($this->user)
+         if($guardar)
          {
-            $fslog->usuario = $this->user->nick;
+            $fslog = new fs_log();
+            $fslog->tipo = $tipo;
+            $fslog->detalle = $msg;
+            $fslog->ip = $_SERVER['REMOTE_ADDR'];
+            $fslog->alerta = $alerta;
+            
+            if($this->user)
+            {
+               $fslog->usuario = $this->user->nick;
+            }
+            
+            $fslog->save();
          }
-         
-         $fslog->save();
       }
    }
    
@@ -312,14 +315,21 @@ class fs_controller
     */
    public function get_errors()
    {
-      $full = array_merge( $this->errors, $this->db->get_errors() );
-      
-      if( isset($this->empresa) )
+      /// registramos los errores en la base de datos
+      foreach($this->db->get_errors() as $err)
       {
-         $full = array_merge( $full, $this->empresa->get_errors() );
+         $this->new_error_msg($err, 'db');
       }
+      $this->db->clean_errors();
       
-      return $full;
+      /// registramos los errores en los modelos
+      foreach($this->empresa->get_errors() as $err)
+      {
+         $this->new_error_msg($err, 'model');
+      }
+      $this->empresa->clean_errors();
+      
+      return $this->errors;
    }
    
    /**

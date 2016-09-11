@@ -46,36 +46,73 @@ class fs_db2
       }
    }
    
+   /**
+    * Conecta a la base de datos.
+    * @return type
+    */
    public function connect()
    {
       return $this->engine->connect();
    }
    
+   /**
+    * Devuelve TRUE si se está conestado a la base de datos.
+    * @return type
+    */
    public function connected()
    {
       return $this->engine->connected();
    }
    
+   /**
+    * Desconecta de la base de datos.
+    * @return type
+    */
    public function close()
    {
       return $this->engine->close();
    }
    
+   /**
+    * Devuelve el motor de base de datos usado y la versión.
+    * @return type
+    */
    public function version()
    {
       return $this->engine->version();
    }
    
+   /**
+    * Devuelve la lista de errores.
+    * @return type
+    */
    public function get_errors()
    {
       return $this->engine->get_errors();
    }
    
+   /**
+    * Vacía la lista de errores.
+    * @return type
+    */
+   public function clean_errors()
+   {
+      return $this->engine->clean_errors();
+   }
+   
+   /**
+    * Devuelve el nº de selects a la base de datos.
+    * @return type
+    */
    public function get_selects()
    {
       return $this->engine->get_selects();
    }
    
+   /**
+    * Devuelve el nº de transacciones con la base de datos.
+    * @return type
+    */
    public function get_transactions()
    {
       return $this->engine->get_transactions();
@@ -91,7 +128,8 @@ class fs_db2
    }
    
    /**
-    * Devuelve un array con los nombres de las tablas de la base de datos
+    * Devuelve un array con los nombres de las tablas de la base de datos.
+    * @return type
     */
    public function list_tables()
    {
@@ -146,7 +184,7 @@ class fs_db2
     * @param type $offset
     * @return type
     */
-   public function select_limit($sql, $limit, $offset)
+   public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
    {
       return $this->engine->select_limit($sql, $limit, $offset);
    }
@@ -168,45 +206,74 @@ class fs_db2
    }
    
    /**
-    * Devuleve el último ID asignado
+    * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
+    * @return type
     */
    public function lastval()
    {
       return $this->engine->lastval();
    }
    
+   /**
+    * Inicia una transacción SQL.
+    * @return type
+    */
    public function begin_transaction()
    {
       return $this->engine->begin_transaction();
    }
    
+   /**
+    * Guarda los cambios de una transacción SQL.
+    * @return type
+    */
    public function commit()
    {
       return $this->engine->commit();
    }
    
+   /**
+    * Deshace los cambios de una transacción SQL.
+    * @return type
+    */
    public function rollback()
    {
       return $this->engine->rollback();
    }
    
+   /**
+    * Escapa las comillas de la cadena de texto.
+    * @param type $s
+    * @return type
+    */
    public function escape_string($s)
    {
       return $this->engine->escape_string($s);
    }
    
+   /**
+    * Devuelve el estilo de fecha del motor de base de datos.
+    * @return type
+    */
    public function date_style()
    {
       return $this->engine->date_style();
    }
    
+   /**
+    * Devuelve el SQL necesario para convertir la columna a entero.
+    * @param type $col
+    * @return type
+    */
    public function sql_to_int($col)
    {
       return $this->engine->sql_to_int($col);
    }
    
    /**
-    * Devuelve un array con las columnas de una tabla dada
+    * Devuelve un array con las columnas de una tabla dada.
+    * @param type $table
+    * @return type
     */
    public function get_columns($table)
    {
@@ -214,7 +281,9 @@ class fs_db2
    }
    
    /**
-    * Devuelve una array con las restricciones de una tabla dada
+    * Devuelve una array con las restricciones de una tabla dada.
+    * @param type $table
+    * @return type
     */
    public function get_constraints($table)
    {
@@ -222,7 +291,9 @@ class fs_db2
    }
    
    /**
-    * Devuelve una array con los indices de una tabla dada
+    * Devuelve una array con los indices de una tabla dada.
+    * @param type $table
+    * @return type
     */
    public function get_indexes($table)
    {
@@ -241,6 +312,10 @@ class fs_db2
    /**
     * Compara dos arrays de columnas, devuelve una sentencia sql
     * en caso de encontrar diferencias.
+    * @param type $table_name
+    * @param type $xml_cols
+    * @param type $columnas
+    * @return type
     */
    public function compare_columns($table_name, $xml_cols, $columnas)
    {
@@ -250,6 +325,11 @@ class fs_db2
    /**
     * Compara dos arrays de restricciones, devuelve una sentencia sql
     * en caso de encontrar diferencias.
+    * @param type $table_name
+    * @param type $c_nuevas
+    * @param type $c_old
+    * @param type $solo_eliminar
+    * @return type
     */
    public function compare_constraints($table_name, $c_nuevas, $c_old, $solo_eliminar = FALSE)
    {
@@ -257,7 +337,11 @@ class fs_db2
    }
    
    /**
-    * Devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada
+    * Devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada.
+    * @param type $table_name
+    * @param type $xml_columnas
+    * @param type $xml_restricciones
+    * @return type
     */
    public function generate_table($table_name, $xml_columnas, $xml_restricciones)
    {
@@ -266,6 +350,7 @@ class fs_db2
    
    /**
     * Realiza comprobaciones extra a la tabla.
+    * @param type $table_name
     * @return type
     */
    public function check_table_aux($table_name)

@@ -29,7 +29,17 @@ class fs_postgresql
     * @var type 
     */
    protected static $link;
+   
+   /**
+    * Nº de selects ejecutados.
+    * @var type 
+    */
    protected static $t_selects;
+   
+   /**
+    * Nº de transacciones ejecutadas.
+    * @var type 
+    */
    protected static $t_transactions;
    
    /**
@@ -73,14 +83,30 @@ class fs_postgresql
       return self::$t_transactions;
    }
    
+   /**
+    * Devuelve el historial SQL.
+    * @return type
+    */
    public function get_history()
    {
       return self::$history;
    }
    
+   /**
+    * Devuelve la lista de errores.
+    * @return type
+    */
    public function get_errors()
    {
       return self::$errors;
+   }
+   
+   /**
+    * Vacía la lista de errores.
+    */
+   public function clean_errors()
+   {
+      self::$errors = array();
    }
    
    /**
@@ -113,6 +139,10 @@ class fs_postgresql
       return $connected;
    }
    
+   /**
+    * Devuelve TRUE si se está conectado a la base de datos.
+    * @return boolean
+    */
    public function connected()
    {
       if(self::$link)
@@ -209,6 +239,10 @@ class fs_postgresql
          WHERE relfilenode=relation AND NOT granted;");
    }
    
+   /**
+    * Devuelve el motor de base de datos y la versión.
+    * @return boolean
+    */
    public function version()
    {
       if(self::$link)
@@ -256,7 +290,7 @@ class fs_postgresql
     * @param type $offset
     * @return type
     */
-   public function select_limit($sql, $limit, $offset)
+   public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
    {
       $resultado = FALSE;
       if(self::$link)
@@ -288,7 +322,7 @@ class fs_postgresql
     * @param type $transaccion
     * @return boolean
     */
-   public function exec($sql, $transaccion=TRUE)
+   public function exec($sql, $transaccion = TRUE)
    {
       $resultado = FALSE;
       if(self::$link)
@@ -327,6 +361,9 @@ class fs_postgresql
       return $resultado;
    }
    
+   /**
+    * Inicia una transacción SQL.
+    */
    public function begin_transaction()
    {
       if(self::$link)
@@ -335,6 +372,9 @@ class fs_postgresql
       }
    }
    
+   /**
+    * Guarda los cambios de una transacción SQL.
+    */
    public function commit()
    {
       if(self::$link)
@@ -343,6 +383,9 @@ class fs_postgresql
       }
    }
    
+   /**
+    * Deshace los cambios de una transacción SQL.
+    */
    public function rollback()
    {
       if(self::$link)
@@ -362,7 +405,7 @@ class fs_postgresql
    }
    
    /**
-    * Devuleve el último ID asignado.
+    * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
     * @return boolean
     */
    public function lastval()
@@ -376,16 +419,30 @@ class fs_postgresql
          return FALSE;
    }
    
+   /**
+    * Escapa las comillas de la cadena de texto.
+    * @param type $s
+    * @return type
+    */
    public function escape_string($s)
    {
       return pg_escape_string(self::$link, $s);
    }
    
+   /**
+    * Devuelve el estilo de fecha del motor de base de datos.
+    * @return string
+    */
    public function date_style()
    {
       return 'd-m-Y';
    }
    
+   /**
+    * Devuelve el SQL necesario para convertir la columna a entero.
+    * @param type $col
+    * @return type
+    */
    public function sql_to_int($col)
    {
       return $col.'::integer';
@@ -524,7 +581,10 @@ class fs_postgresql
                $num = 1;
                $aux_num = $this->select("SELECT MAX(".$colname."::integer) as num FROM ".$table_name.";");
                if($aux_num)
+               {
                   $num += intval($aux_num[0]['num']);
+               }
+               
                $this->exec("CREATE SEQUENCE ".$aux[1]." START ".$num.";");
             }
          }
@@ -637,6 +697,11 @@ class fs_postgresql
       return $consulta.' ); '.$this->compare_constraints($table_name, $xml_restricciones, FALSE);
    }
    
+   /**
+    * Debería realizar comprobaciones extra, pero en PostgreSQL no es necesario.
+    * @param type $table_name
+    * @return boolean
+    */
    public function check_table_aux($table_name)
    {
       return TRUE;
