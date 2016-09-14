@@ -57,10 +57,10 @@ class forma_pago extends \fs_model
     */
    public $vencimiento;
    
-   public function __construct($f=FALSE)
+   public function __construct($f = FALSE)
    {
       parent::__construct('formaspago');
-      if( $f )
+      if($f)
       {
          $this->codpago = $f['codpago'];
          $this->descripcion = $f['descripcion'];
@@ -138,13 +138,31 @@ class forma_pago extends \fs_model
    }
    
    /**
+    * Comprueba la validez de los datos de la forma de pago.
+    */
+   public function test()
+   {
+      $this->descripcion = $this->no_html($this->descripcion);
+      
+      /// comprobamos la validez del vencimiento
+      $fecha1 = Date('d-m-Y');
+      $fecha2 = Date('d-m-Y', strtotime($this->vencimiento));
+      if( strtotime($fecha1) > strtotime($fecha2) )
+      {
+         /// vencimiento no válido, asignamos el predeterminado
+         $this->new_error_msg('Vencimiento no válido.');
+         $this->vencimiento = '+1month';
+      }
+   }
+   
+   /**
     * Guarda los datos en la base de datos
     * @return type
     */
    public function save()
    {
-      $this->descripcion = $this->no_html($this->descripcion);
       $this->clean_cache();
+      $this->test();
       
       if( $this->exists() )
       {

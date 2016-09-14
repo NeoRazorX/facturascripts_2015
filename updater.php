@@ -243,9 +243,6 @@ class fs_updater
                $this->recurse_copy('facturascripts_2015-master/', '.');
                $this->delTree('facturascripts_2015-master/');
                
-               /// limpiamos la caché
-               $this->clean_cache();
-               
                $this->mensajes = 'Actualizado correctamente.';
                break;
             }
@@ -305,9 +302,6 @@ class fs_updater
                   }
                }
                
-               /// limpiamos la caché
-               $this->clean_cache();
-               
                $this->mensajes = 'Plugin actualizado correctamente.';
             }
             else
@@ -346,9 +340,6 @@ class fs_updater
                /// renombramos el directorio
                rename('plugins/' . $_GET['name'] . '-master', 'plugins/' . $_GET['name']);
             }
-            
-            /// limpiamos la caché
-            $this->clean_cache();
             
             $this->mensajes = 'Plugin actualizado correctamente.';
          }
@@ -634,21 +625,6 @@ class fs_updater
       }
       
       return $this->download_list2;
-   }
-
-   private function clean_cache()
-   {
-      $cache = new fs_cache();
-      $cache->clean();
-
-      /// borramos los archivos temporales del motor de plantillas
-      foreach(scandir(getcwd() . '/tmp/'.FS_TMP_NAME) as $f)
-      {
-         if(substr($f, -4) == '.php')
-         {
-            unlink('tmp/'.FS_TMP_NAME.$f);
-         }
-      }
    }
 }
 
