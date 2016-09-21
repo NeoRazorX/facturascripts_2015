@@ -45,12 +45,54 @@ class fs_controller
     * @var fs_db2
     */
    protected $db;
+   
+   /**
+    * Este objeto permite interactuar con memcache
+    * @var fs_cache
+    */
+   protected $cache;
+   
+   /**
+    * Permite calcular cuanto tarda en procesarse la página.
+    * @var type 
+    */
    private $uptime;
+   
+   /**
+    * Listado de errores en pantalla.
+    * @var type 
+    */
    private $errors;
+   
+   /**
+    * Listado de mensajes en pantalla.
+    * @var type 
+    */
    private $messages;
+   
+   /**
+    * Listado de consejos en pantalla.
+    * @var type 
+    */
    private $advices;
+   
+   /**
+    * Listado con los últimos cambios en documentos.
+    * @var type 
+    */
    private $last_changes;
+   
+   /**
+    * Almecena el simbolo de la divisa predeterminada de la empresa.
+    * @var type 
+    */
    private $simbolo_divisas;
+   
+   /**
+    * Indica si FacturaScripts está actualizado o no.
+    * @var type 
+    */
+   private $fs_updated;
    
    /**
     * El usuario que ha hecho login
@@ -87,13 +129,12 @@ class fs_controller
     * @var empresa
     */
    public $empresa;
-   public $default_items;
    
    /**
-    * Este objeto permite interactuar con memcache
-    * @var fs_cache
+    * Permite consultar los parámetros predeterminados para series, divisas, forma de pago, etc...
+    * @var fs_default_items 
     */
-   protected $cache;
+   public $default_items;
    
    /**
     * Listado de extensiones de la página
@@ -322,12 +363,15 @@ class fs_controller
       }
       $this->db->clean_errors();
       
-      /// registramos los errores en los modelos
-      foreach($this->empresa->get_errors() as $err)
+      if( isset($this->empresa) )
       {
-         $this->new_error_msg($err, 'model');
+         /// registramos los errores en los modelos
+         foreach($this->empresa->get_errors() as $err)
+         {
+            $this->new_error_msg($err, 'model');
+         }
+         $this->empresa->clean_errors();
       }
-      $this->empresa->clean_errors();
       
       return $this->errors;
    }
@@ -1044,7 +1088,7 @@ class fs_controller
    {
       $txt = 'facturascripts: '.$this->version()."\n";
       
-      if( $this->db->connect() )
+      if( $this->db->connected() )
       {
          if($this->user->logged_on)
          {
@@ -1085,6 +1129,12 @@ class fs_controller
                $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
             }
          }
+      }
+      else
+      {
+         $txt .= 'os: '.php_uname()."\n";
+         $txt .= 'php: '.phpversion()."\n";
+         $txt .= 'database type: '.FS_DB_TYPE."\n";
       }
       
       foreach($this->get_errors() as $e)
@@ -1304,26 +1354,31 @@ class fs_controller
     */
    public function check_for_updates()
    {
-      if($this->user->admin)
+      if( !isset($this->fs_updated) )
       {
-         $desactivado = FALSE;
-         if( defined('FS_DISABLE_MOD_PLUGINS') )
-         {
-            $desactivado = FS_DISABLE_MOD_PLUGINS;
-         }
+         $this->fs_updated = FALSE;
          
-         if($desactivado)
+         if($this->user->admin)
          {
-            return FALSE;
-         }
-         else
-         {
-            $fsvar = new fs_var();
-            return $fsvar->simple_get('updates');
+            $desactivado = FALSE;
+            if( defined('FS_DISABLE_MOD_PLUGINS') )
+            {
+               $desactivado = FS_DISABLE_MOD_PLUGINS;
+            }
+            
+            if($desactivado)
+            {
+               $this->fs_updated = FALSE;
+            }
+            else
+            {
+               $fsvar = new fs_var();
+               $this->fs_updated = $fsvar->simple_get('updates');
+            }
          }
       }
-      else
-         return FALSE;
+      
+      return $this->fs_updated;
    }
 
    /**

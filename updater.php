@@ -54,13 +54,7 @@ class fs_updater
       $this->tr_options = '';
       $this->tr_updates = '';
       $this->version = '';
-      
-      $this->xid = '';
-      $e = $this->cache->get_array('empresa');
-      if($e)
-      {
-         $this->xid = $e[0]['xid'];
-      }
+      $this->xid();
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
@@ -625,6 +619,24 @@ class fs_updater
       }
       
       return $this->download_list2;
+   }
+   
+   private function xid()
+   {
+      $this->xid = '';
+      $e = $this->cache->get_array('empresa');
+      if($e)
+      {
+         $this->xid = $e[0]['xid'];
+         if( !isset($_COOKIE['uxid']) )
+         {
+            setcookie('uxid', $this->xid, 10800);
+         }
+      }
+      else if( isset($_COOKIE['uxid']) )
+      {
+         $this->xid = $_COOKIE['uxid'];
+      }
    }
 }
 

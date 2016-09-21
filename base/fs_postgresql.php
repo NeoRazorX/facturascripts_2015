@@ -426,7 +426,14 @@ class fs_postgresql
     */
    public function escape_string($s)
    {
-      return pg_escape_string(self::$link, $s);
+      if(self::$link)
+      {
+         return pg_escape_string(self::$link, $s);
+      }
+      else
+      {
+         return $s;
+      }
    }
    
    /**
