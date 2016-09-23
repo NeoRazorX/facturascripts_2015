@@ -111,7 +111,7 @@ if( $db->connect() )
    /// guardamos las variables
    $fsvar->array_save($cron_vars);
    
-   foreach($fslog->get_errors() as $err)
+   foreach($fsvar->get_errors() as $err)
    {
       echo "\nERROR: ".$err."\n";
    }
