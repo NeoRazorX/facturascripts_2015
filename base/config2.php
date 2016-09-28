@@ -27,6 +27,11 @@ if( !defined('FS_PATH') )
    define('FS_PATH', '');
 }
 
+if( !defined('FS_MYDOCS') )
+{
+   define('FS_MYDOCS', '');
+}
+
 if(FS_TMP_NAME != '' AND !file_exists('tmp/'.FS_TMP_NAME) )
 {
    if( !file_exists('tmp') )
