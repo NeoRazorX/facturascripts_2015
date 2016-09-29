@@ -204,27 +204,28 @@ class fs_controller
             $this->template = 'login/default';
             $this->log_out();
          }
-         else if( isset($_POST['new_password']) AND isset($_POST['new_password2']) )
+         else if( isset($_POST['new_password']) AND isset($_POST['new_password2']) AND isset($_POST['user']) )
          {
             $ips = array();
             
             if( $this->ip_baneada($ips) )
             {
                $this->banear_ip($ips);
-               $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
+               $this->new_error_msg('Tu IP ha sido baneada '.$_POST['user'].'. '
+                       . 'Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
             }
             else if($_POST['new_password'] != $_POST['new_password2'])
             {
-               $this->new_error_msg('Las contraseñas no coinciden.');
+               $this->new_error_msg('Las contraseñas no coinciden '.$_POST['user']);
             }
             else if($_POST['new_password'] == '')
             {
-               $this->new_error_msg('Tienes que escribir una contraseña nueva.');
+               $this->new_error_msg('Tienes que escribir una contraseña nueva '.$_POST['user']);
             }
             else if($_POST['db_password'] != FS_DB_PASS)
             {
                $this->banear_ip($ips);
-               $this->new_error_msg('La contraseña de la base de datos es incorrecta.');
+               $this->new_error_msg('La contraseña de la base de datos es incorrecta '.$_POST['user']);
             }
             else
             {
@@ -234,10 +235,10 @@ class fs_controller
                   $suser->set_password($_POST['new_password']);
                   if( $suser->save() )
                   {
-                     $this->new_message('Contraseña cambiada correctamente.');
+                     $this->new_message('Contraseña cambiada correctamente '.$_POST['user']);
                   }
                   else
-                     $this->new_error_msg('Imposible cambiar la contraseña del usuario.');
+                     $this->new_error_msg('Imposible cambiar la contraseña del usuario '.$_POST['user']);
                }
             }
             
