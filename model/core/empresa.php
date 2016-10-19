@@ -211,6 +211,7 @@ class empresa extends \fs_model
              'mail_password' => '',
              'mail_bcc' => '',
              'mail_firma' => "\n---\nEnviado con FacturaScripts",
+             'mail_mailer' => 'smtp',
              'mail_host' => 'smtp.gmail.com',
              'mail_port' => '465',
              'mail_enc' => 'ssl',
@@ -283,7 +284,7 @@ class empresa extends \fs_model
       $mail = new \PHPMailer();
       $mail->CharSet = 'UTF-8';
       $mail->WordWrap = 50;
-      $mail->isSMTP();
+      $mail->Mailer = $this->email_config['mail_mailer'];
       $mail->SMTPAuth = TRUE;
       $mail->SMTPSecure = $this->email_config['mail_enc'];
       $mail->Host = $this->email_config['mail_host'];
@@ -305,6 +306,18 @@ class empresa extends \fs_model
       }
       
       return $mail;
+   }
+   
+   public function mail_connect(&$mail)
+   {
+      if($this->email_config['mail_mailer'] == 'smtp')
+      {
+         return $mail->smtpConnect($this->smtp_options());
+      }
+      else
+      {
+         return TRUE;
+      }
    }
    
    /**
