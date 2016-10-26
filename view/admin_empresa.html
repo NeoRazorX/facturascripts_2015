@@ -136,18 +136,35 @@
                            <input class="form-control" type="number" name="mail_port" value="{$fsc->empresa->email_config['mail_port']}" autocomplete="off"/>
                         </div>
                      </div>
-                     <div class="col-sm-3">
+                     <div class="col-sm-2">
                         <div class="form-group">
                            Encriptación:
                            <select name="mail_enc" class="form-control">
-                              <option value="ssl">SSL</option>
-                              <option value="tls"{if="$fsc->empresa->email_config['mail_enc']=='tls'"} selected=""{/if}>TLS</option>
-                              <option value="">---</option>
-                              <option value=""{if="$fsc->empresa->email_config['mail_enc']==''"} selected=""{/if}>Ninguna</option>
+                           {loop="$fsc->encriptaciones()"}
+                              {if="$key==$fsc->empresa->email_config['mail_enc']"}
+                              <option value="{$key}" selected="">{$value}</option>
+                              {else}
+                              <option value="{$key}">{$value}</option>
+                              {/if}
+                           {/loop}
                            </select>
                         </div>
                      </div>
-                     <div class="col-sm-3">
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Envío por:
+                           <select name="mail_mailer" class="form-control">
+                           {loop="$fsc->mailers()"}
+                              {if="$key==$fsc->empresa->email_config['mail_mailer']"}
+                              <option value="{$key}" selected="">{$value}</option>
+                              {else}
+                              <option value="{$key}">{$value}</option>
+                              {/if}
+                           {/loop}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
                         <div class="form-group">
                            Usuario:
                            <input class="form-control" type="text" name="mail_user" value="{$fsc->empresa->email_config['mail_user']}" autocomplete="off"/>

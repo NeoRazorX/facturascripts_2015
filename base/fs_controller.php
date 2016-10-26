@@ -45,12 +45,54 @@ class fs_controller
     * @var fs_db2
     */
    protected $db;
+   
+   /**
+    * Este objeto permite interactuar con memcache
+    * @var fs_cache
+    */
+   protected $cache;
+   
+   /**
+    * Permite calcular cuanto tarda en procesarse la página.
+    * @var type 
+    */
    private $uptime;
+   
+   /**
+    * Listado de errores en pantalla.
+    * @var type 
+    */
    private $errors;
+   
+   /**
+    * Listado de mensajes en pantalla.
+    * @var type 
+    */
    private $messages;
+   
+   /**
+    * Listado de consejos en pantalla.
+    * @var type 
+    */
    private $advices;
+   
+   /**
+    * Listado con los últimos cambios en documentos.
+    * @var type 
+    */
    private $last_changes;
+   
+   /**
+    * Almecena el simbolo de la divisa predeterminada de la empresa.
+    * @var type 
+    */
    private $simbolo_divisas;
+   
+   /**
+    * Indica si FacturaScripts está actualizado o no.
+    * @var type 
+    */
+   private $fs_updated;
    
    /**
     * El usuario que ha hecho login
@@ -87,13 +129,12 @@ class fs_controller
     * @var empresa
     */
    public $empresa;
-   public $default_items;
    
    /**
-    * Este objeto permite interactuar con memcache
-    * @var fs_cache
+    * Permite consultar los parámetros predeterminados para series, divisas, forma de pago, etc...
+    * @var fs_default_items 
     */
-   protected $cache;
+   public $default_items;
    
    /**
     * Listado de extensiones de la página
@@ -163,27 +204,28 @@ class fs_controller
             $this->template = 'login/default';
             $this->log_out();
          }
-         else if( isset($_POST['new_password']) AND isset($_POST['new_password2']) )
+         else if( isset($_POST['new_password']) AND isset($_POST['new_password2']) AND isset($_POST['user']) )
          {
             $ips = array();
             
             if( $this->ip_baneada($ips) )
             {
                $this->banear_ip($ips);
-               $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
+               $this->new_error_msg('Tu IP ha sido baneada '.$_POST['user'].'. '
+                       . 'Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
             }
             else if($_POST['new_password'] != $_POST['new_password2'])
             {
-               $this->new_error_msg('Las contraseñas no coinciden.');
+               $this->new_error_msg('Las contraseñas no coinciden '.$_POST['user']);
             }
             else if($_POST['new_password'] == '')
             {
-               $this->new_error_msg('Tienes que escribir una contraseña nueva.');
+               $this->new_error_msg('Tienes que escribir una contraseña nueva '.$_POST['user']);
             }
             else if($_POST['db_password'] != FS_DB_PASS)
             {
                $this->banear_ip($ips);
-               $this->new_error_msg('La contraseña de la base de datos es incorrecta.');
+               $this->new_error_msg('La contraseña de la base de datos es incorrecta '.$_POST['user']);
             }
             else
             {
@@ -193,10 +235,10 @@ class fs_controller
                   $suser->set_password($_POST['new_password']);
                   if( $suser->save() )
                   {
-                     $this->new_message('Contraseña cambiada correctamente.');
+                     $this->new_message('Contraseña cambiada correctamente '.$_POST['user']);
                   }
                   else
-                     $this->new_error_msg('Imposible cambiar la contraseña del usuario.');
+                     $this->new_error_msg('Imposible cambiar la contraseña del usuario '.$_POST['user']);
                }
             }
             
@@ -285,24 +327,27 @@ class fs_controller
     * Muestra al usuario un mensaje de error
     * @param type $msg el mensaje a mostrar
     */
-   public function new_error_msg($msg = FALSE, $tipo = 'error', $alerta = FALSE)
+   public function new_error_msg($msg = FALSE, $tipo = 'error', $alerta = FALSE, $guardar = TRUE)
    {
       if($msg)
       {
          $this->errors[] = str_replace("\n", ' ', $msg);
          
-         $fslog = new fs_log();
-         $fslog->tipo = $tipo;
-         $fslog->detalle = $msg;
-         $fslog->ip = $_SERVER['REMOTE_ADDR'];
-         $fslog->alerta = $alerta;
-         
-         if($this->user)
+         if($guardar)
          {
-            $fslog->usuario = $this->user->nick;
+            $fslog = new fs_log();
+            $fslog->tipo = $tipo;
+            $fslog->detalle = $msg;
+            $fslog->ip = $_SERVER['REMOTE_ADDR'];
+            $fslog->alerta = $alerta;
+            
+            if($this->user)
+            {
+               $fslog->usuario = $this->user->nick;
+            }
+            
+            $fslog->save();
          }
-         
-         $fslog->save();
       }
    }
    
@@ -312,14 +357,24 @@ class fs_controller
     */
    public function get_errors()
    {
-      $full = array_merge( $this->errors, $this->db->get_errors() );
+      /// registramos los errores en la base de datos
+      foreach($this->db->get_errors() as $err)
+      {
+         $this->new_error_msg($err, 'db');
+      }
+      $this->db->clean_errors();
       
       if( isset($this->empresa) )
       {
-         $full = array_merge( $full, $this->empresa->get_errors() );
+         /// registramos los errores en los modelos
+         foreach($this->empresa->get_errors() as $err)
+         {
+            $this->new_error_msg($err, 'model');
+         }
+         $this->empresa->clean_errors();
       }
       
-      return $full;
+      return $this->errors;
    }
    
    /**
@@ -1034,7 +1089,7 @@ class fs_controller
    {
       $txt = 'facturascripts: '.$this->version()."\n";
       
-      if( $this->db->connect() )
+      if( $this->db->connected() )
       {
          if($this->user->logged_on)
          {
@@ -1075,6 +1130,12 @@ class fs_controller
                $txt .= 'url: '.$_SERVER['REQUEST_URI']."\n------";
             }
          }
+      }
+      else
+      {
+         $txt .= 'os: '.php_uname()."\n";
+         $txt .= 'php: '.phpversion()."\n";
+         $txt .= 'database type: '.FS_DB_TYPE."\n";
       }
       
       foreach($this->get_errors() as $e)
@@ -1294,26 +1355,31 @@ class fs_controller
     */
    public function check_for_updates()
    {
-      if($this->user->admin)
+      if( !isset($this->fs_updated) )
       {
-         $desactivado = FALSE;
-         if( defined('FS_DISABLE_MOD_PLUGINS') )
-         {
-            $desactivado = FS_DISABLE_MOD_PLUGINS;
-         }
+         $this->fs_updated = FALSE;
          
-         if($desactivado)
+         if($this->user->admin)
          {
-            return FALSE;
-         }
-         else
-         {
-            $fsvar = new fs_var();
-            return $fsvar->simple_get('updates');
+            $desactivado = FALSE;
+            if( defined('FS_DISABLE_MOD_PLUGINS') )
+            {
+               $desactivado = FS_DISABLE_MOD_PLUGINS;
+            }
+            
+            if($desactivado)
+            {
+               $this->fs_updated = FALSE;
+            }
+            else
+            {
+               $fsvar = new fs_var();
+               $this->fs_updated = $fsvar->simple_get('updates');
+            }
          }
       }
-      else
-         return FALSE;
+      
+      return $this->fs_updated;
    }
 
    /**

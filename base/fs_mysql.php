@@ -29,7 +29,17 @@ class fs_mysql
     * @var type 
     */
    protected static $link;
+   
+   /**
+    * Nº de selects ejecutados.
+    * @var type 
+    */
    protected static $t_selects;
+   
+   /**
+    * Nº de transacciones ejecutadas.
+    * @var type 
+    */
    protected static $t_transactions;
    
    /**
@@ -78,9 +88,21 @@ class fs_mysql
       return self::$history;
    }
    
+   /**
+    * Devuelve la lista de errores.
+    * @return type
+    */
    public function get_errors()
    {
       return self::$errors;
+   }
+   
+   /**
+    * Vacía la lista de errores.
+    */
+   public function clean_errors()
+   {
+      self::$errors = array();
    }
    
    /**
@@ -124,6 +146,10 @@ class fs_mysql
       return $connected;
    }
    
+   /**
+    * Devuelve TRUE si se está conectado a la base de datos.
+    * @return boolean
+    */
    public function connected()
    {
       if(self::$link)
@@ -248,11 +274,19 @@ class fs_mysql
       return $indices;
    }
    
+   /**
+    * Devuelve un array con los datos de bloqueos en la base de datos.
+    * @return type
+    */
    public function get_locks()
    {
       return array();
    }
    
+   /**
+    * Devuelve el motor de base de datos y la versión.
+    * @return boolean
+    */
    public function version()
    {
       if(self::$link)
@@ -388,6 +422,9 @@ class fs_mysql
       return $resultado;
    }
    
+   /**
+    * Inicia una transacción SQL.
+    */
    public function begin_transaction()
    {
       if(self::$link)
@@ -396,6 +433,9 @@ class fs_mysql
       }
    }
    
+   /**
+    * Guarda los cambios de una transacción SQL.
+    */
    public function commit()
    {
       if(self::$link)
@@ -404,6 +444,9 @@ class fs_mysql
       }
    }
    
+   /**
+    * Deshace los cambios de una transacción SQL.
+    */
    public function rollback()
    {
       if(self::$link)
@@ -413,7 +456,7 @@ class fs_mysql
    }
    
    /**
-    * Devuleve el último ID asignado.
+    * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
     * @return boolean
     */
    public function lastval()
@@ -427,6 +470,11 @@ class fs_mysql
          return FALSE;
    }
    
+   /**
+    * Escapa las comillas de la cadena de texto.
+    * @param type $s
+    * @return type
+    */
    public function escape_string($s)
    {
       if(self::$link)
@@ -437,11 +485,20 @@ class fs_mysql
          return $s;
    }
    
+   /**
+    * Devuelve el estilo de fecha del motor de base de datos.
+    * @return string
+    */
    public function date_style()
    {
       return 'Y-m-d';
    }
    
+   /**
+    * Devuelve el SQL necesario para convertir la columna a entero.
+    * @param type $col
+    * @return type
+    */
    public function sql_to_int($col)
    {
       return 'CAST('.$col.' as UNSIGNED)';
@@ -863,6 +920,11 @@ class fs_mysql
               .'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
    }
    
+   /**
+    * Genera el SQL para establecer las restricciones proporcionadas.
+    * @param type $xml_restricciones
+    * @return type
+    */
    private function generate_table_constraints($xml_restricciones)
    {
       $consulta = '';
@@ -890,6 +952,11 @@ class fs_mysql
       return $consulta;
    }
    
+   /**
+    * Realiza comprobaciones extra a la tabla.
+    * @param type $table_name
+    * @return type
+    */
    public function check_table_aux($table_name)
    {
       $retorno = TRUE;

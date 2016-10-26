@@ -128,7 +128,9 @@ class admin_user extends fs_controller
          $this->user_log = $fslog->all_from($this->suser->nick);
       }
       else
-         $this->new_error_msg("Usuario no encontrado.");
+      {
+         $this->new_error_msg("Usuario no encontrado.", 'error', FALSE, FALSE);
+      }
    }
    
    public function url()

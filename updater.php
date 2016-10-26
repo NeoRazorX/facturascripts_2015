@@ -54,20 +54,14 @@ class fs_updater
       $this->tr_options = '';
       $this->tr_updates = '';
       $this->version = '';
-      
-      $this->xid = '';
-      $e = $this->cache->get_array('empresa');
-      if($e)
-      {
-         $this->xid = $e[0]['xid'];
-      }
+      $this->xid();
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
          /// ¿Están todos los permisos correctos?
          if( !isset($_GET['update']) AND ! isset($_GET['reinstall']) AND ! isset($_GET['plugin']) )
          {
-            foreach($this->__areWritable($this->__getAllSubDirectories('.')) as $dir)
+            foreach($this->__are_writable($this->__get_all_sub_directories('.')) as $dir)
             {
                $this->errores .= 'No se puede escribir sobre el directorio ' . $dir . '<br/>';
             }
@@ -232,19 +226,16 @@ class fs_updater
                unlink('update.zip');
                
                /// eliminamos archivos antiguos
-               $this->delTree('base/');
-               $this->delTree('controller/');
-               $this->delTree('extras/');
-               $this->delTree('model/');
-               $this->delTree('raintpl/');
-               $this->delTree('view/');
+               $this->del_tree('base/');
+               $this->del_tree('controller/');
+               $this->del_tree('extras/');
+               $this->del_tree('model/');
+               $this->del_tree('raintpl/');
+               $this->del_tree('view/');
                
                /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
                $this->recurse_copy('facturascripts_2015-master/', '.');
-               $this->delTree('facturascripts_2015-master/');
-               
-               /// limpiamos la caché
-               $this->clean_cache();
+               $this->del_tree('facturascripts_2015-master/');
                
                $this->mensajes = 'Actualizado correctamente.';
                break;
@@ -275,7 +266,7 @@ class fs_updater
                $plugins_list = scandir(getcwd().'/plugins');
                
                /// eliminamos los archivos antiguos
-               $this->delTree('plugins/' . $_GET['plugin']);
+               $this->del_tree('plugins/' . $_GET['plugin']);
                
                /// descomprimimos
                $zip->extractTo('plugins/');
@@ -305,9 +296,6 @@ class fs_updater
                   }
                }
                
-               /// limpiamos la caché
-               $this->clean_cache();
-               
                $this->mensajes = 'Plugin actualizado correctamente.';
             }
             else
@@ -334,7 +322,7 @@ class fs_updater
          if($zip_status === TRUE)
          {
             /// eliminamos los archivos antiguos
-            $this->delTree('plugins/' . $_GET['name']);
+            $this->del_tree('plugins/' . $_GET['name']);
             
             /// descomprimimos
             $zip->extractTo('plugins/');
@@ -346,9 +334,6 @@ class fs_updater
                /// renombramos el directorio
                rename('plugins/' . $_GET['name'] . '-master', 'plugins/' . $_GET['name']);
             }
-            
-            /// limpiamos la caché
-            $this->clean_cache();
             
             $this->mensajes = 'Plugin actualizado correctamente.';
          }
@@ -382,17 +367,17 @@ class fs_updater
       closedir($dir);
    }
 
-   private function delTree($dir)
+   private function del_tree($dir)
    {
       $files = array_diff(scandir($dir), array('.', '..'));
       foreach($files as $file)
       {
-         (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+         (is_dir("$dir/$file")) ? $this->del_tree("$dir/$file") : unlink("$dir/$file");
       }
       return rmdir($dir);
    }
 
-   private function __getAllSubDirectories($base_dir)
+   private function __get_all_sub_directories($base_dir)
    {
       $directories = array();
 
@@ -407,14 +392,14 @@ class fs_updater
          if( is_dir($dir) )
          {
             $directories[] = $dir;
-            $directories = array_merge($directories, $this->__getAllSubDirectories($dir));
+            $directories = array_merge($directories, $this->__get_all_sub_directories($dir));
          }
       }
 
       return $directories;
    }
 
-   private function __areWritable($dirlist)
+   private function __are_writable($dirlist)
    {
       $notwritable = array();
 
@@ -422,7 +407,21 @@ class fs_updater
       {
          if( !is_writable($dir) )
          {
-            $notwritable[] = $dir;
+            /// Comprobamos si podemos solucionar los permisos del scripts de forma automatica
+            if( ini_get('safe_mode') )
+            {
+               /// PHP Safe Mode activado
+               $notwritable[] = $dir;
+            }
+            else
+            {
+               /// PHP Safe Mode desactivado
+               /// Le damos todos los permisos al usuario, y lectura y ejecución a grupo y otros
+               if( !chmod($dir, 0764) )
+               {
+                  $notwritable[] = $dir;
+               }
+            }
          }
       }
 
@@ -635,19 +634,22 @@ class fs_updater
       
       return $this->download_list2;
    }
-
-   private function clean_cache()
+   
+   private function xid()
    {
-      $cache = new fs_cache();
-      $cache->clean();
-
-      /// borramos los archivos temporales del motor de plantillas
-      foreach(scandir(getcwd() . '/tmp/'.FS_TMP_NAME) as $f)
+      $this->xid = '';
+      $e = $this->cache->get_array('empresa');
+      if($e)
       {
-         if(substr($f, -4) == '.php')
+         $this->xid = $e[0]['xid'];
+         if( !isset($_COOKIE['uxid']) )
          {
-            unlink('tmp/'.FS_TMP_NAME.$f);
+            setcookie('uxid', $this->xid, 10800);
          }
+      }
+      else if( isset($_COOKIE['uxid']) )
+      {
+         $this->xid = $_COOKIE['uxid'];
       }
    }
 }

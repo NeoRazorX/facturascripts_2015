@@ -69,6 +69,7 @@ class admin_empresa extends fs_controller
          $this->empresa->email_config['mail_password'] = $_POST['mail_password'];
          $this->empresa->email_config['mail_bcc'] = $_POST['mail_bcc'];
          $this->empresa->email_config['mail_firma'] = $_POST['mail_firma'];
+         $this->empresa->email_config['mail_mailer'] = $_POST['mail_mailer'];
          $this->empresa->email_config['mail_host'] = $_POST['mail_host'];
          $this->empresa->email_config['mail_port'] = intval($_POST['mail_port']);
          $this->empresa->email_config['mail_enc'] = strtolower($_POST['mail_enc']);
@@ -101,7 +102,7 @@ class admin_empresa extends fs_controller
             $mail->msgHTML('TEST');
             $mail->isHTML(TRUE);
             
-            if( !$mail->smtpConnect($this->empresa->smtp_options()) )
+            if( !$this->empresa->mail_connect($mail) )
             {
                $this->new_error_msg('No se ha podido conectar por email. ¿La contraseña es correcta?');
                
@@ -126,5 +127,23 @@ class admin_empresa extends fs_controller
                     . ' imprescindible para enviar emails.');
          }
       }
+   }
+   
+   public function encriptaciones()
+   {
+      return array(
+          'ssl' => 'SSL',
+          'tls' => 'TLS',
+          '' => 'Ninguna'
+      );
+   }
+   
+   public function mailers()
+   {
+      return array(
+          'mail' => 'Mail',
+          'sendmail' => 'SendMail',
+          'smtp' => 'SMTP'
+      );
    }
 }

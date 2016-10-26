@@ -136,10 +136,10 @@
                            <div class="thumbnail hidden-sm hidden-xs">
                               {if="FS_DEMO"}
                               <img src="{#FS_PATH#}view/img/logo.png" alt="logo"/>
-                              {elseif="file_exists('tmp/'.FS_TMP_NAME.'logo.png')"}
-                              <img src="{#FS_PATH#}tmp/{#FS_TMP_NAME#}logo.png" alt="{$fsc->empresa->nombre}"/>
-                              {elseif="file_exists('tmp/'.FS_TMP_NAME.'logo.jpg')"}
-                              <img src="{#FS_PATH#}tmp/{#FS_TMP_NAME#}logo.jpg" alt="{$fsc->empresa->nombre}"/>
+                              {elseif="file_exists(FS_MYDOCS.'images/logo.png')"}
+                              <img src="images/logo.png" alt="{$fsc->empresa->nombre}"/>
+                              {elseif="file_exists(FS_MYDOCS.'images/logo.jpg')"}
+                              <img src="images/logo.jpg" alt="{$fsc->empresa->nombre}"/>
                               {else}
                               <img src="{#FS_PATH#}view/img/logo.png" alt="logo"/>
                               {/if}

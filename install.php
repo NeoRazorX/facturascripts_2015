@@ -444,13 +444,19 @@ $system_info = str_replace('"', "'", $system_info);
                </div>
                <div class="panel-body">
                   <p>
-                     La carpeta de FacturaScripts no tiene permisos de escritura. Sin esos
-                     permisos, no funcionará FacturaScripts.
+                     La carpeta de FacturaScripts no tiene permisos de escritura.
+                     Estos permisos son necesarios para el sistema de plantillas,
+                     instalar plugin, actualizaciones, etc...
                   </p>
                   <h3>
                      <i class="fa fa-linux" aria-hidden="true"></i> Linux
                   </h3>
                   <pre>sudo chmod -R o+w <?php echo dirname(__FILE__); ?></pre>
+                  <p class="help-block">
+                     Este comando soluciona el problema en el 100% de los casos, pero
+                     puedes optar por una solución más restrictiva, simplemente es necesario
+                     que Apache (o PHP) pueda leer y escribir en la carpeta.
+                  </p>
                   <h3>
                      <i class="fa fa-globe" aria-hidden="true"></i> Hosting
                   </h3>

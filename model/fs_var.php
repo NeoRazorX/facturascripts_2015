@@ -178,7 +178,7 @@ class fs_var extends fs_model
     * 
     * @param type $array
     */
-   public function array_get($array, $replace=TRUE)
+   public function array_get($array, $replace = TRUE)
    {
       /// obtenemos todos los resultados y seleccionamos los que necesitamos
       $data = $this->db->select("SELECT * FROM ".$this->table_name.";");

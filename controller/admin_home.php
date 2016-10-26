@@ -80,6 +80,7 @@ class admin_home extends fs_controller
       {
          /// el sistema ya se ha actualizado
          $fsvar->simple_delete('updates');
+         $this->clean_cache();
       }
       else if(FS_DEMO)
       {
@@ -187,7 +188,7 @@ class admin_home extends fs_controller
                $zip->close();
                $this->new_message('Plugin '.$_FILES['fplugin']['name'].' añadido correctamente. Ya puedes activarlo.');
                
-               $this->cache->clean();
+               $this->clean_cache();
             }
             else
                $this->new_error_msg('Error al abrir el archivo ZIP. Código: '.$res);
@@ -732,8 +733,7 @@ class admin_home extends fs_controller
                $this->load_menu(TRUE);
             }
             
-            /// limpiamos la caché
-            $this->cache->clean();
+            $this->clean_cache();
          }
          else
             $this->new_error_msg('Imposible activar el plugin <b>'.$name.'</b>.');
@@ -841,8 +841,7 @@ class admin_home extends fs_controller
             }
          }
          
-         /// limpiamos la caché
-         $this->cache->clean();
+         $this->clean_cache();
       }
    }
    
@@ -1215,6 +1214,20 @@ class admin_home extends fs_controller
          if( !file_exists('tmp/'.FS_TMP_NAME.'private_keys/.htaccess') )
          {
             file_put_contents('tmp/'.FS_TMP_NAME.'private_keys/.htaccess', 'Deny from all');
+         }
+      }
+   }
+   
+   private function clean_cache()
+   {
+      $this->cache->clean();
+
+      /// borramos los archivos temporales del motor de plantillas
+      foreach(scandir(getcwd() . '/tmp/'.FS_TMP_NAME) as $f)
+      {
+         if(substr($f, -4) == '.php')
+         {
+            unlink('tmp/'.FS_TMP_NAME.$f);
          }
       }
    }

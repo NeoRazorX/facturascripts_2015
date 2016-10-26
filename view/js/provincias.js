@@ -25,6 +25,7 @@ var provincia_list = [
    {value: 'Asturias'},
    {value: 'Ávila'},
    {value: 'Badajoz'},
+   {value: 'Baleares'},
    {value: 'Barcelona'},
    {value: 'Burgos'},
    {value: 'Cáceres'},
