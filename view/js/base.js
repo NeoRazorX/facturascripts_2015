@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var input_number = 'number';
+if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
+{
+   input_number = 'text';
+}
+
 function fs_round(value, precision, mode)
 {
    var m, f, isHalf, sgn;
@@ -191,13 +197,6 @@ var Base64 = {
         return string;
     }
 
-}
-
-function fs_modal(txt,url)
-{
-   $("#modal_iframe h4.modal-title").html( Base64.decode(txt) );
-   $("#modal_iframe iframe").attr('src', url);
-   $("#modal_iframe").modal('show');
 }
 
 $(document).ready(function() {

@@ -403,28 +403,14 @@ class fs_updater
    {
       $notwritable = array();
 
-      foreach ($dirlist as $dir)
+      foreach($dirlist as $dir)
       {
          if( !is_writable($dir) )
          {
-            /// Comprobamos si podemos solucionar los permisos del scripts de forma automatica
-            if( ini_get('safe_mode') )
-            {
-               /// PHP Safe Mode activado
-               $notwritable[] = $dir;
-            }
-            else
-            {
-               /// PHP Safe Mode desactivado
-               /// Le damos todos los permisos al usuario, y lectura y ejecución a grupo y otros
-               if( !chmod($dir, 0764) )
-               {
-                  $notwritable[] = $dir;
-               }
-            }
+            $notwritable[] = $dir;
          }
       }
-
+      
       return $notwritable;
    }
 
@@ -775,7 +761,7 @@ $updater = new fs_updater();
                </p>
                <br/>
                <a href="https://www.facturascripts.com/ideas#mejoras" target="_blank" class="btn btn-block btn-default">
-                  <i class="fa fa-toggle-off fa-3x" aria-hidden="true"></i>
+                  <i class="fa fa-trophy fa-3x" aria-hidden="true"></i>
                   <br/>Mejoras
                </a>
                <p class="help-block">

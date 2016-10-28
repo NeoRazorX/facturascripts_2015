@@ -124,9 +124,7 @@
                      <th class="text-left">Página</th>
                      {loop="$fsc->user->all()"}
                      <th colspan="2" class="text-center">
-                        <a href="{$value->url()}">
-                           <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {$value->nick}
-                        </a>
+                        <a href="{$value->url()}">{$value->nick}</a>
                      </th>
                      {/loop}
                   </tr>
