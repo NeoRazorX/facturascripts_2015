@@ -199,6 +199,13 @@ var Base64 = {
 
 }
 
+function fs_modal(txt,url)
+{
+   $("#modal_iframe h4.modal-title").html( Base64.decode(txt) );
+   $("#modal_iframe iframe").attr('src', url);
+   $("#modal_iframe").modal('show');
+}
+
 $(document).ready(function() {
    $('.datepicker').datepicker();
    $("#b_feedback").click(function(event) {
