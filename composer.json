@@ -26,7 +26,7 @@
             "php -r \"copy('config/local-example.php', 'config/local.php');\""
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "2016.025-dev"
