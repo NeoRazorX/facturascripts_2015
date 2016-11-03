@@ -1,9 +1,8 @@
 {
     "name": "joenilson/facturascripts_2015",
     "description": "Nucleo de FacturaScripts",
-    "version": "2016.025",
     "type": "project",
-    "license": "LGPLv3",
+    "license": "LGPL-3.0",
     "authors": [
         {            
             "name": "NeoRazorX",
@@ -21,6 +20,7 @@
         "issues": "https://www.facturascripts.com/comm3/index.php?page=community_all",
         "source": "https://github.com/joenilson/facturascripts_2015"
     },
+    "prefer-stable": true,
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
