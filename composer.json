@@ -6,9 +6,9 @@
     "type": "project",
     "license": "LGPLv3",
     "authors": [
-        {
-            "name": "Joe Nilson",
-            "email": "joenilson@gmail.com"
+        {            
+            "name": "NeoRazorX",
+            "email": "neorazorx@gmail.com"
         }
     ],
     "minimum-stability": "stable",
