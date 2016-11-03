@@ -15,10 +15,11 @@
         "source": "https://github.com/joenilson/facturascripts_2015"
     },
     "require": {
-        "php": ">=5.3"
+        "php": ">=5.3",
+        "philipp15b/php-i18n": ">=3.x"
     },
     "config": {
-        "vendor-dir": ".",
+        "vendor-dir": "extras",
         "preferred-install": "dist"
     },
     "prefer-stable": true,
