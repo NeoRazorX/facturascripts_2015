@@ -2,7 +2,6 @@
     "name": "joenilson/facturascripts_2015",
     "description": "Nucleo de FacturaScripts",
     "version": "2016.025",
-    "branch": "master", 
     "type": "project",
     "license": "LGPLv3",
     "authors": [
@@ -22,5 +21,10 @@
         "issues": "https://www.facturascripts.com/comm3/index.php?page=community_all",
         "source": "https://github.com/joenilson/facturascripts_2015"
     },
-    "minimum-stability": "dev-master"
+    "scripts": {
+        "post-create-project-cmd": [
+            "php -r \"copy('config/local-example.php', 'config/local.php');\""
+        ]
+    }
+    "minimum-stability": "dev"
 }
