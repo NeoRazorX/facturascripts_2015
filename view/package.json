@@ -1,0 +1,20 @@
+{
+  "name": "facturascripts",
+  "version": "3.0.1",
+  "description": "Facturación y contabilidad fácil, libre y con actualizaciones constantes",
+  "repository": "github:NeoRazorX/facturascripts_2015",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Carlos García",
+  "license": "LGPL-3.0",
+  "dependencies": {
+    "bootstrap-datepicker": "^1.6.4",
+    "bootstrap-sass": "^3.3.7",
+    "jquery": "^3.1.1",
+    "jquery-autocomplete": "^1.2.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-validation": "^1.15.1"
+  }
+}
