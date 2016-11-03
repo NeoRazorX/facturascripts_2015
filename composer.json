@@ -2,6 +2,7 @@
     "name": "joenilson/facturascripts_2015",
     "description": "Nucleo de FacturaScripts",
     "version": "2016.025",
+    "branch": "master", 
     "type": "project",
     "license": "LGPLv3",
     "authors": [
@@ -14,9 +15,6 @@
         "php": ">=5.3"
     },
     "config": {
-        "preferred-install": {
-            "*": "dist"
-        },
         "vendor-dir": "."
     },
     "homepage": "https://www.facturascripts.com",
