@@ -22,11 +22,6 @@
         "issues": "https://www.facturascripts.com/comm3/index.php?page=community_all",
         "source": "https://github.com/joenilson/facturascripts_2015"
     },
-    "scripts": {
-        "post-create-project-cmd": [
-            "php -r \"copy('config/local-example.php', 'config/local.php');\""
-        ]
-    },
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
