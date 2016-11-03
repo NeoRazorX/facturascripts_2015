@@ -9,16 +9,17 @@
             "email": "neorazorx@gmail.com"
         }
     ],
-    "require": {
-        "php": ">=5.3"
-    },
-    "config": {
-        "vendor-dir": "."
-    },
     "homepage": "https://www.facturascripts.com",
     "support": {
         "issues": "https://www.facturascripts.com/comm3/index.php?page=community_all",
         "source": "https://github.com/joenilson/facturascripts_2015"
+    },
+    "require": {
+        "php": ">=5.3"
+    },
+    "config": {
+        "vendor-dir": ".",
+        "preferred-install": "dist"
     },
     "prefer-stable": true,
     "minimum-stability": "dev",
