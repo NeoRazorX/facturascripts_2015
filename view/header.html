@@ -7,21 +7,26 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="{#FS_PATH#}view/img/favicon.ico" />
+
+
+
+
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/main.css" />
    <link rel="stylesheet" href="{#FS_PATH#}{$fsc->user->css}" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/font-awesome.min.css" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/datepicker.css" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/custom.css" />
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.autocomplete.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery-ui.min.js"></script>
+
+
+
+   <script type="text/javascript" src="{#FS_PATH#}view/node_modules/jquery/dist/jquery.min.js"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/node_modules/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js" charset="UTF-8"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/node_modules/jquery-autocomplete/jquery.autocomplete.js"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/node_modules/jquery-ui/ui/widget.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/base.js?updated=2016.25"></script>
    <script type="text/javascript">
       function show_precio(precio, coddivisa)
       {
          coddivisa || ( coddivisa = '{$fsc->empresa->coddivisa}' );
-         
+
          if(coddivisa == '{$fsc->empresa->coddivisa}')
          {
             {if="FS_POS_DIVISA=='right'"}
@@ -59,7 +64,7 @@
                <span class="hidden-sm">{if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</span>
             </a>
          </div>
-         
+
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
@@ -99,7 +104,7 @@
                </li>
                {/if}
             </ul>
-            
+
             <ul class="nav navbar-nav navbar-right">
                {if="$fsc->check_for_updates()"}
                <li>
@@ -109,7 +114,7 @@
                   </a>
                </li>
                {/if}
-               
+
                {if="$fsc->get_last_changes()"}
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -132,7 +137,7 @@
                   </ul>
                </li>
                {/if}
-               
+
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
                      <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
@@ -168,7 +173,7 @@
                      <li><a href="#" id="b_feedback"><span class="glyphicon glyphicon-send"></span>&nbsp; Informar...</a></li>
                   </ul>
                </li>
-               
+
                <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{$fsc->user->nick}">
                      <span class="glyphicon glyphicon-user hidden-xs"></span>
@@ -192,13 +197,13 @@
          </div>
       </div>
    </nav>
-   
+
    {if="$fsc->user->css=='view/css/bootstrap-yeti.min.css'"}
    <div style="margin-bottom: 55px"></div>
    {else}
    <div style="margin-bottom: 70px"></div>
    {/if}
-   
+
    {if="$fsc->get_errors()"}
    <div class="alert alert-danger hidden-print">
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
@@ -214,9 +219,9 @@
       <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
-   
+
    {include="feedback"}
-   
+
    <div class="modal fade" id="modal_iframe" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
          <div class="modal-content">
