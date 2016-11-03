@@ -1,0 +1,29 @@
+{
+    "name": "joenilson/facturascripts_2015",
+    "description": "Nucleo de FacturaScripts",
+    "version": "2016.025",
+    "branch": "master",
+    "type": "project",
+    "license": "LGPLv3",
+    "authors": [
+        {
+            "name": "Joe Nilson",
+            "email": "joenilson@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.3",
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "vendor-dir": "."
+    },
+    "homepage": "https://www.facturascripts.com",
+    "support": {
+        "issues": "https://www.facturascripts.com/comm3/index.php?page=community_all",
+        "source": "https://github.com/joenilson/facturascripts_2015"
+    }
+}
