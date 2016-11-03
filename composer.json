@@ -16,7 +16,7 @@
     },
     "require": {
         "php": ">=5.3",
-        "philipp15b/php-i18n": ">=3.x"
+        "philipp15b/php-i18n": ">=3"
     },
     "config": {
         "vendor-dir": "extras",
