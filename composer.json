@@ -25,6 +25,6 @@
         "post-create-project-cmd": [
             "php -r \"copy('config/local-example.php', 'config/local.php');\""
         ]
-    }
+    },
     "minimum-stability": "dev"
 }
