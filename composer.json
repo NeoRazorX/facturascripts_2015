@@ -11,7 +11,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3"
+        "php": ">=5.3",
+        "joenilson/facturascripts_2015": "dev-master as 2016.025-dev"
     },
     "config": {
         "vendor-dir": "."
