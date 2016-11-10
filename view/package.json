@@ -6,9 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build && scss --no-cache --sourcemap=none --style=compressed css/main.scss:css/main.min.css",
     "build:js": "node build",
-    "build:css": "scss --no-cache --sourcemap=none --style=compressed css/main.scss:css/main.min.css"
+    "build:css": "scss --no-cache --sourcemap=none --style=compressed css/main.scss:css/main.min.css",
+    "build": "npm run build:js && npm run build:css"
   },
   "author": "Carlos García",
   "license": "LGPL-3.0",

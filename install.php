@@ -37,12 +37,12 @@ function guarda_config($nombre_archivo)
       fwrite($archivo, "define('FS_DB_NAME', '".$_REQUEST['db_name']."');\n");
       fwrite($archivo, "define('FS_DB_USER', '".$_REQUEST['db_user']."'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
       fwrite($archivo, "define('FS_DB_PASS', '".$_REQUEST['db_pass']."');\n");
-      
+
       if($_REQUEST['db_type'] == 'MYSQL' AND $_POST['mysql_socket'] != '')
       {
          fwrite($archivo, "ini_set('mysqli.default_socket', '".$_POST['mysql_socket']."');\n");
       }
-      
+
       fwrite($archivo, "\n");
       fwrite($archivo, "/*\n");
       fwrite($archivo, " * Un directorio de nombre aleatorio para mejorar la seguridad del directorio temporal.\n");
@@ -88,7 +88,7 @@ function guarda_config($nombre_archivo)
       fwrite($archivo, "/// desactiva el poder eliminar plugins manualmente\n");
       fwrite($archivo, "define('FS_DISABLE_RM_PLUGINS', FALSE);\n");
       fclose($archivo);
-      
+
       header("Location: index.php");
       exit();
    }
@@ -139,7 +139,7 @@ else if( isset($_REQUEST['db_type']) )
          {
             ini_set('mysqli.default_socket', $_POST['mysql_socket']);
          }
-         
+
          // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
          $connection = @new mysqli($_REQUEST['db_host'], $_REQUEST['db_user'], $_REQUEST['db_pass'], "", intval($_REQUEST['db_port']));
          if($connection->connect_error)
@@ -186,7 +186,7 @@ else if( isset($_REQUEST['db_type']) )
             // Comprobamos que la BD exista, de lo contrario la creamos
             $connection2 = @pg_connect('host='.$_REQUEST['db_host'].' port='.$_REQUEST['db_port'].' dbname='.$_REQUEST['db_name']
                     .' user='.$_REQUEST['db_user'].' password='.$_REQUEST['db_pass'] );
-            
+
             if($connection2)
             {
                guarda_config($nombre_archivo);
@@ -217,7 +217,7 @@ else if( isset($_REQUEST['db_type']) )
          $errors2[] = 'No tienes instalada la extensión de PHP para PostgreSQL.';
       }
    }
-   
+
    $db_type = $_REQUEST['db_type'];
    $db_host = $_REQUEST['db_host'];
    $db_port = $_REQUEST['db_port'];
@@ -249,16 +249,11 @@ $system_info = str_replace('"', "'", $system_info);
    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
-   <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
-   <link rel="stylesheet" href="view/css/font-awesome.min.css" />
-   <link rel="stylesheet" href="view/css/datepicker.css" />
-   <link rel="stylesheet" href="view/css/custom.css" />
-   <script type="text/javascript" src="view/js/jquery.min.js"></script>
-   <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
-   <script type="text/javascript" src="view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
-   <script type="text/javascript" src="view/js/jquery.autocomplete.min.js"></script>
-   <script type="text/javascript" src="view/js/base.js"></script>
-   <script type="text/javascript" src="view/js/jquery.validate.min.js"></script>
+
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/main.min.css" />
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/bootstrap-yeti.min.css" />
+
+   <script type="text/javascript" src="{#FS_PATH#}view/js/build.min.js?v=3.0.1"></script>
 </head>
 <body>
    <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
@@ -317,7 +312,7 @@ $system_info = str_replace('"', "'", $system_info);
          </div>
       </div>
    </nav>
-   
+
    <form name="f_feedback" action="https://www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
       <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
       <input type="hidden" name="feedback_type" value="error"/>
@@ -416,7 +411,7 @@ $system_info = str_replace('"', "'", $system_info);
          });
       });
    </script>
-   
+
    <div class="container">
       <div class="row">
          <div class="col-sm-12">
@@ -429,7 +424,7 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
          </div>
       </div>
-      
+
       <div class="row">
          <div class="col-sm-12">
             <?php
@@ -677,7 +672,7 @@ $system_info = str_replace('"', "'", $system_info);
             ?>
          </div>
       </div>
-      
+
       <div class="row">
          <div class="col-sm-10">
             <b>Antes de empezar...</b>
@@ -699,7 +694,7 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
          </div>
       </div>
-      
+
       <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form" role="form" method="post">
          <div class="row">
             <div class="col-sm-12">
@@ -832,7 +827,7 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
          </div>
       </form>
-      
+
       <div class="row" style="margin-bottom: 20px;">
          <div class="col-sm-12 text-center">
             <hr/>
