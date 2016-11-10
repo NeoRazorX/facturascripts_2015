@@ -5,7 +5,10 @@
   "repository": "github:NeoRazorX/facturascripts_2015",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build && scss --no-cache --sourcemap=none --style=compressed css/main.scss:css/main.min.css",
+    "build:js": "node build",
+    "build:css": "scss --no-cache --sourcemap=none --style=compressed css/main.scss:css/main.min.css"
   },
   "author": "Carlos García",
   "license": "LGPL-3.0",
