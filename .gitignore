@@ -4,4 +4,6 @@
 /doc/
 /tmp/
 node_modules
+/view/css/*
+!/view/css/.gitkeep
 .DS_Store

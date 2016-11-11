@@ -7,7 +7,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:js": "node build",
-    "build:css": "scss --no-cache --sourcemap=none --style=compressed css/main.scss:css/main.min.css",
+    "build:cosmo": "scss --no-cache --style=compressed scss/main-cosmo.scss:css/main-cosmo.min.css",
+    "build:darkly": "scss --no-cache --style=compressed scss/main-darkly.scss:css/main-darkly.min.css",
+    "build:flatly": "scss --no-cache --style=compressed scss/main-flatly.scss:css/main-flatly.min.css",
+    "build:lumen": "scss --no-cache --style=compressed scss/main-lumen.scss:css/main-lumen.min.css",
+    "build:paper": "scss --no-cache --style=compressed scss/main-paper.scss:css/main-paper.min.css",
+    "build:sandstone": "scss --no-cache --style=compressed scss/main-sandstone.scss:css/main-sandstone.min.css",
+    "build:simplex": "scss --no-cache --style=compressed scss/main-simplex.scss:css/main-simplex.min.css",
+    "build:spacelab": "scss --no-cache --style=compressed scss/main-spacelab.scss:css/main-spacelab.min.css",
+    "build:united": "scss --no-cache --style=compressed scss/main-united.scss:css/main-united.min.css",
+    "build:yeti": "scss --no-cache --style=compressed scss/main-yeti.scss:css/main-yeti.min.css",
+    "build:css": "npm run build:cosmo && npm run build:darkly && npm run build:flatly && npm run build:lumen && npm run build:paper && npm run build:sandstone && npm run build:simplex && npm run build:spacelab && npm run build:united && npm run build:yeti",
     "build": "npm run build:js && npm run build:css"
   },
   "author": "Carlos García",
@@ -15,6 +25,7 @@
   "dependencies": {
     "bootstrap-datepicker": "^1.6.4",
     "bootstrap-sass": "^3.3.7",
+    "bootswatch": "^3.3.7",
     "buildify": "^0.4.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.1.1",

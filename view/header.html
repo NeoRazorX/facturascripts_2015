@@ -8,8 +8,7 @@
    <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="{#FS_PATH#}view/img/favicon.ico" />
 
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/main.min.css" />
-   <link rel="stylesheet" href="{#FS_PATH#}{$fsc->user->css}" />
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/main-{$fsc->user->css}.min.css" />
 
    <script type="text/javascript" src="{#FS_PATH#}view/js/build.min.js?v=3.0.1"></script>
 
@@ -189,7 +188,7 @@
       </div>
    </nav>
 
-   {if="$fsc->user->css=='view/css/bootstrap-yeti.min.css'"}
+   {if="$fsc->user->css=='yeti'"}
    <div style="margin-bottom: 55px"></div>
    {else}
    <div style="margin-bottom: 70px"></div>

@@ -653,8 +653,7 @@ $updater = new fs_updater();
        <meta name="generator" content="FacturaScripts"/>
        <link rel="shortcut icon" href="view/img/favicon.ico"/>
 
-       <link rel="stylesheet" href="{#FS_PATH#}view/css/main.min.css"/>
-       <link rel="stylesheet" href="{#FS_PATH#}view/css/bootstrap-yeti.min.css"/>
+       <link rel="stylesheet" href="{#FS_PATH#}view/css/main-yeti.min.css"/>
 
        <script type="text/javascript" src="{#FS_PATH#}view/js/build.min.js?v=3.0.1"></script>
    </head>
