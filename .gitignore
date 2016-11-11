@@ -4,6 +4,7 @@
 /doc/
 /tmp/
 node_modules
+npm-debug.log
 /view/css/*
 !/view/css/.gitkeep
 .DS_Store
