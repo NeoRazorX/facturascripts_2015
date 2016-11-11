@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,94 +31,94 @@ class fs_user extends fs_model
 {
    /**
     * Clave primaria. Varchar (12).
-    * @var type 
+    * @var type
     */
    public $nick;
-   
+
    /**
     * Contraseña, en sha1
-    * @var type 
+    * @var type
     */
    public $password;
-   
+
    /**
     * Email del usuario.
-    * @var type 
+    * @var type
     */
    public $email;
-   
+
    /**
     * Clave de sesión. El cliente se la guarda en una cookie,
     * sirve para no tener que guardar la contraseña.
     * Se regenera cada vez que el cliente inicia sesión. Así se
     * impide que dos personas accedan con el mismo usuario.
-    * @var type 
+    * @var type
     */
    public $log_key;
-   
+
    /**
     * TRUE -> el usuario ha iniciado sesión
     * No se guarda en la base de datos
-    * @var type 
+    * @var type
     */
    public $logged_on;
-   
+
    /**
     * Código del agente/empleado asociado
-    * @var type 
+    * @var type
     */
    public $codagente;
-   
+
    /**
     * El objeto agente asignado. Hay que llamar previamente la función get_agente().
-    * @var type 
+    * @var type
     */
    public $agente;
-   
+
    /**
     * TRUE -> el usuario es un administrador
-    * @var type 
+    * @var type
     */
    public $admin;
-   
+
    /**
     * Fecha del último login.
-    * @var type 
+    * @var type
     */
    public $last_login;
-   
+
    /**
     * Hora del último login.
-    * @var type 
+    * @var type
     */
    public $last_login_time;
-   
+
    /**
     * Última IP usada
-    * @var type 
+    * @var type
     */
    public $last_ip;
-   
+
    /**
     * Último identificador de navegador usado
-    * @var type 
+    * @var type
     */
    public $last_browser;
-   
+
    /**
     * Página de inicio.
-    * @var type 
+    * @var type
     */
    public $fs_page;
-   
+
    /**
     * Plantilla CSS predeterminada.
-    * @var type 
+    * @var type
     */
    public $css;
-   
+
    private $menu;
-   
+
    public function __construct($a = FALSE)
    {
       parent::__construct('fs_users');
@@ -128,32 +128,32 @@ class fs_user extends fs_model
          $this->password = $a['password'];
          $this->email = $a['email'];
          $this->log_key = $a['log_key'];
-         
+
          $this->codagente = NULL;
          if( isset($a['codagente']) )
          {
             $this->codagente = $a['codagente'];
          }
-         
+
          $this->admin = $this->str2bool($a['admin']);
-         
+
          $this->last_login = NULL;
          if($a['last_login'])
          {
             $this->last_login = Date('d-m-Y', strtotime($a['last_login']));
          }
-         
+
          $this->last_login_time = NULL;
          if($a['last_login_time'])
          {
             $this->last_login_time = $a['last_login_time'];
          }
-         
+
          $this->last_ip = $a['last_ip'];
          $this->last_browser = $a['last_browser'];
          $this->fs_page = $a['fs_page'];
-         
-         $this->css = 'view/css/bootstrap-yeti.min.css';
+
+         $this->css = 'yeti';
          if( isset($a['css']) )
          {
             $this->css = $a['css'];
@@ -172,13 +172,13 @@ class fs_user extends fs_model
          $this->last_ip = NULL;
          $this->last_browser = NULL;
          $this->fs_page = NULL;
-         $this->css = 'view/css/bootstrap-yeti.min.css';
+         $this->css = 'yeti';
       }
-      
+
       $this->logged_on = FALSE;
       $this->agente = NULL;
    }
-   
+
    /**
     * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
     * @return type
@@ -186,11 +186,11 @@ class fs_user extends fs_model
    protected function install()
    {
       $this->clean_cache(TRUE);
-      
+
       /// Esta tabla tiene claves ajenas a agentes y fs_pages
       new agente();
       new fs_page();
-      
+
       $this->new_error_msg('Se ha creado el usuario <b>admin</b> con la contraseña <b>admin</b>.');
       if( $this->db->select("SELECT * FROM agentes WHERE codagente = '1';") )
       {
@@ -203,7 +203,7 @@ class fs_user extends fs_model
             VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
       }
    }
-   
+
    public function url()
    {
       if( is_null($this->nick) )
@@ -213,7 +213,7 @@ class fs_user extends fs_model
       else
          return 'index.php?page=admin_user&snick='.$this->nick;
    }
-   
+
    /**
     * Devuelve el agente/empleado asociado
     * @return boolean|agente
@@ -245,7 +245,7 @@ class fs_user extends fs_model
          }
       }
    }
-   
+
    public function get_agente_fullname()
    {
       $agente = $this->get_agente();
@@ -256,7 +256,7 @@ class fs_user extends fs_model
       else
          return $this->nick;
    }
-   
+
    public function get_agente_url()
    {
       $agente = $this->get_agente();
@@ -267,7 +267,7 @@ class fs_user extends fs_model
       else
          return '#';
    }
-   
+
    /**
     * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
     * @param type $reload
@@ -279,7 +279,7 @@ class fs_user extends fs_model
       {
          $this->menu = array();
          $page = new fs_page();
-         
+
          if($this->admin OR FS_DEMO)
          {
             $this->menu = $page->all();
@@ -303,7 +303,7 @@ class fs_user extends fs_model
       }
       return $this->menu;
    }
-   
+
    /**
     * Devuelve TRUE si el usuario tiene acceso a la página solicitada.
     * @param type $page_name
@@ -320,10 +320,10 @@ class fs_user extends fs_model
             break;
          }
       }
-      
+
       return $status;
    }
-   
+
    /**
     * Devuelve TRUE si el usuario tiene permiso para eliminar elementos en la página solicitada.
     * @param type $page_name
@@ -347,10 +347,10 @@ class fs_user extends fs_model
             }
          }
       }
-      
+
       return $status;
    }
-   
+
    /**
     * Devuelve la lista de accesos permitidos del cliente.
     * @return type
@@ -360,7 +360,7 @@ class fs_user extends fs_model
       $access = new fs_access();
       return $access->all_from_nick($this->nick);
    }
-   
+
    public function show_last_login()
    {
       if( is_null($this->last_login) )
@@ -372,7 +372,7 @@ class fs_user extends fs_model
          return Date('d-m-Y', strtotime($this->last_login)).' '.$this->last_login_time;
       }
    }
-   
+
    public function set_password($p='')
    {
       $p = trim($p);
@@ -387,7 +387,7 @@ class fs_user extends fs_model
          return FALSE;
       }
    }
-   
+
    /*
     * Modifica y guarda la fecha de login si tiene una diferencia de más de una hora
     * con la fecha guardada, así se evita guardar en cada consulta
@@ -399,7 +399,7 @@ class fs_user extends fs_model
       {
          $this->last_login = Date('d-m-Y');
          $this->last_login_time = Date('H:i:s');
-         
+
          if( isset($_SERVER['HTTP_X_FORWARDED_FOR']) )
          {
             $this->last_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -408,12 +408,12 @@ class fs_user extends fs_model
          {
             $this->last_ip = $_SERVER['REMOTE_ADDR'];
          }
-         
+
          $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
          $this->save();
       }
    }
-   
+
    /**
     * Genera una nueva clave de login, para usar en lugar de la contraseña (via cookie),
     * esto impide que dos o más personas utilicen el mismo usuario al mismo tiempo.
@@ -424,11 +424,11 @@ class fs_user extends fs_model
       {
          $this->log_key = sha1( strval(rand()) );
       }
-      
+
       $this->logged_on = TRUE;
       $this->last_login = Date('d-m-Y');
       $this->last_login_time = Date('H:i:s');
-      
+
       if( isset($_SERVER['HTTP_X_FORWARDED_FOR']) )
       {
          $this->last_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -437,10 +437,10 @@ class fs_user extends fs_model
       {
          $this->last_ip = $_SERVER['REMOTE_ADDR'];
       }
-      
+
       $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
    }
-   
+
    public function get($n = '')
    {
       $u = $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($n).";");
@@ -451,7 +451,7 @@ class fs_user extends fs_model
       else
          return FALSE;
    }
-   
+
    public function exists()
    {
       if( is_null($this->nick) )
@@ -461,12 +461,12 @@ class fs_user extends fs_model
       else
          return $this->db->select("SELECT * FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
-   
+
    public function test()
    {
       $this->nick = trim($this->nick);
       $this->last_browser = $this->no_html($this->last_browser);
-      
+
       if( !preg_match("/^[A-Z0-9_\+\.\-]{3,12}$/i", $this->nick) )
       {
          $this->new_error_msg("Nick no válido. Debe tener entre 3 y 12 caracteres,
@@ -476,13 +476,13 @@ class fs_user extends fs_model
       else
          return TRUE;
    }
-   
+
    public function save()
    {
       if( $this->test() )
       {
          $this->clean_cache();
-         
+
          if( $this->exists() )
          {
             $sql = "UPDATE ".$this->table_name." SET password = ".$this->var2str($this->password)
@@ -515,29 +515,29 @@ class fs_user extends fs_model
                     .",".$this->var2str($this->fs_page)
                     .",".$this->var2str($this->css).");";
          }
-         
+
          return $this->db->exec($sql);
       }
       else
          return FALSE;
    }
-   
+
    public function delete()
    {
       $this->clean_cache();
       return $this->db->exec("DELETE FROM ".$this->table_name." WHERE nick = ".$this->var2str($this->nick).";");
    }
-   
+
    public function clean_cache($full=FALSE)
    {
       $this->cache->delete('m_fs_user_all');
-      
+
       if($full)
       {
          $this->clean_checked_tables();
       }
    }
-   
+
    /**
     * Devuelve la lista completa de usuarios de FacturaScripts.
     * @return \fs_user
@@ -545,7 +545,7 @@ class fs_user extends fs_model
    public function all()
    {
       $userlist = $this->cache->get_array('m_fs_user_all');
-      
+
       if(!$userlist)
       {
          $users = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nick ASC;");
@@ -556,7 +556,7 @@ class fs_user extends fs_model
          }
          $this->cache->set('m_fs_user_all', $userlist);
       }
-      
+
       return $userlist;
    }
 }
