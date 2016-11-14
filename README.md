@@ -7,3 +7,8 @@ Demo online: http://www.facturascripts.com/demo
 
 Si tienes problemas, no dudes en informar:
 https://www.facturascripts.com
+
+## Instalación
+Tras descargar una [release](https://github.com/NeoRazorX/facturascripts_2015/releases), deberás ir a la carpeta `/view/` y ejecutar `npm install`.
+
+Ahora, para asegurar que todos los assets están actualizados, ejecuta `npm run build`.

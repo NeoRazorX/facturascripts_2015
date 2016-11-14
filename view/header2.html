@@ -3,25 +3,19 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->page->title} &lsaquo; {if="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}</title>
-   <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <meta name="generator" content="FacturaScripts" />
-   <link rel="shortcut icon" href="{#FS_PATH#}view/img/favicon.ico" />
-   <link rel="stylesheet" href="{#FS_PATH#}{$fsc->user->css}" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/font-awesome.min.css" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/datepicker.css" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/custom.css" />
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.autocomplete.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery-ui.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/base.js?updated=2016.25"></script>
-   <script type="text/javascript">
+    <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="generator" content="FacturaScripts"/>
+    <link rel="shortcut icon" href="{#FS_PATH#}view/img/favicon.ico"/>
+
+    <link rel="stylesheet" href="{#FS_PATH#}view/css/main-{$fsc->user->css}.min.css"/>
+
+    <script type="text/javascript" src="{#FS_PATH#}view/js/build.min.js?v=3.0.1"></script>
+    <script type="text/javascript">
       function show_precio(precio, coddivisa)
       {
          coddivisa || ( coddivisa = '{$fsc->empresa->coddivisa}' );
-         
+
          if(coddivisa == '{$fsc->empresa->coddivisa}')
          {
             {if="FS_POS_DIVISA=='right'"}
