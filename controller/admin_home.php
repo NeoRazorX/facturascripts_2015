@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,16 +30,16 @@ class admin_home extends fs_controller
    public $download_list2;
    public $paginas;
    public $step;
-   
+
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Panel de control', 'admin', TRUE, TRUE);
    }
-   
+
    protected function private_core()
    {
       $this->check_htaccess();
-      
+
       $this->disable_mod_plugins = FALSE;
       $this->disable_add_plugins = FALSE;
       $this->disable_rm_plugins = FALSE;
@@ -49,23 +49,23 @@ class admin_home extends fs_controller
          $this->disable_add_plugins = FS_DISABLE_MOD_PLUGINS;
          $this->disable_rm_plugins = FS_DISABLE_MOD_PLUGINS;
       }
-      
+
       if(!$this->disable_mod_plugins)
       {
          if( defined('FS_DISABLE_ADD_PLUGINS') )
          {
             $this->disable_add_plugins = FS_DISABLE_ADD_PLUGINS;
          }
-         
+
          if( defined('FS_DISABLE_RM_PLUGINS') )
          {
             $this->disable_rm_plugins = FS_DISABLE_RM_PLUGINS;
          }
       }
-      
+
       $this->get_download_list();
       $fsvar = new fs_var();
-      
+
       if( isset($_GET['check4updates']) )
       {
          $this->template = FALSE;
@@ -103,13 +103,13 @@ class admin_home extends fs_controller
       else if( isset($_POST['modpages']) )
       {
          /// activar/desactivas páginas del menú
-         
+
          if(!$this->step)
          {
             $this->step = '1';
             $fsvar->simple_save('install_step', $this->step);
          }
-         
+
          foreach($this->all_pages() as $p)
          {
             if( !$p->exists ) /// la página está en la base de datos pero ya no existe el controlador
@@ -133,14 +133,14 @@ class admin_home extends fs_controller
                $this->disable_page($p);
             }
          }
-         
+
          $this->new_message('Datos guardados correctamente.');
       }
       else if( isset($_GET['enable']) )
       {
          /// activar plugin
          $this->enable_plugin($_GET['enable']);
-         
+
          if($this->step == '1')
          {
             $this->step = '2';
@@ -187,7 +187,7 @@ class admin_home extends fs_controller
                $zip->extractTo('plugins/');
                $zip->close();
                $this->new_message('Plugin '.$_FILES['fplugin']['name'].' añadido correctamente. Ya puedes activarlo.');
-               
+
                $this->clean_cache();
             }
             else
@@ -231,7 +231,7 @@ class admin_home extends fs_controller
          {
             unlink('tmp/'.FS_TMP_NAME.'config2.ini');
          }
-         
+
          $this->new_message('Configuración reiniciada correctamente, pulsa <a href="'.$this->url().'#avanzado">aquí</a> para continuar.', TRUE);
       }
       else
@@ -246,7 +246,7 @@ class admin_home extends fs_controller
                $guardar = TRUE;
             }
          }
-         
+
          if($guardar)
          {
             $file = fopen('tmp/'.FS_TMP_NAME.'config2.ini', 'w');
@@ -263,19 +263,19 @@ class admin_home extends fs_controller
                      fwrite($file, $i." = '".$value."';\n");
                   }
                }
-               
+
                fclose($file);
             }
-            
+
             $this->new_message('Datos guardados correctamente.');
          }
       }
-      
-      
+
+
       $this->paginas = $this->all_pages();
       $this->load_menu(TRUE);
    }
-   
+
    /**
     * Devuelve las páginas/controladore de los plugins activos.
     * @return type
@@ -284,7 +284,7 @@ class admin_home extends fs_controller
    {
       $pages = array();
       $page_names = array();
-      
+
       /// añadimos las páginas de los plugins
       foreach($this->plugins() as $plugin)
       {
@@ -298,7 +298,7 @@ class admin_home extends fs_controller
                   $p->name = substr($f, 0, -4);
                   $p->exists = TRUE;
                   $p->show_on_menu = FALSE;
-                  
+
                   if( !in_array($p->name, $page_names) )
                   {
                      $pages[] = $p;
@@ -308,7 +308,7 @@ class admin_home extends fs_controller
             }
          }
       }
-      
+
       /// añadimos las páginas que están en el directorio controller
       foreach( scandir(getcwd().'/controller') as $f)
       {
@@ -318,7 +318,7 @@ class admin_home extends fs_controller
             $p->name = substr($f, 0, -4);
             $p->exists = TRUE;
             $p->show_on_menu = FALSE;
-            
+
             if( !in_array($p->name, $page_names) )
             {
                $pages[] = $p;
@@ -326,7 +326,7 @@ class admin_home extends fs_controller
             }
          }
       }
-      
+
       /// completamos los datos de las páginas con los datos de la base de datos
       foreach($this->page->all() as $p)
       {
@@ -348,7 +348,7 @@ class admin_home extends fs_controller
             $pages[] = $p;
          }
       }
-      
+
       /// ordenamos
       usort($pages, function($a,$b){
          if($a->name == $b->name)
@@ -362,10 +362,10 @@ class admin_home extends fs_controller
          else
             return -1;
       });
-      
+
       return $pages;
    }
-   
+
    /**
     * Devuelve la lista de plugins instalados y activados
     * @return type
@@ -374,7 +374,7 @@ class admin_home extends fs_controller
    {
       return $GLOBALS['plugins'];
    }
-   
+
    /**
     * Activa una página/controlador.
     * @param type $page
@@ -390,7 +390,7 @@ class admin_home extends fs_controller
             require_once 'plugins/'.$plugin.'/controller/'.$page->name.'.php';
             $new_fsc = new $page->name();
             $found = TRUE;
-            
+
             if( isset($new_fsc->page) )
             {
                if( !$new_fsc->page->save() )
@@ -402,26 +402,26 @@ class admin_home extends fs_controller
             {
                $this->new_error_msg("Error al leer la página ".$page->name);
             }
-            
+
             unset($new_fsc);
             break;
          }
       }
-      
+
       if( !$found )
       {
          require_once 'controller/'.$page->name.'.php';
          $new_fsc = new $page->name(); /// cargamos el controlador asociado
-         
+
          if( !$new_fsc->page->save() )
          {
             $this->new_error_msg("Imposible guardar la página ".$page->name);
          }
-         
+
          unset($new_fsc);
       }
    }
-   
+
    /**
     * Desactiva una página/controlador.
     * @param type $page
@@ -437,7 +437,7 @@ class admin_home extends fs_controller
          $this->new_error_msg('Imposible eliminar la página '.$page->name.'.');
       }
    }
-   
+
    /**
     * Devuelve la lista de elementos a traducir
     * @return type
@@ -450,7 +450,7 @@ class admin_home extends fs_controller
           'albaran','albaranes','pedido','pedidos','presupuesto','presupuestos',
           'provincia','apartado','cifnif','iva','irpf','numero2','serie','series'
       );
-      
+
       foreach($GLOBALS['config2'] as $i => $value)
       {
          if( in_array($i, $include) )
@@ -458,30 +458,30 @@ class admin_home extends fs_controller
             $clist[] = array('nombre' => $i, 'valor' => $value);
          }
       }
-      
+
       return $clist;
    }
 
    /**
     * Timezones list with GMT offset
-    * 
+    *
     * @return array
     * @link http://stackoverflow.com/a/9328760
     */
    public function get_timezone_list()
    {
       $zones_array = array();
-      
+
       $timestamp = time();
       foreach(timezone_identifiers_list() as $key => $zone) {
          date_default_timezone_set($zone);
          $zones_array[$key]['zone'] = $zone;
          $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
       }
-      
+
       return $zones_array;
    }
-   
+
    /**
     * Lista de opciones para NF0
     * @return type
@@ -490,7 +490,7 @@ class admin_home extends fs_controller
    {
       return array(0, 1, 2, 3, 4, 5);
    }
-   
+
    /**
     * Lista de opciones para NF1
     * @return type
@@ -503,7 +503,7 @@ class admin_home extends fs_controller
           ' ' => '(espacio en blanco)'
       );
    }
-   
+
    /**
     * Devuelve la lista completada de plugins instalados
     * @return type
@@ -512,7 +512,7 @@ class admin_home extends fs_controller
    {
       $plugins = array();
       $disabled = array();
-      
+
       if( defined('FS_DISABLED_PLUGINS') )
       {
          foreach( explode(',', FS_DISABLED_PLUGINS) as $aux )
@@ -520,7 +520,7 @@ class admin_home extends fs_controller
             $disabled[] = $aux;
          }
       }
-      
+
       foreach( scandir(getcwd().'/plugins') as $f)
       {
          if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..' AND !in_array($f, $disabled) )
@@ -539,23 +539,23 @@ class admin_home extends fs_controller
                 'version_url' => '',
                 'wizard' => FALSE,
             );
-            
+
             if( file_exists('plugins/'.$f.'/facturascripts.ini') )
             {
                $plugin['compatible'] = TRUE;
                $plugin['enabled'] = in_array($f, $this->plugins());
-               
+
                if( file_exists('plugins/'.$f.'/description') )
                {
                   $plugin['description'] = file_get_contents('plugins/'.$f.'/description');
                }
-               
+
                $ini_file = parse_ini_file('plugins/'.$f.'/facturascripts.ini');
                if( isset($ini_file['version']) )
                {
                   $plugin['version'] = intval($ini_file['version']);
                }
-               
+
                if( isset($ini_file['require']) )
                {
                   if($ini_file['require'] != '')
@@ -566,17 +566,17 @@ class admin_home extends fs_controller
                      }
                   }
                }
-               
+
                if( isset($ini_file['idplugin']) )
                {
                   $plugin['idplugin'] = $ini_file['idplugin'];
                }
-               
+
                if( isset($ini_file['update_url']) )
                {
                   $plugin['update_url'] = $ini_file['update_url'];
                }
-               
+
                if( isset($ini_file['version_url']) )
                {
                   $plugin['version_url'] = $ini_file['version_url'];
@@ -595,12 +595,12 @@ class admin_home extends fs_controller
                      }
                   }
                }
-               
+
                if( isset($ini_file['wizard']) )
                {
                   $plugin['wizard'] = $ini_file['wizard'];
                }
-               
+
                if($plugin['enabled'])
                {
                   foreach( array_reverse($this->plugins()) as $i => $value)
@@ -613,14 +613,14 @@ class admin_home extends fs_controller
                   }
                }
             }
-            
+
             $plugins[] = $plugin;
          }
       }
-      
+
       return $plugins;
    }
-   
+
    /**
     * Elimina recursivamente un directorio
     * @param type $dir
@@ -635,7 +635,7 @@ class admin_home extends fs_controller
       }
       return rmdir($dir);
    }
-   
+
    /**
     * Activa un plugin
     * @param type $name
@@ -648,7 +648,7 @@ class admin_home extends fs_controller
          $name = substr($name, 0, -7);
          rename('plugins/'.$name.'-master', 'plugins/'.$name);
       }
-      
+
       /// comprobamos las dependencias
       $install = TRUE;
       $wizard = FALSE;
@@ -657,14 +657,14 @@ class admin_home extends fs_controller
          if($pitem['name'] == $name)
          {
             $wizard = $pitem['wizard'];
-            
+
             foreach($pitem['require'] as $req)
             {
                if( !in_array($req, $GLOBALS['plugins']) )
                {
                   $install = FALSE;
                   $txt = 'Dependencias incumplidas: <b>'.$req.'</b>';
-                  
+
                   foreach($this->download_list2 as $value)
                   {
                      if($value->nombre == $req)
@@ -673,18 +673,18 @@ class admin_home extends fs_controller
                         break;
                      }
                   }
-                  
+
                   $this->new_error_msg($txt);
                }
             }
             break;
          }
       }
-      
+
       if( $install AND !in_array($name, $GLOBALS['plugins']) )
       {
          array_unshift($GLOBALS['plugins'], $name);
-         
+
          if( file_put_contents('tmp/'.FS_TMP_NAME.'enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
          {
             if($wizard)
@@ -699,7 +699,7 @@ class admin_home extends fs_controller
                {
                   require_once 'plugins/'.$name.'/functions.php';
                }
-               
+
                if( file_exists(getcwd().'/plugins/'.$name.'/controller') )
                {
                   /// activamos las páginas del plugin
@@ -712,34 +712,34 @@ class admin_home extends fs_controller
                         {
                            $page_name = substr($f, 0, -4);
                            $page_list[] = $page_name;
-                           
+
                            require_once 'plugins/'.$name.'/controller/'.$f;
                            $new_fsc = new $page_name();
-                           
+
                            if( !$new_fsc->page->save() )
                            {
                               $this->new_error_msg("Imposible guardar la página ".$page_name);
                            }
-                           
+
                            unset($new_fsc);
                         }
                      }
                   }
-                  
+
                   $this->new_message('Se han activado automáticamente las siguientes páginas: '.join(', ', $page_list) . '.');
                }
-               
+
                $this->new_message('Plugin <b>'.$name.'</b> activado correctamente.');
                $this->load_menu(TRUE);
             }
-            
+
             $this->clean_cache();
          }
          else
             $this->new_error_msg('Imposible activar el plugin <b>'.$name.'</b>.');
       }
    }
-   
+
    /**
     * Desactiva un plugin
     * @param type $name
@@ -754,7 +754,7 @@ class admin_home extends fs_controller
             {
                $GLOBALS['plugins'] = array();
                unlink('tmp/'.FS_TMP_NAME.'enabled_plugins.list');
-               
+
                $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
             }
             else
@@ -767,7 +767,7 @@ class admin_home extends fs_controller
                      break;
                   }
                }
-               
+
                if( file_put_contents('tmp/'.FS_TMP_NAME.'enabled_plugins.list', join(',', $GLOBALS['plugins']) ) !== FALSE )
                {
                   $this->new_message('Plugin <b>'.$name.'</b> desactivado correctamente.');
@@ -776,8 +776,8 @@ class admin_home extends fs_controller
                   $this->new_error_msg('Imposible desactivar el plugin <b>'.$name.'</b>.');
             }
          }
-         
-         
+
+
          /*
           * Desactivamos las páginas que ya no existen
           */
@@ -785,7 +785,7 @@ class admin_home extends fs_controller
          foreach($this->page->all() as $p)
          {
             $encontrada = FALSE;
-            
+
             if( file_exists(getcwd().'/controller/'.$p->name.'.php') )
             {
                $encontrada = TRUE;
@@ -801,7 +801,7 @@ class admin_home extends fs_controller
                   }
                }
             }
-            
+
             if( !$encontrada )
             {
                if( $p->delete() )
@@ -814,7 +814,7 @@ class admin_home extends fs_controller
          {
             $this->new_message('Se han eliminado automáticamente las siguientes páginas: '.join(', ', $eliminadas));
          }
-         
+
          /// desactivamos los plugins que dependan de este
          foreach($this->plugin_advanced_list() as $plug)
          {
@@ -831,7 +831,7 @@ class admin_home extends fs_controller
                }
             }
          }
-         
+
          /// borramos los archivos temporales del motor de plantillas
          foreach( scandir(getcwd().'/tmp/'.FS_TMP_NAME) as $f)
          {
@@ -840,11 +840,11 @@ class admin_home extends fs_controller
                unlink('tmp/'.FS_TMP_NAME.$f);
             }
          }
-         
+
          $this->clean_cache();
       }
    }
-   
+
    /**
     * Comprueba actualizaciones de los plugins y del núcleo.
     * @return boolean
@@ -858,7 +858,7 @@ class admin_home extends fs_controller
       else
       {
          $fsvar = new fs_var();
-         
+
          /// comprobamos actualizaciones en los plugins
          $updates = FALSE;
          foreach($this->plugin_advanced_list() as $plugin)
@@ -879,7 +879,7 @@ class admin_home extends fs_controller
             else if($plugin['idplugin'])
             {
                /// plugin de pago/oculto
-               
+
                if($plugin['download2_url'] != '')
                {
                   /// download2_url implica que hay actualización
@@ -888,7 +888,7 @@ class admin_home extends fs_controller
                }
             }
          }
-         
+
          if(!$updates)
          {
             /// comprobamos actualizaciones del núcleo
@@ -899,7 +899,7 @@ class admin_home extends fs_controller
                $updates = TRUE;
             }
          }
-         
+
          if($updates)
          {
             $fsvar->simple_save('updates', 'true');
@@ -913,7 +913,7 @@ class admin_home extends fs_controller
          }
       }
    }
-   
+
    /**
     * Descarga el contenido con curl o file_get_contents
     * @param type $url
@@ -932,7 +932,7 @@ class admin_home extends fs_controller
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
-         
+
          if($info['http_code'] == 301 OR $info['http_code'] == 302)
          {
             $redirs = 0;
@@ -947,7 +947,7 @@ class admin_home extends fs_controller
       else
          return file_get_contents($url);
    }
-   
+
    /**
     * Función alternativa para cuando el followlocation falla.
     * @param type $ch
@@ -961,7 +961,7 @@ class admin_home extends fs_controller
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $data = curl_exec($ch);
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-      
+
       if($http_code == 301 || $http_code == 302)
       {
          list($header) = explode("\r\n\r\n", $data, 2);
@@ -976,7 +976,7 @@ class admin_home extends fs_controller
             return $this->curl_redirect_exec($ch, $redirects, $curlopt_header);
          }
       }
-      
+
       if($curlopt_header)
       {
          curl_close($ch);
@@ -989,7 +989,7 @@ class admin_home extends fs_controller
          return $body;
       }
    }
-   
+
    /**
     * Descarga un plugin de la lista de plugins fijos.
     */
@@ -998,7 +998,7 @@ class admin_home extends fs_controller
       if( isset($this->download_list[$_GET['download']]) )
       {
          $this->new_message('Descargando el plugin '.$_GET['download']);
-         
+
          if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
          {
             $zip = new ZipArchive();
@@ -1009,7 +1009,7 @@ class admin_home extends fs_controller
                $zip->extractTo('plugins/');
                $zip->close();
                unlink('download.zip');
-               
+
                /// renombramos si es necesario
                foreach( scandir(getcwd().'/plugins') as $f)
                {
@@ -1024,7 +1024,7 @@ class admin_home extends fs_controller
                            break;
                         }
                      }
-                     
+
                      if(!$encontrado2)
                      {
                         rename('plugins/'.$f, 'plugins/'.$_GET['download']);
@@ -1032,10 +1032,10 @@ class admin_home extends fs_controller
                      }
                   }
                }
-               
+
                $this->new_message('Plugin añadido correctamente.');
                $this->enable_plugin($_GET['download']);
-               
+
                if($this->step == '1')
                {
                   $this->step = '2';
@@ -1056,7 +1056,7 @@ class admin_home extends fs_controller
       else
          $this->new_error_msg('Descarga no encontrada.');
    }
-   
+
    /**
     * Descarga un plugin de la lista dinámica de la comunidad.
     */
@@ -1069,7 +1069,7 @@ class admin_home extends fs_controller
          {
             $this->new_message('Descargando el plugin '.$item->nombre);
             $encontrado = TRUE;
-            
+
             if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
             {
                $zip = new ZipArchive();
@@ -1080,7 +1080,7 @@ class admin_home extends fs_controller
                   $zip->extractTo('plugins/');
                   $zip->close();
                   unlink('download.zip');
-                  
+
                   /// renombramos si es necesario
                   foreach( scandir(getcwd().'/plugins') as $f)
                   {
@@ -1095,7 +1095,7 @@ class admin_home extends fs_controller
                               break;
                            }
                         }
-                        
+
                         if(!$encontrado2)
                         {
                            rename('plugins/'.$f, 'plugins/'.$item->nombre);
@@ -1103,7 +1103,7 @@ class admin_home extends fs_controller
                         }
                      }
                   }
-                  
+
                   $this->new_message('Plugin añadido correctamente.');
                   $this->enable_plugin($item->nombre);
                }
@@ -1118,13 +1118,13 @@ class admin_home extends fs_controller
             break;
          }
       }
-      
+
       if(!$encontrado)
       {
          $this->new_error_msg('Descarga no encontrada.');
       }
    }
-   
+
    private function get_download_list()
    {
       /**
@@ -1179,7 +1179,7 @@ class admin_home extends fs_controller
       );
       $fsvar = new fs_var();
       $this->step = $fsvar->simple_get('install_step');
-      
+
       /**
        * Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.
        */
@@ -1199,7 +1199,7 @@ class admin_home extends fs_controller
          }
       }
    }
-   
+
    private function check_htaccess()
    {
       if( !file_exists('.htaccess') )
@@ -1207,7 +1207,7 @@ class admin_home extends fs_controller
          $txt = file_get_contents('htaccess-sample');
          file_put_contents('.htaccess', $txt);
       }
-      
+
       /// ahora comprobamos el de tmp/XXXXX/private_keys
       if( file_exists('tmp/'.FS_TMP_NAME.'private_keys') )
       {
@@ -1217,7 +1217,7 @@ class admin_home extends fs_controller
          }
       }
    }
-   
+
    private function clean_cache()
    {
       $this->cache->clean();
