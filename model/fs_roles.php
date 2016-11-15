@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+require_model('fs_roles_pages.php');
+require_model('fs_roles_users.php');
 /**
  * Description of fs_roles
  *
@@ -59,6 +60,9 @@ class fs_roles extends fs_model{
      */
     public $usuario_modificacion;
 
+    public $roles_pages;
+    public $roles_users;
+
     public function __construct($t = FALSE) {
         parent::__construct('fs_roles');
         if($t){
@@ -78,11 +82,13 @@ class fs_roles extends fs_model{
             $this->fecha_modificacion = NULL;
             $this->usuario_modificacion = NULL;
         }
+        $this->roles_pages = new fs_roles_pages();
+        $this->roles_users = new fs_roles_users();
     }
 
     public function url(){
         if(!empty($this->id)){
-            return FS_PATH.'index.php?page=admin_roles&type=detalle&id='.$this->id;
+            return FS_PATH.'index.php?page=admin_rol&id='.$this->id;
         }else{
             return FS_PATH.'index.php?page=admin_roles';
         }
@@ -116,6 +122,32 @@ class fs_roles extends fs_model{
         $sql = "SELECT * FROM ".$this->table_name." WHERE id = ".$this->intval($id).";";
         $data = $this->db->select($sql);
         return ($data)?new fs_roles($data[0]):false;
+    }
+
+    /**
+     * Obtenemos el listado de paginas asociadas al rol
+     * @param type array
+     */
+    public function get_pages(){
+        $lista = $this->roles_pages->get_by('rol', $this->id);
+        if($lista){
+            return $lista;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * Obtenemos los usuarios del Rol
+     * @return array/boolean
+     */
+    public function get_users(){
+        $lista = $this->roles_users->get_by('rol',$this->id);
+        if($lista){
+            return $lista;
+        }else{
+            return false;
+        }
     }
 
     /**

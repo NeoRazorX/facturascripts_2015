@@ -39,7 +39,6 @@ class admin_roles extends fs_controller {
 
     protected function private_core() {
         $this->roles = new fs_roles();
-        $this->roles_cantidad = ($this->roles->all())?count($this->roles->all()):0;
         $this->roles_paginas = new fs_roles_pages();
         $this->roles_usuarios = new fs_roles_users();
         $admin_home = new admin_home();
@@ -116,7 +115,8 @@ class admin_roles extends fs_controller {
                 }
             }
         }
-
+        //Luego de todo el proceso contamos la cantidad de roles
+        $this->roles_cantidad = ($this->roles->all())?count($this->roles->all()):0;
     }
 
     /**

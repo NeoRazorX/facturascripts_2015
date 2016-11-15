@@ -1,0 +1,235 @@
+{include="header"}
+<!--
+Copyright (C) 2016 Joe Nilson <joenilson at gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6 col-xs-7">
+            <div class="btn-group">
+                <a class="btn btn-sm btn-default" href="{$fsc->rol->url()}" title="Recargar la página">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                </a>
+                {if="$fsc->page->is_default()"}
+                <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+                    <span class="glyphicon glyphicon-home"></span>
+                </a>
+                {else}
+                <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+                    <span class="glyphicon glyphicon-home"></span>
+                </a>
+                {/if}
+            </div>
+            <div class="btn-group">
+                <a id="b_nuevo_rol" class="btn btn-sm btn-success" href="{#FS_PATH#}index.php?page=admin_roles#nuevo">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span class="hidden-xs">&nbsp;Nuevo Rol</span>
+                </a>
+
+                {loop="$fsc->extensions"}
+                {if="$value->type=='button'"}
+                <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
+                {/if}
+                {/loop}
+            </div>
+            <a href="{#FS_PATH#}index.php?page=admin_roles" class="btn btn-sm btn-default">
+                <span class="fa fa-arrow-left"></span>
+                <span class="hidden-xs">&nbsp;Regresar a Roles</span>
+            </a>
+        </div>
+        <div class="col-sm-6 col-xs-5 text-right">
+            <h2 style="margin-top: 0px;"><span class="fa fa-tasks"></span>&nbsp;Rol: {$fsc->rol->descripcion}</h2>
+        </div>
+    </div>
+</div>
+<div role="tabpanel">
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#paginas" aria-controls="paginas" role="tab" data-toggle="tab">
+                <i class="fa fa-files-o" aria-hidden="true"></i>
+                <span class="hidden-xs">&nbsp; Páginas</span>
+                <span class="badge">{$fsc->rol->accesos()}</span>
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab">
+                <span class="fa fa-users" aria-hidden="true"></span>
+                <span class="hidden-xs">&nbsp; Usuarios</span>
+                <span class="badge">{$fsc->rol->asignaciones()}</span>
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="paginas">
+            <div class="container-fluid" style="margin-top: 10px;">
+                <button type="button" id="btn_add_pages" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_nueva_pagina">
+                    <span class="fa fa-plus-circle"></span>&nbsp;Agregar páginas
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Plugin</th>
+                            <th class="text-left">Pagina</th>
+                            <th class="text-left">Eliminar</th>
+                            <th class="text-left">Estado</th>
+                            <th class="text-left">Fecha de Creacion</th>
+                            <th class="text-left">Usuario Creacion</th>
+                            <th class="text-left">Ultima modicación</th>
+                            <th class="text-left">Usuario modificó</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    {loop="$fsc->rol->get_pages()"}
+                    <tr class='{if="!$value->estado"} warning{/if}'>
+                        <td>
+                            {$value->plugin}
+                        </td>
+                        <td>
+                            <input type="hidden" name="id" value="{$value->id}">
+                            {$value->name}
+                        </td>
+                        <td><input type="checkbox" name="allow_delete" value="TRUE" {if="$value->allow_delete"}checked{/if}></td>
+                        <td><input type="checkbox" name="estado" value="TRUE" {if="$value->estado"}checked{/if}></td>
+                        <td>{$value->fecha_creacion}</td>
+                        <td>{$value->usuario_creacion}</td>
+                        <td>{$value->fecha_modificacion}</td>
+                        <td>{$value->usuario_modificacion}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
+                            <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span></button>
+                        </td>
+                    </tr>
+                    {/loop}
+                </table>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p class="help-block">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            No es obligatorio el uso de Roles, puedes asignar los accesos directamente desde la página de <strong>Usuarios</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="usuarios">
+            <div class="container-fluid" style="margin-top: 10px;">
+                <button type="button" id="btn_add_users" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_nuevo_usuario">
+                    <span class="fa fa-plus-circle"></span>&nbsp;Agregar usuarios
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Usuario</th>
+                            <th class="text-left">Estado</th>
+                            <th class="text-left">Fecha de Creacion</th>
+                            <th class="text-left">Usuario Creacion</th>
+                            <th class="text-left">Ultima modicación</th>
+                            <th class="text-left">Usuario modificó</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    {loop="$fsc->rol->get_users()"}
+                    <tr class='{if="!$value->estado"} warning{/if}'>
+                        <td>
+                            <input type="hidden" name="id" value="{$value->id}">
+                            {$value->nick}
+                        </td>
+                        <td><input type="checkbox" name="estado" value="TRUE" {if="$value->estado"}checked{/if}></td>
+                        <td>{$value->fecha_creacion}</td>
+                        <td>{$value->usuario_creacion}</td>
+                        <td>{$value->fecha_modificacion}</td>
+                        <td>{$value->usuario_modificacion}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
+                            <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span></button>
+                        </td>
+                    </tr>
+                    {/loop}
+                </table>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p class="help-block">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            No es obligatorio el uso de Roles, puedes asignar los accesos directamente desde la página de <strong>Usuarios</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal_nueva_pagina">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">
+                    <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Agregar Páginas
+                </h4>
+            </div>
+            <div class="modal-body">
+                Agregar páginas
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-8 pull-left">
+                        <span class="help-block text-left">
+                            <span class="fa fa-info-circle"></span>&nbsp;Al agregar páginas se actualizarán los accesos de los usuarios de este Rol.
+                        </span>
+                    </div>
+                    <div class="col-sm-4 pull-right">
+                        <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span>&nbsp;Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal_nuevo_usuario">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">
+                    <i class="fa fa-users" aria-hidden="true"></i>&nbsp; Agregar Usuarios
+                </h4>
+            </div>
+            <div class="modal-body">
+                Agregar Usuarios
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-8 pull-left">
+                        <span class="help-block text-left">
+                            <span class="fa fa-info-circle"></span>&nbsp;Al agregar usuarios se les asignarán las páginas de este Rol.
+                        </span>
+                    </div>
+                    <div class="col-sm-4 pull-right">
+                        <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span>&nbsp;Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include="footer"}

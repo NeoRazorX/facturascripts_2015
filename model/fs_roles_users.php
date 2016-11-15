@@ -110,6 +110,35 @@ class fs_roles_users extends fs_model{
         return ($data)?new fs_roles_users($data[0]):false;
     }
 
+    public function get_by($type='',$value){
+        switch ($type){
+            case "rol":
+                $where = " WHERE id = ".$this->intval($value);
+                $order = "nick,estado";
+                break;
+            case "user":
+                $where = " WHERE nick = ".$this->var2str($value);
+                $order = "nick,estado,id";
+                break;
+            default :
+                $where  = "";
+                $order = "id,estado,nick";
+                break;
+        }
+        $sql = "SELECT * FROM ".$this->table_name.$where." ORDER BY ".$order.";";
+        $data = $this->db->select($sql);
+        if($data){
+            $lista = array();
+            foreach ($data as $d){
+                $linea = new fs_roles_users($d);
+                $lista[] = $linea;
+            }
+            return $lista;
+        }else{
+            return false;
+        }
+    }
+
     /**
      *
      * @return boolean

@@ -290,7 +290,6 @@ span.round-tab:hover {
       </div>
    </div>
 </div>
-
 <div role="tabpanel">
    <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
@@ -298,12 +297,6 @@ span.round-tab:hover {
             <i class="fa fa-tasks" aria-hidden="true"></i>
             <span class="hidden-xs">&nbsp; Roles</span>
             <span class="badge">{$fsc->roles_cantidad}</span>
-         </a>
-      </li>
-      <li role="presentation">
-         <a href="#historial" aria-controls="historial" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-            <span class="hidden-xs">&nbsp; Historial</span>
          </a>
       </li>
    </ul>
@@ -337,8 +330,12 @@ span.round-tab:hover {
                   <td>{$value->fecha_modificacion}</td>
                   <td>{$value->usuario_modificacion}</td>
                   <td>
-                      <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
-                      <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-save"></span></button>
+                      {if="$value->asignaciones()==0"}
+                        <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
+                      {else}
+                        <button type="button" class="btn btn-sm btn-warning" title="Rol con usuarios no se puede eliminar" data-tooltip="true"><span class="fa fa-lock"></span></button>
+                      {/if}
+                      <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span></button>
                   </td>
                </tr>
                {/loop}
@@ -353,54 +350,6 @@ span.round-tab:hover {
                   </p>
                </div>
             </div>
-         </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="historial">
-         <div class="container-fluid" style="margin-top: 10px;">
-            <div class="row">
-               <div class="col-sm-8">
-                  <p class="help-block">
-                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                     &nbsp; Puedes ver más detalles desde Admin &gt; Información del sistema.
-                  </p>
-               </div>
-               <div class="col-sm-4 text-right">
-                  <a href="index.php?page=admin_info" class="btn btn-xs btn-default">
-                     <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-                     <span class="hidden-xs">&nbsp; Historial completo</span>
-                  </a>
-               </div>
-            </div>
-         </div>
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
-                  <tr>
-                     <th class="text-left">Usuario</th>
-                     <th></th>
-                     <th class="text-left">Detalle</th>
-                     <th class="text-left">IP</th>
-                     <th class="text-right">Fecha</th>
-                  </tr>
-               </thead>
-               {loop="$fsc->historial"}
-               <tr{if="$value->alerta"} class="danger"{/if}>
-                  <td><a href="index.php?page=admin_user&snick={$value->usuario}">{$value->usuario}</a></td>
-                  <td class="text-right">
-                     {if="$value->alerta"}
-                     <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Podría ser importante"></span>
-                     {/if}
-                  </td>
-                  <td>{$value->detalle}</td>
-                  <td>{$value->ip}</td>
-                  <td class="text-right">{$value->fecha}</td>
-               </tr>
-               {else}
-               <tr class="warning">
-                  <td colspan="5">Sin resultados.</td>
-               </tr>
-               {/loop}
-            </table>
          </div>
       </div>
    </div>
