@@ -16,7 +16,7 @@
    <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.autocomplete.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery-ui.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/base.js"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/js/base.js?updated=2016.25"></script>
    <script type="text/javascript">
       function show_precio(precio, coddivisa)
       {
@@ -63,7 +63,7 @@
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                {loop="$fsc->folders()"}
-               <li class="dropdown{if="$value1==$fsc->page->folder"} active{/if}">
+               <li class='dropdown{if="$value1==$fsc->page->folder"} active{/if}'>
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                      {if="$value1=='admin'"}
                      <span class="glyphicon glyphicon-wrench hidden-xs" title="Administración"></span>

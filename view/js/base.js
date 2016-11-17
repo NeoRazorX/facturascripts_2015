@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var input_number = 'number';
+if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
+{
+   input_number = 'text';
+}
+
 function fs_round(value, precision, mode)
 {
    var m, f, isHalf, sgn;

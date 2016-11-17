@@ -24,13 +24,16 @@ function fatal_handler()
    $error = error_get_last();
    if($error !== NULL)
    {
-      echo "<h1>Error fatal</h1>"
-         . "<ul>"
-              . "<li><b>Tipo:</b> " . $error["type"]."</li>"
-              . "<li><b>Archivo:</b> " . $error["file"]."</li>"
-              . "<li><b>Línea:</b> " . $error["line"]."</li>"
-              . "<li><b>Mensaje:</b> " . $error["message"]."</li>"
-         . "</ul>";
+      if( substr($error["message"], 0, 19) != 'Memcache::connect()' )
+      {
+         echo "<h1>Error fatal</h1>"
+            . "<ul>"
+                 . "<li><b>Tipo:</b> ".$error["type"]."</li>"
+                 . "<li><b>Archivo:</b> ".$error["file"]."</li>"
+                 . "<li><b>Línea:</b> ".$error["line"]."</li>"
+                 . "<li><b>Mensaje:</b> ".$error["message"]."</li>"
+            . "</ul>";
+      }
    }
 }
 
