@@ -52,7 +52,8 @@ class admin_roles extends fs_controller {
             $id = filter_input(INPUT_POST, 'id');
             $descripcion = filter_input(INPUT_POST, 'descripcion');
             $enabled = filter_input(INPUT_POST, 'enabled', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            $allow_delete = filter_input(INPUT_POST, 'allow_delete', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $allow_delete_p = filter_input(INPUT_POST, 'allow_delete', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+            $allow_delete = ($allow_delete_p)?$allow_delete_p:array();
             $acceso = filter_input(INPUT_POST, 'acceso', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
             $estado = filter_input(INPUT_POST, 'estado');
             $rol0 = new fs_roles();

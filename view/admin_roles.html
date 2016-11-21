@@ -204,10 +204,7 @@ span.round-tab:hover {
             if(tabHref === '#step2'){
                 $('#step2_error').hide();
                 $('#step2_error').html('');
-                var permisos = $('input[name="enabled[]"]').attr('checked');
-                var le = document.querySelectorAll('input[name="enabled[]"]:checked');
-                console.log(permisos);
-                console.log(le);
+                var le = document.querySelectorAll('#f_nuevo_rol input[name="enabled[]"]:checked');
                 if(le.length <= 0 ){
                     valid = false;
                     $('#step2_error').html('Debes seleccionar por lo menos 1 acceso de Ver!');
@@ -428,7 +425,6 @@ span.round-tab:hover {
                                         <thead>
                                             <th class="col-xs-6 col-sm-6">
                                                 Pagina
-
                                             </th>
                                             <th class="col-xs-3 col-sm-3 text-center">
                                                 Ver/Modificar<br>

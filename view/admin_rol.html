@@ -15,6 +15,75 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<style>
+.table-fixed thead {
+  width: 97%;
+}
+.table-fixed tbody {
+  height: 200px;
+  overflow-y: auto;
+  width: 100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+  display: block;
+}
+.table-fixed tbody td, .table-fixed thead > tr> th {
+  float: left;
+  border-bottom-width: 0;
+}
+</style>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+    });
+
+    /**
+     * Validamos si el formulario tiene datos correctos con páginas seleccionadas
+     * @returns {Boolean}
+     */
+    function validar_paginas(){
+        var le = document.querySelectorAll('#f_nueva_pagina_rol input[name="enabled[]"]:checked');
+        if(le.length <= 0 ){
+            valid = false;
+            alert('¡Debes seleccionar por lo menos una página para agregar al rol!');
+        }else{
+            var valid = confirm('¿Esta seguro que quiere agregar estas páginas?');
+        }
+        return valid;
+    }
+
+    /**
+     * Validamos si se selecciono un usuario como mínimo
+     * @returns {Boolean}
+     */
+    function validar_usuarios(){
+        var le = document.querySelectorAll('#f_nuevo_usuario_rol input[name="acceso[]"]:checked');
+        if(le.length <= 0 ){
+            valid = false;
+            alert('¡Debes seleccionar por lo menos un usuario para agregar al rol!');
+        }else{
+            var valid = confirm('¿Esta seguro que quiere agregar estos usuarios?');
+        }
+        return valid;
+    }
+
+    function fs_marcar_todo(formulario,selector,plugin)
+    {
+        $("#"+formulario+" input[plugin='"+plugin+"_"+selector+"']").prop('checked', true);
+    }
+    function fs_marcar_nada(formulario,selector,plugin)
+    {
+        $("#"+formulario+" input[plugin='"+plugin+"_"+selector+"']").prop('checked', false);
+    }
+    function fs_marcar_todos(formulario,selector)
+    {
+        $("#"+formulario+" input[name='"+selector+"[]']").prop('checked', true);
+    }
+    function fs_marcar_nadie(formulario,selector)
+    {
+        $("#"+formulario+" input[name='"+selector+"[]']").prop('checked', false);
+    }
+</script>
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-6 col-xs-7">
@@ -110,7 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <td>{$value->usuario_modificacion}</td>
                         <td>
                             <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
-                            <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span></button>
+                            <button type="button" class="btn btn-sm btn-primary" name="accion" value="actualizar_pagina"><span class="fa fa-save"></span></button>
                         </td>
                     </tr>
                     {/loop}
@@ -159,7 +228,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <td>{$value->usuario_modificacion}</td>
                         <td>
                             <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
-                            <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span></button>
+                            <button type="button" class="btn btn-sm btn-primary" name="accion" value="actualizar_usuario"><span class="fa fa-save"></span></button>
                         </td>
                     </tr>
                     {/loop}
@@ -187,21 +256,92 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Agregar Páginas
                 </h4>
             </div>
-            <div class="modal-body">
-                Agregar páginas
-            </div>
-            <div class="modal-footer">
-                <div class="row">
-                    <div class="col-sm-8 pull-left">
-                        <span class="help-block text-left">
-                            <span class="fa fa-info-circle"></span>&nbsp;Al agregar páginas se actualizarán los accesos de los usuarios de este Rol.
-                        </span>
-                    </div>
-                    <div class="col-sm-4 pull-right">
-                        <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span>&nbsp;Guardar</button>
+            <form id="f_nueva_pagina_rol" name="f_nueva_pagina_rol" class="form" role="form" action="{$fsc->url()}&id={$fsc->id}" method="post">
+                <div class="modal-body">
+                    <h5>Páginas a Autorizar por plugin:</h5>
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        {loop="$fsc->plugins"}
+                        {if="count($fsc->mostrar_paginas('disponibles',$value))!=0"}
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="plugin{$counter}">
+                                <h6 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{$counter}" aria-expanded="true" aria-controls="collapse{$counter}">
+                                        Plugin: {$value}
+                                    </a>
+                                </h6>
+                            </div>
+                            <div id="collapse{$counter}" class="panel-collapse collapse {if="$counter==0"}in{/if}" role="tabpanel" aria-labelledby="plugin{$counter}">
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-fixed">
+                                            <thead>
+                                                <th class="col-xs-6 col-sm-6">
+                                                    Pagina
+                                                </th>
+                                                <th class="col-xs-3 col-sm-3 text-center">
+                                                    Ver/Modificar<br>
+                                                    <span class="text-center">
+                                                        <div class="btn-group">
+                                                            <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('f_nueva_pagina_rol','enabled','{$value1}')" title="Marcar todo">
+                                                                <span class="glyphicon glyphicon-check"></span>
+                                                            </button>
+                                                            <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('f_nueva_pagina_rol','enabled','{$value1}')" title="Desmarcar todo">
+                                                                <span class="glyphicon glyphicon-unchecked"></span>
+                                                            </button>
+                                                        </div>
+                                                    </span>
+                                                </th>
+                                                <th class="col-xs-3 col-sm-3 text-center">
+                                                    Eliminar<br>
+                                                    <span class="text-center">
+                                                        <div class="btn-group">
+                                                            <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('f_nueva_pagina_rol','allow_delete','{$value1}')" title="Marcar todo">
+                                                                <span class="glyphicon glyphicon-check"></span>
+                                                            </button>
+                                                            <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('f_nueva_pagina_rol','allow_delete','{$value1}')" title="Desmarcar todo">
+                                                                <span class="glyphicon glyphicon-unchecked"></span>
+                                                            </button>
+                                                        </div>
+                                                    </span>
+                                                </th>
+                                            </thead>
+                                            <tbody>
+                                                {loop="$fsc->mostrar_paginas('disponibles',$value)"}
+                                                <tr>
+                                                    <td class="col-sm-6">
+                                                        {$value2->folder} > {$value2->name}
+                                                    </td>
+                                                    <td class="col-sm-3 text-center">
+                                                        <input type="checkbox" id="enabled_{$counter2}" plugin="{$value1}_enabled" name="enabled[]" value="{$value2->name}"/>
+                                                    </td>
+                                                    <td class="col-sm-3 text-center">
+                                                        <input type="checkbox" id="allow_delete_{$counter2}" plugin="{$value1}_allow_delete" name="allow_delete[]" value="{$value2->name}"/>
+                                                    </td>
+                                                </tr>
+                                                {/loop}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/if}
+                        {/loop}
                     </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-8 pull-left">
+                            <span class="help-block text-left">
+                                <span class="fa fa-info-circle"></span>&nbsp;Al agregar páginas se actualizarán los accesos de los usuarios de este Rol.
+                            </span>
+                        </div>
+                        <div class="col-sm-4 pull-right">
+                            <button type="submit" class="btn btn-sm btn-primary" name="accion" value="agregar_pagina" onclick="return validar_paginas()"><span class="fa fa-save"></span>&nbsp;Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -214,8 +354,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <i class="fa fa-users" aria-hidden="true"></i>&nbsp; Agregar Usuarios
                 </h4>
             </div>
+            <form id="f_nuevo_usuario_rol" name="f_nueva_pagina_rol" class="form" role="form" action="{$fsc->url()}&id={$fsc->id}" method="post">
             <div class="modal-body">
-                Agregar Usuarios
+                <div class="table-responsive">
+                    <table class="table table-fixed">
+                       <thead>
+                          <tr>
+                             <th class="col-sm-3 text-left">Nick</th>
+                             <th class="col-sm-2 text-left">Email</th>
+                             <th class="col-sm-3 text-left">Empleado</th>
+                             <th class="col-sm-2 text-center">Administrador</th>
+                             <th class="col-sm-2 text-center">
+                                <div class="btn-group">
+                                    <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todos('f_nuevo_usuario_rol','acceso')" title="Marcar todo">
+                                        <span class="glyphicon glyphicon-check"></span>
+                                    </button>
+                                    <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nadie('f_nuevo_usuario_rol','acceso')" title="Desmarcar todo">
+                                        <span class="glyphicon glyphicon-unchecked"></span>
+                                    </button>
+                                </div>
+                             </th>
+                          </tr>
+                       </thead>
+                       {loop="$fsc->mostrar_usuarios('disponibles')"}
+                       <tr>
+                          <td class="col-xs-3 col-sm-3">{$value->nick}</td>
+                          <td class="col-xs-3 col-sm-2">{if="FS_DEMO"}XXX@XXX.com{else}{$value->email}{/if}</td>
+                          <td class="col-xs-3 col-sm-3">{$value->get_agente_fullname()}</td>
+                          <td class="col-xs-1 col-sm-2 text-center">
+                             {if="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}
+                          </td>
+                          <td class="col-sm-2 text-center">
+                              {if="!$value->admin"}
+                              <input type="checkbox" name="acceso[]" value="{$value->nick}">
+                              {/if}
+                          </td>
+                       </tr>
+                       {/loop}
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <div class="row">
@@ -225,10 +402,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </span>
                     </div>
                     <div class="col-sm-4 pull-right">
-                        <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span>&nbsp;Guardar</button>
+                        <button type="submit" class="btn btn-sm btn-primary" onclick="return validar_usuarios()" name="accion" value="agregar_usuario"><span class="fa fa-save"></span>&nbsp;Guardar</button>
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 </div>

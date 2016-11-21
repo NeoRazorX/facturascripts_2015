@@ -137,6 +137,15 @@ class fs_roles extends fs_model{
         }
     }
 
+    public function get_page($name,$plugin){
+        $lista = $this->roles_pages->get($this->id, $name, $plugin);
+        if($lista){
+            return $lista;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Obtenemos los usuarios del Rol
      * @return array/boolean
