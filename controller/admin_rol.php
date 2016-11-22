@@ -44,7 +44,8 @@ class admin_rol extends fs_controller {
         $this->roles = new fs_roles();
         $this->roles_users = new fs_roles_users();
         $this->roles_pages = new fs_roles_pages();
-        $this->plugins = $GLOBALS['plugins'];
+        $this->plugins = $this->lista_plugins();
+        //$this->plugins = $GLOBALS['plugins'];
 
         $this->shared_extensions();
 
@@ -67,6 +68,15 @@ class admin_rol extends fs_controller {
         $this->rol = $this->roles->get($this->id);
     }
 
+    public function lista_plugins(){
+        $lista = array();
+        $lista[] = 'FacturaScripts';
+        foreach($GLOBALS['plugins'] as $plugin){
+            $lista[] = $plugin;
+        }
+        return $lista;
+    }
+
     /**
      * Tratamos las paginas procesadas ya sea para agregarlas o eliminarlas
      */
@@ -74,7 +84,7 @@ class admin_rol extends fs_controller {
         $enabled = filter_input(INPUT_POST, 'enabled', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
         $allow_delete_p = filter_input(INPUT_POST, 'allow_delete', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
         $allow_delete = ($allow_delete_p)?$allow_delete_p:array();
-        if($accion=='agregar_pagina'){
+        if($accion=='agregar_pagina' AND !empty($enabled)){
             $mensaje = 'Páginas agregadas ';
             /**
             * Grabamos las páginas a las que vamos a crear el acceso
@@ -99,18 +109,57 @@ class admin_rol extends fs_controller {
                     unset($enabled[$key]);
                 }
             }
-
             /**
             * Si todo está correcto tambien actualizamos fs_access
-             * para los usuarios del rol actual
+            * para los usuarios del rol actual
             */
-           if($paginas){
+             $this->new_message('¡'.$mensaje.'con exito!');
+            if($paginas){
                $this->agregar_paginas_usuarios($enabled);
-           }
-
+            }
+        }elseif($accion=='eliminar_pagina' AND (filter_input(INPUT_POST, 'enabled'))){
+            $pagina = filter_input(INPUT_POST, 'enabled');
+            $mensaje = 'Página eliminada ';
+            //Sacamos la información de la página
+            $p = $this->roles_pages->get($this->id, $pagina, $this->getPagePlugin($pagina));
+            //Eliminamos de los accesos de usuario esta página
+            if($this->roles_users->get_by('rol', $this->id)){
+                foreach($this->roles_users->get_by('rol', $this->id) as $rol_user){
+                    $a = new fs_access( array('fs_user'=> trim($rol_user->nick), 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete) );
+                    $a->delete();
+                }
+            }
+            //Eliminamos la página de este rol
+            $p->delete();
+            $this->new_message('¡'.$mensaje.'con exito!');
+            //Corregimos cualquier error si en otros perfiles tenia acceso a esta página
+            if($this->roles_users->get_by('rol', $this->id)){
+                foreach($this->roles_users->get_by('rol', $this->id) as $rol_user){
+                    $this->actualizar_accesos($rol_user->nick);
+                }
+                $this->new_message('¡Actualizados los accesos de usuarios!');
+            }
+        }elseif(empty($enabled)){
+            $mensaje = '¡Se envió una consulta con datos incompletos!';
+            $this->new_error_msg($mensaje);
         }
 
-        $this->new_message('¡'.$mensaje.'con exito y aplicada a los usuarios!');
+    }
+
+    /**
+     * Cuando se elimina un una página o se agregan páginas se debe actualizar la información
+     * del acceso de los usuarios en fs_access
+     * @param type $user nick
+     */
+    public function actualizar_accesos($user){
+        $otros_roles = $this->roles_users->get_by('user', $user);
+        foreach($otros_roles as $rol){
+            $lista_paginas = $this->roles_pages->get_by('rol', $rol->id);
+            foreach($lista_paginas as $p){
+                $a = new fs_access( array('fs_user'=> trim($user), 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete));
+                $a->save();
+            }
+        }
     }
 
     /**
@@ -120,6 +169,7 @@ class admin_rol extends fs_controller {
     public function tratar_usuarios($accion){
         $acceso = filter_input(INPUT_POST, 'acceso', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
         if($accion=='agregar_usuario'){
+            $mensaje = '¡Usuarios ';
             foreach($acceso as $usuario){
                 $rol_usuario = new fs_roles_users();
                 $rol_usuario->id = $this->id;
@@ -131,6 +181,7 @@ class admin_rol extends fs_controller {
                 $rol_usuario->usuario_modificacion = $this->user->nick;
                 if($rol_usuario->save()){
                     $usuario_ok = true;
+                    $mensaje .= ' '.$usuario.', ';
                     $lista_paginas = $this->roles_pages->get_by('rol', $this->id);
                     foreach($lista_paginas as $p){
                         $a = new fs_access( array('fs_user'=> trim($usuario), 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete) );
@@ -139,6 +190,43 @@ class admin_rol extends fs_controller {
                 }else{
                     $usuario_ok = false;
                 }
+                $msg_total = substr($mensaje,0,strlen($mensaje)-2);
+                $mensaje = $msg_total.' agregados correctamente!';
+                $this->new_message($mensaje);
+            }
+        }elseif($accion=='eliminar_usuario'){
+            $usuario_elegido = filter_input(INPUT_POST, 'acceso');
+            if(!empty($usuario_elegido)){
+                $mensaje = '¡Usuario '.$usuario_elegido.' eliminado y accesos actualizados correctamente!';
+                //Cargamos la Lista de páginas de este rol
+                $lista_paginas = $this->roles_pages->get_by('rol', $this->id);
+                if($lista_paginas){
+                    //Eliminamos cada acceso para este usuario en este rol
+                    foreach($lista_paginas as $p){
+                        $a = new fs_access( array('fs_user'=> trim($usuario_elegido), 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete));
+                        $a->delete();
+                    }
+                    //Borramos este usuario del rol actual
+                    $uRol = $this->roles_users->get($this->id, $usuario_elegido);
+                    $uRol->delete();
+                    //Reconfiguramos los accesos de los otros roles a los que tenga acceso este usuario
+                    $this->actualizar_accesos($usuario_elegido);
+                    $otros_roles = $this->roles_users->get_by('user', $usuario_elegido);
+                    foreach($otros_roles as $rol){
+                        $lista_paginas = $this->roles_pages->get_by('rol', $rol->id);
+                        foreach($lista_paginas as $p){
+                            $a = new fs_access( array('fs_user'=> trim($usuario_elegido), 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete));
+                            $a->save();
+                        }
+                    }
+                    $this->new_message($mensaje);
+                }else{
+                    $mensaje = '¡Usuario '.$usuario_elegido.' no tiene paginas en este rol, no se actualiza nada!';
+                    $this->new_error_msg($mensaje);
+                }
+            }else{
+                $mensaje = '¡Se envió una consulta con datos incompletos!';
+                $this->new_error_msg($mensaje);
             }
         }
     }
@@ -150,14 +238,17 @@ class admin_rol extends fs_controller {
         $lista_paginas = $this->roles_pages->get_by('rol', $this->id);
         $acceso = $this->roles_users->get_by('rol',$this->id);
         $lista_errores = array();
-        foreach($acceso as $usuario){
-            foreach($lista_paginas as $p){
-                $a = new fs_access( array('fs_user'=> $usuario->nick, 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete) );
-                if($a->save()){
-                    $resultado = true;
-                }else{
-                    $resultado = false;
-                    $lista_errores[]="¡Error al aplicar Usuario: $usuario - Pagina: {$p->name}!.<br />";
+        $resultado = false;
+        if($acceso){
+            foreach($acceso as $usuario){
+                foreach($lista_paginas as $p){
+                    $a = new fs_access( array('fs_user'=> $usuario->nick, 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete) );
+                    if($a->save()){
+                        $resultado = true;
+                    }else{
+                        $resultado = false;
+                        $lista_errores[]="¡Error al aplicar Usuario: $usuario - Pagina: {$p->name}!.<br />";
+                    }
                 }
             }
         }
@@ -167,7 +258,9 @@ class admin_rol extends fs_controller {
             }
         }
         if($resultado){
-            $this->new_message('¡Páginas agregadas a los usuarios de este rol con exito!');
+            $this->new_message('¡Páginas agregadas a este rol con exito!');
+        }else{
+            $this->new_message('¡No se agregaron páginas a usuarios porque no hay usuarios en este rol!');
         }
     }
 
@@ -185,13 +278,10 @@ class admin_rol extends fs_controller {
         //Inicializamos la lista
         $lista = array();
         //Sacamos el listado de páginas
-        /**
-         * @todo Pasar por el foreach las paginas y compararlas y hacer un listado segun el type
-         */
         foreach($this->pages->all() as $page){
-            if($type=='asignadas' and $this->rol->get_page($this->id,$page->name,$this->getPagePlugin($page->name)) and ($plugin==$this->getPagePlugin($page->name))){
+            if($type=='asignadas' and $this->rol->get_page($page->name,$this->getPagePlugin($page->name)) and ($plugin==$this->getPagePlugin($page->name))){
                 $lista[] = $this->data_pagina($page);
-            }elseif($type=='disponibles' and !$this->rol->get_page($this->id,$page->name,$this->getPagePlugin($page->name)) and ($plugin==$this->getPagePlugin($page->name))){
+            }elseif($type=='disponibles' and !$this->rol->get_page($page->name,$this->getPagePlugin($page->name)) and ($plugin==$this->getPagePlugin($page->name))){
                 $lista[] = $this->data_pagina($page);
             }elseif($type=='all' and ($plugin==$this->getPagePlugin($page->name))){
                 $lista[] = $this->data_pagina($page);

@@ -121,7 +121,11 @@ class fs_roles_pages extends fs_model{
     public function get($id,$name,$plugin){
         $sql = "SELECT * FROM ".$this->table_name." WHERE id = ".$this->intval($id)." AND name = ".$this->var2str($name)." AND plugin = ".$this->var2str($plugin).";";
         $data = $this->db->select($sql);
-        return ($data)?new fs_roles_pages($data[0]):false;
+        if($data){
+            return new fs_roles_pages($data[0]);
+        }else{
+            return false;
+        }
     }
 
     public function get_by($type,$value){
@@ -197,9 +201,7 @@ class fs_roles_pages extends fs_model{
      * @return type boolean
      */
     public function delete() {
-        $sql = "UPDATE ".$this->table_name." SET estado = FALSE, ".
-            "fecha_modificacion = ".$this->var2str($this->fecha_modificacion).", ".
-            "usuario_modificacion = ".$this->var2str($this->usuario_modificacion)." ".
+        $sql = "DELETE FROM ".$this->table_name.
             " WHERE id = ".$this->intval($this->id).
             " AND name = ".$this->var2str($this->name).
             " AND plugin = ".$this->var2str($this->plugin).";";

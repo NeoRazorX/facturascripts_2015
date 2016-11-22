@@ -100,7 +100,7 @@ class fs_roles_users extends fs_model{
     }
 
     /**
-     * Obtenemos la información de un item
+     * Obtenemos la información de un rol y un usuario
      * @param type $id
      * @return type object or false
      */
@@ -110,7 +110,13 @@ class fs_roles_users extends fs_model{
         return ($data)?new fs_roles_users($data[0]):false;
     }
 
-    public function get_by($type='',$value){
+    /**
+     * Funcion para obtener listado de información por rol o usuario
+     * @param type $type rol|user
+     * @param type $value integer|string
+     * @return boolean|\fs_roles_users
+     */
+    public function get_by($type,$value){
         switch ($type){
             case "rol":
                 $where = " WHERE id = ".$this->intval($value);
@@ -170,15 +176,8 @@ class fs_roles_users extends fs_model{
         return $this->db->exec($sql);
     }
 
-    /**
-     * No borramos el usuario del rol, lo desactivamos para poder tener el control de quien y cuando se borro
-     * Esto puede servir para efectos de auditoria
-     * @return type boolean
-     */
     public function delete() {
-        $sql = "UPDATE ".$this->table_name." SET estado = FALSE, ".
-            "fecha_modificacion = ".$this->var2str($this->fecha_modificacion).", ".
-            "usuario_modificacion = ".$this->var2str($this->usuario_modificacion)." ".
+        $sql = "DELETE FROM ".$this->table_name.
             " WHERE id = ".$this->intval($this->id).
             " AND nick = ".$this->var2str($this->nick).";";
         return $this->db->exec($sql);

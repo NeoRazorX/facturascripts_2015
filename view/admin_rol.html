@@ -163,12 +163,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </tr>
                     </thead>
                     {loop="$fsc->rol->get_pages()"}
+                    <form id="f_paginas_rol" name="f_paginas_rol" class="form" role="form" action="{$fsc->url()}&id={$fsc->id}" method="post">
                     <tr class='{if="!$value->estado"} warning{/if}'>
                         <td>
                             {$value->plugin}
                         </td>
                         <td>
-                            <input type="hidden" name="id" value="{$value->id}">
+                            <input type="hidden" name="enabled" value="{$value->name}">
                             {$value->name}
                         </td>
                         <td><input type="checkbox" name="allow_delete" value="TRUE" {if="$value->allow_delete"}checked{/if}></td>
@@ -178,10 +179,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <td>{$value->fecha_modificacion}</td>
                         <td>{$value->usuario_modificacion}</td>
                         <td>
-                            <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
+                            <button type="submit" class="btn btn-sm btn-danger" name="accion" value="eliminar_pagina" onclick="return confirm('¿Esta seguro que quiere eliminar la página {$value->name} de este rol?')"><span class="fa fa-trash"></span></button>
                             <button type="button" class="btn btn-sm btn-primary" name="accion" value="actualizar_pagina"><span class="fa fa-save"></span></button>
                         </td>
                     </tr>
+                    </form>
                     {/loop}
                 </table>
             </div>
@@ -216,9 +218,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </tr>
                     </thead>
                     {loop="$fsc->rol->get_users()"}
+                    <form id="f_usuarios_rol" name="f_usuarios_rol" class="form" role="form" action="{$fsc->url()}&id={$fsc->id}" method="post">
                     <tr class='{if="!$value->estado"} warning{/if}'>
                         <td>
-                            <input type="hidden" name="id" value="{$value->id}">
+                            <input type="hidden" name="acceso" value="{$value->nick}">
                             {$value->nick}
                         </td>
                         <td><input type="checkbox" name="estado" value="TRUE" {if="$value->estado"}checked{/if}></td>
@@ -227,10 +230,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <td>{$value->fecha_modificacion}</td>
                         <td>{$value->usuario_modificacion}</td>
                         <td>
-                            <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
+                            <button type="submit" class="btn btn-sm btn-danger" name="accion" value="eliminar_usuario" onclick="return confirm('¿Esta seguro que quiere eliminar al usuario {$value->nick} de este rol?')"><span class="fa fa-trash"></span></button>
                             <button type="button" class="btn btn-sm btn-primary" name="accion" value="actualizar_usuario"><span class="fa fa-save"></span></button>
                         </td>
                     </tr>
+                    </form>
                     {/loop}
                 </table>
             </div>
