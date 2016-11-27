@@ -1,163 +1,4 @@
 {include="header"}
-<style>
-.table-fixed thead {
-  width: 97%;
-}
-.table-fixed tbody {
-  height: 230px;
-  overflow-y: auto;
-  width: 100%;
-}
-.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
-  display: block;
-}
-.table-fixed tbody td, .table-fixed thead > tr> th {
-  float: left;
-  border-bottom-width: 0;
-}
-
-.wizard {
-    margin: 5px auto;
-    background: #fff;
-}
-
-.wizard .nav-tabs {
-    position: relative;
-    margin: 2px auto;
-    margin-bottom: 0;
-    border-bottom-color: #e0e0e0;
-}
-
-.wizard > div.wizard-inner {
-    position: relative;
-}
-
-.connecting-line {
-    height: 2px;
-    background: #e0e0e0;
-    position: absolute;
-    width: 80%;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    top: 50%;
-    z-index: 1;
-}
-
-.wizard .nav-tabs > li.active > a, .wizard .nav-tabs > li.active > a:hover, .wizard .nav-tabs > li.active > a:focus {
-    color: #555555;
-    cursor: default;
-    border: 0;
-    border-bottom-color: transparent;
-    margin-top: 0px;
-}
-
-span.round-tab {
-    width: 70px;
-    height: 70px;
-    line-height: 70px;
-    display: inline-block;
-    border-radius: 100px;
-    background: #fff;
-    border: 2px solid #e0e0e0;
-    z-index: 2;
-    position: absolute;
-    left: 0;
-    text-align: center;
-    font-size: 25px;
-}
-span.round-tab i{
-    color:#555555;
-}
-.wizard li.active span.round-tab {
-    background: #fff;
-    border: 2px solid #5bc0de;
-
-}
-.wizard li.active span.round-tab i{
-    color: #5bc0de;
-}
-
-span.round-tab:hover {
-    color: #333;
-    border: 2px solid #333;
-}
-
-.wizard .nav-tabs > li {
-    width: 25%;
-}
-
-.wizard li:after {
-    content: " ";
-    position: absolute;
-    left: 46%;
-    opacity: 0;
-    margin: 0 auto;
-    bottom: 0px;
-    border: 5px solid transparent;
-    border-bottom-color: #5bc0de;
-    transition: 0.1s ease-in-out;
-}
-
-.wizard li.active:after {
-    content: " ";
-    position: absolute;
-    left: 46%;
-    opacity: 1;
-    margin: 0 auto;
-    bottom: 0px;
-    border: 10px solid transparent;
-    border-bottom-color: #5bc0de;
-}
-
-.wizard .nav-tabs > li a {
-    width: 70px;
-    height: 70px;
-    margin: 10px auto;
-    border-radius: 100%;
-    padding: 0;
-}
-
-    .wizard .nav-tabs > li a:hover {
-        background: transparent;
-    }
-
-.wizard .tab-pane {
-    position: relative;
-    padding-top: 50px;
-}
-
-.wizard h3 {
-    margin-top: 0;
-}
-
-@media( max-width : 585px ) {
-
-    .wizard {
-        width: 90%;
-        height: auto !important;
-    }
-
-    span.round-tab {
-        font-size: 16px;
-        width: 50px;
-        height: 50px;
-        line-height: 50px;
-    }
-
-    .wizard .nav-tabs > li a {
-        width: 50px;
-        height: 50px;
-        line-height: 50px;
-    }
-
-    .wizard li.active:after {
-        content: " ";
-        position: absolute;
-        left: 35%;
-    }
-}
-</style>
 <script type="text/javascript">
     $(document).ready(function() {
         if(window.location.hash.substring(1) == 'nuevo')
@@ -232,6 +73,16 @@ span.round-tab:hover {
     function prevTab(elem) {
         $(elem).prev().find('a[data-toggle="tab"]').click();
     }
+
+    function fs_marcar_todo(formulario,selector,plugin)
+    {
+        $("#"+formulario+" input[plugin='"+plugin+"_"+selector+"']").prop('checked', true);
+    }
+    function fs_marcar_nada(formulario,selector,plugin)
+    {
+        $("#"+formulario+" input[plugin='"+plugin+"_"+selector+"']").prop('checked', false);
+    }
+    /*
     function fs_marcar_todo(selector)
     {
         $("#f_nuevo_rol input[name='"+selector+"[]']").prop('checked', true);
@@ -240,6 +91,7 @@ span.round-tab:hover {
     {
         $("#f_nuevo_rol input[name='"+selector+"[]']").prop('checked', false);
     }
+    */
     function fs_marcar_todos()
     {
         $("#f_nuevo_rol input[name='acceso[]']").prop('checked', true);
@@ -253,6 +105,7 @@ span.round-tab:hover {
         $('#'+id).validate();
     }
 </script>
+{include="loader"}
 <div class="container-fluid">
    <div class="row">
       <div class="col-sm-6 col-xs-7">
@@ -314,8 +167,12 @@ span.round-tab:hover {
                   </tr>
                </thead>
                {loop="$fsc->roles->all()"}
-               <tr class='clickableRow{if="$value->asignaciones()=='0'"} warning{/if}' href='{$value->url()}'>
-                  <td><a href="{$value->url()}">{$value->descripcion}</a></td>
+               <form name="f_rol_{$counter}" action="{$fsc->url()}" method="POST">
+               <tr class='{if="$value->asignaciones()=='0'"}danger{/if}'>
+                  <td>
+                       <a href="{$value->url()}">{$value->descripcion}</a>
+                       <input type="hidden" name="id" value="{$value->id}">
+                  </td>
                   <td>{$value->fecha_creacion}</td>
                   <td>{$value->usuario_creacion}</td>
                   <td class="text-center">
@@ -328,13 +185,16 @@ span.round-tab:hover {
                   <td>{$value->usuario_modificacion}</td>
                   <td>
                       {if="$value->asignaciones()==0"}
-                        <button type="button" class="btn btn-sm btn-danger"><span class="fa fa-trash"></span></button>
+                        <button type="submit" class="btn btn-sm btn-danger" name="accion" value="eliminar" onclick="return confirm('Esta seguro que quiere eliminar el Rol: {$value->descripcion}?')"><span class="fa fa-trash"></span></button>
                       {else}
+                        {if="$fsc->allow_delete"}
                         <button type="button" class="btn btn-sm btn-warning" title="Rol con usuarios no se puede eliminar" data-tooltip="true"><span class="fa fa-lock"></span></button>
+                        {/if}
                       {/if}
                       <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span></button>
                   </td>
                </tr>
+               </form>
                {/loop}
             </table>
          </div>
@@ -420,54 +280,76 @@ span.round-tab:hover {
                             </div>
                             <div class="tab-pane" role="tabpanel" id="step2">
                                 <h3>Páginas a Autorizar</h3>
-                                <div class="table-responsive">
-                                    <table class="table table-fixed">
-                                        <thead>
-                                            <th class="col-xs-6 col-sm-6">
-                                                Pagina
-                                            </th>
-                                            <th class="col-xs-3 col-sm-3 text-center">
-                                                Ver/Modificar<br>
-                                                <span class="text-center">
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('enabled')" title="Marcar todo">
-                                                            <span class="glyphicon glyphicon-check"></span>
-                                                        </button>
-                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('enabled')" title="Desmarcar todo">
-                                                            <span class="glyphicon glyphicon-unchecked"></span>
-                                                        </button>
-                                                    </div>
-                                                </span>
-                                            </th>
-                                            <th class="col-xs-3 col-sm-3 text-center">
-                                                Eliminar<br>
-                                                <span class="text-center">
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('allow_delete')" title="Marcar todo">
-                                                            <span class="glyphicon glyphicon-check"></span>
-                                                        </button>
-                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('allow_delete')" title="Desmarcar todo">
-                                                            <span class="glyphicon glyphicon-unchecked"></span>
-                                                        </button>
-                                                    </div>
-                                                </span>
-                                            </th>
-                                        </thead>
-                                        <tbody>
-                                            {loop="$fsc->all_pages"}
-                                            <tr>
-                                                <td class="col-sm-6">{$value->folder} > {$value->name}</td>
-                                                <td class="col-sm-3 text-center">
-                                                    <input type="checkbox" id="enabled_{$counter}" name="enabled[]" value="{$value->name}"/>
-                                                </td>
-                                                <td class="col-sm-3 text-center">
-                                                    <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"/>
-                                                </td>
-                                            </tr>
-                                            {/loop}
-                                        </tbody>
-                                    </table>
+                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                    {loop="$fsc->plugins"}
+                                    {if="count($fsc->mostrar_paginas($value))!=0"}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="plugin{$counter}">
+                                            <h6 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{$counter}" aria-expanded="true" aria-controls="collapse{$counter}">
+                                                    Plugin: {$value}
+                                                </a>
+                                            </h6>
+                                        </div>
+                                        <div id="collapse{$counter}" class="panel-collapse collapse {if="$counter==0"}in{/if}" role="tabpanel" aria-labelledby="plugin{$counter}">
+                                            <div class="panel-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-fixed">
+                                                        <thead>
+                                                            <th class="col-xs-6 col-sm-6">
+                                                                Pagina
+                                                            </th>
+                                                            <th class="col-xs-3 col-sm-3 text-center">
+                                                                Ver/Modificar<br>
+                                                                <span class="text-center">
+                                                                    <div class="btn-group">
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('f_nuevo_rol','enabled','{$value1}')" title="Marcar todo">
+                                                                            <span class="glyphicon glyphicon-check"></span>
+                                                                        </button>
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('f_nuevo_rol','enabled','{$value1}')" title="Desmarcar todo">
+                                                                            <span class="glyphicon glyphicon-unchecked"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </span>
+                                                            </th>
+                                                            <th class="col-xs-3 col-sm-3 text-center">
+                                                                Eliminar<br>
+                                                                <span class="text-center">
+                                                                    <div class="btn-group">
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('f_nuevo_rol','allow_delete','{$value1}')" title="Marcar todo">
+                                                                            <span class="glyphicon glyphicon-check"></span>
+                                                                        </button>
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('f_nuevo_rol','allow_delete','{$value1}')" title="Desmarcar todo">
+                                                                            <span class="glyphicon glyphicon-unchecked"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </span>
+                                                            </th>
+                                                        </thead>
+                                                        <tbody>
+                                                            {loop="$fsc->mostrar_paginas($value)"}
+                                                            <tr>
+                                                                <td class="col-sm-6">
+                                                                    {$value2->folder} > {$value2->name}
+                                                                </td>
+                                                                <td class="col-sm-3 text-center">
+                                                                    <input type="checkbox" id="enabled_{$counter2}" plugin="{$value1}_enabled" name="enabled[]" value="{$value2->name}"/>
+                                                                </td>
+                                                                <td class="col-sm-3 text-center">
+                                                                    <input type="checkbox" id="allow_delete_{$counter2}" plugin="{$value1}_allow_delete" name="allow_delete[]" value="{$value2->name}"/>
+                                                                </td>
+                                                            </tr>
+                                                            {/loop}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/if}
+                                    {/loop}
                                 </div>
+
                                 <div id="step2_error" class="pull-left alert alert-sm alert-danger hidden">
 
                                 </div>

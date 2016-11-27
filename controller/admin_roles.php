@@ -38,13 +38,16 @@ class admin_roles extends fs_controller {
     }
 
     protected function private_core() {
+        $this->pages = new fs_page();
         $this->roles = new fs_roles();
         $this->roles_paginas = new fs_roles_pages();
         $this->roles_usuarios = new fs_roles_users();
-        $admin_home = new admin_home();
-        $this->plugins = $admin_home->plugin_advanced_list();
-        $this->all_pages = $admin_home->paginas;
-        $this->share_extensions();
+        $this->plugins = $this->lista_plugins();
+
+        //Cargamos los complementos
+        $this->shared_extensions();
+        //Verificamos si este usuario puede borrar Roles
+        $this->allow_delete = ($this->user->admin)?TRUE:$this->user->allow_delete_on(__CLASS__);
 
         $accion = filter_input(INPUT_POST, 'accion');
         if($accion == 'agregar'){
@@ -75,7 +78,6 @@ class admin_roles extends fs_controller {
                     $rol_paginas->name = $page;
                     $rol_paginas->plugin = $this->getPagePlugin($page);
                     $rol_paginas->allow_delete = (in_array($page, $allow_delete))?TRUE:FALSE;
-                    $rol_paginas->estado = TRUE;
                     $rol_paginas->fecha_creacion = \Date('d-m-Y H:i:s');
                     $rol_paginas->usuario_creacion = $this->user->nick;
                     $rol_paginas->fecha_modificacion = \Date('d-m-Y H:i:s');
@@ -97,7 +99,6 @@ class admin_roles extends fs_controller {
                         $rol_usuario = new fs_roles_users();
                         $rol_usuario->id = $id_rol;
                         $rol_usuario->nick = trim($usuario);
-                        $rol_usuario->estado = TRUE;
                         $rol_usuario->fecha_creacion = \Date('d-m-Y H:i:s');
                         $rol_usuario->usuario_creacion = $this->user->nick;
                         $rol_usuario->fecha_modificacion = \Date('d-m-Y H:i:s');
@@ -113,6 +114,15 @@ class admin_roles extends fs_controller {
                             $usuario_ok = false;
                         }
                     }
+                }
+            }
+        }elseif($accion=='eliminar'){
+            $item = $this->roles->get(filter_input(INPUT_POST, 'id'));
+            if($item){
+                if($item->delete()){
+                    $this->new_message('¡Rol eliminado exitosamente!');
+                }else{
+                    $this->new_error_msg('Ocurrio un error al intentar borrar el rol.');
                 }
             }
         }
@@ -162,7 +172,57 @@ class admin_roles extends fs_controller {
         return $plugin;
     }
 
-    protected function share_extensions(){
+    /**
+     * Buscamos las páginas a mostrar, estas pueden ser
+     * all = todas sin importar si están asignadas o no
+     * asignadas = todas las asignadas al rol
+     * disponibles = todas las que no están en el rol
+     * Agregamos el plugin con el cual vamos a comparar la lista
+     * @param type $type
+     * @param type $plugin
+     * @return array
+     */
+    public function mostrar_paginas($plugin){
+        //Inicializamos la lista
+        $lista = array();
+        //Sacamos el listado de páginas
+        foreach($this->pages->all() as $page){
+            if($plugin==$this->getPagePlugin($page->name)){
+                $lista[] = $this->data_pagina($page);
+            }
+        }
+        return $lista;
+    }
+
+    /**
+     * Una vez pasado por el foreach de la funcion mostrar_paginas generamos la información a ser utilizada en el listado de Plugins
+     * @param type $page
+     * @return \stdClass
+     */
+    public function data_pagina($page){
+        $item = new stdClass();
+        $item->name=$page->name;
+        $item->folder=$page->folder;
+        $item->title=$page->title;
+        $item->plugin=$this->getPagePlugin($page->name);
+        return $item;
+    }
+
+    /**
+     * Generamos la lista de plugins agregando los que son de la base
+     * como un plugin FacturaScripts
+     * @return type array
+     */
+    public function lista_plugins(){
+        $lista = array();
+        $lista[] = 'FacturaScripts';
+        foreach($GLOBALS['plugins'] as $plugin){
+            $lista[] = $plugin;
+        }
+        return $lista;
+    }
+
+    protected function shared_extensions(){
         $extensions = array(
             array(
                 'name' => 'admin_roles_validate_js',
@@ -172,6 +232,30 @@ class admin_roles extends fs_controller {
                 'text' => '<script src="'.FS_PATH.'view/js/jquery.validate.min.js" type="text/javascript"></script>',
                 'params' => ''
             ),
+            array(
+                'name' => 'loader_roles_js',
+                'page_from' => __CLASS__,
+                'page_to' => __CLASS__,
+                'type' => 'head',
+                'text' => '<script src="'.FS_PATH.'view/js/loader.js" type="text/javascript"></script>',
+                'params' => ''
+            ),
+            array(
+                'name' => 'loader_roles_css',
+                'page_from' => __CLASS__,
+                'page_to' => __CLASS__,
+                'type' => 'head',
+                'text' => '<link rel="stylesheet" type="text/css" media="screen" href="'.FS_PATH.'view/css/loader.css"/>',
+                'params' => ''
+            ),
+            array(
+                'name' => 'wizard_roles_css',
+                'page_from' => __CLASS__,
+                'page_to' => __CLASS__,
+                'type' => 'head',
+                'text' => '<link rel="stylesheet" type="text/css" media="screen" href="'.FS_PATH.'view/css/wizard.css"/>',
+                'params' => ''
+            )
         );
 
         foreach($extensions as $ext)

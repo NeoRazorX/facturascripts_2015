@@ -45,11 +45,6 @@ class fs_roles_pages extends fs_model{
     public $allow_delete;
     /**
      *
-     * @var type boolean
-     */
-    public $estado;
-    /**
-     *
      * @var type timestamp with out time zone
      */
     public $fecha_creacion;
@@ -76,7 +71,6 @@ class fs_roles_pages extends fs_model{
             $this->name = $t['name'];
             $this->plugin = $t['plugin'];
             $this->allow_delete = $this->str2bool($t['allow_delete']);
-            $this->estado = $this->str2bool($t['estado']);
             $this->fecha_creacion = \date('d-m-Y H:i:s', strtotime($t['fecha_creacion']));
             $this->usuario_creacion = $t['usuario_creacion'];
             $this->fecha_modificacion = \date('d-m-Y H:i:s', strtotime($t['fecha_modificacion']));
@@ -86,7 +80,6 @@ class fs_roles_pages extends fs_model{
             $this->name = NULL;
             $this->plugin = NULL;
             $this->allow_delete = FALSE;
-            $this->estado = FALSE;
             $this->fecha_creacion = \date('d-m-Y H:i:s');
             $this->usuario_creacion = NULL;
             $this->fecha_modificacion = NULL;
@@ -177,19 +170,17 @@ class fs_roles_pages extends fs_model{
         if($this->exists()){
             $sql = "UPDATE ".$this->table_name." SET ".
                 "allow_delete = ".$this->var2str($this->allow_delete).", ".
-                "estado = ".$this->var2str($this->estado).", ".
                 "fecha_modificacion = ".$this->var2str($this->fecha_modificacion).", ".
                 "usuario_modificacion = ".$this->var2str($this->usuario_modificacion)." ".
                 " WHERE id = ".$this->intval($this->id).
                 " AND name = ".$this->var2str($this->name).
                 " AND plugin = ".$this->var2str($this->plugin).";";
         }else{
-            $sql = "INSERT INTO ".$this->table_name." (id, name, plugin, allow_delete, estado, fecha_creacion, usuario_creacion) VALUES (".
+            $sql = "INSERT INTO ".$this->table_name." (id, name, plugin, allow_delete, fecha_creacion, usuario_creacion) VALUES (".
                 $this->intval($this->id).",".
                 $this->var2str($this->name).",".
                 $this->var2str($this->plugin).",".
                 $this->var2str($this->allow_delete).",".
-                $this->var2str($this->estado).",".
                 $this->var2str($this->fecha_creacion).",".
                 $this->var2str($this->usuario_creacion).");";
         }

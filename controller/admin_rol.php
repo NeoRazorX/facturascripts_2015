@@ -35,6 +35,8 @@ class admin_rol extends fs_controller {
     public $roles_pages;
     public $id;
     public $plugins;
+    public $allow_delete;
+    public $allow_modify;
     public function __construct() {
         parent::__construct(__CLASS__, 'Rol', 'admin', TRUE, FALSE, FALSE);
     }
@@ -46,7 +48,10 @@ class admin_rol extends fs_controller {
         $this->roles_pages = new fs_roles_pages();
         $this->plugins = $this->lista_plugins();
 
+        //Cargamos los complementos
         $this->shared_extensions();
+        //Verificamos si este usuario puede borrar información de un Rol
+        $this->allow_delete = ($this->user->admin)?TRUE:$this->user->allow_delete_on(__CLASS__);
 
         $id_p = filter_input(INPUT_POST, 'id');
         $id_g = filter_input(INPUT_GET, 'id');
@@ -77,6 +82,35 @@ class admin_rol extends fs_controller {
     }
 
     /**
+     * Cuando vamos a modificar si se permite borrar o no en una página
+     * esto se hace desde aquí, para que modamos controlar las modificaciones
+     * a los usuarios del rol
+     */
+    public function tratar_pagina(){
+        $plugin = filter_input(INPUT_POST, 'plugin');
+        $pagina = filter_input(INPUT_POST, 'enabled');
+        $allow_delete = filter_input(INPUT_POST, 'allow_delete');
+        if($this->roles_pages->get($this->id, $pagina, $plugin)){
+            $rol0 = new fs_roles_pages();
+            $rol0->id = $this->id;
+            $rol0->name = $pagina;
+            $rol0->plugin = $plugin;
+            $rol0->allow_delete = ($allow_delete)?TRUE:FALSE;
+            $rol0->usuario_modificacion = $this->user->nick;
+            $rol0->fecha_modificacion =  \Date('d-m-Y H:i:s');
+            if($rol0->save()){
+                if($this->roles_users->get_by('rol', $this->id)){
+                    foreach($this->roles_users->get_by('rol', $this->id) as $rol_user){
+                        $a = new fs_access( array('fs_user'=> trim($rol_user->nick), 'fs_page'=>$pagina, 'allow_delete'=>($allow_delete)?TRUE:FALSE) );
+                        $a->save();
+                    }
+                }
+                $this->new_message('¡Datos actualizados con exito!');
+            }
+        }
+    }
+
+    /**
      * Tratamos las paginas procesadas ya sea para agregarlas o eliminarlas
      */
     public function tratar_paginas($accion){
@@ -95,7 +129,6 @@ class admin_rol extends fs_controller {
                 $rol_paginas->name = $name;
                 $rol_paginas->plugin = $this->getPagePlugin($name);
                 $rol_paginas->allow_delete = (in_array($name, $allow_delete))?TRUE:FALSE;
-                $rol_paginas->estado = TRUE;
                 $rol_paginas->fecha_creacion = \Date('d-m-Y H:i:s');
                 $rol_paginas->usuario_creacion = $this->user->nick;
                 $rol_paginas->fecha_modificacion = \Date('d-m-Y H:i:s');
@@ -114,7 +147,7 @@ class admin_rol extends fs_controller {
             */
              $this->new_message('¡'.$mensaje.'con exito!');
             if($paginas){
-               $this->agregar_paginas_usuarios($enabled);
+               $this->agregar_paginas_usuarios();
             }
         }elseif($accion=='eliminar_pagina' AND (filter_input(INPUT_POST, 'enabled'))){
             $pagina = filter_input(INPUT_POST, 'enabled');
@@ -173,7 +206,6 @@ class admin_rol extends fs_controller {
                 $rol_usuario = new fs_roles_users();
                 $rol_usuario->id = $this->id;
                 $rol_usuario->nick = trim($usuario);
-                $rol_usuario->estado = TRUE;
                 $rol_usuario->fecha_creacion = \Date('d-m-Y H:i:s');
                 $rol_usuario->usuario_creacion = $this->user->nick;
                 $rol_usuario->fecha_modificacion = \Date('d-m-Y H:i:s');
@@ -211,11 +243,13 @@ class admin_rol extends fs_controller {
                     //Reconfiguramos los accesos de los otros roles a los que tenga acceso este usuario
                     $this->actualizar_accesos($usuario_elegido);
                     $otros_roles = $this->roles_users->get_by('user', $usuario_elegido);
-                    foreach($otros_roles as $rol){
-                        $lista_paginas = $this->roles_pages->get_by('rol', $rol->id);
-                        foreach($lista_paginas as $p){
-                            $a = new fs_access( array('fs_user'=> trim($usuario_elegido), 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete));
-                            $a->save();
+                    if($otros_roles){
+                        foreach($otros_roles as $rol){
+                            $lista_paginas = $this->roles_pages->get_by('rol', $rol->id);
+                            foreach($lista_paginas as $p){
+                                $a = new fs_access( array('fs_user'=> trim($usuario_elegido), 'fs_page'=>$p->name, 'allow_delete'=>$p->allow_delete));
+                                $a->save();
+                            }
                         }
                     }
                     $this->new_message($mensaje);
@@ -257,7 +291,7 @@ class admin_rol extends fs_controller {
             }
         }
         if($resultado){
-            $this->new_message('¡Páginas agregadas a este rol con exito!');
+            $this->new_message('¡Páginas agregadas a los usuarios de este rol con exito!');
         }else{
             $this->new_message('¡No se agregaron páginas a usuarios porque no hay usuarios en este rol!');
         }

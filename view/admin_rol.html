@@ -67,21 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         $("#"+formulario+" input[name='"+selector+"[]']").prop('checked', false);
     }
 </script>
-<div class="container bg_load">
-    <div class="row">
-        <div id="loader">
-        <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="lading">Cargando...</div>
-        </div>
-    </div>
-</div>
+{include="loader"}
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-6 col-xs-7">
@@ -152,7 +138,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             <th class="text-left">Plugin</th>
                             <th class="text-left">Pagina</th>
                             <th class="text-left">Eliminar</th>
-                            <th class="text-left">Estado</th>
                             <th class="text-left">Fecha de Creacion</th>
                             <th class="text-left">Usuario Creacion</th>
                             <th class="text-left">Ultima modicación</th>
@@ -161,24 +146,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </tr>
                     </thead>
                     {loop="$fsc->rol->get_pages()"}
-                    <form id="f_paginas_rol" name="f_paginas_rol" class="form" role="form" action="{$fsc->url()}&id={$fsc->id}" method="post">
-                    <tr class='{if="!$value->estado"} warning{/if}'>
+                    <form name="f_paginas_rol" class="form" role="form" action="{$fsc->url()}&id={$fsc->id}" method="post">
+                    <tr>
                         <td>
                             {$value->plugin}
                         </td>
                         <td>
+                            <input type="hidden" name="plugin" value="{$value->plugin}">
                             <input type="hidden" name="enabled" value="{$value->name}">
                             {$value->name}
                         </td>
                         <td><input type="checkbox" name="allow_delete" value="TRUE" {if="$value->allow_delete"}checked{/if}></td>
-                        <td><input type="checkbox" name="estado" value="TRUE" {if="$value->estado"}checked{/if}></td>
                         <td>{$value->fecha_creacion}</td>
                         <td>{$value->usuario_creacion}</td>
                         <td>{$value->fecha_modificacion}</td>
                         <td>{$value->usuario_modificacion}</td>
                         <td>
+                            {if="$fsc->allow_delete"}
                             <button type="submit" class="btn btn-sm btn-danger" name="accion" value="eliminar_pagina" onclick="return confirm('¿Esta seguro que quiere eliminar la página {$value->name} de este rol?')"><span class="fa fa-trash"></span></button>
-                            <button type="button" class="btn btn-sm btn-primary" name="accion" value="actualizar_pagina"><span class="fa fa-save"></span></button>
+                            {/if}
+                            <button type="submit" class="btn btn-sm btn-primary" name="accion" value="actualizar_pagina" onclick="return confirm('¿Esta seguro que quiere modificar el acceso a \n la página {$value->name} de este rol?')"><span class="fa fa-save"></span></button>
                         </td>
                     </tr>
                     </form>
@@ -207,7 +194,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <thead>
                         <tr>
                             <th class="text-left">Usuario</th>
-                            <th class="text-left">Estado</th>
                             <th class="text-left">Fecha de Creacion</th>
                             <th class="text-left">Usuario Creacion</th>
                             <th class="text-left">Ultima modicación</th>
@@ -217,19 +203,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </thead>
                     {loop="$fsc->rol->get_users()"}
                     <form id="f_usuarios_rol" name="f_usuarios_rol" class="form" role="form" action="{$fsc->url()}&id={$fsc->id}" method="post">
-                    <tr class='{if="!$value->estado"} warning{/if}'>
+                    <tr>
                         <td>
                             <input type="hidden" name="acceso" value="{$value->nick}">
                             {$value->nick}
                         </td>
-                        <td><input type="checkbox" name="estado" value="TRUE" {if="$value->estado"}checked{/if}></td>
                         <td>{$value->fecha_creacion}</td>
                         <td>{$value->usuario_creacion}</td>
                         <td>{$value->fecha_modificacion}</td>
                         <td>{$value->usuario_modificacion}</td>
                         <td>
+                            {if="$fsc->allow_delete"}
                             <button type="submit" class="btn btn-sm btn-danger" name="accion" value="eliminar_usuario" onclick="return confirm('¿Esta seguro que quiere eliminar al usuario {$value->nick} de este rol?')"><span class="fa fa-trash"></span></button>
-                            <button type="button" class="btn btn-sm btn-primary" name="accion" value="actualizar_usuario"><span class="fa fa-save"></span></button>
+                            {/if}
                         </td>
                     </tr>
                     </form>
@@ -412,19 +398,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
     </div>
 </div>
-<!-- INICIO DIV PARA LOADER
-<div class="bg_load"></div>
-<div class="wrapper">
-    <div class="inner">
-        <span>C</span>
-        <span>a</span>
-        <span>r</span>
-        <span>g</span>
-        <span>a</span>
-        <span>n</span>
-        <span>d</span>
-        <span>o</span>
-    </div>
-</div>
-FIN DIV PARA LOADER !-->
 {include="footer"}
