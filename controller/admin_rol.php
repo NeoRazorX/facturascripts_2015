@@ -45,7 +45,6 @@ class admin_rol extends fs_controller {
         $this->roles_users = new fs_roles_users();
         $this->roles_pages = new fs_roles_pages();
         $this->plugins = $this->lista_plugins();
-        //$this->plugins = $GLOBALS['plugins'];
 
         $this->shared_extensions();
 
@@ -364,6 +363,29 @@ class admin_rol extends fs_controller {
         return $lista;
     }
     protected function shared_extensions(){
-
+        $extensiones = array(
+            array(
+                'name' => 'loader_js',
+                'page_from' => __CLASS__,
+                'page_to' => __CLASS__,
+                'type' => 'head',
+                'text' => '<script src="'.FS_PATH.'view/js/loader.js" type="text/javascript"></script>',
+                'params' => ''
+            ),
+            array(
+                'name' => 'loader_css',
+                'page_from' => __CLASS__,
+                'page_to' => __CLASS__,
+                'type' => 'head',
+                'text' => '<link rel="stylesheet" type="text/css" media="screen" href="'.FS_PATH.'view/css/loader.css"/>',
+                'params' => ''
+            )
+        );
+        foreach ($extensiones as $ext) {
+            $fsext0 = new fs_extension($ext);
+            if (!$fsext0->save()) {
+                $this->new_error_msg('Imposible guardar los datos de la extensión ' . $ext['name'] . '.');
+            }
+        }
     }
 }

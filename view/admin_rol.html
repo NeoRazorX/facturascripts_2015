@@ -15,23 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<style>
-.table-fixed thead {
-  width: 97%;
-}
-.table-fixed tbody {
-  height: 200px;
-  overflow-y: auto;
-  width: 100%;
-}
-.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
-  display: block;
-}
-.table-fixed tbody td, .table-fixed thead > tr> th {
-  float: left;
-  border-bottom-width: 0;
-}
-</style>
 <script type="text/javascript">
     $(document).ready(function() {
 
@@ -84,6 +67,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         $("#"+formulario+" input[name='"+selector+"[]']").prop('checked', false);
     }
 </script>
+<div class="container bg_load">
+    <div class="row">
+        <div id="loader">
+        <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="lading">Cargando...</div>
+        </div>
+    </div>
+</div>
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-6 col-xs-7">
@@ -414,4 +412,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
     </div>
 </div>
+<!-- INICIO DIV PARA LOADER
+<div class="bg_load"></div>
+<div class="wrapper">
+    <div class="inner">
+        <span>C</span>
+        <span>a</span>
+        <span>r</span>
+        <span>g</span>
+        <span>a</span>
+        <span>n</span>
+        <span>d</span>
+        <span>o</span>
+    </div>
+</div>
+FIN DIV PARA LOADER !-->
 {include="footer"}
