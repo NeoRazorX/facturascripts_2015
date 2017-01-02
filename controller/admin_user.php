@@ -406,6 +406,7 @@ class admin_user extends fs_controller
                      /// la página ha sido marcada como autorizada.
                      $a->save();
                      
+                     /// si no hay una página de inicio para el usuario, usamos esta
                      if( is_null($this->suser->fs_page) AND $p->show_on_menu )
                      {
                         $this->suser->fs_page = $p->name;
