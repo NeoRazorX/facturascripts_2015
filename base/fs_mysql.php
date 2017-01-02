@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of FacturaSctipts
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -341,7 +341,7 @@ class fs_mysql
     * @param type $offset
     * @return type
     */
-   public function select_limit($sql, $limit, $offset)
+   public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
    {
       $resultado = FALSE;
       
@@ -379,7 +379,7 @@ class fs_mysql
     * @param type $sql
     * @return boolean
     */
-   public function exec($sql, $transaccion=TRUE)
+   public function exec($sql, $transaccion = TRUE)
    {
       $resultado = FALSE;
       

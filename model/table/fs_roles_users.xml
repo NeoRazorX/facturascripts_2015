@@ -5,43 +5,26 @@
         Estructura de la tabla fs_roles_users.
 -->
 <tabla>
-    <columna>
-        <nombre>estado</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fecha_creacion</nombre>
-        <tipo>timestamp without time zone</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>fecha_modificacion</nombre>
-        <tipo>timestamp without time zone</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nick</nombre>
-        <tipo>character varying(12)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>usuario_creacion</nombre>
-        <tipo>character varying(12)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>usuario_modificacion</nombre>
-        <tipo>character varying(12)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fs_roles_users_pkey</nombre>
-        <consulta>PRIMARY KEY (id,nick)</consulta>
-    </restriccion>
+   <columna>
+      <nombre>codrol</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>fs_user</nombre>
+      <tipo>character varying(12)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>fs_roles_users_pkey</nombre>
+      <consulta>PRIMARY KEY (codrol,fs_user)</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>fs_roles_users_roles</nombre>
+      <consulta>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
+   <restriccion>
+      <nombre>fs_roles_users_user</nombre>
+      <consulta>FOREIGN KEY (fs_user) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+   </restriccion>
 </tabla>

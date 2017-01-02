@@ -5,44 +5,18 @@
         Estructura de la tabla fs_roles.
 -->
 <tabla>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>estado</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fecha_creacion</nombre>
-        <tipo>timestamp without time zone</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>fecha_modificacion</nombre>
-        <tipo>timestamp without time zone</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('fs_roles_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>usuario_creacion</nombre>
-        <tipo>character varying(12)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>usuario_modificacion</nombre>
-        <tipo>character varying(12)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fs_roles_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
+   <columna>
+      <nombre>codrol</nombre>
+      <tipo>character varying(20)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <columna>
+      <nombre>descripcion</nombre>
+      <tipo>character varying(200)</tipo>
+      <nulo>NO</nulo>
+   </columna>
+   <restriccion>
+      <nombre>fs_roles_pkey</nombre>
+      <consulta>PRIMARY KEY (codrol)</consulta>
+   </restriccion>
 </tabla>

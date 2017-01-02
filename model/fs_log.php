@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of FacturaSctipts
+ * This file is part of FacturaScripts
  * Copyright (C) 2013         Salvador Merino      salvaweb.co@gmail.com
  * Copyright (C) 2013-2016    Carlos García Gómez  neorazorx@gmail.com
  *
