@@ -1,0 +1,197 @@
+{include="header"}
+
+{if="$fsc->rol"}
+<script type="text/javascript">
+   function fs_marcar_todo()
+   {
+      $("#f_rol_pages input[name='enabled[]']").prop('checked', true);
+      $("#f_rol_pages input[name='allow_delete[]']").prop('checked', true);
+   }
+   function fs_marcar_nada()
+   {
+      $("#f_rol_pages input[name='enabled[]']").prop('checked', false);
+      $("#f_rol_pages input[name='allow_delete[]']").prop('checked', false);
+   }
+   function check_allow_delete(counter)
+   {
+      if( $("#enabled_"+counter).is(':checked') )
+      {
+         $("#allow_delete_"+counter).prop('checked', true);
+      }
+      else
+      {
+         $("#allow_delete_"+counter).prop('checked', false);
+      }
+   }
+   $(document).ready(function() {
+      $("#b_eliminar_rol").click(function(event) {
+         event.preventDefault();
+         if( confirm("¿Realmente desea eliminar el rol {$fsc->rol->codrol}?") )
+         {
+            window.location.href = 'index.php?page=admin_users&delete_rol={$fsc->rol->codrol}#roles';
+         }
+      });
+   });
+</script>
+
+<form action="{$fsc->rol->url()}" method="post" class="form" id="f_rol_pages">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-default" href="index.php?page=admin_users#roles">
+                  <span class="glyphicon glyphicon-arrow-left"></span>
+                  <span class="hidden-xs">&nbsp; Roles</span>
+               </a>
+               <a class="btn btn-sm btn-default" href="{$fsc->rol->url()}" title="recargar la página">
+                  <span class="glyphicon glyphicon-refresh"></span>
+               </a>
+            </div>
+            <div class="btn-group">
+               {loop="$fsc->extensions"}
+                  {if="$value->type=='button'"}
+                  <a href="index.php?page={$value->from}&codrol={$fsc->rol->codrol}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
+                  {/if}
+               {/loop}
+            </div>
+         </div>
+         <div class="col-sm-6 text-right">
+            <a class="btn btn-sm btn-success" href="index.php?page=admin_users#nuevorol" title="Nuevo rol">
+               <span class="glyphicon glyphicon-plus"></span>
+            </a>
+            <div class="btn-group">
+               {if="$fsc->allow_delete"}
+               <a href="#" id="b_eliminar_rol" class="btn btn-sm btn-danger">
+                  <span class="glyphicon glyphicon-trash"></span>
+                  <span class="hidden-xs hidden-sm">&nbsp; Eliminar</span>
+               </a>
+               {/if}
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+                  <span class="hidden-xs">&nbsp; Guardar</span>
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-sm-12">
+            <div class="page-header">
+               <h1>
+                  <i class="fa fa-address-card-o" aria-hidden="true"></i>
+                  Rol <small>{$fsc->rol->codrol}</small>
+               </h1>
+               <a href="{$fsc->rol->url()}&aplicar=TRUE" class="label label-success">
+                  <i class="fa fa-check" aria-hidden="true"></i> Aplicar
+               </a>
+               &nbsp; pulsa aplicar para regenerar los permisos de los usuarios.
+            </div>
+            <div class="form-group">
+               <input type="text" name="descripcion" value="{$fsc->rol->descripcion}" class="form-control" autocomplete="off"/>
+            </div>
+         </div>
+      </div>
+   </div>
+   <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+         <a href="#autorizar" aria-controls="usuarios" role="tab" data-toggle="tab">
+            <i class="fa fa-check-square" aria-hidden="true"></i>
+            <span class="hidden-xs">&nbsp;Autorizar</span>
+         </a>
+      </li>
+      <li role="presentation">
+         <a href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab">
+            <i class="fa fa-users" aria-hidden="true"></i>
+            <span class="hidden-xs">&nbsp;Usuarios</span>
+         </a>
+      </li>
+   </ul>
+   <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="autorizar">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-left">Página</th>
+                     <th class="text-left">Menú</th>
+                     <th class="text-center">Ver / Modificar</th>
+                     <th></th>
+                     <th class="text-center">Permiso de eliminación</th>
+                  </tr>
+               </thead>
+               {loop="$fsc->all_pages()"}
+                  <tr{if="$value->enabled"} class="{if="$value->allow_delete"}success{else}warning{/if}"{/if}>
+                     <td>{$value->name}</td>
+                     <td>
+                        {if="$value->important"}
+                        <span class="glyphicon glyphicon-star"></span> » {$value->title}
+                        {elseif="$value->show_on_menu"}
+                        <span class="text-capitalize">{$value->folder}</span> » {$value->title}
+                        {else}
+                        -
+                        {/if}
+                     </td>
+                     <td class="text-center">
+                        <input type="checkbox" id="enabled_{$counter}" name="enabled[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')"{if="$value->enabled"} checked=""{/if}/>
+                     </td>
+                     <td class="text-center">
+                        {if="$counter==0"}
+                        <div class="btn-group">
+                           <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
+                              <span class="glyphicon glyphicon-check"></span>
+                           </button>
+                           <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
+                              <span class="glyphicon glyphicon-unchecked"></span>
+                           </button>
+                        </div>
+                        {/if}
+                     </td>
+                     <td class="text-center">
+                        <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"{if="$value->allow_delete"} checked=""{/if} title="el usuario tiene permisos para eliminar en esta página"/>
+                     </td>
+                  </tr>
+               {/loop}
+            </table>
+         </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="usuarios">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th width="40"></th>
+                     <th class="text-left">Nick</th>
+                     <th class="text-left">Email</th>
+                     <th class="text-right">Último login</th>
+                  </tr>
+               </thead>
+               {loop="$fsc->all_users()"}
+                  <tr{if="$value->included"} class="success"{/if}>
+                     <td class="text-center">
+                        {if="$value->admin"}
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        {else}
+                        <input type="checkbox" id="enabled_{$counter}" name="iuser[]" value="{$value->nick}" {if="$value->included"} checked=""{/if}/>
+                        {/if}
+                     </td>
+                     <td>
+                        <a href="{$value->url()}">{$value->nick}</a>
+                        {if="$value->admin"}
+                        &nbsp; <span class="label label-warning">administrador</span>
+                        {/if}
+                     </td>
+                     <td>{$value->email}</td>
+                     <td class="text-right">{$value->show_last_login()}</td>
+                  </tr>
+               {/loop}
+            </table>
+         </div>
+      </div>
+   </div>
+</form>
+{else}
+<div class="thumbnail">
+   <img src="{#FS_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}
