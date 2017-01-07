@@ -42,7 +42,7 @@
 <form class="form" role="form" id="f_user_pages" action="{$fsc->url()}" method="post">
    <input type="hidden" name="modupages" value="TRUE"/>
    <div class="container-fluid">
-      <div class="row" style="margin-bottom: 10px;">
+      <div class="row">
          <div class="col-xs-6">
             <div class="btn-group">
                <a class="btn btn-sm btn-default" href="index.php?page=admin_users">
@@ -76,6 +76,16 @@
                   <span class="glyphicon glyphicon-floppy-disk"></span>
                   <span class="hidden-xs">&nbsp; Guardar</span>
                </button>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-sm-12">
+            <div class="page-header">
+               <h1>
+                  <i class="fa fa-user" aria-hidden="true"></i>
+                  Usuario <small>{$fsc->suser->nick}</small>
+               </h1>
             </div>
          </div>
       </div>
@@ -174,15 +184,15 @@
    <div role="tabpanel">
       <ul class="nav nav-tabs" role="tablist">
          <li role="presentation" class="active">
-            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
-               <span class="glyphicon glyphicon-check"></span>
-               <span class="hidden-xs">&nbsp; Autorizar</span>
+            <a href="#autorizar" aria-controls="autorizar" role="tab" data-toggle="tab">
+               <i class="fa fa-check-square" aria-hidden="true"></i>
+               <span class="hidden-xs">&nbsp;Autorizar</span>
             </a>
          </li>
          <li role="presentation">
-            <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">
-               <span class="glyphicon glyphicon-book"></span>
-               <span class="hidden-xs">&nbsp; Historial</span>
+            <a href="#historial" aria-controls="historial" role="tab" data-toggle="tab">
+               <i class="fa fa-history" aria-hidden="true"></i>
+               <span class="hidden-xs">&nbsp;Historial</span>
             </a>
          </li>
          {loop="$fsc->extensions"}
@@ -194,7 +204,7 @@
          {/loop}
       </ul>
       <div class="tab-content">
-         <div role="tabpanel" class="tab-pane active" id="home">
+         <div role="tabpanel" class="tab-pane active" id="autorizar">
             <div class="table-responsive">
                <table class="table table-hover">
                   <thead>
@@ -280,7 +290,7 @@
                </table>
             </div>
          </div>
-         <div role="tabpanel" class="tab-pane" id="profile">
+         <div role="tabpanel" class="tab-pane" id="historial">
             <div class="table-responsive">
                <table class="table table-hover">
                   <thead>

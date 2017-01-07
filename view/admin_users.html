@@ -7,10 +7,25 @@
          $("#modal_nuevo_usuario").modal('show');
          document.f_nuevo_usuario.nnick.focus();
       }
+      else if(window.location.hash.substring(1) == 'roles')
+      {
+         $('#tab_usuarios a[href="#roles"]').tab('show');
+      }
+      else if(window.location.hash.substring(1) == 'nuevorol')
+      {
+         $('#tab_usuarios a[href="#roles"]').tab('show');
+         $("#modal_nuevo_rol").modal('show');
+         document.f_nuevo_rol.descripcion.focus();
+      }
       $("#b_nuevo_usuario").click(function(event) {
          event.preventDefault();
          $("#modal_nuevo_usuario").modal('show');
          document.f_nuevo_usuario.nnick.focus();
+      });
+      $("#b_nuevo_rol").click(function(event) {
+         event.preventDefault();
+         $("#modal_nuevo_rol").modal('show');
+         document.f_nuevo_rol.nrol.focus();
       });
    });
 </script>
@@ -33,10 +48,6 @@
             {/if}
          </div>
          <div class="btn-group">
-            <a id="b_nuevo_usuario" class="btn btn-sm btn-success" href="#">
-               <span class="glyphicon glyphicon-plus"></span>
-               <span class="hidden-xs">&nbsp; Nuevo</span>
-            </a>
             {loop="$fsc->extensions"}
                {if="$value->type=='button'"}
                <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
@@ -51,31 +62,55 @@
 </div>
 
 <div role="tabpanel">
-   <ul class="nav nav-tabs" role="tablist">
+   <ul id="tab_usuarios" class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
          <a href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab">
             <i class="fa fa-users" aria-hidden="true"></i>
-            <span class="hidden-xs">&nbsp; Usuarios</span>
+            <span class="hidden-xs">&nbsp;Usuarios</span>
             <span class="badge">{function="count($fsc->user->all())"}</span>
          </a>
       </li>
       {if="!FS_DEMO"}
       <li role="presentation">
          <a href="#permisos" aria-controls="permisos" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-            <span class="hidden-xs">&nbsp; Permisos</span>
+            <i class="fa fa-check-square" aria-hidden="true"></i>
+            <span class="hidden-xs">&nbsp;Permisos</span>
+         </a>
+      </li>
+      <li role="presentation">
+         <a href="#roles" aria-controls="roles" role="tab" data-toggle="tab">
+            <i class="fa fa-address-card-o" aria-hidden="true"></i>
+            <span class="hidden-xs">&nbsp;Roles</span>
          </a>
       </li>
       {/if}
       <li role="presentation">
          <a href="#historial" aria-controls="historial" role="tab" data-toggle="tab">
-            <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-            <span class="hidden-xs">&nbsp; Historial</span>
+            <i class="fa fa-history" aria-hidden="true"></i>
+            <span class="hidden-xs">&nbsp;Historial</span>
          </a>
       </li>
    </ul>
+   
    <div class="tab-content">
       <div role="tabpanel" class="tab-pane active" id="usuarios">
+         <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
+            <div class="row">
+               <div class="col-sm-6">
+                  <a id="b_nuevo_usuario" class="btn btn-xs btn-success" href="#">
+                     <span class="glyphicon glyphicon-plus"></span>
+                     <span class="hidden-xs">&nbsp;Nuevo</span>
+                  </a>
+               </div>
+               <div class="col-sm-6 text-right">
+                  <p class="help-block">
+                     <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+                     Instala el plugin <b>login_anonimo</b> para que no salga la lista
+                     de usuarios en la pantalla de login.
+                  </p>
+               </div>
+            </div>
+         </div>
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
@@ -104,58 +139,100 @@
                {/loop}
             </table>
          </div>
-         <div class="container-fluid">
+      </div>
+      {if="!FS_DEMO"}
+      <div role="tabpanel" class="tab-pane" id="permisos">
+         <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
             <div class="row">
                <div class="col-sm-12">
                   <p class="help-block">
-                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                     Instala el plugin <b>login_anonimo</b> para que no salga la lista
-                     de usuarios en la pantalla de login.
+                     <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+                     Aquí puedes ver rápidamente qué usuarios tienen permiso para acceder
+                     a cada página. En <span class="label label-warning">destacado</span>
+                     los que tienen permisos para ver, modificar y eliminar, el resto
+                     solamente tienen permisos para ver y modificar.
                   </p>
                </div>
             </div>
          </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="permisos">
          <div class="table-responsive">
             <table class="table table-hover">
                <thead>
                   <tr>
                      <th class="text-left">Página</th>
-                     {loop="$fsc->user->all()"}
-                     <th colspan="2" class="text-center">
-                        <a href="{$value->url()}">{$value->nick}</a>
-                     </th>
-                     {/loop}
+                     <th class="text-left">Usuarios con permiso</th>
                   </tr>
                </thead>
                {loop="$fsc->all_pages()"}
                   <tr>
                      <td>{$value->name}</td>
-                     {loop="$value->users"}
-                        <td class='text-center{if="$counter%2==0"} info{/if}'>
-                           {if="$value2['modify']"}
-                           <span class="glyphicon glyphicon-edit" aria-hidden="true" title="{$key2} puede editar en {$value1->name}"></span>
-                           {/if}
-                        </td>
-                        <td class='text-center{if="$counter%2==0"} info{/if}'>
+                     <td>
+                        {loop="$value->users"}
                            {if="$value2['delete']"}
-                           <span class="glyphicon glyphicon-trash" aria-hidden="true" title="{$key2} puede eliminar en {$value1->name}"></span>
+                           <a href="index.php?page=admin_user&snick={$key2}" class="label label-warning" title="{$key2} puede ver, modificar y eliminar en {$value1->name}">
+                              {$key2}
+                           </a>&nbsp;
+                           {elseif="$value2['modify']"}
+                           <a href="index.php?page=admin_user&snick={$key2}" class="label label-default" title="{$key2} puede ver y modificar en {$value1->name}, pero no eliminar">
+                              {$key2}
+                           </a>&nbsp;
                            {/if}
-                        </td>
-                     {/loop}
+                        {/loop}
+                     </td>
                   </tr>
                {/if}
             </table>
          </div>
       </div>
+      <div role="tabpanel" class="tab-pane" id="roles">
+         <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
+            <div class="row">
+               <div class="col-sm-6">
+                  <a id="b_nuevo_rol" class="btn btn-xs btn-success" href="#">
+                     <span class="glyphicon glyphicon-plus"></span>
+                     <span class="hidden-xs">&nbsp;Nuevo</span>
+                  </a>
+               </div>
+               <div class="col-sm-6 text-right">
+                  <p class="help-block">
+                     <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+                     Los roles permiten definir paquetes de permisos para aplicar rápidamente
+                     a usuarios, en lugar de ir uno por uno.
+                  </p>
+               </div>
+            </div>
+         </div>
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Código</th>
+                     <th>Descripción</th>
+                  </tr>
+               </thead>
+               {loop="$fsc->rol->all()"}
+               <tr class="clickableRow" href="{$value->url()}">
+                  <td>
+                     <a href="{$value->url()}">{$value->codrol}</a>
+                  </td>
+                  <td>{$value->descripcion}</td>
+               </tr>
+               {else}
+               <tr class="warning">
+                  <td colspan="2">Sin resultados.</td>
+               </tr>
+               {/loop}
+            </table>
+         </div>
+      </div>
+      {/if}
       <div role="tabpanel" class="tab-pane" id="historial">
-         <div class="container-fluid" style="margin-top: 10px;">
+         <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
             <div class="row">
                <div class="col-sm-8">
                   <p class="help-block">
-                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                     &nbsp; Puedes ver más detalles desde Admin &gt; Información del sistema.
+                     <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+                     Puedes ver más detalles desde Admin &gt; Información del sistema.
                   </p>
                </div>
                <div class="col-sm-4 text-right">
@@ -203,25 +280,31 @@
 <div class="modal" id="modal_nuevo_usuario">
    <div class="modal-dialog">
       <div class="modal-content">
-         <form name="f_nuevo_usuario" class="form" role="form" action="{$fsc->page->url()}" method="post">
+         <form name="f_nuevo_usuario" class="form" role="form" action="{$fsc->url()}" method="post">
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">
-                  <span class="glyphicon glyphicon-user"></span>&nbsp; Nuevo usuario
+                  <i class="fa fa-user" aria-hidden="true"></i>&nbsp; Nuevo usuario
                </h4>
             </div>
             <div class="modal-body">
                <div class="form-group">
                   Nick:
                   <input class="form-control" type="text" name="nnick" maxlength="12" autocomplete="off" required=""/>
-               </div>
-               <div class="form-group">
-                  Contraseña:
-                  <input class="form-control" type="password" name="npassword" maxlength="32"/>
                   <label class="checkbox-inline">
                      <input type="checkbox" name="nadmin" value="TRUE"/>
                      Administrador
                   </label>
+                  {loop="$fsc->rol->all()"}
+                  <label class="checkbox-inline">
+                     <input type="checkbox" name="roles[]" value="{$value->codrol}"/>
+                     {$value->codrol}
+                  </label>
+                  {/loop}
+               </div>
+               <div class="form-group">
+                  Contraseña:
+                  <input class="form-control" type="password" name="npassword" maxlength="32"/>
                </div>
                <div class="form-group">
                   Email:
@@ -245,6 +328,36 @@
                      Puedes tener empleados que no tengan acceso a FacturaScripts,
                      o bien usuarios que no sean empleados, por eso está separado.
                   </p>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; Guardar
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="modal" id="modal_nuevo_rol">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nuevo_rol" class="form" role="form" action="{$fsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">
+                  <i class="fa fa-address-card-o" aria-hidden="true"></i>&nbsp; Nuevo rol
+               </h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input type="text" name="nrol" class="form-control" maxlength="20" autocomplete="off" required=""/>
+               </div>
+               <div class="form-group">
+                  Descripcion:
+                  <input type="text" name="descripcion" class="form-control" autocomplete="off" required=""/>
                </div>
             </div>
             <div class="modal-footer">

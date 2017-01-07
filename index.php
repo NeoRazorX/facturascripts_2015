@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of FacturaSctipts
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -141,7 +141,11 @@ else
       $fsc->select_default_page();
    }
    
-   if($fsc->template AND !$fsc_error)
+   if($fsc_error)
+   {
+      die();
+   }
+   else if($fsc->template)
    {
       /// configuramos rain.tpl
       raintpl::configure('base_url', NULL);
