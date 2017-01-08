@@ -7,6 +7,7 @@ buildify()
         nodePath + 'bootstrap-sass/assets/javascripts/bootstrap.js',
         nodePath + 'bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
         nodePath + 'jquery-autocomplete/jquery.autocomplete.js',
+        nodePath + 'jquery-validation/dist/jquery.validate.js',
         nodePath + 'jquery-ui/ui/widget.js',
         'js/base.js'
     ])

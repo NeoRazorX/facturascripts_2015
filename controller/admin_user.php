@@ -201,7 +201,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'cosmo',
+              'text' => 'bootstrap-cosmo.min.css',
               'params' => ''
           ),
           array(
@@ -209,7 +209,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'darkly',
+              'text' => 'bootstrap-darkly.min.css',
               'params' => ''
           ),
           array(
@@ -217,7 +217,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'flatly',
+              'text' => 'bootstrap-flatly.min.css',
               'params' => ''
           ),
           array(
@@ -225,7 +225,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'sandstone',
+              'text' => 'bootstrap-sandstone.min.css',
               'params' => ''
           ),
           array(
@@ -233,7 +233,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'united',
+              'text' => 'bootstrap-united.min.css',
               'params' => ''
           ),
           array(
@@ -241,7 +241,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'yeti',
+              'text' => 'bootstrap-yeti.min.css',
               'params' => ''
           ),
           array(
@@ -249,7 +249,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'lumen',
+              'text' => 'bootstrap-lumen.min.css',
               'params' => ''
           ),
           array(
@@ -257,7 +257,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'paper',
+              'text' => 'bootstrap-paper.min.css',
               'params' => ''
           ),
           array(
@@ -265,7 +265,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'simplex',
+              'text' => 'bootstrap-simplex.min.css',
               'params' => ''
           ),
           array(
@@ -273,7 +273,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'spacelab',
+              'text' => 'bootstrap-spacelab.min.css',
               'params' => ''
           ),
       );
