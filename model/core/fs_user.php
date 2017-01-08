@@ -155,7 +155,7 @@ class fs_user extends \fs_model
          $this->last_browser = $a['last_browser'];
          $this->fs_page = $a['fs_page'];
          
-         $this->css = 'view/css/bootstrap-yeti.min.css';
+         $this->css = 'bootstrap-yeti.min.css';
          if( isset($a['css']) )
          {
             $this->css = $a['css'];
@@ -174,7 +174,7 @@ class fs_user extends \fs_model
          $this->last_ip = NULL;
          $this->last_browser = NULL;
          $this->fs_page = NULL;
-         $this->css = 'view/css/bootstrap-yeti.min.css';
+         $this->css = 'bootstrap-yeti.min.css';
       }
       
       $this->logged_on = FALSE;
