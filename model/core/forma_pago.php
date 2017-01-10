@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of FacturaScripts
+ * This file is part of FacturaSctipts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -231,5 +231,44 @@ class forma_pago extends \fs_model
       }
       
       return $listaformas;
+   }
+
+   /**
+    * calculavencimiento: calcula un vencimiento si hay un dia concreto de cobro
+    * @param type $fecha_inicio : DateTime Fecha inicial
+    * @param type $dias         : Int Numero de dias para cobro
+    * @param type $dia_de_pago  : Dia de pago de las facturas
+    * @return \FacturaScripts\model\DateTime
+    */
+   public function calculavencimiento($fecha_inicio, $dias, $dia_de_pago) {
+      $fecha_inicio->modify('+' . strval($dias) . ' days');
+      $tmp_dia = $fecha_inicio->format("d");
+      $tmp_mes = $fecha_inicio->format("m");
+      $tmp_año = $fecha_inicio->format("Y");
+      if($tmp_dia <= $dia_de_pago) {
+         // calculamos el dia de cobro para este mes
+         $tmp_dia = $dia_de_pago;
+      } else {
+         // calculamos el dia de cobro para el mes siguiente
+         if($tmp_mes == 12) {
+            $tmp_mes = 1;
+            $tmp_año = $tmp_año + 1;
+            $tmp_dia = $dia_de_pago; // No hay que calcular nada, enero tiene 31 dias
+         } else {
+            $tmp_mes += 1;
+            // calculamos el último dia del mes para ver si sobrepasa dia elegido
+            $date = new \DateTime($tmp_año . '-' . $tmp_mes . '-1');
+            $date->modify('last day of this month');
+            $ultimo_dia = $date->format('d');
+            if($dia_de_pago > $ultimo_dia) {
+               $tmp_dia = $ultimo_dia;
+            } else {
+               $tmp_dia = $dia_de_pago;
+            }
+         }
+      }
+      $fecha = $tmp_año . '-' . $tmp_mes . '-' . $tmp_dia;
+      $fecha = new \DateTime($fecha);
+      return $fecha;
    }
 }
