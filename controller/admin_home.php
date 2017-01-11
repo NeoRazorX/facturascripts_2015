@@ -161,7 +161,7 @@ class admin_home extends fs_controller
          }
          else if( is_writable('plugins/'.$_GET['delete_plugin']) )
          {
-            if( $this->delTree('plugins/'.$_GET['delete_plugin']) )
+            if( $this->del_tree('plugins/'.$_GET['delete_plugin']) )
             {
                $this->new_message('Plugin '.$_GET['delete_plugin'].' eliminado correctamente.');
             }
@@ -523,7 +523,7 @@ class admin_home extends fs_controller
       
       foreach( scandir(getcwd().'/plugins') as $f)
       {
-         if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..' AND !in_array($f, $disabled) )
+         if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) AND !in_array($f, $disabled) )
          {
             $plugin = array(
                 'compatible' => FALSE,
@@ -626,12 +626,12 @@ class admin_home extends fs_controller
     * @param type $dir
     * @return type
     */
-   private function delTree($dir)
+   private function del_tree($dir)
    {
       $files = array_diff(scandir($dir), array('.','..'));
       foreach ($files as $file)
       {
-         (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+         (is_dir("$dir/$file")) ? $this->del_tree("$dir/$file") : unlink("$dir/$file");
       }
       return rmdir($dir);
    }
@@ -706,7 +706,7 @@ class admin_home extends fs_controller
                   $page_list = array();
                   foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
                   {
-                     if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+                     if( $f != '.' AND $f != '..' AND is_string($f) AND strlen($f) > 4 AND !is_dir($f) )
                      {
                         if( substr($f, -4) == '.php' )
                         {
@@ -1013,7 +1013,7 @@ class admin_home extends fs_controller
                /// renombramos si es necesario
                foreach( scandir(getcwd().'/plugins') as $f)
                {
-                  if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                  if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) )
                   {
                      $encontrado2 = FALSE;
                      foreach($plugins_list as $f2)
@@ -1084,7 +1084,7 @@ class admin_home extends fs_controller
                   /// renombramos si es necesario
                   foreach( scandir(getcwd().'/plugins') as $f)
                   {
-                     if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                     if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) )
                      {
                         $encontrado2 = FALSE;
                         foreach($plugins_list as $f2)

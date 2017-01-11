@@ -276,7 +276,7 @@ class fs_updater
                /// renombramos si es necesario
                foreach( scandir(getcwd().'/plugins') as $f)
                {
-                  if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                  if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) )
                   {
                      $encontrado2 = FALSE;
                      foreach($plugins_list as $f2)
@@ -354,7 +354,7 @@ class fs_updater
       {
          if(( $file != '.' ) && ( $file != '..' ))
          {
-            if(is_dir($src . '/' . $file))
+            if( is_dir($src . '/' . $file) )
             {
                $this->recurse_copy($src . '/' . $file, $dst . '/' . $file);
             }
@@ -497,7 +497,7 @@ class fs_updater
          $this->plugin_updates = array();
          foreach( scandir(getcwd() . '/plugins') as $f )
          {
-            if( is_dir('plugins/' . $f) AND $f != '.' AND $f != '..' )
+            if( $f != '.' AND $f != '..' AND is_dir('plugins/' . $f) )
             {
                $plugin = array(
                    'name' => $f,

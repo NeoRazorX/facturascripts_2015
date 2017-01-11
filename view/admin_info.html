@@ -64,7 +64,7 @@
          {if="$fsc->allow_delete"}
          <a class="btn btn-xs btn-danger" href="{$fsc->url()}&clean_cache=TRUE">
             <span class="glyphicon glyphicon-trash"></span>
-            <span class="hidden-xs">&nbsp; Limpiar la cache</span>
+            <span class="hidden-xs">&nbsp;Limpiar la cache</span>
          </a>
          {/if}
       </div>
@@ -117,21 +117,21 @@
    <li role="presentation" class="active">
       <a href="#history" aria-controls="history" role="tab" data-toggle="tab">
          <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-         <span class="hidden-xs">&nbsp; Historial</span>
+         <span class="hidden-xs">&nbsp;Historial</span>
          <span class="badge">{function="count($fsc->resultados)"}</span>
       </a>
    </li>
    <li role="presentation">
       <a href="#tablas" aria-controls="tablas" role="tab" data-toggle="tab">
          <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-         <span class="hidden-xs">&nbsp; Tablas</span>
+         <span class="hidden-xs">&nbsp;Tablas</span>
       </a>
    </li>
    {if="$fsc->modulos_eneboo"}
    <li role="presentation">
       <a href="#eneboo" aria-controls="eneboo" role="tab" data-toggle="tab">
          <span class="glyphicon glyphicon-hdd" aria-hidden="true"></span>
-         <span class="hidden-xs">&nbsp; Eneboo</span>
+         <span class="hidden-xs">&nbsp;Eneboo</span>
       </a>
    </li>
    {/if}
@@ -252,18 +252,20 @@
                <br/>
                <div class="panel panel-warning">
                   <div class="panel-heading">
-                     <h3 class="panel-title">Importante</h3>
+                     <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp; Importante
+                     </h3>
                   </div>
                   <div class="panel-body">
                      <p class="help-block">
                         FacturaScripts es compatible con los módulos oficiales 2.3
                         de Eneboo, no así con las docenas de personalizaciones que hay.
-                        Si necesitas modificaciones, busca un partner de FacturaScripts.
+                        Si necesitas modificaciones, busca un Partner de FacturaScripts.
                      </p>
                   </div>
                   <div class="panel-footer">
                      <a href="https://www.facturascripts.com/contacto" target="_blank" class="btn btn-sm btn-default">
-                        Partners de FacturaScripts
+                        <i class="fa fa-shield" aria-hidden="true"></i>&nbsp; Partners de FacturaScripts
                      </a>
                   </div>
                </div>
