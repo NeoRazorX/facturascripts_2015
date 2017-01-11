@@ -29,7 +29,7 @@
     "buildify": "^0.4.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.1.1",
-    "jquery-autocomplete": "^1.2.1",
+    "devbridge-autocomplete": "^1.2.10",
     "jquery-ui": "^1.12.1",
     "jquery-validation": "^1.15.1"
   }
