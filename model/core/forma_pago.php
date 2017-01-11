@@ -233,6 +233,10 @@ class forma_pago extends \fs_model
       return $listaformas;
    }
 
+   public function calculavencimiento_2dias($fecha_inicio, $dias, $dia_de_pago, $dia_pago2) {
+      
+   }
+
    /**
     * calculavencimiento: calcula un vencimiento si hay un dia concreto de cobro
     * @param type $fecha_inicio : DateTime Fecha inicial
@@ -241,10 +245,14 @@ class forma_pago extends \fs_model
     * @return \FacturaScripts\model\DateTime
     */
    public function calculavencimiento($fecha_inicio, $dias, $dia_de_pago) {
-      $fecha_inicio->modify('+' . strval($dias) . ' days');
+      $fecha_inicio = Date('d-m-Y', strtotime($fecha_inicio.$dias));
+      $fecha_inicio = new \DateTime($fecha_inicio);
       $tmp_dia = $fecha_inicio->format("d");
       $tmp_mes = $fecha_inicio->format("m");
       $tmp_año = $fecha_inicio->format("Y");
+      $dia_de_pago = intval($dia_de_pago);
+      if($dia_de_pago <= 0)
+         $dia_de_pago = $tmp_dia;
       if($tmp_dia <= $dia_de_pago) {
          // calculamos el dia de cobro para este mes
          $tmp_dia = $dia_de_pago;
@@ -267,8 +275,8 @@ class forma_pago extends \fs_model
             }
          }
       }
-      $fecha = $tmp_año . '-' . $tmp_mes . '-' . $tmp_dia;
-      $fecha = new \DateTime($fecha);
-      return $fecha;
+      $fecha = $tmp_dia . '-' . $tmp_mes . '-' . $tmp_año;
+      $fecha_inicio = Date('d-m-Y',strtotime($fecha));
+      return $fecha_inicio;
    }
 }
