@@ -23,6 +23,7 @@ if( !file_exists('config.php') )
 }
 
 require_once 'config.php';
+require_once 'base/config2.php';
 require_once 'base/fs_cache.php';
 
 /**
@@ -430,6 +431,11 @@ class fs_updater
          curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+         if(isset($GLOBALS['config2']['proxy_host'])){
+            curl_setopt($ch, CURLOPT_PROXYPORT, $GLOBALS['config2']['proxy_port']);
+            curl_setopt($ch, CURLOPT_PROXYTYPE, $GLOBALS['config2']['proxy_type']);
+            curl_setopt($ch, CURLOPT_PROXY, $GLOBALS['config2']['proxy_host']);             
+         }         
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
          
