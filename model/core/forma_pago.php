@@ -240,17 +240,36 @@ class forma_pago extends \fs_model
     * @param type $dia_de_pago
     * @param type $dia_pago2
     */
-   public function calculavencimiento_2dias($fecha_inicio, $dias, $dia_de_pago, $dia_de_pago2) {
-      $fecha1 = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago);
-      $dia2 = intval($dia_de_pago2);
-      if($dia2 > 0) {
-         $fecha2 = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago2);
-         if($fecha1 > $fecha2) {
-            $fecha1 = $fecha2;
+   public function calculavencimiento_final($fecha_inicio, $dias, $dias_de_pago) {
+      $array_dias = str_getcsv($dias_de_pago);
+      if(empty($array_dias)) {
+         $fecha = $this->calculavencimiento($fecha_inicio, $dias, "0");
+      } else {
+         $i = 0;
+         foreach ($array_dias as $dia_de_pago){
+            if($i == 0){
+               $fecha = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago);
+            } else {
+               $fecha_temp = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago);
+               $fecha = $this->RetornaFechaMenor($fecha, $fecha_temp);
+            }
+            $i++;
          }
       }
+      return $fecha;
+   }
 
-      return $fecha1;
+   private function RetornaFechaMenor($fecha1, $fecha2){
+      $f_1 = new \DateTime($fecha1);
+      $f_2 = new \DateTime($fecha2);
+
+      //compara las fechas julianas (son numeros) y retorna.
+      if($f_1 > $f_2){
+         return $fecha2;
+      }else{
+         return $fecha1;
+      }
+
    }
 
    /**
@@ -260,7 +279,7 @@ class forma_pago extends \fs_model
     * @param type $dia_de_pago  : Dia de pago de las facturas
     * @return \FacturaScripts\model\DateTime
     */
-   public function calculavencimiento($fecha_inicio, $dias, $dia_de_pago) {
+   private function calculavencimiento($fecha_inicio, $dias, $dia_de_pago) {
       $fecha_inicio = Date('d-m-Y', strtotime($fecha_inicio.$dias));
       $fecha_inicio = new \DateTime($fecha_inicio);
       $tmp_dia = $fecha_inicio->format("d");
