@@ -233,8 +233,24 @@ class forma_pago extends \fs_model
       return $listaformas;
    }
 
-   public function calculavencimiento_2dias($fecha_inicio, $dias, $dia_de_pago, $dia_pago2) {
-      
+   /**
+    * 
+    * @param type $fecha_inicio
+    * @param type $dias
+    * @param type $dia_de_pago
+    * @param type $dia_pago2
+    */
+   public function calculavencimiento_2dias($fecha_inicio, $dias, $dia_de_pago, $dia_de_pago2) {
+      $fecha1 = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago);
+      $dia2 = intval($dia_de_pago2);
+      if($dia2 > 0) {
+         $fecha2 = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago2);
+         if($fecha1 > $fecha2) {
+            $fecha1 = $fecha2;
+         }
+      }
+
+      return $fecha1;
    }
 
    /**
@@ -276,7 +292,7 @@ class forma_pago extends \fs_model
          }
       }
       $fecha = $tmp_dia . '-' . $tmp_mes . '-' . $tmp_año;
-      $fecha_inicio = Date('d-m-Y',strtotime($fecha));
-      return $fecha_inicio;
+      $fecha_final = Date('d-m-Y',strtotime($fecha));
+      return $fecha_final;
    }
 }
