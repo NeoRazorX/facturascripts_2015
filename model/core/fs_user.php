@@ -215,6 +215,33 @@ class fs_user extends \fs_model
       else
          return 'index.php?page=admin_user&snick='.$this->nick;
    }
+
+   public function check_css_is_path(){
+      $mystyle = $this->css;
+      $slash = '/';
+      $is_have_slash = strpos($mystyle, $slash);
+
+      if (is_have_slash!==FALSE && $this->check_file_exists($mystyle)) {
+         return TRUE;
+      }
+      return FALSE;
+   }
+
+   private function check_file_exists($filename){
+        $path_relative = $filename;
+        $path_absolute = FS_PATH.$filename;
+
+        if (file_exists($path_relative)) {
+          $this->css = $path_relative;
+          return  TRUE;
+        }
+        else if (file_exists($path_absolute)) {
+          $this->css = $path_absolute;
+          return  TRUE;
+        }
+        $this->css = 'bootstrap-yeti.min.css';
+        return FALSE;
+   }
    
    /**
     * Devuelve el agente/empleado asociado

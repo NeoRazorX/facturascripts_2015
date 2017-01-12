@@ -251,7 +251,7 @@ $system_info = str_replace('"', "'", $system_info);
    <link rel="shortcut icon" href="view/img/favicon.ico" />
 
    <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
-   <script type="text/javascript" src="view/js/build.min.js"></script>
+   <script type="text/javascript" src="view/js/build.min.js?v=3.0.1"></script>
 </head>
 <body>
    <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
