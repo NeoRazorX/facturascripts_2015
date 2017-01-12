@@ -7,4 +7,6 @@ node_modules
 npm-debug.log
 /view/css/*
 !/view/css/.gitkeep
+config.php
+.htaccess
 .DS_Store
