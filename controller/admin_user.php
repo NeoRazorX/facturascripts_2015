@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,41 +28,41 @@ class admin_user extends fs_controller
    public $allow_modify;
    public $user_log;
    public $suser;
-   
+
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Usuario', 'admin', TRUE, FALSE);
    }
-   
+
    public function private_core()
    {
       $this->share_extensions();
-      
+
       /// ¿El usuario tiene permiso para eliminar en esta página?
       $this->allow_delete = $this->user->admin;
-      
+
       /// ¿El usuario tiene permiso para modificar en esta página?
       $this->allow_modify = $this->user->admin;
-      
+
       $this->agente = new agente();
-      
+
       $this->suser = FALSE;
       if( isset($_GET['snick']) )
       {
          $this->suser = $this->user->get($_GET['snick']);
       }
-      
+
       if($this->suser)
       {
          $this->page->title = $this->suser->nick;
-         
+
          /// ¿Estamos modificando nuestro usuario?
          if($this->suser->nick == $this->user->nick)
          {
             $this->allow_modify = TRUE;
             $this->allow_delete = FALSE;
          }
-         
+
          if( isset($_POST['nnombre']) )
          {
             /// Nuevo empleado
@@ -73,7 +73,7 @@ class admin_user extends fs_controller
             $age0->dnicif = $_POST['ndnicif'];
             $age0->telefono = $_POST['ntelefono'];
             $age0->email = strtolower($_POST['nemail']);
-            
+
             if(!$this->user->admin)
             {
                $this->new_error_msg('Solamente un administrador puede crear y asignar un empleado desde aquí.');
@@ -82,7 +82,7 @@ class admin_user extends fs_controller
             {
                $this->new_message("Empleado ".$age0->codagente." guardado correctamente.");
                $this->suser->codagente = $age0->codagente;
-               
+
                if( $this->suser->save() )
                {
                   $this->new_message("Empleado ".$age0->codagente." asignado correctamente.");
@@ -97,13 +97,13 @@ class admin_user extends fs_controller
          {
             $this->modificar_user();
          }
-         
+
          /// ¿Estamos modificando nuestro usuario?
          if($this->suser->nick == $this->user->nick)
          {
             $this->user = $this->suser;
          }
-         
+
          /// si el usuario no tiene acceso a ninguna página, entonces hay que informar del problema.
          if( !$this->suser->admin )
          {
@@ -123,7 +123,7 @@ class admin_user extends fs_controller
                   . ' desde la pestaña autorizar.');
             }
          }
-         
+
          $fslog = new fs_log();
          $this->user_log = $fslog->all_from($this->suser->nick);
       }
@@ -132,7 +132,7 @@ class admin_user extends fs_controller
          $this->new_error_msg("Usuario no encontrado.", 'error', FALSE, FALSE);
       }
    }
-   
+
    public function url()
    {
       if( !isset($this->suser) )
@@ -146,11 +146,11 @@ class admin_user extends fs_controller
       else
          return $this->page->url();
    }
-   
+
    public function all_pages()
    {
       $returnlist = array();
-      
+
       /// Obtenemos la lista de páginas. Todas
       foreach($this->menu as $m)
       {
@@ -158,7 +158,7 @@ class admin_user extends fs_controller
          $m->allow_delete = FALSE;
          $returnlist[] = $m;
       }
-      
+
       /// Completamos con la lista de accesos del usuario
       $access = $this->suser->get_accesses();
       foreach($returnlist as $i => $value)
@@ -173,15 +173,15 @@ class admin_user extends fs_controller
             }
          }
       }
-      
+
       /// ordenamos por nombre
       usort($returnlist, function($a, $b) {
          return strcmp($a->name, $b->name);
       });
-      
+
       return $returnlist;
    }
-   
+
    private function share_extensions()
    {
       foreach($this->extensions as $ext)
@@ -194,14 +194,14 @@ class admin_user extends fs_controller
             }
          }
       }
-      
+
       $extensions = array(
           array(
               'name' => 'cosmo',
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-cosmo.min.css',
+              'text' => 'bootstrap-cosmo.min.css',
               'params' => ''
           ),
           array(
@@ -209,7 +209,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-darkly.min.css',
+              'text' => 'bootstrap-darkly.min.css',
               'params' => ''
           ),
           array(
@@ -217,7 +217,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-flatly.min.css',
+              'text' => 'bootstrap-flatly.min.css',
               'params' => ''
           ),
           array(
@@ -225,7 +225,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-sandstone.min.css',
+              'text' => 'bootstrap-sandstone.min.css',
               'params' => ''
           ),
           array(
@@ -233,7 +233,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-united.min.css',
+              'text' => 'bootstrap-united.min.css',
               'params' => ''
           ),
           array(
@@ -241,7 +241,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-yeti.min.css',
+              'text' => 'bootstrap-yeti.min.css',
               'params' => ''
           ),
           array(
@@ -249,7 +249,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-lumen.min.css',
+              'text' => 'bootstrap-lumen.min.css',
               'params' => ''
           ),
           array(
@@ -257,7 +257,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-paper.min.css',
+              'text' => 'bootstrap-paper.min.css',
               'params' => ''
           ),
           array(
@@ -265,7 +265,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-simplex.min.css',
+              'text' => 'bootstrap-simplex.min.css',
               'params' => ''
           ),
           array(
@@ -273,7 +273,7 @@ class admin_user extends fs_controller
               'page_from' => __CLASS__,
               'page_to' => __CLASS__,
               'type' => 'css',
-              'text' => 'view/css/bootstrap-spacelab.min.css',
+              'text' => 'bootstrap-spacelab.min.css',
               'params' => ''
           ),
       );
@@ -283,7 +283,7 @@ class admin_user extends fs_controller
          $fsext->save();
       }
    }
-   
+
    private function modificar_user()
    {
       if(FS_DEMO AND $this->user->nick != $this->suser->nick)
@@ -314,9 +314,9 @@ class admin_user extends fs_controller
                $error = TRUE;
             }
          }
-         
+
          $this->suser->email = strtolower($_POST['email']);
-         
+
          if( isset($_POST['scodagente']) )
          {
             $this->suser->codagente = NULL;
@@ -325,7 +325,7 @@ class admin_user extends fs_controller
                $this->suser->codagente = $_POST['scodagente'];
             }
          }
-         
+
          /*
           * Propiedad admin: solamente un admin puede cambiarla.
           */
@@ -347,21 +347,21 @@ class admin_user extends fs_controller
                $this->suser->admin = isset($_POST['sadmin']);
             }
          }
-         
+
          $this->suser->fs_page = NULL;
          if( isset($_POST['udpage']) )
          {
             $this->suser->fs_page = $_POST['udpage'];
          }
-         
+
          if( isset($_POST['css']) )
          {
             $this->suser->css = $_POST['css'];
          }
-         
+
          if($error)
          {
-            
+
          }
          else if( $this->suser->save() )
          {
@@ -384,7 +384,7 @@ class admin_user extends fs_controller
                   {
                      $a->allow_delete = in_array($p->name, $_POST['allow_delete']);
                   }
-                  
+
                   if($user_no_more_admin)
                   {
                      /*
@@ -406,7 +406,7 @@ class admin_user extends fs_controller
                      /// la página ha sido marcada como autorizada.
                      $a->save();
                      
-                     /// si no hay una página de inicio para el usuario, usamos esta
+                     /// si no hay una página de inicio para el usuario, usamos esta                     
                      if( is_null($this->suser->fs_page) AND $p->show_on_menu )
                      {
                         $this->suser->fs_page = $p->name;
@@ -420,11 +420,12 @@ class admin_user extends fs_controller
                   }
                }
             }
-            
+
             $this->new_message("Datos modificados correctamente.");
          }
-         else
+         else {
             $this->new_error_msg("¡Imposible modificar los datos!");
+         }
       }
    }
 }

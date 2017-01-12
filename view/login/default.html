@@ -7,12 +7,10 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <meta name="generator" content="FacturaScripts" />
    <link rel="shortcut icon" href="{#FS_PATH#}view/img/favicon.ico" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/bootstrap-yeti.min.css" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/font-awesome.min.css" />
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/custom.css" />
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.ui.shake.js"></script>
+
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/{$fsc->user->css}" />
+
+   <script type="text/javascript" src="{#FS_PATH#}view/js/build.min.js?v=3.0.1"></script>
    <script type="text/javascript">
       {if="FS_DEMO"}
          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -26,13 +24,13 @@
          {if="$fsc->get_errors()"}
          $("#box_login").shake();
          {/if}
-         
+
          {if="FS_DEMO"}
          document.f_login.user.focus();
          {else}
          document.f_login.password.focus();
          {/if}
-         
+
          $("#b_feedback").click(function(event) {
             event.preventDefault();
             $("#modal_feedback").modal('show');
@@ -102,7 +100,7 @@
          </div>
       </div>
    </nav>
-   
+
    {if="$fsc->get_errors()"}
    <div class="alert alert-danger">
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
@@ -118,7 +116,7 @@
       <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
-   
+
    <form name="f_login" action="index.php?nlogin={$nlogin}" method="post" class="form" role="form">
       <div id="box_login" class="container">
          <div class="row">
@@ -183,9 +181,9 @@
          </div>
       </div>
    </form>
-   
+
    <div class="visible-md visible-lg" style="margin-bottom: 100px;"></div>
-   
+
    {if="!FS_DEMO"}
    <div class="modal" id="modal_new_password">
       <div class="modal-dialog">
@@ -230,11 +228,11 @@
       </div>
    </div>
    {/if}
-   
+
    {include="feedback"}
-   
+
    <hr style="margin-top: 50px;"/>
-   
+
    <div class="container-fluid" style="margin-bottom: 10px;">
       <div class="row">
          {if="FS_DB_HISTORY"}
