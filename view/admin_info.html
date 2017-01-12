@@ -177,10 +177,10 @@
                   </td>
                   <td><input type="text" name="b_ip" value="{$fsc->b_ip}" class="form-control" placeholder="buscar" autocomplete="off"/></td>
                   <td width="140">
-                     <input type="text" name="b_desde" value="{$fsc->b_desde}" class="form-control datepicker" placeholder="desde" autocomplete="off" onchange="this.form.submit()"/>
+                     <input type="text" name="b_desde" value="{$fsc->b_desde}" class="form-control datepicker" placeholder="desde" autocomplete="off" onblur="this.form.submit()"/>
                   </td>
                   <td width="140">
-                     <input type="text" name="b_hasta" value="{$fsc->b_hasta}" class="form-control datepicker" placeholder="hasta" autocomplete="off" onchange="this.form.submit()"/>
+                     <input type="text" name="b_hasta" value="{$fsc->b_hasta}" class="form-control datepicker" placeholder="hasta" autocomplete="off" onblur="this.form.submit()"/>
                   </td>
                </tr>
                {loop="$fsc->resultados"}
