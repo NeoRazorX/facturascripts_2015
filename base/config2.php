@@ -138,6 +138,25 @@ if( file_exists('tmp/'.FS_TMP_NAME.'config2.ini') )
       $GLOBALS['config2']['serie'] = 'serie';
       $GLOBALS['config2']['series'] = 'series';
    }
+   
+   if( !isset($GLOBALS['config2']['proxy_type']) )
+   {
+      $GLOBALS['config2']['proxy_type'] = '';
+      define('FS_PROXY_TYPE','');
+   }
+   
+   if( !isset($GLOBALS['config2']['proxy_host']) )
+   {
+      $GLOBALS['config2']['proxy_host'] = '';
+      define('FS_PROXY_HOST','');
+   }
+   
+   if( !isset($GLOBALS['config2']['proxy_port']) )
+   {
+      $GLOBALS['config2']['proxy_port'] = '';
+      define('FS_PROXY_PORT','');
+   }
+   
 }
 else
 {
