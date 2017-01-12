@@ -82,3 +82,10 @@ ul {
 .modal-dialog {
     z-index: 1050;
 }
+
+.datepicker {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  direction: initial;
+}
