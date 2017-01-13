@@ -11,4 +11,7 @@ https://www.facturascripts.com
 ## Instalación
 Tras descargar una [release](https://github.com/NeoRazorX/facturascripts_2015/releases), deberás ir a la carpeta `/view/` y ejecutar `npm install`.
 
+Recuerda tener instalado sass y sass-css-importer
+ejecuta  `gem install sass` y `gem install --pre sass-css-importer` 
+
 Ahora, para asegurar que todos los assets están actualizados, ejecuta `npm run build`.
