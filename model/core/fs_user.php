@@ -219,9 +219,9 @@ class fs_user extends \fs_model
    public function check_css_is_path(){
       $mystyle = $this->css;
       $slash = '/';
-      $is_have_slash = strpos($mystyle, $slash);
+      $have_slash = strpos($mystyle, $slash);
 
-      if (is_have_slash!==FALSE && $this->check_file_exists($mystyle)) {
+      if ($have_slash!==FALSE && $this->check_file_exists($mystyle)) {
          return TRUE;
       }
       return FALSE;
