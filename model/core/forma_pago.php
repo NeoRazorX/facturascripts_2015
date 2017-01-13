@@ -240,7 +240,7 @@ class forma_pago extends \fs_model
     * @param type $dias_de_pago dias de pago específicos para el cliente (separados por comas).
     * @return type
     */
-   public function calcular_vencimiento($fecha_inicio, $dias_de_pago)
+   public function calcular_vencimiento($fecha_inicio, $dias_de_pago = '')
    {
       $fecha = $this->calcular_vencimiento2($fecha_inicio);
       
