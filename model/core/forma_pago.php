@@ -1,7 +1,7 @@
 <?php
 /*
- * This file is part of FacturaSctipts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -232,86 +232,77 @@ class forma_pago extends \fs_model
       
       return $listaformas;
    }
-
+   
    /**
-    * 
+    * A partir de una fecha devuelve la nueva fecha de vencimiento en base a esta forma de pago.
+    * Si se proporciona $dias_de_pago se usarán para la nueva fecha.
     * @param type $fecha_inicio
-    * @param type $dias
-    * @param type $dia_de_pago
-    * @param type $dia_pago2
+    * @param type $dias_de_pago dias de pago específicos para el cliente (separados por comas).
+    * @return type
     */
-   public function calculavencimiento_final($fecha_inicio, $dias, $dias_de_pago) {
-      $array_dias = str_getcsv($dias_de_pago);
-      if(empty($array_dias)) {
-         $fecha = $this->calculavencimiento($fecha_inicio, $dias, "0");
-      } else {
-         $i = 0;
-         foreach ($array_dias as $dia_de_pago){
-            if($i == 0){
-               $fecha = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago);
-            } else {
-               $fecha_temp = $this->calculavencimiento($fecha_inicio, $dias, $dia_de_pago);
-               $fecha = $this->RetornaFechaMenor($fecha, $fecha_temp);
-            }
-            $i++;
+   public function calcular_vencimiento($fecha_inicio, $dias_de_pago)
+   {
+      $fecha = $this->calcular_vencimiento2($fecha_inicio);
+      
+      /// validamos los días de pago
+      $array_dias = array();
+      foreach( str_getcsv($dias_de_pago) as $d )
+      {
+         if( intval($d) >= 1 AND intval($d) <= 31 )
+         {
+            $array_dias[] = intval($d);
          }
       }
+      
+      if($array_dias)
+      {
+         foreach($array_dias as $i => $dia_de_pago)
+         {
+            if($i == 0)
+            {
+               $fecha = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
+            }
+            else
+            {
+               /// si hay varios dias de pago, elegimos la fecha más cercana
+               $fecha_temp = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
+               if( strtotime($fecha_temp) < strtotime($fecha) )
+               {
+                  $fecha = $fecha_temp;
+               }
+            }
+         }
+      }
+      
       return $fecha;
    }
-
-   private function RetornaFechaMenor($fecha1, $fecha2){
-      $f_1 = new \DateTime($fecha1);
-      $f_2 = new \DateTime($fecha2);
-
-      //compara las fechas julianas (son numeros) y retorna.
-      if($f_1 > $f_2){
-         return $fecha2;
-      }else{
-         return $fecha1;
+   
+   private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0)
+   {
+      if($dia_de_pago == 0)
+      {
+         return date('d-m-Y', strtotime($fecha_inicio.' '.$this->vencimiento));
       }
-
-   }
-
-   /**
-    * calculavencimiento: calcula un vencimiento si hay un dia concreto de cobro
-    * @param type $fecha_inicio : DateTime Fecha inicial
-    * @param type $dias         : Int Numero de dias para cobro
-    * @param type $dia_de_pago  : Dia de pago de las facturas
-    * @return \FacturaScripts\model\DateTime
-    */
-   private function calculavencimiento($fecha_inicio, $dias, $dia_de_pago) {
-      $fecha_inicio = Date('d-m-Y', strtotime($fecha_inicio.$dias));
-      $fecha_inicio = new \DateTime($fecha_inicio);
-      $tmp_dia = $fecha_inicio->format("d");
-      $tmp_mes = $fecha_inicio->format("m");
-      $tmp_año = $fecha_inicio->format("Y");
-      $dia_de_pago = intval($dia_de_pago);
-      if($dia_de_pago <= 0)
-         $dia_de_pago = $tmp_dia;
-      if($tmp_dia <= $dia_de_pago) {
-         // calculamos el dia de cobro para este mes
-         $tmp_dia = $dia_de_pago;
-      } else {
-         // calculamos el dia de cobro para el mes siguiente
-         if($tmp_mes == 12) {
-            $tmp_mes = 1;
-            $tmp_año = $tmp_año + 1;
-            $tmp_dia = $dia_de_pago; // No hay que calcular nada, enero tiene 31 dias
-         } else {
-            $tmp_mes += 1;
-            // calculamos el último dia del mes para ver si sobrepasa dia elegido
-            $date = new \DateTime($tmp_año . '-' . $tmp_mes . '-1');
-            $date->modify('last day of this month');
-            $ultimo_dia = $date->format('d');
-            if($dia_de_pago > $ultimo_dia) {
-               $tmp_dia = $ultimo_dia;
-            } else {
-               $tmp_dia = $dia_de_pago;
-            }
+      else
+      {
+         $fecha = date('d-m-Y', strtotime($fecha_inicio.' '.$this->vencimiento));
+         $tmp_dia = date('d', strtotime($fecha));
+         $tmp_mes = date('m', strtotime($fecha));
+         $tmp_anyo = date('Y', strtotime($fecha));
+         
+         if($tmp_dia > $dia_de_pago)
+         {
+            /// calculamos el dia de cobro para el mes siguiente
+            $fecha = date('d-m-Y', strtotime($fecha.' +1 month'));
+            $tmp_mes = date('m', strtotime($fecha));
+            $tmp_anyo = date('Y', strtotime($fecha));
          }
+         
+         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
+         $tmp_dia = min( array($dia_de_pago, intval( date('t', strtotime($fecha)) )) );
+         
+         /// y por último generamos la fecha
+         return date('d-m-Y', strtotime($tmp_dia.'-'.$tmp_mes.'-'.$tmp_anyo));
       }
-      $fecha = $tmp_dia . '-' . $tmp_mes . '-' . $tmp_año;
-      $fecha_final = Date('d-m-Y',strtotime($fecha));
-      return $fecha_final;
    }
 }
