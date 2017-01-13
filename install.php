@@ -250,9 +250,8 @@ $system_info = str_replace('"', "'", $system_info);
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
 
-   <link rel="stylesheet" href="{#FS_PATH#}view/css/main-yeti.min.css" />
-
-   <script type="text/javascript" src="{#FS_PATH#}view/js/build.min.js?v=3.0.1"></script>
+   <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
+   <script type="text/javascript" src="view/js/build.min.js?v=3.0.1"></script>
 </head>
 <body>
    <nav class="navbar navbar-default" role="navigation" style="margin: 0px;">
@@ -384,27 +383,27 @@ $system_info = str_replace('"', "'", $system_info);
             messages: {
                db_host: {
                            required: "El campo es obligatorio.",
-                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
+                           minlength: jQuery.validator.format("Requiere mínimo {0} carácteres!")
                         },
                db_port: {
                            required: "El campo es obligatorio.",
-                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
+                           minlength: jQuery.validator.format("Requiere mínimo {0} carácteres!")
                         },
                db_name: {
                            required: "El campo es obligatorio.",
-                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
+                           minlength:jQuery.validator.format("Requiere mínimo {0} carácteres!")
                         },
                db_user: {
                            required: "El campo es obligatorio.",
-                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
+                           minlength: jQuery.validator.format("Requiere mínimo {0} carácteres!")
                         },
                cache_host: {
                            required: "El campo es obligatorio.",
-                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
+                           minlength: jQuery.validator.format("Requiere mínimo {0} carácteres!")
                         },
                cache_port: {
                            required: "El campo es obligatorio.",
-                           minlength: $.validator.format("Requiere mínimo {0} carácteres!")
+                           minlength: jQuery.validator.format("Requiere mínimo {0} carácteres!")
                         },
             }
          });

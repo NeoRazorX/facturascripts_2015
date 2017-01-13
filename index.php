@@ -141,7 +141,11 @@ else
       $fsc->select_default_page();
    }
    
-   if($fsc->template AND !$fsc_error)
+   if($fsc_error)
+   {
+      die();
+   }
+   else if($fsc->template)
    {
       /// configuramos rain.tpl
       raintpl::configure('base_url', NULL);

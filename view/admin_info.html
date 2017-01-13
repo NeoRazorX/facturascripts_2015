@@ -177,10 +177,10 @@
                   </td>
                   <td><input type="text" name="b_ip" value="{$fsc->b_ip}" class="form-control" placeholder="buscar" autocomplete="off"/></td>
                   <td width="140">
-                     <input type="text" name="b_desde" value="{$fsc->b_desde}" class="form-control datepicker" placeholder="desde" autocomplete="off" onchange="this.form.submit()"/>
+                     <input type="text" name="b_desde" value="{$fsc->b_desde}" class="form-control datepicker" placeholder="desde" autocomplete="off" onblur="this.form.submit()"/>
                   </td>
                   <td width="140">
-                     <input type="text" name="b_hasta" value="{$fsc->b_hasta}" class="form-control datepicker" placeholder="hasta" autocomplete="off" onchange="this.form.submit()"/>
+                     <input type="text" name="b_hasta" value="{$fsc->b_hasta}" class="form-control datepicker" placeholder="hasta" autocomplete="off" onblur="this.form.submit()"/>
                   </td>
                </tr>
                {loop="$fsc->resultados"}
@@ -250,7 +250,7 @@
             </div>
             <div class="col-sm-6">
                <br/>
-               <div class="panel panel-default">
+               <div class="panel panel-warning">
                   <div class="panel-heading">
                      <h3 class="panel-title">Importante</h3>
                   </div>
@@ -262,7 +262,7 @@
                      </p>
                   </div>
                   <div class="panel-footer">
-                     <a href="https://www.facturascripts.com/comm3/index.php?page=community_feedback&feedback_partner=TRUE" target="_blank" class="btn btn-sm btn-default">
+                     <a href="https://www.facturascripts.com/contacto" target="_blank" class="btn btn-sm btn-default">
                         Partners de FacturaScripts
                      </a>
                   </div>
