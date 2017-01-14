@@ -37,15 +37,20 @@ class fs_updater
    public $plugins;
    public $tr_options;
    public $tr_updates;
+   public $updates;
    public $version;
    public $xid;
    
    private $cache;
    private $download_list2;
    private $plugin_updates;
+   private $uptime;
    
    public function __construct()
    {
+      $tiempo = explode(' ', microtime());
+      $this->uptime = $tiempo[1] + $tiempo[0];
+      
       $this->btn_fin = FALSE;
       $this->cache = new fs_cache();
       $this->errores = '';
@@ -58,9 +63,10 @@ class fs_updater
       
       if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
-         /// ¿Están todos los permisos correctos?
-         if( !isset($_GET['update']) AND ! isset($_GET['reinstall']) AND ! isset($_GET['plugin']) )
+         /// solamente comprobamos si no hay que hacer nada
+         if( !isset($_GET['update']) AND !isset($_GET['reinstall']) AND !isset($_GET['plugin']) AND !isset($_GET['idplugin']) )
          {
+            /// ¿Están todos los permisos correctos?
             foreach($this->__are_writable($this->__get_all_sub_directories('.')) as $dir)
             {
                $this->errores .= 'No se puede escribir sobre el directorio ' . $dir . '<br/>';
@@ -96,104 +102,7 @@ class fs_updater
          
          if($this->errores == '')
          {
-            $version_actual = file_get_contents('VERSION');
-            $this->version = $version_actual;
-            $nueva_version = @$this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
-            if( floatval($version_actual) < floatval($nueva_version) )
-            {
-               $this->tr_updates = '<tr>'
-                       . '<td><b>Núcleo</b></td>'
-                       . '<td>Núcleo de FacturaScripts.</td>'
-                       . '<td class="text-right">'.$version_actual.'</td>'
-                       . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='.
-                              $nueva_version.'" target="_blank">'.$nueva_version.'</a></td>'
-                       . '<td class="text-right">
-                           <a class="btn btn-sm btn-primary" href="updater.php?update=TRUE" role="button">
-                              <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Actualizar
-                           </a>
-                          </td>'
-                       . '</tr>';
-            }
-            else
-            {
-               $this->tr_options = '<tr>'
-                       . '<td><b>Núcleo</b></td>'
-                       . '<td>Núcleo de FacturaScripts.</td>'
-                       . '<td class="text-right">'.$version_actual.'</td>'
-                       . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='.
-                              $nueva_version.'" target="_blank">'.$nueva_version.'</a></td>'
-                       . '<td class="text-right">
-                          <a class="btn btn-xs btn-default" href="updater.php?reinstall=TRUE" role="button">
-                              <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> &nbsp; Reinstalar
-                          </a></td>'
-                       . '</tr>';
-               
-               /// comprobamos los plugins
-               foreach($this->check_for_plugin_updates() as $plugin)
-               {
-                  if($plugin['depago'])
-                  {
-                     if($plugin['private_key'])
-                     {
-                        $this->tr_updates .= '<tr>'
-                                . '<td>'.$plugin['name'].'</td>'
-                                . '<td>'.$plugin['description'].'<br/>'
-                                . '<a href="#" data-toggle="modal" data-target="#modal_key_'.$plugin['name'].'">'
-                                . '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Cambiar la clave'
-                                . '</a>'
-                                . '</td>'
-                                . '<td class="text-right">'.$plugin['version'].'</td>'
-                                . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
-                                . $plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank">'.$plugin['new_version'].'</a></td>'
-                                . '<td class="text-right">'
-                                . '<div class="btn-group">'
-                                . '<a href="updater.php?idplugin='.$plugin['idplugin'].'&name='.$plugin['name'].'&key='.$plugin['private_key']
-                                .'" class="btn btn-xs btn-primary">'
-                                . '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span> &nbsp; Actualizar'
-                                . '</a>'
-                                . '</div>'
-                                . '</td></tr>';
-                     }
-                     else
-                     {
-                        $this->tr_updates .= '<tr>'
-                                . '<td>'.$plugin['name'].'</td>'
-                                . '<td>'.$plugin['description'].'</td>'
-                                . '<td class="text-right">'.$plugin['version'].'</td>'
-                                . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
-                                . $plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank">'.$plugin['new_version'].'</a></td>'
-                                . '<td class="text-right">'
-                                . '<div class="btn-group">'
-                                . '<a href="#" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#modal_key_'.$plugin['name'].'">'
-                                . '<i class="fa fa-key" aria-hidden="true"></i>&nbsp; Añadir clave'
-                                . '</a>'
-                                . '</div>'
-                                . '</td></tr>';
-                     }
-                  }
-                  else
-                  {
-                     $this->tr_updates .= '<tr>'
-                          . '<td>'.$plugin['name'].'</td>'
-                          . '<td>'.$plugin['description'].'</td>'
-                          . '<td class="text-right">'.$plugin['version'].'</td>'
-                          . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
-                          . $plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank">'.$plugin['new_version'].'</a></td>'
-                          . '<td class="text-right">'
-                          . '<a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">'
-                          . '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp; Actualizar'
-                          . '</a>'
-                          . '</td></tr>';
-                  }
-               }
-               
-               if($this->tr_updates == '')
-               {
-                  $this->tr_updates = '<tr class="success"><td colspan="5">El sistema está actualizado.'
-                          . ' <a href="index.php?page=admin_home&updated=TRUE">Volver</a></td></tr>';
-                  $this->btn_fin = TRUE;
-               }
-            }
+            $this->comprobar_actualizaciones();
          }
          else
          {
@@ -203,6 +112,179 @@ class fs_updater
       }
       else
          $this->errores = '<a href="index.php">Debes iniciar sesi&oacute;n</a>';
+   }
+   
+   private function comprobar_actualizaciones()
+   {
+      if( !isset($this->updates) )
+      {
+         /// comprobamos la lista de actualizaciones de cache
+         $this->updates = $this->cache->get('updater_lista');
+         if($this->updates)
+         {
+            $this->plugin_updates = $this->updates['plugins'];
+         }
+         else
+         {
+            /// si no está en cache, nos toca comprobar todo
+            $this->updates = array(
+                'version' => '',
+                'core' => FALSE,
+                'plugins' => array(),
+            );
+            
+            $version_actual = file_get_contents('VERSION');
+            $this->updates['version'] = $version_actual;
+            $nueva_version = @$this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
+            if( floatval($version_actual) < floatval($nueva_version) )
+            {
+               $this->updates['core'] = $nueva_version;
+            }
+            else
+            {
+               /// comprobamos los plugins
+               foreach($this->check_for_plugin_updates() as $plugin)
+               {
+                  $this->updates['plugins'][] = $plugin;
+               }
+            }
+            
+            /// guardamos la lista de actualizaciones en cache
+            $this->cache->set('updater_lista', $this->updates);
+         }
+      }
+      
+      $this->version = $this->updates['version'];
+      
+      if($this->updates['core'])
+      {
+         $this->tr_updates = '<tr>'
+                 . '<td><b>Núcleo</b></td>'
+                 . '<td>Núcleo de FacturaScripts.</td>'
+                 . '<td class="text-right">'.$this->version.'</td>'
+                 . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                 . $this->updates['core'].'" target="_blank">'.$this->updates['core'].'</a></td>'
+                 . '<td class="text-right">
+                    <a class="btn btn-sm btn-primary" href="updater.php?update=TRUE" role="button">
+                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp; Actualizar
+                    </a></td>'
+                 . '</tr>';
+      }
+      else
+      {
+         $this->tr_options = '<tr>'
+                 . '<td><b>Núcleo</b></td>'
+                 . '<td>Núcleo de FacturaScripts.</td>'
+                 . '<td class="text-right">'.$this->version.'</td>'
+                 . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                 . $this->version.'" target="_blank">'.$this->version.'</a></td>'
+                 . '<td class="text-right">
+                    <a class="btn btn-xs btn-default" href="updater.php?reinstall=TRUE" role="button">
+                        <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>&nbsp; Reinstalar
+                    </a></td>'
+                 . '</tr>';
+         
+         foreach($this->updates['plugins'] as $plugin)
+         {
+            if($plugin['depago'])
+            {
+               if($plugin['private_key'])
+               {
+                  $this->tr_updates .= '<tr>'
+                          . '<td>'.$plugin['name'].'</td>'
+                          . '<td>'.$plugin['description'].'<br/>'
+                          . '<a href="#" data-toggle="modal" data-target="#modal_key_'.$plugin['name'].'">'
+                          . '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Cambiar la clave'
+                          . '</a>'
+                          . '</td>'
+                          . '<td class="text-right">'.$plugin['version'].'</td>'
+                          . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                          . $plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank">'.$plugin['new_version'].'</a></td>'
+                          . '<td class="text-right">'
+                          . '<div class="btn-group">'
+                          . '<a href="updater.php?idplugin='.$plugin['idplugin'].'&name='.$plugin['name'].'&key='.$plugin['private_key']
+                          . '" class="btn btn-xs btn-primary">'
+                          . '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp; Actualizar'
+                          . '</a>'
+                          . '</div>'
+                          . '</td></tr>';
+               }
+               else
+               {
+                  $this->tr_updates .= '<tr>'
+                          . '<td>'.$plugin['name'].'</td>'
+                          . '<td>'.$plugin['description'].'</td>'
+                          . '<td class="text-right">'.$plugin['version'].'</td>'
+                          . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                          . $plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank">'.$plugin['new_version'].'</a></td>'
+                          . '<td class="text-right">'
+                          . '<div class="btn-group">'
+                          . '<a href="#" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#modal_key_'.$plugin['name'].'">'
+                          . '<i class="fa fa-key" aria-hidden="true"></i>&nbsp; Añadir clave'
+                          . '</a>'
+                          . '</div>'
+                          . '</td></tr>';
+               }
+            }
+            else
+            {
+               $this->tr_updates .= '<tr>'
+                       . '<td>'.$plugin['name'].'</td>'
+                       . '<td>'.$plugin['description'].'</td>'
+                       . '<td class="text-right">'.$plugin['version'].'</td>'
+                       . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                       . $plugin['new_version'].'&plugin='.$plugin['name'].'" target="_blank">'.$plugin['new_version'].'</a></td>'
+                       . '<td class="text-right">'
+                       . '<a href="updater.php?plugin='.$plugin['name'].'" class="btn btn-xs btn-primary">'
+                       . '<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp; Actualizar'
+                       . '</a>'
+                       . '</td></tr>';
+            }
+         }
+         
+         if($this->tr_updates == '')
+         {
+            $this->tr_updates = '<tr class="success"><td colspan="5">El sistema está actualizado.'
+                    . ' <a href="index.php?page=admin_home&updated=TRUE">Volver</a></td></tr>';
+            $this->btn_fin = TRUE;
+         }
+      }
+   }
+   
+   /**
+    * Elimina la actualización de la lista de pendientes.
+    * @param type $plugin
+    */
+   private function actualizacion_correcta($plugin = FALSE)
+   {
+      if( !isset($this->updates) )
+      {
+         /// comprobamos la lista de actualizaciones de cache
+         $this->updates = $this->cache->get('updater_lista');
+      }
+      
+      if($this->updates)
+      {
+         if($plugin)
+         {
+            foreach($this->updates['plugins'] as $i => $pl)
+            {
+               if($pl['name'] == $plugin)
+               {
+                  unset($this->updates['plugins'][$i]);
+                  break;
+               }
+            }
+         }
+         else
+         {
+            /// hemos actualizado el core
+            $this->updates['core'] = FALSE;
+         }
+         
+         /// guardamos la lista de actualizaciones en cache
+         $this->cache->set('updater_lista', $this->updates);
+      }
    }
    
    private function actualizar_nucleo()
@@ -219,7 +301,15 @@ class fs_updater
             $zip = new ZipArchive();
             $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
             
-            if($zip_status === TRUE)
+            if($zip_status !== TRUE)
+            {
+               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
+            }
+            else if( !$this->test_zip_nucleo($zip) )
+            {
+               $this->errores = 'Ha habido un error con el archivo update.zip';
+            }
+            else
             {
                $zip->extractTo('.');
                $zip->close();
@@ -238,14 +328,33 @@ class fs_updater
                $this->del_tree('facturascripts_2015-master/');
                
                $this->mensajes = 'Actualizado correctamente.';
+               $this->actualizacion_correcta();
                break;
             }
-            else
-               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
          }
          else
             $this->errores = 'Error al descargar el archivo zip.';
       }
+   }
+   
+   /**
+    * Comprueba la integridad del zip del núcleo.
+    * @param ZipArchive $zip
+    */
+   private function test_zip_nucleo(&$zip)
+   {
+      $ok = FALSE;
+      for($i = 0; $i < $zip->numFiles; $i++)
+      {
+         $data = $zip->statIndex($i);
+         if( basename($data['name']) == 'updater.php' )
+         {
+            $ok = TRUE;
+            break;
+         }
+      }
+      
+      return $ok;
    }
    
    private function actualizar_plugin()
@@ -260,7 +369,15 @@ class fs_updater
             $zip = new ZipArchive();
             $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
             
-            if($zip_status === TRUE)
+            if($zip_status !== TRUE)
+            {
+               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
+            }
+            else if( !$this->test_zip_plugin($zip) )
+            {
+               $this->errores = 'Ha habido un error con el archivo update.zip';
+            }
+            else
             {
                /// nos guardamos la lista previa de plugins
                $plugins_list = scandir(getcwd().'/plugins');
@@ -297,15 +414,35 @@ class fs_updater
                }
                
                $this->mensajes = 'Plugin actualizado correctamente.';
+               $this->actualizacion_correcta($_GET['plugin']);
             }
-            else
-               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
          }
          else
             $this->errores = 'Error al descargar el archivo zip.';
       }
       else
          $this->errores = 'Error al leer el archivo plugins/' . $_GET['plugin'] . '/facturascripts.ini';
+   }
+   
+   /**
+    * Comprueba la integridad del zip de un plugin.
+    * @param ZipArchive $zip
+    * @return boolean
+    */
+   private function test_zip_plugin(&$zip)
+   {
+      $ok = FALSE;
+      for($i = 0; $i < $zip->numFiles; $i++)
+      {
+         $data = $zip->statIndex($i);
+         if( basename($data['name']) == 'facturascripts.ini' )
+         {
+            $ok = TRUE;
+            break;
+         }
+      }
+      
+      return $ok;
    }
    
    private function actualizar_plugin_pago()
@@ -319,7 +456,15 @@ class fs_updater
          $zip = new ZipArchive();
          $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
          
-         if($zip_status === TRUE)
+         if($zip_status !== TRUE)
+         {
+            $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
+         }
+         else if( !$this->test_zip_plugin($zip) )
+         {
+            $this->errores = 'Ha habido un error con el archivo update.zip';
+         }
+         else
          {
             /// eliminamos los archivos antiguos
             $this->del_tree('plugins/' . $_GET['name']);
@@ -336,10 +481,8 @@ class fs_updater
             }
             
             $this->mensajes = 'Plugin actualizado correctamente.';
+            $this->actualizacion_correcta($_GET['name']);
          }
-         else
-            $this->errores = 'Ha habido un error con el archivo update.zip <a href="updater.php?idplugin='.
-                 $_GET['idplugin'].'&name='.$_GET['name'].'">¿Clave incorrecta?</a>';
       }
       else
          $this->errores = 'Error al descargar el archivo zip. <a href="updater.php?idplugin='.
@@ -650,6 +793,16 @@ class fs_updater
          $this->xid = $_COOKIE['uxid'];
       }
    }
+   
+   /**
+    * Devuelve la duración de la ejecución de la página
+    * @return type un string con la duración de la ejecución
+    */
+   public function duration()
+   {
+      $tiempo = explode(" ", microtime());
+      return (number_format($tiempo[1] + $tiempo[0] - $this->uptime, 3) . ' s');
+   }
 }
 
 $updater = new fs_updater();
@@ -784,11 +937,17 @@ $updater = new fs_updater();
          </div>
       </div>
       <?php
-      foreach($updater->check_for_plugin_updates() as $plug)
+      if( !isset($updater->updates) )
       {
-         if($plug['depago'])
+         /// nada
+      }
+      else if($updater->updates['plugins'])
+      {
+         foreach($updater->check_for_plugin_updates() as $plug)
          {
-         ?>
+            if($plug['depago'])
+            {
+               ?>
          <form action="updater.php?idplugin=<?php echo $plug['idplugin'].'&name='.$plug['name']; ?>" method="post" class="form">
             <div class="modal" id="modal_key_<?php echo $plug['name']; ?>" tabindex="-1" role="dialog">
                <div class="modal-dialog" role="document">
@@ -834,12 +993,32 @@ $updater = new fs_updater();
                </div>
             </div>
          </form>
-         <?php
+            <?php
+            }
          }
       }
       ?>
       <br/><br/>
-      <div class="text-center">;-)</div>
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-sm-12">
+               <hr/>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-xs-6">
+               <small>
+                  Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>.
+               </small>
+            </div>
+            <div class="col-xs-6 text-right">
+               <span class="label label-default">
+                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                  &nbsp; <?php echo $updater->duration(); ?>
+               </span>
+            </div>
+         </div>
+      </div>
       <?php
       if(!FS_DEMO)
       {
