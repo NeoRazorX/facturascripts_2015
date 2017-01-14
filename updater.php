@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -276,7 +276,7 @@ class fs_updater
                /// renombramos si es necesario
                foreach( scandir(getcwd().'/plugins') as $f)
                {
-                  if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                  if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) )
                   {
                      $encontrado2 = FALSE;
                      foreach($plugins_list as $f2)
@@ -354,7 +354,7 @@ class fs_updater
       {
          if(( $file != '.' ) && ( $file != '..' ))
          {
-            if(is_dir($src . '/' . $file))
+            if( is_dir($src . '/' . $file) )
             {
                $this->recurse_copy($src . '/' . $file, $dst . '/' . $file);
             }
@@ -430,6 +430,12 @@ class fs_updater
          curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+         if( defined('FS_PROXY_TYPE') )
+         {
+            curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
+            curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
+            curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
+         }
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
          
@@ -459,6 +465,12 @@ class fs_updater
    {
       curl_setopt($ch, CURLOPT_HEADER, true);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      if( defined('FS_PROXY_TYPE') )
+      {
+         curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
+         curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
+         curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
+      }
       $data = curl_exec($ch);
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       
@@ -497,7 +509,7 @@ class fs_updater
          $this->plugin_updates = array();
          foreach( scandir(getcwd() . '/plugins') as $f )
          {
-            if( is_dir('plugins/' . $f) AND $f != '.' AND $f != '..' )
+            if( $f != '.' AND $f != '..' AND is_dir('plugins/' . $f) )
             {
                $plugin = array(
                    'name' => $f,

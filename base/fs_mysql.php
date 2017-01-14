@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -831,7 +831,7 @@ class fs_mysql
             if(!$encontrado)
             {
                /// añadimos la restriccion
-               if( substr($col['consulta'], 0, 11) == 'FOREIGN KEY' )
+               if( substr($col['consulta'], 0, 11) == 'FOREIGN KEY' AND FS_FOREIGN_KEYS )
                {
                   $consulta .= 'ALTER TABLE '.$table_name.' ADD CONSTRAINT '.$col['nombre'].' '.$col['consulta'].';';
                }
@@ -937,8 +937,10 @@ class fs_mysql
             {
                $consulta .= ', '.$res['consulta'];
             }
-            else
+            else if(FS_FOREIGN_KEYS OR substr($res['consulta'], 0, 11) != 'FOREIGN KEY')
+            {
                $consulta .= ', CONSTRAINT '.$res['nombre'].' '.$res['consulta'];
+            }
          }
       }
       

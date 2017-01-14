@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -161,7 +161,7 @@ class admin_home extends fs_controller
          }
          else if( is_writable('plugins/'.$_GET['delete_plugin']) )
          {
-            if( $this->delTree('plugins/'.$_GET['delete_plugin']) )
+            if( $this->del_tree('plugins/'.$_GET['delete_plugin']) )
             {
                $this->new_message('Plugin '.$_GET['delete_plugin'].' eliminado correctamente.');
             }
@@ -523,7 +523,7 @@ class admin_home extends fs_controller
       
       foreach( scandir(getcwd().'/plugins') as $f)
       {
-         if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..' AND !in_array($f, $disabled) )
+         if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) AND !in_array($f, $disabled) )
          {
             $plugin = array(
                 'compatible' => FALSE,
@@ -626,12 +626,12 @@ class admin_home extends fs_controller
     * @param type $dir
     * @return type
     */
-   private function delTree($dir)
+   private function del_tree($dir)
    {
       $files = array_diff(scandir($dir), array('.','..'));
       foreach ($files as $file)
       {
-         (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+         (is_dir("$dir/$file")) ? $this->del_tree("$dir/$file") : unlink("$dir/$file");
       }
       return rmdir($dir);
    }
@@ -706,7 +706,7 @@ class admin_home extends fs_controller
                   $page_list = array();
                   foreach( scandir(getcwd().'/plugins/'.$name.'/controller') as $f)
                   {
-                     if( is_string($f) AND strlen($f) > 0 AND !is_dir($f) )
+                     if( $f != '.' AND $f != '..' AND is_string($f) AND strlen($f) > 4 AND !is_dir($f) )
                      {
                         if( substr($f, -4) == '.php' )
                         {
@@ -930,6 +930,12 @@ class admin_home extends fs_controller
          curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+         if( defined('FS_PROXY_TYPE') )
+         {
+            curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
+            curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
+            curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
+         }
          $data = curl_exec($ch);
          $info = curl_getinfo($ch);
          
@@ -959,6 +965,12 @@ class admin_home extends fs_controller
    {
       curl_setopt($ch, CURLOPT_HEADER, true);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      if( defined('FS_PROXY_TYPE') )
+      {
+         curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
+         curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
+         curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
+      }
       $data = curl_exec($ch);
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       
@@ -1013,7 +1025,7 @@ class admin_home extends fs_controller
                /// renombramos si es necesario
                foreach( scandir(getcwd().'/plugins') as $f)
                {
-                  if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                  if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) )
                   {
                      $encontrado2 = FALSE;
                      foreach($plugins_list as $f2)
@@ -1084,7 +1096,7 @@ class admin_home extends fs_controller
                   /// renombramos si es necesario
                   foreach( scandir(getcwd().'/plugins') as $f)
                   {
-                     if( is_dir('plugins/'.$f) AND $f != '.' AND $f != '..')
+                     if( $f != '.' AND $f != '..' AND is_dir('plugins/'.$f) )
                      {
                         $encontrado2 = FALSE;
                         foreach($plugins_list as $f2)

@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 $nombre_archivo = "config.php";
 error_reporting(E_ALL);
@@ -87,6 +104,15 @@ function guarda_config($nombre_archivo)
       fwrite($archivo, "\n");
       fwrite($archivo, "/// desactiva el poder eliminar plugins manualmente\n");
       fwrite($archivo, "define('FS_DISABLE_RM_PLUGINS', FALSE);\n");
+      
+      if($_REQUEST['proxy_type'])
+      {
+         fwrite($archivo, "\n");
+         fwrite($archivo, "define('FS_PROXY_TYPE', '".$_REQUEST['proxy_type']."');\n");
+         fwrite($archivo, "define('FS_PROXY_HOST', '".$_REQUEST['proxy_host']."');\n");
+         fwrite($archivo, "define('FS_PROXY_PORT', '".$_REQUEST['proxy_port']."');\n");
+      }
+      
       fclose($archivo);
       
       header("Location: index.php");
@@ -712,8 +738,8 @@ $system_info = str_replace('"', "'", $system_info);
                   </li>
                   <li role="presentation">
                      <a href="#cache" aria-controls="cache" role="tab" data-toggle="tab">
-                        <i class="fa fa-tachometer"></i>&nbsp;
-                        Memcached
+                        <i class="fa fa-wrench"></i>&nbsp;
+                        Avanzado
                      </a>
                   </li>
                   <li role="presentation">
@@ -786,30 +812,70 @@ $system_info = str_replace('"', "'", $system_info);
             <div role="tabpanel" class="tab-pane" id="cache">
                <div class="row">
                   <div class="col-sm-12">
-                     <p class="help-block">
-                        Este apartado es totalmente <b>opcional</b>. Si tienes instalado memcached,
-                        puedes especificar aquí la ruta, puerto y prefijo a utilizar. Si no,
-                        déjalo como está.
-                     </p>
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="col-sm-4">
-                     <div class="form-group">
-                        Servidor:
-                        <input class="form-control" type="text" name="cache_host" value="localhost" autocomplete="off"/>
+                     <div class="panel panel-default">
+                        <div class="panel-heading">
+                           <h3 class="panel-title">Mencached</h3>
+                        </div>
+                        <div class="panel-body">
+                           <p class="help-block">
+                              Este apartado es totalmente <b>opcional</b>. Si tienes instalado memcached,
+                              puedes especificar aquí la ruta, puerto y prefijo a utilizar. Si no,
+                              déjalo como está.
+                           </p>
+                           <div class="row">
+                              <div class="col-sm-4">
+                                 <div class="form-group">
+                                    Servidor:
+                                    <input class="form-control" type="text" name="cache_host" value="localhost" autocomplete="off"/>
+                                 </div>
+                              </div>
+                              <div class="col-sm-4">
+                                 <div class="form-group">
+                                    Puerto:
+                                    <input class="form-control" type="number" name="cache_port" value="11211" autocomplete="off"/>
+                                 </div>
+                              </div>
+                              <div class="col-sm-4">
+                                 <div class="form-group">
+                                    Prefijo:
+                                    <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(8); ?>_" autocomplete="off"/>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
                      </div>
-                  </div>
-                  <div class="col-sm-4">
-                     <div class="form-group">
-                        Puerto:
-                        <input class="form-control" type="number" name="cache_port" value="11211" autocomplete="off"/>
-                     </div>
-                  </div>
-                  <div class="col-sm-4">
-                     <div class="form-group">
-                        Prefijo:
-                        <input class="form-control" type="text" name="cache_prefix" value="<?php echo random_string(8); ?>_" autocomplete="off"/>
+                     <div class="panel panel-default">
+                        <div class="panel-heading">
+                           <h3 class="panel-title">Proxy</h3>
+                        </div>
+                        <div class="panel-body">
+                           <div class="row">
+                              <div class="col-sm-4">
+                                 <div class="form-group">
+                                    Tipo de Proxy:
+                                    <select class='form-control' name="proxy_type">
+                                       <option value="">Sin proxy</option>
+                                       <option value="">------</option>
+                                       <option value="HTTP">HTTP</option>
+                                       <option value="HTTPS">HTTPS</option>
+                                       <option value="SOCKS5">SOCKS5</option>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="col-sm-4">
+                                 <div class="form-group">
+                                    Servidor:
+                                    <input class="form-control" type="text" name="proxy_host" placeholder="192.168.1.1" autocomplete="off"/>
+                                 </div>
+                              </div>
+                              <div class="col-sm-4">
+                                 <div class="form-group">
+                                    Puerto:
+                                    <input class="form-control" type="number" name="proxy_port" placeholder="8080" autocomplete="off"/>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
                      </div>
                   </div>
                </div>
@@ -837,7 +903,7 @@ $system_info = str_replace('"', "'", $system_info);
          <div class="col-sm-12 text-center">
             <hr/>
             <small>
-               © 2013-2016 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
+               &COPY; 2013-2017 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
             </small>
          </div>
       </div>
