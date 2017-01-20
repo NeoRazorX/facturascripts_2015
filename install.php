@@ -479,9 +479,18 @@ $system_info = str_replace('"', "'", $system_info);
                   </h3>
                   <pre>sudo chmod -R o+w <?php echo dirname(__FILE__); ?></pre>
                   <p class="help-block">
-                     Este comando soluciona el problema en el 100% de los casos, pero
+                     Este comando soluciona el problema en el 95% de los casos, pero
                      puedes optar por una solución más restrictiva, simplemente es necesario
                      que Apache (o PHP) pueda leer y escribir en la carpeta.
+                  </p>
+                  <h3>
+                     <i class="fa fa-lock" aria-hidden="true"></i> Fedora / CentOS / Red Hat
+                  </h3>
+                  <p class="help-block">
+                     La configuración por defecto de estas distribuciones, en concreto SELinux,
+                     bloquea cualquier intento de comprobar si la carpeta tiene permisos de escritura.
+                     Desactiva o modifica la configuración de SELinux para el correcto funcionamiento
+                     de FacturaScripts.
                   </p>
                   <h3>
                      <i class="fa fa-globe" aria-hidden="true"></i> Hosting

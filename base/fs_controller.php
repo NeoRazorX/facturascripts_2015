@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -381,7 +381,7 @@ class fs_controller
     * Muestra un mensaje al usuario
     * @param type $msg mensaje a mostrar
     */
-   public function new_message($msg=FALSE, $save=FALSE, $tipo = 'msg', $alerta = FALSE)
+   public function new_message($msg = FALSE, $save = FALSE, $tipo = 'msg', $alerta = FALSE)
    {
       if($msg)
       {
@@ -418,7 +418,7 @@ class fs_controller
     * Muestra un consejo al usuario
     * @param type $msg el consejo a mostrar
     */
-   public function new_advice($msg=FALSE)
+   public function new_advice($msg = FALSE)
    {
       if($msg)
       {
@@ -768,7 +768,7 @@ class fs_controller
     * Carga el menú de facturaScripts
     * @param type $reload TRUE si quieres recargar
     */
-   protected function load_menu($reload=FALSE)
+   protected function load_menu($reload = FALSE)
    {
       $this->menu = $this->user->get_menu($reload);
    }
@@ -795,7 +795,7 @@ class fs_controller
     * @param type $f el menú seleccionado
     * @return type lista de elementos del menú
     */
-   public function pages($f='')
+   public function pages($f = '')
    {
       $pages = array();
       foreach($this->menu as $p)
@@ -1186,7 +1186,7 @@ class fs_controller
     * @param type $dec nº de decimales
     * @return type
     */
-   public function show_precio($precio=0, $coddivisa=FALSE, $simbolo=TRUE, $dec=FS_NF0)
+   public function show_precio($precio = 0, $coddivisa = FALSE, $simbolo = TRUE, $dec = FS_NF0)
    {
       if($coddivisa === FALSE)
       {
@@ -1220,7 +1220,7 @@ class fs_controller
     * @param type $js
     * @return type
     */
-   public function show_numero($num=0, $decimales=FS_NF0, $js=FALSE)
+   public function show_numero($num = 0, $decimales = FS_NF0, $js = FALSE)
    {
       if($js)
       {
@@ -1295,7 +1295,7 @@ class fs_controller
     * @param type $url URL del elemento (albarán, factura, artículos...).
     * @param type $nuevo TRUE si el elemento es nuevo, FALSE si se ha modificado.
     */
-   public function new_change($txt, $url, $nuevo=FALSE)
+   public function new_change($txt, $url, $nuevo = FALSE)
    {
       $this->get_last_changes();
       if( count($this->last_changes) > 0 )
