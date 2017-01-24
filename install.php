@@ -132,6 +132,12 @@ else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
 {
    $errors[] = 'php';
 }
+else if( floatval('3,1') >= floatval('3.1') )
+{
+   $errors[] = "floatval";
+   $errors2[] = 'El separador de decimales de esta versión de PHP no es el punto,'
+           . ' como sucede en las instalaciones estándar. Debes corregirlo.';
+}
 else if( !function_exists('mb_substr') )
 {
    $errors[] = "mb_substr";

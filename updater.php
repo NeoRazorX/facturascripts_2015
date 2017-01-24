@@ -188,7 +188,11 @@ class fs_updater
          {
             if($plugin['depago'])
             {
-               if($plugin['private_key'])
+               if(!$this->xid)
+               {
+                  /// nada
+               }
+               else if($plugin['private_key'])
                {
                   $this->tr_updates .= '<tr>'
                           . '<td>'.$plugin['name'].'</td>'
