@@ -52,6 +52,13 @@ class forma_pago extends \fs_model
    public $domiciliado;
    
    /**
+    * TRUE (por defecto) -> mostrar los datos en documentos de venta,
+    * incluida la cuenta bancaria asociada.
+    * @var type 
+    */
+   public $imprimir;
+   
+   /**
     * Sirve para generar la fecha de vencimiento de las facturas.
     * @var type 
     */
@@ -67,6 +74,7 @@ class forma_pago extends \fs_model
          $this->genrecibos = $f['genrecibos'];
          $this->codcuenta = $f['codcuenta'];
          $this->domiciliado = $this->str2bool($f['domiciliado']);
+         $this->imprimir = $this->str2bool($f['imprimir']);
          $this->vencimiento = $f['vencimiento'];
       }
       else
@@ -76,6 +84,7 @@ class forma_pago extends \fs_model
          $this->genrecibos = 'Emitidos';
          $this->codcuenta = '';
          $this->domiciliado = FALSE;
+         $this->imprimir = TRUE;
          $this->vencimiento = '+1month';
       }
    }
@@ -171,17 +180,20 @@ class forma_pago extends \fs_model
                  ", genrecibos = ".$this->var2str($this->genrecibos).
                  ", codcuenta = ".$this->var2str($this->codcuenta).
                  ", domiciliado = ".$this->var2str($this->domiciliado).
+                 ", imprimir = ".$this->var2str($this->imprimir).
                  ", vencimiento = ".$this->var2str($this->vencimiento).
                  "  WHERE codpago = ".$this->var2str($this->codpago).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)
-                 VALUES (".$this->var2str($this->codpago).
+         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta
+            ,domiciliado,imprimir,vencimiento) VALUES 
+                  (".$this->var2str($this->codpago).
                  ",".$this->var2str($this->descripcion).
                  ",".$this->var2str($this->genrecibos).
                  ",".$this->var2str($this->codcuenta).
                  ",".$this->var2str($this->domiciliado).
+                 ",".$this->var2str($this->imprimir).
                  ",".$this->var2str($this->vencimiento).");";
       }
       
