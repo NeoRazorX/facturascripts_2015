@@ -117,10 +117,16 @@
             {/if}
          </div>
          {if="!$fsc->disable_mod_plugins"}
-         <a class='btn btn-sm {if="$fsc->check_for_updates()"}btn-info{else}btn-default{/if}' href='updater.php' title='Actualizador'>
-            <span class="glyphicon glyphicon-upload"></span>
-            <span class="hidden-xs">&nbsp; Actualizador</span>
-         </a>
+         <div class="btn-group">
+            <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
+               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+               <span class="hidden-xs">&nbsp;Añadir</span>
+            </a>
+            <a class='btn btn-sm {if="$fsc->check_for_updates()"}btn-info{else}btn-default{/if}' href='updater.php' title='Actualizador'>
+               <span class="glyphicon glyphicon-upload"></span>
+               <span class="hidden-xs">&nbsp;Actualizador</span>
+            </a>
+         </div>
          {/if}
          <div class="btn-group">
          {loop="$fsc->extensions"}
@@ -253,7 +259,7 @@
                   <div class="col-xs-6 text-right">
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                         <span class="glyphicon glyphicon-floppy-disk"></span>
-                        <span class="hidden-xs">&nbsp; Guardar</span>
+                        <span class="hidden-xs">&nbsp;Guardar</span>
                      </button>
                   </div>
                </div>
@@ -337,7 +343,7 @@
                   {if="!$fsc->disable_add_plugins"}
                   <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_add_plugin">
                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                     <span class="hidden-xs">&nbsp; Añadir</span>
+                     <span class="hidden-xs">&nbsp;Añadir</span>
                   </a>
                   {/if}
                </div>

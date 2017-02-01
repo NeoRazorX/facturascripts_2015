@@ -132,6 +132,12 @@ else if( floatval( substr(phpversion(), 0, 3) ) < 5.3 )
 {
    $errors[] = 'php';
 }
+else if( floatval('3,1') >= floatval('3.1') )
+{
+   $errors[] = "floatval";
+   $errors2[] = 'El separador de decimales de esta versión de PHP no es el punto,'
+           . ' como sucede en las instalaciones estándar. Debes corregirlo.';
+}
 else if( !function_exists('mb_substr') )
 {
    $errors[] = "mb_substr";
@@ -479,9 +485,18 @@ $system_info = str_replace('"', "'", $system_info);
                   </h3>
                   <pre>sudo chmod -R o+w <?php echo dirname(__FILE__); ?></pre>
                   <p class="help-block">
-                     Este comando soluciona el problema en el 100% de los casos, pero
+                     Este comando soluciona el problema en el 95% de los casos, pero
                      puedes optar por una solución más restrictiva, simplemente es necesario
                      que Apache (o PHP) pueda leer y escribir en la carpeta.
+                  </p>
+                  <h3>
+                     <i class="fa fa-lock" aria-hidden="true"></i> Fedora / CentOS / Red Hat
+                  </h3>
+                  <p class="help-block">
+                     La configuración por defecto de estas distribuciones, en concreto SELinux,
+                     bloquea cualquier intento de comprobar si la carpeta tiene permisos de escritura.
+                     Desactiva o modifica la configuración de SELinux para el correcto funcionamiento
+                     de FacturaScripts.
                   </p>
                   <h3>
                      <i class="fa fa-globe" aria-hidden="true"></i> Hosting

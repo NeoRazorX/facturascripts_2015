@@ -969,7 +969,12 @@ class fs_mysql
       {
          if($data[0]['Engine'] != 'InnoDB')
          {
-            $retorno = $this->exec("ALTER TABLE ".$table_name." ENGINE=InnoDB;");
+            if( !$this->exec("ALTER TABLE ".$table_name." ENGINE=InnoDB;") )
+            {
+               self::$errors[] = 'Imposible convertir la tabla '.$table_name.' a InnoDB.'
+                       . ' Imprescindible para FacturaScripts.';
+               $retorno = FALSE;
+            }
          }
       }
       

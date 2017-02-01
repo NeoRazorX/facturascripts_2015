@@ -642,11 +642,18 @@ class admin_home extends fs_controller
     */
    private function enable_plugin($name)
    {
-      if( substr($name, -7) == '-master' )
+      if( strpos($name, '-master') !== FALSE )
       {
          /// renombramos el directorio
-         $name = substr($name, 0, -7);
-         rename('plugins/'.$name.'-master', 'plugins/'.$name);
+         $name2 = substr($name, 0, strpos($name, '-master'));
+         if( rename('plugins/'.$name, 'plugins/'.$name2) )
+         {
+            $name = $name2;
+         }
+         else
+         {
+            $this->new_error_msg('Error al renombrar el plugin.');
+         }
       }
       
       /// comprobamos las dependencias

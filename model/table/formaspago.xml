@@ -31,6 +31,12 @@
       <nulo>YES</nulo>
    </columna>
    <columna>
+      <nombre>imprimir</nombre>
+      <tipo>boolean</tipo>
+      <nulo>YES</nulo>
+      <defecto>true</defecto>
+   </columna>
+   <columna>
       <nombre>vencimiento</nombre>
       <tipo>character varying(20)</tipo>
       <nulo>YES</nulo>

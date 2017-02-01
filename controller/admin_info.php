@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -82,7 +82,7 @@ class admin_info extends fs_controller
       else if( !$cron_vars['cron_exists'] )
       {
          $this->new_advice('Nunca se ha ejecutado el'
-                 . ' <a href="http://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
+                 . ' <a href="https://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
                  . ' te perderás algunas características interesantes de FacturaScripts.');
       }
       else if( $cron_vars['cron_error'] )

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,15 +96,16 @@ class divisa extends \fs_model
       return "INSERT INTO ".$this->table_name." (coddivisa,descripcion,tasaconv,tasaconv_compra,codiso,simbolo)"
               ." VALUES ('EUR','EUROS','1','1','978','€')"
               .",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
-              .",('CLP','PESOS (CLP)','741.81','741.81','152','CLP$')"
-              .",('COP','PESOS (COP)','3286.82','3286.82','170','CO$')"
-              .",('DOP','PESOS DOMINICANOS','51.944','51.944','214','RD$')"
+              .",('CLP','PESOS (CLP)','704.0227','704.0227','152','CLP$')"
+              .",('COP','PESOS (COP)','3140.6803','3140.6803','170','CO$')"
+              .",('DOP','PESOS DOMINICANOS','49.7618','49.7618','214','RD$')"
               .",('GBP','LIBRAS ESTERLINAS','0.865','0.865','826','£')"
-              .",('MXN','PESOS (MXN)','20.478','20.478','484','MX$')"
+              .",('HTG','GOURDES','72.0869','72.0869','322','G')"
+              .",('MXN','PESOS (MXN)','23.3678','23.3678','484','MX$')"
               .",('PAB','BALBOAS','1.128','1.128','590','B')"
               .",('PEN','NUEVOS SOLES','3.736','3.736','604','S/.')"
               .",('USD','DÓLARES EE.UU.','1.129','1.129','840','$')"
-              .",('VEF','BOLÍVARES','11.234','11.234','937','Bs')";
+              .",('VEF','BOLÍVARES','10.6492','10.6492','937','Bs')";
    }
    
    /**

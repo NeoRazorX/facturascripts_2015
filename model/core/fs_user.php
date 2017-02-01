@@ -550,7 +550,7 @@ class fs_user extends \fs_model
       
       if(!$userlist)
       {
-         $users = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nick ASC;");
+         $users = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(nick) ASC;");
          if($users)
          {
             foreach($users as $u)
