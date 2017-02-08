@@ -307,11 +307,12 @@ class fs_updater
             
             if($zip_status !== TRUE)
             {
-               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
+               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status
+                       .'. Intente de nuevo en unos minutos.';
             }
             else if( !$this->test_zip_nucleo($zip) )
             {
-               $this->errores = 'Ha habido un error con el archivo update.zip';
+               $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
             }
             else
             {
@@ -337,7 +338,7 @@ class fs_updater
             }
          }
          else
-            $this->errores = 'Error al descargar el archivo zip.';
+            $this->errores = 'Error al descargar el archivo zip. Intente de nuevo en unos minutos.';
       }
    }
    
@@ -375,11 +376,12 @@ class fs_updater
             
             if($zip_status !== TRUE)
             {
-               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
+               $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status
+                       .'. Intente de nuevo en unos minutos.';
             }
             else if( !$this->test_zip_plugin($zip) )
             {
-               $this->errores = 'Ha habido un error con el archivo update.zip';
+               $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
             }
             else
             {
@@ -422,7 +424,7 @@ class fs_updater
             }
          }
          else
-            $this->errores = 'Error al descargar el archivo zip.';
+            $this->errores = 'Error al descargar el archivo zip. Intente de nuevo en unos minutos.';
       }
       else
          $this->errores = 'Error al leer el archivo plugins/' . $_GET['plugin'] . '/facturascripts.ini';
@@ -462,11 +464,12 @@ class fs_updater
          
          if($zip_status !== TRUE)
          {
-            $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status;
+            $this->errores = 'Ha habido un error con el archivo update.zip. Código: '.$zip_status
+                    .'. Intente de nuevo en unos minutos.';
          }
          else if( !$this->test_zip_plugin($zip) )
          {
-            $this->errores = 'Ha habido un error con el archivo update.zip';
+            $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
          }
          else
          {
@@ -833,11 +836,11 @@ $updater = new fs_updater();
             <div class="col-sm-12">
                <a href="index.php?page=admin_home&updated=TRUE" class="btn btn-sm btn-default">
                   <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                  <span class="hidden-xs">&nbsp; Panel de control</span>
+                  <span class="hidden-xs">&nbsp;Panel de control</span>
                </a>
                <a href="https://www.facturascripts.com/comm3/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-default">
                   <i class="fa fa-key" aria-hidden="true"></i>
-                  <span class="hidden-xs">&nbsp; Claves</span>
+                  <span class="hidden-xs">&nbsp;Claves</span>
                </a>
                <div class="page-header">
                   <h1>
@@ -876,13 +879,13 @@ $updater = new fs_updater();
                   <li role="presentation" class="active">
                      <a href="#actualizaciones" aria-controls="actualizaciones" role="tab" data-toggle="tab">
                         <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
-                        <span class="hidden-xs">&nbsp; Actualizaciones</span>
+                        <span class="hidden-xs">&nbsp;Actualizaciones</span>
                      </a>
                   </li>
                   <li role="presentation">
                      <a href="#opciones" aria-controls="opciones" role="tab" data-toggle="tab">
                         <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-                        <span class="hidden-xs">&nbsp; Opciones</span>
+                        <span class="hidden-xs">&nbsp;Opciones</span>
                      </a>
                   </li>
                </ul>

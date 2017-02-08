@@ -95,7 +95,7 @@ class admin_info extends fs_controller
          $this->new_advice('Se está ejecutando el cron.');
       }
       
-      $this->b_alerta = '';
+      $this->b_alerta = isset($_REQUEST['b_alerta']);
       $this->b_desde = '';
       $this->b_detalle = '';
       $this->b_hasta = '';
@@ -103,15 +103,18 @@ class admin_info extends fs_controller
       $this->b_tipo = '';
       $this->b_usuario = '';
       
-      if( isset($_POST['b_desde']) )
+      if( isset($_REQUEST['b_desde']) )
       {
-         $this->b_alerta = isset($_POST['b_alerta']);
-         $this->b_desde = $_POST['b_desde'];
-         $this->b_detalle = $_POST['b_detalle'];
-         $this->b_hasta = $_POST['b_hasta'];
-         $this->b_ip = $_POST['b_ip'];
-         $this->b_tipo = $_POST['b_tipo'];
-         $this->b_usuario = $_POST['b_usuario'];
+         $this->b_desde = $_REQUEST['b_desde'];
+         $this->b_detalle = $_REQUEST['b_detalle'];
+         $this->b_hasta = $_REQUEST['b_hasta'];
+         $this->b_tipo = $_REQUEST['b_tipo'];
+         $this->b_usuario = $_REQUEST['b_usuario'];
+      }
+      
+      if( isset($_REQUEST['b_ip']) )
+      {
+         $this->b_ip = $_REQUEST['b_ip'];
       }
       
       $this->buscar_en_log();
