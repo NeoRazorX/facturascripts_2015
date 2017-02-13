@@ -31,7 +31,7 @@ if( $db->connect() )
 {
    if( !isset($_REQUEST['v']) )
    {
-      echo 'Version de la API ausente. Actualiza el cliente.';
+      echo 'Version de la API de FacturaScripts ausente. Actualiza el cliente.';
    }
    else if($_REQUEST['v'] == '2')
    {
@@ -67,7 +67,7 @@ if( $db->connect() )
    }
    else
    {
-      echo 'Version de la API incorrecta. Actualiza el cliente.';
+      echo 'Version de la API de FacturaScripts incorrecta. Actualiza el cliente.';
    }
 }
 else

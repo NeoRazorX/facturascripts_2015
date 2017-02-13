@@ -93,9 +93,9 @@ class forma_pago extends \fs_model
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
-              . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+1month')"
+              . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+1day')"
               . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
-              . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+1week')"
+              . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+1day')"
               . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+1week');";
    }
    

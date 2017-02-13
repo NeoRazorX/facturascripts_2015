@@ -900,6 +900,20 @@ $system_info = str_replace('"', "'", $system_info);
                   <div class="col-sm-12">
                      <div class="form-group">
                         <pre><?php echo file_get_contents('COPYING'); ?></pre>
+                        <p>
+                           FacturaScripts también incluye una versión modificada de
+                           <a href="https://github.com/feulf/raintpl/tree/65493157073ff0f313a67fe2ee42139b3eaa7f5a">RainTPL</a>
+                           que también tiene licencia <a href="raintpl/LICENSE.txt">LGPL</a>, así como
+                           <a href="https://github.com/PHPMailer/PHPMailer/">phpmailer</a> con la misma licencia
+                           <a href="extras/phpmailer/LICENSE">LGPL</a>.
+                           <br/>
+                           Para la parte gráfica se incluye el framewrowk <a href="http://getbootstrap.com">Bootstrap</a>, con licencia
+                           <a href="https://github.com/twbs/bootstrap/blob/master/LICENSE">MIT</a> y
+                           <a href="http://fontawesome.io">font-awesome</a> también con licencia <a href="http://fontawesome.io/license">MIT</a>.
+                           <br/>
+                           Y por último, pero no menos importante, también incluye <a href="https://github.com/jquery/jquery">jQuery</a>,
+                           con licencia <a href="https://github.com/jquery/jquery/blob/master/LICENSE.txt">MIT</a>.
+                        </p>
                      </div>
                   </div>
                </div>
