@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_roles_pages.xml
+    Description:
+        Estructura de la tabla fs_roles_pages.
+-->
+<tabla>
+    <columna>
+        <nombre>allow_delete</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+      <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>fecha_creacion</nombre>
+        <tipo>timestamp without time zone</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fecha_modificacion</nombre>
+        <tipo>timestamp without time zone</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>name</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>plugin</nombre>
+        <tipo>character varying(64)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>usuario_creacion</nombre>
+        <tipo>character varying(12)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>usuario_modificacion</nombre>
+        <tipo>character varying(12)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>fs_roles_pages_pkey</nombre>
+        <consulta>PRIMARY KEY (id, name, plugin)</consulta>
+    </restriccion>
+</tabla>

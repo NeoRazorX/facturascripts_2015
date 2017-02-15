@@ -1,0 +1,425 @@
+{include="header"}
+<script type="text/javascript">
+    $(document).ready(function() {
+        if(window.location.hash.substring(1) == 'nuevo')
+        {
+            $("#modal_nuevo_rol").modal('show');
+            document.f_nuevo_rol.descripcion.focus();
+        }
+        $("#b_nuevo_rol").click(function(event) {
+            event.preventDefault();
+            $("#modal_nuevo_rol").modal('show');
+            document.f_nuevo_rol.descripcion.focus();
+        });
+
+        var validator = $("#f_nuevo_rol").validate();
+
+        //Initialize tooltips
+        $('.nav-tabs > li a[title]').tooltip();
+
+        //Wizard
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+
+            var $target = $(e.target);
+
+            if ($target.parent().hasClass('disabled')) {
+                return false;
+            }
+        });
+
+        $(".next-step").click(function (e) {
+            var valid = true;
+            var isValidInput = function( inp ) {
+                return inp !== "" && inp.length > 0;
+            };
+            var tabHref = $('.wizard .nav-tabs li.active a').attr('href');
+
+            if(tabHref === '#step1'){
+                var text = $('#descripcion').val();
+                if (!isValidInput(text)) {
+                    valid = false;
+                    $('#descripcion').closest('.form-group').removeClass('has-success').addClass('has-error');
+                }
+            }
+
+            if(tabHref === '#step2'){
+                $('#step2_error').hide();
+                $('#step2_error').html('');
+                var le = document.querySelectorAll('#f_nuevo_rol input[name="enabled[]"]:checked');
+                if(le.length <= 0 ){
+                    valid = false;
+                    $('#step2_error').html('Debes seleccionar por lo menos 1 acceso de Ver!');
+                    $('#step2_error').removeClass('hidden');
+                    $('#step2_error').show();
+                }
+            }
+
+            if (valid) {
+                var $active = $('.wizard .nav-tabs li.active');
+                $active.next().removeClass('disabled');
+                nextTab($active);
+            }
+        });
+        $(".prev-step").click(function (e) {
+            var $active = $('.wizard .nav-tabs li.active');
+            prevTab($active);
+
+        });
+    });
+
+    function nextTab(elem) {
+        $(elem).next().find('a[data-toggle="tab"]').click();
+    }
+    function prevTab(elem) {
+        $(elem).prev().find('a[data-toggle="tab"]').click();
+    }
+
+    function fs_marcar_todo(formulario,selector,plugin)
+    {
+        $("#"+formulario+" input[plugin='"+plugin+"_"+selector+"']").prop('checked', true);
+    }
+    function fs_marcar_nada(formulario,selector,plugin)
+    {
+        $("#"+formulario+" input[plugin='"+plugin+"_"+selector+"']").prop('checked', false);
+    }
+    /*
+    function fs_marcar_todo(selector)
+    {
+        $("#f_nuevo_rol input[name='"+selector+"[]']").prop('checked', true);
+    }
+    function fs_marcar_nada(selector)
+    {
+        $("#f_nuevo_rol input[name='"+selector+"[]']").prop('checked', false);
+    }
+    */
+    function fs_marcar_todos()
+    {
+        $("#f_nuevo_rol input[name='acceso[]']").prop('checked', true);
+    }
+    function fs_marcar_nadie()
+    {
+        $("#f_nuevo_rol input[name='acceso[]']").prop('checked', false);
+    }
+
+    function validar_campo(id){
+        $('#'+id).validate();
+    }
+</script>
+{include="loader"}
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-sm-6 col-xs-7">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+               <span class="glyphicon glyphicon-refresh"></span>
+            </a>
+            {if="$fsc->page->is_default()"}
+            <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="desmarcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {else}
+            <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="marcar como página de inicio">
+               <span class="glyphicon glyphicon-home"></span>
+            </a>
+            {/if}
+         </div>
+         <div class="btn-group">
+            <a id="b_nuevo_rol" class="btn btn-sm btn-success" href="#">
+               <span class="glyphicon glyphicon-plus"></span>
+               <span class="hidden-xs">&nbsp; Nuevo</span>
+            </a>
+            {loop="$fsc->extensions"}
+               {if="$value->type=='button'"}
+               <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
+               {/if}
+            {/loop}
+         </div>
+      </div>
+       <div class="col-sm-6 col-xs-5 text-right">
+           <h2 style="margin-top: 0px;"><span class="fa fa-tasks"></span>&nbsp;Roles</h2>
+      </div>
+   </div>
+</div>
+<div role="tabpanel">
+   <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+         <a href="#roles" aria-controls="roles" role="tab" data-toggle="tab">
+            <i class="fa fa-tasks" aria-hidden="true"></i>
+            <span class="hidden-xs">&nbsp; Roles</span>
+            <span class="badge">{$fsc->roles_cantidad}</span>
+         </a>
+      </li>
+   </ul>
+   <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="roles">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-left">Rol</th>
+                     <th class="text-left">Fecha de Creacion</th>
+                     <th class="text-left">Usuario Creacion</th>
+                     <th class="text-center">Paginas</th>
+                     <th class="text-center">Usuarios</th>
+                     <th class="text-left">Ultima modicación</th>
+                     <th class="text-left">Usuario modificó</th>
+                     <th></th>
+                  </tr>
+               </thead>
+               {loop="$fsc->roles->all()"}
+               <form name="f_rol_{$counter}" action="{$fsc->url()}" method="POST">
+               <tr class='{if="$value->asignaciones()=='0'"}danger{/if}'>
+                  <td>
+                       <a href="{$value->url()}">{$value->descripcion}</a>
+                       <input type="hidden" name="id" value="{$value->id}">
+                  </td>
+                  <td>{$value->fecha_creacion}</td>
+                  <td>{$value->usuario_creacion}</td>
+                  <td class="text-center">
+                      {$value->accesos()}
+                  </td>
+                  <td class="text-center">
+                      {$value->asignaciones()}
+                  </td>
+                  <td>{$value->fecha_modificacion}</td>
+                  <td>{$value->usuario_modificacion}</td>
+                  <td>
+                      {if="$value->asignaciones()==0"}
+                        <button type="submit" class="btn btn-sm btn-danger" name="accion" value="eliminar" onclick="return confirm('Esta seguro que quiere eliminar el Rol: {$value->descripcion}?')"><span class="fa fa-trash"></span></button>
+                      {else}
+                        {if="$fsc->allow_delete"}
+                        <button type="button" class="btn btn-sm btn-warning" title="Rol con usuarios no se puede eliminar" data-tooltip="true"><span class="fa fa-lock"></span></button>
+                        {/if}
+                      {/if}
+                      <button type="button" class="btn btn-sm btn-primary"><span class="fa fa-save"></span></button>
+                  </td>
+               </tr>
+               </form>
+               {/loop}
+            </table>
+         </div>
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-sm-12">
+                  <p class="help-block">
+                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                     No es obligatorio el uso de Roles, puedes asignar los accesos directamente desde la página de <strong>Usuarios</strong>.
+                  </p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="modal" id="modal_nuevo_rol">
+   <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+           <h4 class="modal-title">
+              <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp; Nuevo rol
+           </h4>
+        </div>
+        <div class="modal-body">
+            <section>
+                <div class="wizard">
+                    <div class="wizard-inner">
+                        <div class="connecting-line"></div>
+                        <ul class="nav nav-tabs" role="tablist" id="tabsWizard">
+
+                            <li role="presentation" class="active">
+                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Descripción del Rol">
+                                    <span class="round-tab">
+                                        <span class="fa fa-pencil"></span>
+                                    </span>
+                                </a>
+                            </li>
+
+                            <li role="presentation" class="disabled">
+                                <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Páginas a autorizar">
+                                    <span class="round-tab">
+                                        <span class="fa fa-files-o"></span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li role="presentation" class="disabled">
+                                <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Asignación de Usuarios">
+                                    <span class="round-tab">
+                                        <i class="fa fa-users"></i>
+                                    </span>
+                                </a>
+                            </li>
+
+                            <li role="presentation" class="disabled">
+                                <a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Completado!">
+                                    <span class="round-tab">
+                                        <span class="fa fa-check"></span>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <form id="f_nuevo_rol" name="f_nuevo_rol" class="form" role="form" action="{$fsc->url()}" method="post">
+                        <div class="tab-content">
+                            <div class="tab-pane active" role="tabpanel" id="step1">
+                                <h3>Descripcion del Rol</h3>
+                                <p>
+                                    <input type="hidden" name="id" value="">
+                                    <input type="hidden" name="estado" value="TRUE">
+                                    <div class="form-group">
+                                        <label class="control-label"><strong>Descripcion del Rol (requerido)</strong></label>
+                                        <input type="text" name="descripcion" id="descripcion" required="required" placeholder="Descripción o nombre del rol" class="form-control input-sm" value="">
+                                    </div>
+                                </p>
+                                <div class="row" style="margin-top: 10px;">
+                                    <ul class="list-inline pull-right">
+                                        <li><button type="button" class="btn btn-sm btn-primary next-step">Siguiente</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="tab-pane" role="tabpanel" id="step2">
+                                <h3>Páginas a Autorizar</h3>
+                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                    {loop="$fsc->plugins"}
+                                    {if="count($fsc->mostrar_paginas($value))!=0"}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="plugin{$counter}">
+                                            <h6 class="panel-title">
+                                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{$counter}" aria-expanded="true" aria-controls="collapse{$counter}">
+                                                    Plugin: {$value}
+                                                </a>
+                                            </h6>
+                                        </div>
+                                        <div id="collapse{$counter}" class="panel-collapse collapse {if="$counter==0"}in{/if}" role="tabpanel" aria-labelledby="plugin{$counter}">
+                                            <div class="panel-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-fixed">
+                                                        <thead>
+                                                            <th class="col-xs-6 col-sm-6">
+                                                                Pagina
+                                                            </th>
+                                                            <th class="col-xs-3 col-sm-3 text-center">
+                                                                Ver/Modificar<br>
+                                                                <span class="text-center">
+                                                                    <div class="btn-group">
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('f_nuevo_rol','enabled','{$value1}')" title="Marcar todo">
+                                                                            <span class="glyphicon glyphicon-check"></span>
+                                                                        </button>
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('f_nuevo_rol','enabled','{$value1}')" title="Desmarcar todo">
+                                                                            <span class="glyphicon glyphicon-unchecked"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </span>
+                                                            </th>
+                                                            <th class="col-xs-3 col-sm-3 text-center">
+                                                                Eliminar<br>
+                                                                <span class="text-center">
+                                                                    <div class="btn-group">
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo('f_nuevo_rol','allow_delete','{$value1}')" title="Marcar todo">
+                                                                            <span class="glyphicon glyphicon-check"></span>
+                                                                        </button>
+                                                                        <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada('f_nuevo_rol','allow_delete','{$value1}')" title="Desmarcar todo">
+                                                                            <span class="glyphicon glyphicon-unchecked"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </span>
+                                                            </th>
+                                                        </thead>
+                                                        <tbody>
+                                                            {loop="$fsc->mostrar_paginas($value)"}
+                                                            <tr>
+                                                                <td class="col-sm-6">
+                                                                    {$value2->folder} > {$value2->name}
+                                                                </td>
+                                                                <td class="col-sm-3 text-center">
+                                                                    <input type="checkbox" id="enabled_{$counter2}" plugin="{$value1}_enabled" name="enabled[]" value="{$value2->name}"/>
+                                                                </td>
+                                                                <td class="col-sm-3 text-center">
+                                                                    <input type="checkbox" id="allow_delete_{$counter2}" plugin="{$value1}_allow_delete" name="allow_delete[]" value="{$value2->name}"/>
+                                                                </td>
+                                                            </tr>
+                                                            {/loop}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/if}
+                                    {/loop}
+                                </div>
+
+                                <div id="step2_error" class="pull-left alert alert-sm alert-danger hidden">
+
+                                </div>
+                                <ul class="list-inline pull-right">
+                                    <li><button type="button" class="btn btn-default prev-step">Anterior</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-info-full next-step">Continuar</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" role="tabpanel" id="step3">
+                                <h3>Asignacion de Usuarios</h3>
+                                <span class="help-block">Esta asignación puede ser realizada posteriormente.</span>
+                                <div class="table-responsive">
+                                    <table class="table table-fixed">
+                                       <thead>
+                                          <tr>
+                                             <th class="col-sm-3 text-left">Nick</th>
+                                             <th class="col-sm-2 text-left">Email</th>
+                                             <th class="col-sm-3 text-left">Empleado</th>
+                                             <th class="col-sm-2 text-center">Administrador</th>
+                                             <th class="col-sm-2 text-center">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todos()" title="Marcar todo">
+                                                        <span class="glyphicon glyphicon-check"></span>
+                                                    </button>
+                                                    <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nadie()" title="Desmarcar todo">
+                                                        <span class="glyphicon glyphicon-unchecked"></span>
+                                                    </button>
+                                                </div>
+                                             </th>
+                                          </tr>
+                                       </thead>
+                                       {loop="$fsc->user->all()"}
+                                       <tr>
+                                          <td class="col-xs-3 col-sm-3">{$value->nick}</td>
+                                          <td class="col-xs-3 col-sm-2">{if="FS_DEMO"}XXX@XXX.com{else}{$value->email}{/if}</td>
+                                          <td class="col-xs-3 col-sm-3">{$value->get_agente_fullname()}</td>
+                                          <td class="col-xs-1 col-sm-2 text-center">
+                                             {if="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}
+                                          </td>
+                                          <td class="col-sm-2 text-center">
+                                              {if="!$value->admin"}
+                                              <input type="checkbox" name="acceso[]" value="{$value->nick}">
+                                              {/if}
+                                          </td>
+                                       </tr>
+                                       {/loop}
+                                    </table>
+                                </div>
+                                <ul class="list-inline pull-right">
+                                    <li><button type="button" class="btn btn-default prev-step">Anterior</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-info-full next-step">Continuar</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" role="tabpanel" id="complete">
+                                <h3>Completo!</h3>
+                                <p>Se han completado todas las configuraciones, si está conforme y reviso todo puede <strong>Guardar</strong>
+                                    y se actualizará la información de los accesos a los usuarios que haya seleccionado o se creará el Rol para que
+                                    pueda asignarlos con posterioridad.</p>
+                                <ul class="list-inline pull-right">
+                                    <li><button type="submit" class="btn btn-sm btn-primary" name="accion" value="agregar"><span class="fa fa-save"></span>&nbsp;Guardar</button></li>
+                                </ul>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+      </div>
+   </div>
+</div>
+
+{include="footer"}

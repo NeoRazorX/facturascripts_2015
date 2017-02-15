@@ -1,0 +1,32 @@
+{
+    "name": "joenilson/facturascripts_2015",
+    "description": "Nucleo de FacturaScripts",
+    "type": "project",
+    "license": "LGPL-3.0",
+    "authors": [
+        {            
+            "name": "NeoRazorX",
+            "email": "neorazorx@gmail.com"
+        }
+    ],
+    "homepage": "https://www.facturascripts.com",
+    "support": {
+        "issues": "https://www.facturascripts.com/comm3/index.php?page=community_all",
+        "source": "https://github.com/joenilson/facturascripts_2015"
+    },
+    "require": {
+        "php": ">=5.3",
+        "philipp15b/php-i18n": ">=3"
+    },
+    "config": {
+        "vendor-dir": "extras",
+        "preferred-install": "dist"
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2016.025-dev"
+        }
+    }
+}

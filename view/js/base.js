@@ -11,17 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/*
 var input_number = 'number';
 if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
 {
    input_number = 'text';
 }
-
+*/
 function fs_round(value, precision, mode)
 {
    var m, f, isHalf, sgn;
@@ -31,27 +31,27 @@ function fs_round(value, precision, mode)
    sgn = (value > 0) | -(value < 0);
    isHalf = value % 1 === 0.5 * sgn;
    f = Math.floor(value);
-   
+
    if(isHalf)
    {
       switch (mode) {
          case 'PHP_ROUND_HALF_DOWN':
             value = f + (sgn < 0);
             break;
-            
+
          case 'PHP_ROUND_HALF_EVEN':
             value = f + (f % 2 * sgn);
             break;
-            
+
          case 'PHP_ROUND_HALF_ODD':
             value = f + !(f % 2);
             break;
-            
+
          default:
             value = f + (sgn > 0);
       }
    }
-   
+
    return (isHalf ? value : Math.round(value)) / m;
 }
 
