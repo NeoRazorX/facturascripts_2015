@@ -303,17 +303,17 @@
                   <td class="text-right">
                      {if="$value['enabled']"}
                      <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}#plugins">
-                        <span class="glyphicon glyphicon-remove"></span> &nbsp; Desactivar
+                        <span class="glyphicon glyphicon-remove"></span>&nbsp; Desactivar
                      </a>
                      {else}
                      <div class="btn-group">
                         {if="$value['compatible']"}
                         <a class="btn btn-sm btn-default" href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable={$value['name']}#plugins">
-                           <span class="glyphicon glyphicon-ok"></span> &nbsp; Activar
+                           <span class="glyphicon glyphicon-ok"></span>&nbsp; Activar
                         </a>
                         {else}
                         <a class="btn btn-sm btn-default" href="#" onclick="alert('Le falta el archivo facturascripts.ini')">
-                           <span class="glyphicon glyphicon-remove"></span> &nbsp; Incompatible
+                           <span class="glyphicon glyphicon-remove"></span>&nbsp; Incompatible
                         </a>
                         {/if}
                         {if="!$fsc->disable_rm_plugins"}
