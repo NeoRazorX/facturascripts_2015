@@ -7,40 +7,12 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="{#FS_PATH#}view/img/favicon.ico" />
       <link rel="stylesheet" href="{#FS_PATH#}view/css/bootstrap-yeti.min.css" />
+      <link rel="stylesheet" href="{#FS_PATH#}view/css/font-awesome.min.css" />
       <link rel="stylesheet" href="{#FS_PATH#}view/css/custom.css" />
       <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.min.js"></script>
       <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap.min.js"></script>
-      <script type="text/javascript">
-         $(document).ready(function() {
-            $("#b_feedback").click(function(event) {
-               event.preventDefault();
-               $("#modal_feedback").modal('show');
-               document.f_feedback.feedback_text.focus();
-            });
-         });
-      </script>
    </head>
    <body>
-      {if="$fsc->get_errors()"}
-      <div class="alert alert-danger hidden-print">
-         <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
-      </div>
-      {/if}
-      
-      {if="$fsc->get_messages()"}
-      <div class="alert alert-success hidden-print">
-         <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
-      </div>
-      {/if}
-      
-      {if="$fsc->get_advices()"}
-      <div class="alert alert-info hidden-print">
-         <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
-      </div>
-      {/if}
-      
-      {include="feedback"}
-      
       <div class="container">
          <div class="row">
             <div class="col-sm-12">
@@ -49,27 +21,72 @@
                      <span class="glyphicon glyphicon-exclamation-sign"></span>
                      Error
                   </h1>
+                  {if="$fsc->get_errors()"}
+                  <div class="alert alert-danger hidden-print">
+                     <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+                  </div>
+                  {/if}
+                     
+                  {if="$fsc->get_messages()"}
+                  <div class="alert alert-success hidden-print">
+                     <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+                  </div>
+                  {/if}
+                  
+                  {if="$fsc->get_advices()"}
+                  <div class="alert alert-info hidden-print">
+                     <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
+                  </div>
+                  {/if}
                </div>
+               <p class="help-block">
+                  Ha sido imposible conectar a la base de datos. Los motivos suelen ser distintos
+                  en función de dónde tengas instalado FacturaScripts.
+               </p>
             </div>
          </div>
          <div class="row">
             <div class="col-sm-6">
-               <p class="help-block">
-                  Ha sido imposible conectar a la base de datos. Bien porque ya
-                  no existe, el servidor ha sido desconectado o has excedido la
-                  cuota del hosting.
-               </p>
-               <a href="#" id="b_feedback" class="btn btn-sm btn-block btn-primary">
-                  <span class="glyphicon glyphicon-question-sign"></span> &nbsp; Preguntar a la comunidad...
-               </a>
-               <a href="https://www.facturascripts.com/preguntas" target="_blank" class="btn btn-sm btn-block btn-info">
-                  <span class="glyphicon glyphicon-link"></span> &nbsp; Foro de ayuda
-               </a>
+               <h3>
+                  <i class="fa fa-desktop" aria-hidden="true"></i>
+                  Instalado en tu PC...
+               </h3>
+               <ul>
+                  <li>
+                     Se ha desconectado {#FS_DB_TYPE#}. Para solucionarlo debes reiniciar {#FS_DB_TYPE#}.
+                     Si estás usando FacturaScripts portable, ve a la carpeta de FacturaScripts, haz clic
+                     en <b>xampp-control</b> y pulsa el botón <b>start</b>, al lado de {#FS_DB_TYPE#}.
+                  </li>
+                  <li>
+                     Has cambiado la contraseña de la base de datos. Para solucionarlo debes volver a poner
+                     la contraseña original de la base de datos, o bien poner la nueva contraseña en el archivo
+                     config.php de FacturaScripts.
+                  </li>
+               </ul>
             </div>
             <div class="col-sm-6">
-               <div class="thumbnail">
-                  <img src="{#FS_PATH#}view/img/fuuu_face.png" alt="FUUUUUUUUUU"/>
-               </div>
+               <h3>
+                  <i class="fa fa-globe" aria-hidden="true"></i>
+                  Instalado en un hosting...
+               </h3>
+               <ul>
+                  <li>
+                     Se ha bloqueado {#FS_DB_TYPE#}. Contacta con tu proveedor para que lo reinicie.
+                  </li>
+                  <li>
+                     Has excedido la cuota del hosting. Muchos hostings tienen límites de uso en la base
+                     de datos, y si los excedes te bloquean.
+                  </li>
+                  <li>Se ha cambiado la contraseña o la configuración de la base de datos.</li>
+               </ul>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-12">
+               <br/>
+               <a href="https://www.facturascripts.com/preguntas" target="_blank" class="btn btn-sm btn-info">
+                  <span class="glyphicon glyphicon-link"></span>&nbsp; Foro de ayuda
+               </a>
             </div>
          </div>
       </div>
