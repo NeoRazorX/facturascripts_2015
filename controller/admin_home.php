@@ -163,7 +163,7 @@ class admin_home extends fs_controller
          {
             if( $this->del_tree('plugins/'.$_GET['delete_plugin']) )
             {
-               $this->new_message('Plugin '.$_GET['delete_plugin'].' eliminado correctamente.');
+               $this->new_message('Plugin '.$_GET['delete_plugin'].' eliminado correctamente.', TRUE);
             }
             else
                $this->new_error_msg('Imposible eliminar el plugin '.$_GET['delete_plugin']);

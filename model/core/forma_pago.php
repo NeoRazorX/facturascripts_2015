@@ -85,7 +85,7 @@ class forma_pago extends \fs_model
          $this->codcuenta = '';
          $this->domiciliado = FALSE;
          $this->imprimir = TRUE;
-         $this->vencimiento = '+1month';
+         $this->vencimiento = '+1day';
       }
    }
    
@@ -93,10 +93,10 @@ class forma_pago extends \fs_model
    {
       $this->clean_cache();
       return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
-              . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+1day')"
+              . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
               . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
-              . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+1day')"
-              . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+1week');";
+              . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
+              . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
    }
    
    /**
@@ -161,7 +161,7 @@ class forma_pago extends \fs_model
       {
          /// vencimiento no válido, asignamos el predeterminado
          $this->new_error_msg('Vencimiento no válido.');
-         $this->vencimiento = '+1month';
+         $this->vencimiento = '+1day';
       }
    }
    
