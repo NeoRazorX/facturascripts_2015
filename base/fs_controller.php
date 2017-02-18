@@ -411,6 +411,12 @@ class fs_controller
     */
    public function get_messages()
    {
+      /// registramos los mensajes en los modelos
+         foreach($this->empresa->get_messages() as $mess)
+         {
+            $this->new_message($mess, 'model');
+         }
+         $this->empresa->clean_messages();
       return $this->messages;
    }
    

@@ -158,6 +158,7 @@ abstract class fs_model
    
    private static $checked_tables;
    private static $errors;
+   private static $messages;
    
    /**
     * 
@@ -185,6 +186,11 @@ abstract class fs_model
       if( !self::$errors )
       {
          self::$errors = array();
+      }
+      
+      if( !self::$messages )
+      {
+         self::$messages = array();
       }
       
       if( !self::$checked_tables )
@@ -254,6 +260,35 @@ abstract class fs_model
    public function clean_errors()
    {
       self::$errors = array();
+   }
+   
+   /**
+    * Muestra al usuario un mensaje de error
+    * @param type $msg mensaje de error
+    */
+   protected function new_message($msg = FALSE)
+   {
+      if($msg)
+      {
+         self::$messages[] = $msg;
+      }
+   }
+   
+   /**
+    * Devuelve la lista de mensajes de error.
+    * @return type lista de errores.
+    */
+   public function get_messages()
+   {
+      return self::$messages;
+   }
+   
+   /**
+    * Vacía la lista de errores.
+    */
+   public function clean_messages()
+   {
+      self::$messages = array();
    }
    
    /**
