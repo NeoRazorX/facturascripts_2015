@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,101 +19,8 @@
 
 require_once 'base/fs_cache.php';
 require_once 'base/fs_db2.php';
+require_once 'base/fs_functions.php';
 require_once 'base/fs_default_items.php';
-
-/**
- * Esta función sirve para cargar modelos, y sobre todo, para cargarlos
- * desde la carpeta plugins, así se puede personalizar aún más el comportamiento
- * de FacturaScripts.
- * 
- * No se producirá ningún error en caso de que el archivo no se encuentre.
- * @param string $name nombre del archivo que se desea cargar.
- */
-function require_model($name)
-{
-   if( !isset($GLOBALS['models']) )
-   {
-      $GLOBALS['models'] = array();
-   }
-   
-   if( !in_array($name, $GLOBALS['models']) )
-   {
-      /// primero buscamos en los plugins
-      $found = FALSE;
-      foreach($GLOBALS['plugins'] as $plugin)
-      {
-         if( file_exists('plugins/'.$plugin.'/model/'.$name) )
-         {
-            require_once 'plugins/'.$plugin.'/model/'.$name;
-            $GLOBALS['models'][] = $name;
-            $found = TRUE;
-            break;
-         }
-      }
-      
-      if( !$found )
-      {
-         if( file_exists('model/'.$name) )
-         {
-            require_once 'model/'.$name;
-            $GLOBALS['models'][] = $name;
-         }
-      }
-   }
-}
-
-/**
- * Devuelve el nombre de la clase del objeto, pero sin el namespace.
- * @param type $object
- * @return type
- */
-function get_class_name($object = NULL)
-{
-   $name = get_class($object);
-   
-   $pos = strrpos($name, '\\');
-   if($pos !== FALSE)
-   {
-      $name = substr($name, $pos + 1);
-   }
-   
-   return $name;
-}
-
-/**
- * Redondeo bancario
- * @staticvar real $dFuzz
- * @param type $dVal
- * @param type $iDec
- * @return type
- */
-function bround($dVal, $iDec = 2)
-{
-   // banker's style rounding or round-half-even
-   // (round down when even number is left of 5, otherwise round up)
-   // $dVal is value to round
-   // $iDec specifies number of decimal places to retain
-   static $dFuzz = 0.00001; // to deal with floating-point precision loss
-   $iRoundup = 0; // amount to round up by
-   
-   $iSign = ($dVal != 0.0) ? intval($dVal / abs($dVal)) : 1;
-   $dVal = abs($dVal);
-   
-   // get decimal digit in question and amount to right of it as a fraction
-   $dWorking = $dVal*pow(10.0,$iDec+1)-floor($dVal*pow(10.0,$iDec))*10.0;
-   $iEvenOddDigit = floor($dVal*pow(10.0,$iDec))-floor($dVal*pow(10.0,$iDec-1))*10.0;
-   
-   if( abs($dWorking - 5.0) < $dFuzz )
-   {
-      $iRoundup = ($iEvenOddDigit & 1) ? 1 : 0;
-   }
-   else
-   {
-      $iRoundup = ($dWorking>5.0) ? 1 : 0;
-   }
-   
-   return $iSign*((floor($dVal*pow(10.0,$iDec))+$iRoundup)/pow(10.0,$iDec));
-}
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,

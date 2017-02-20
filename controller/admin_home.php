@@ -873,7 +873,7 @@ class admin_home extends fs_controller
             if($plugin['version_url'] != '' AND $plugin['update_url'] != '')
             {
                /// plugin con descarga gratuita
-               $internet_ini = @parse_ini_string( $this->curl_get_contents($plugin['version_url']) );
+               $internet_ini = @parse_ini_string( @fs_file_get_contents($plugin['version_url']) );
                if($internet_ini)
                {
                   if( $plugin['version'] < intval($internet_ini['version']) )
@@ -900,7 +900,7 @@ class admin_home extends fs_controller
          {
             /// comprobamos actualizaciones del núcleo
             $version = file_get_contents('VERSION');
-            $internet_version = $this->curl_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
+            $internet_version = @fs_file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
             if( floatval($version) < floatval($internet_version) )
             {
                $updates = TRUE;
@@ -922,97 +922,6 @@ class admin_home extends fs_controller
    }
    
    /**
-    * Descarga el contenido con curl o file_get_contents
-    * @param type $url
-    * @param type $timeout
-    * @return type
-    */
-   private function curl_get_contents($url)
-   {
-      if( function_exists('curl_init') )
-      {
-         $ch = curl_init();
-         curl_setopt($ch, CURLOPT_URL, $url);
-         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-         if( is_null( ini_get('open_basedir') ) )
-         {
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-         }
-         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-         if( defined('FS_PROXY_TYPE') )
-         {
-            curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
-            curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
-            curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
-         }
-         $data = curl_exec($ch);
-         $info = curl_getinfo($ch);
-         
-         if($info['http_code'] == 301 OR $info['http_code'] == 302)
-         {
-            $redirs = 0;
-            return $this->curl_redirect_exec($ch, $redirs);
-         }
-         else
-         {
-            curl_close($ch);
-            return $data;
-         }
-      }
-      else
-         return file_get_contents($url);
-   }
-   
-   /**
-    * Función alternativa para cuando el followlocation falla.
-    * @param type $ch
-    * @param type $redirects
-    * @param type $curlopt_header
-    * @return type
-    */
-   private function curl_redirect_exec($ch, &$redirects, $curlopt_header = false)
-   {
-      curl_setopt($ch, CURLOPT_HEADER, true);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      if( defined('FS_PROXY_TYPE') )
-      {
-         curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
-         curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
-         curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
-      }
-      $data = curl_exec($ch);
-      $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-      
-      if($http_code == 301 || $http_code == 302)
-      {
-         list($header) = explode("\r\n\r\n", $data, 2);
-         $matches = array();
-         preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
-         $url = trim(str_replace($matches[1], "", $matches[0]));
-         $url_parsed = parse_url($url);
-         if( isset($url_parsed) )
-         {
-            curl_setopt($ch, CURLOPT_URL, $url);
-            $redirects++;
-            return $this->curl_redirect_exec($ch, $redirects, $curlopt_header);
-         }
-      }
-      
-      if($curlopt_header)
-      {
-         curl_close($ch);
-         return $data;
-      }
-      else
-      {
-         list(, $body) = explode("\r\n\r\n", $data, 2);
-         curl_close($ch);
-         return $body;
-      }
-   }
-   
-   /**
     * Descarga un plugin de la lista de plugins fijos.
     */
    private function download1()
@@ -1021,7 +930,7 @@ class admin_home extends fs_controller
       {
          $this->new_message('Descargando el plugin '.$_GET['download']);
          
-         if( @file_put_contents('download.zip', $this->curl_get_contents($this->download_list[$_GET['download']]['url']) ) )
+         if( @fs_file_download($this->download_list[$_GET['download']]['url'], 'download.zip') )
          {
             $zip = new ZipArchive();
             $res = $zip->open('download.zip', ZipArchive::CHECKCONS);
@@ -1092,7 +1001,7 @@ class admin_home extends fs_controller
             $this->new_message('Descargando el plugin '.$item->nombre);
             $encontrado = TRUE;
             
-            if( @file_put_contents('download.zip', $this->curl_get_contents($item->zip_link) ) )
+            if( @fs_file_download($item->zip_link, 'download.zip') )
             {
                $zip = new ZipArchive();
                $res = $zip->open('download.zip', ZipArchive::CHECKCONS);
@@ -1208,7 +1117,7 @@ class admin_home extends fs_controller
       $this->download_list2 = $this->cache->get('download_list');
       if(!$this->download_list2)
       {
-         $json = @$this->curl_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE', 5);
+         $json = @fs_file_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE', 5);
          if($json)
          {
             $this->download_list2 = json_decode($json);

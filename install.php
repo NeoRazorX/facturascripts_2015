@@ -478,7 +478,7 @@ $system_info = str_replace('"', "'", $system_info);
                   <p>
                      La carpeta de FacturaScripts no tiene permisos de escritura.
                      Estos permisos son necesarios para el sistema de plantillas,
-                     instalar plugin, actualizaciones, etc...
+                     instalar plugins, actualizaciones, etc...
                   </p>
                   <h3>
                      <i class="fa fa-linux" aria-hidden="true"></i> Linux
