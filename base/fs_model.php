@@ -65,7 +65,8 @@ abstract class fs_model
    
    private static $checked_tables;
    private static $errors;
-   
+   private static $messages;
+
    /**
     * 
     * @param type $name nombre de la tabla de la base de datos.
@@ -92,6 +93,11 @@ abstract class fs_model
       if( !self::$errors )
       {
          self::$errors = array();
+      }
+      
+      if( !self::$messages )
+      {
+         self::$messages = array();
       }
       
       if( !self::$checked_tables )
@@ -147,7 +153,7 @@ abstract class fs_model
    }
    
    /**
-    * Devuelve la lista de mensajes de error.
+    * Devuelve la lista de mensajes de error de los modelos.
     * @return type lista de errores.
     */
    public function get_errors()
@@ -156,11 +162,40 @@ abstract class fs_model
    }
    
    /**
-    * Vacía la lista de errores.
+    * Vacía la lista de errores de los modelos.
     */
    public function clean_errors()
    {
       self::$errors = array();
+   }
+   
+   /**
+    * Muestra al usuario un mensaje.
+    * @param type $msg
+    */
+   protected function new_message($msg = FALSE)
+   {
+      if($msg)
+      {
+         self::$messages[] = $msg;
+      }
+   }
+   
+   /**
+    * Devuelve la lista de mensajes de los modelos.
+    * @return type
+    */
+   public function get_messages()
+   {
+      return self::$messages;
+   }
+   
+   /**
+    * Vacía la lista de mensajes de los modelos.
+    */
+   public function clean_messages()
+   {
+      self::$messages = array();
    }
    
    /**

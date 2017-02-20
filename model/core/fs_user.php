@@ -193,7 +193,7 @@ class fs_user extends \fs_model
       new \agente();
       new \fs_page();
       
-      $this->new_error_msg('Se ha creado el usuario <b>admin</b> con la contraseña <b>admin</b>.');
+      $this->new_message('Se ha creado el usuario <b>admin</b> con la contraseña <b>admin</b>.');
       if( $this->db->select("SELECT * FROM agentes WHERE codagente = '1';") )
       {
          return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
