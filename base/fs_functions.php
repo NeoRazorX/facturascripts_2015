@@ -125,6 +125,7 @@ function fs_file_get_contents($url, $timeout = 10)
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $url);
       curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+      curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36');
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       if( is_null( ini_get('open_basedir') ) )
       {
