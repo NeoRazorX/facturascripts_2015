@@ -96,6 +96,7 @@ class fs_updater
             if( file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . $_GET['idplugin'], $private_key) )
             {
                $this->mensajes = 'Clave añadida correctamente.';
+               $this->cache->clean();
             }
             else
                $this->errores = 'Error al guardar la clave.';
@@ -898,13 +899,13 @@ $updater = new fs_updater();
                            <div class="col-xs-6">
                               <a href="https://www.facturascripts.com/comm3/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-warning">
                                  <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                                 <span class="hidden-xs">&nbsp; Ver mis claves</span>
+                                 <span class="hidden-xs">&nbsp;Ver mis claves</span>
                               </a>
                            </div>
                            <div class="col-xs-6 text-right">
                               <button type="submit" class="btn btn-sm btn-primary">
                                  <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                 <span class="hidden-xs">&nbsp; Añadir</span>
+                                 <span class="hidden-xs">&nbsp;Añadir</span>
                               </button>
                            </div>
                         </div>
