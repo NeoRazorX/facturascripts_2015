@@ -276,6 +276,14 @@ class admin_user extends fs_controller
               'text' => 'view/css/bootstrap-spacelab.min.css',
               'params' => ''
           ),
+          array(
+              'name' => 'bootbox.min.js',
+              'page_from' => __CLASS__,
+              'page_to' => __CLASS__,
+              'type' => 'head',
+              'text' => '<script type="text/javascript" src="view/js/bootbox.min.js"></script>',
+              'params' => ''
+          ),
       );
       foreach($extensions as $ext)
       {
