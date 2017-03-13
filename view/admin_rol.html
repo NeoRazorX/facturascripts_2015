@@ -26,10 +26,15 @@
    $(document).ready(function() {
       $("#b_eliminar_rol").click(function(event) {
          event.preventDefault();
-         if( confirm("¿Realmente desea eliminar el rol {$fsc->rol->codrol}?") )
-         {
-            window.location.href = 'index.php?page=admin_users&delete_rol={$fsc->rol->codrol}#roles';
-         }
+         bootbox.confirm({
+            message: '¿Realmente desea eliminar el rol {$fsc->rol->codrol}?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+               if (result) {
+                  window.location.href = 'index.php?page=admin_users&delete_rol={$fsc->rol->codrol}#roles';
+               }
+            }                
+         });
       });
    });
 </script>
