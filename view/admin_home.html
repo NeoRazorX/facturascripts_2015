@@ -11,17 +11,27 @@
    }
    function eliminar(name)
    {
-      if( confirm("¿Realmente desea eliminar este plugin?") )
-      {
-         window.location.href = '{$fsc->url()}&delete_plugin='+name+'#plugins';
-      }
+      bootbox.confirm({
+         message: '¿Realmente desea eliminar este plugin?',
+         title: '<b>Atención</b>',
+         callback: function(result) {
+            if (result) {
+               window.location.href = '{$fsc->url()}&delete_plugin='+name+'#plugins';
+            }
+         }
+      });
    }
    function descargar_plugin_inestable(id)
    {
-      if( confirm("Este plugin está marcado como inestable ¿Estas seguro de que quieres descargarlo?") )
-      {
-         window.location.href = '{$fsc->url()}&caca={$fsc->random_string(4)}&download2='+id+'#plugins';
-      }
+      bootbox.confirm({
+         message: 'Este plugin está marcado como inestable ¿Estas seguro de que quieres descargarlo?',
+         title: '<b>Atención</b>',
+         callback: function(result) {
+            if (result) {
+               window.location.href = '{$fsc->url()}&caca={$fsc->random_string(4)}&download2='+id+'#plugins';
+            }
+         }
+      });
    }
    $(document).ready(function() {
       
@@ -312,7 +322,7 @@
                            <span class="glyphicon glyphicon-ok"></span>&nbsp; Activar
                         </a>
                         {else}
-                        <a class="btn btn-sm btn-default" href="#" onclick="alert('Le falta el archivo facturascripts.ini')">
+                        <a class="btn btn-sm btn-default" href="#" onclick="bootbox.alert({message: 'Le falta el archivo facturascripts.ini',title: '<b>Atención</b>'});">
                            <span class="glyphicon glyphicon-remove"></span>&nbsp; Incompatible
                         </a>
                         {/if}

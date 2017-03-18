@@ -183,7 +183,7 @@ class fs_extension extends fs_model
    {
       $elist = array();
       
-      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY text ASC;");
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY name ASC;");
       if($data)
       {
          foreach($data as $d)

@@ -26,10 +26,15 @@
    $(document).ready(function() {
       $("#b_eliminar_usuario").click(function(event) {
          event.preventDefault();
-         if( confirm("¿Realmente desea eliminar el usuario?") )
-         {
-            window.location.href = 'index.php?page=admin_users&delete={$fsc->suser->nick}';
-         }
+         bootbox.confirm({
+            message: '¿Realmente desea eliminar el usuario?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+               if (result) {
+                  window.location.href = 'index.php?page=admin_users&delete={$fsc->suser->nick}';
+               }
+            }                
+         });
       });
       $("#b_nuevo_agente").click(function(event) {
          event.preventDefault();
