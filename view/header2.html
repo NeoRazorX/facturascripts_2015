@@ -17,7 +17,10 @@
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.autocomplete.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery-ui.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/base.js?updated=2016.25"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/js/bootbox.min.js"></script>
    <script type="text/javascript">
+      bootbox.setLocale("es");
+      
       function show_precio(precio, coddivisa)
       {
          coddivisa || ( coddivisa = '{$fsc->empresa->coddivisa}' );
