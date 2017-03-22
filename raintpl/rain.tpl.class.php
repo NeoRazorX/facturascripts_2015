@@ -4,8 +4,10 @@
  *  -------
  *  Realized by Federico Ulfo & maintained by the Rain Team
  *  Distributed under GNU/LGPL 3 License
+ * 
+ *  Adaptada a FacturaScripts por Carlos García Gómez, 2013-2017
  *
- *  @version 2.7.2
+ *  @version 2.8
  */
 
 class RainTPL
@@ -334,6 +336,7 @@ class RainTPL
       //tag list
       $tag_regexp = array( 'loop'         => '(\{loop(?: name){0,1}="\${0,1}[^"]*"\})',
                            'loop_close'   => '(\{\/loop\})',
+                           'loop_beak'    => '(\{break\})',
                            'if'           => '(\{if(?: condition){0,1}="[^"]*"\})',
                            'elseif'       => '(\{elseif(?: condition){0,1}="[^"]*"\})',
                            'else'         => '(\{else\})',
@@ -351,7 +354,7 @@ class RainTPL
       $tag_regexp = "/" . join( "|", $tag_regexp ) . "/";
       
       //split the code with the tags regexp
-      $template_code = preg_split ( $tag_regexp, $template_code, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
+      $template_code = preg_split( $tag_regexp, $template_code, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
       
       //path replace (src of img, background and href of link)
       $template_code = $this->path_replace( $template_code, $tpl_basedir );
@@ -455,6 +458,12 @@ class RainTPL
             
             //close loop code
             $compiled_code .=  "<?php } ?>";
+         }
+         //loop break
+         else if( strpos( $html, '{break}' ) !== FALSE )
+         {
+            //close loop code
+            $compiled_code .=  "<?php break; ?>";
          }
          //if
          else if( preg_match( '/\{if(?: condition){0,1}="([^"]*)"\}/', $html, $code ) )
