@@ -4,3 +4,5 @@
 /doc/
 /tmp/
 .DS_Store
+config.php
+.htaccess
