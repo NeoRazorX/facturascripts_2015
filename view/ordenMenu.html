@@ -1,0 +1,26 @@
+{include="header"}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="{#FS_PATH#}plugins/ordenMenu/view/css/ordenMenu.css" />
+
+<script src="{#FS_PATH#}plugins/ordenMenu/view/js/ordenMenu.js"></script>
+
+<h2>Reordenar opciones de menú</h2>
+<div id="accordion">
+    {loop="$fsc->getMenuFolders()"}
+    <h3>{$value1}</h3>
+    <div><ul id="sortable_{$value1}" class="ordenable">
+            {loop="$fsc->getMenu($value1)"}
+            <li class="ordenable ui-state-default" id="{$value2['name']}"><span class=" ordenable ui-icon ui-icon-arrowthick-2-n-s"></span>{$value2['title']}</li>
+            {/loop}
+        </ul>                
+    </div>
+    <script>
+        $("#sortable_{$value1}").sortable();
+        $("#sortable_{$value1}").disableSelection();
+        $("#sortable_{$value1}" ).on( "sortupdate", function(){pasoAOrdenar('sortable_{$value1}','{$fsc->url()}')} );
+    </script>
+    {/loop}
+</div>
+
+{include="footer"}
