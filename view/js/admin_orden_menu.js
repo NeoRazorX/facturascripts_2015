@@ -25,9 +25,9 @@ function pasoAOrdenar(elemento, pagina) {
                     setTimeout(function () {
                         // be careful not to call box.hide() here, which will invoke jQuery's hide method
                         box.modal('hide');
-                    }, 200);
+                    }, 700);
                 } else {
-                    alert('Error: ' + obj.ERROR + ', ' + obj.MENSAJE);
+                    bootbox.alert('Error: ' + obj.ERROR + ', ' + obj.MENSAJE);
                 }
             }
         },
