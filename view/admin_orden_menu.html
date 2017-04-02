@@ -1,16 +1,15 @@
 {include="header"}
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <link rel="stylesheet" href="{#FS_PATH#}view/css/admin_orden_menu.css" />
 
 <script type="text/javascript" src="{$fsc->get_js_location('admin_orden_menu.js')}"></script>
 
 <h2>Reordenar opciones de menú</h2>
 <div id="accordion">
-    {loop="$fsc->getMenuFolders()"}
+    {loop="$fsc->get_menu_folders()"}
     <h3>{$value1}</h3>
     <div><ul id="sortable_{$value1}" class="ordenable">
-            {loop="$fsc->getMenu($value1)"}
+            {loop="$fsc->get_menu($value1)"}
             <li class="ordenable ui-state-default" id="{$value2['name']}"><span class=" ordenable ui-icon ui-icon-arrowthick-2-n-s"></span>{$value2['title']}</li>
             {/loop}
         </ul>                
@@ -18,7 +17,7 @@
     <script>
         $("#sortable_{$value1}").sortable();
         $("#sortable_{$value1}").disableSelection();
-        $("#sortable_{$value1}" ).on( "sortupdate", function(){pasoAOrdenar('sortable_{$value1}','{$fsc->url()}')} );
+        $("#sortable_{$value1}" ).on( "sortupdate", function(){paso_a_ordenar('sortable_{$value1}','{$fsc->url()}')} );
     </script>
     {/loop}
 </div>

@@ -80,11 +80,11 @@ class admin_orden_menu extends fs_controller {
         echo json_encode($resultado);
     }
 
-    public function getMenuFolders() {
+    public function get_menu_folders() {
         return $this->folders;
     }
 
-    public function getMenu($folder) {
+    public function get_menu($folder) {
 
         return isset($this->paginas[$folder]) ? $this->paginas[$folder] : [];
     }

@@ -6,7 +6,7 @@ $(document).ready(function () {
     });
 });
 
-function pasoAOrdenar(elemento, pagina) {
+function paso_a_ordenar(elemento, pagina) {
     var ordenElementos = $('#' + elemento).sortable("toArray").toString();
     var parametros = {
         "elementos": ordenElementos,
