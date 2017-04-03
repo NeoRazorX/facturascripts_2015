@@ -150,7 +150,7 @@
                            <input type="hidden" name="password" value="demo"/>
                            <div class="form-group">
                               Bienvenido a la demo de FacturaScripts, escribe tu email para continuar:
-                              <input type="text" class="form-control input-lg" name="user" placeholder="Escribe tu email" autocomplete="off"/>
+                              <input type="text" name="user" class="form-control input-lg" placeholder="Escribe tu email" required="" autocomplete="off"/>
                            </div>
                            {else}
                            <div class="form-group">
@@ -165,13 +165,13 @@
                               </select>
                            </div>
                            <div class="form-group">
-                              <input type="password" class="form-control input-lg" name="password" maxlength="32" placeholder="Contraseña"/>
+                              <input type="password" name="password" class="form-control input-lg" maxlength="32" required="" placeholder="Contraseña"/>
                               <p class="help-block">
                                  <a href="#" id="b_new_password">¿Has olvidado la contraseña?</a>
                               </p>
                            </div>
                            {/if}
-                           <button class="btn btn-block btn-primary" type="submit" id="login" onclick="this.disabled=true;this.form.submit();">
+                           <button class="btn btn-block btn-primary" type="submit" id="login">
                               <span class="glyphicon glyphicon-log-in"></span>&nbsp; Iniciar sesión
                            </button>
                         </div>

@@ -664,6 +664,8 @@ class fs_controller
             {
                $user->logged_on = TRUE;
                $user->update_login();
+               setcookie('user', $user->nick, time()+FS_COOKIES_EXPIRE);
+               setcookie('logkey', $user->log_key, time()+FS_COOKIES_EXPIRE);
                $this->user = $user;
                $this->load_menu();
             }

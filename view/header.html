@@ -16,7 +16,7 @@
    <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.autocomplete.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery-ui.min.js"></script>
-   <script type="text/javascript" src="{#FS_PATH#}view/js/base.js?updated=2016.25"></script>
+   <script type="text/javascript" src="{#FS_PATH#}view/js/base.js?updated={$fsc->today()}"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/bootbox.min.js"></script>
    <script type="text/javascript">
       bootbox.setLocale("es");
@@ -203,17 +203,26 @@
    {/if}
    
    {if="$fsc->get_errors()"}
-   <div class="alert alert-danger hidden-print">
+   <div class="alert alert-danger alert-dismissible hidden-print" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+      </button>
       <ul>{loop="$fsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
    {if="$fsc->get_messages()"}
-   <div class="alert alert-success hidden-print">
+   <div class="alert alert-success alert-dismissible hidden-print" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+      </button>
       <ul>{loop="$fsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
    {if="$fsc->get_advices()"}
-   <div class="alert alert-info hidden-print">
+   <div class="alert alert-info alert-dismissible hidden-print" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+      </button>
       <ul>{loop="$fsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
    </div>
    {/if}
