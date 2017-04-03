@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,8 @@ ul.dropdown-menu li a:first-letter {
 .autocomplete-selected { background: #D9EDF7; }
 .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
 
-.clickableRow:hover {
+.clickable, .clickableRow:hover {
    cursor: pointer;
 }
+
 .modal-dialog {z-index: 1050;}

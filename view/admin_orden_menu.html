@@ -2,8 +2,8 @@
 
 <script type="text/javascript">
    $(document).ready(function () {
-      $("#sortable").sortable();
-      $("#sortable").disableSelection();
+      $(".sortable").sortable();
+      $(".sortable").disableSelection();
    });
 </script>
 
@@ -18,7 +18,7 @@
                </a>
             </h1>
             <p class="help-block">
-               Haz clic y mueve las opciones de cada menú libremente.
+               Ordena libremente las entradas de cada menú. Al terminar pulsa <b>guardar</b>.
             </p>
          </div>
       </div>
@@ -26,21 +26,25 @@
    <form action="{$fsc->url()}" method="post" class="form">
       <input type="hidden" name="guardar" value="TRUE"/>
       <div class="row">
-         {loop="$fsc->folders()"}
+      {loop="$fsc->folders()"}
+         {if="$counter1%4==0"}</div><div class="row">{/if}
          <div class="col-sm-3">
             <h3>
                <i class="fa fa-folder-open-o" aria-hidden="true"></i> {$value1}
             </h3>
-            <ul id="sortable" class="list-group">
+            <p class="help-block">
+               Haz clic y mantén pulsado para mover las entradas del menú.
+            </p>
+            <ul class="list-group sortable">
                {loop="$fsc->pages($value1)"}
-               <li class="list-group-item">
+               <li class="list-group-item clickable">
                   <i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp; {$value2->title}
                   <input type="hidden" name="{$value1}_{$counter2}" value="{$value2->name}"/>
                </li>
                {/loop}
             </ul>
          </div>
-         {/loop}
+      {/loop}
       </div>
       <div class="row">
          <div class="col-sm-12">
