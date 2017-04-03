@@ -41,9 +41,9 @@
    </columna>
     <columna>
         <nombre>orden</nombre>
-        <tipo>int(2)</tipo>
+        <tipo>integer</tipo>
         <nulo>NO</nulo>
-        <defecto>1</defecto>
+        <defecto>100</defecto>
     </columna>   
    <restriccion>
       <nombre>fs_pages_pkey</nombre>

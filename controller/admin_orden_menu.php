@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2017  Carlos Garcia Gomez  neorazorx@gmail.com
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,79 +18,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('fs_page.php');
-
-define('AL_ACCION_GRABAR', 2);
-
 /**
  * Description Ordenar menú
  *
  * @author alagoro
  */
-class admin_orden_menu extends fs_controller {
+class admin_orden_menu extends fs_controller
+{
+   public function __construct()
+   {
+      parent::__construct(__CLASS__, 'Ordenar menú', 'admin', FALSE, TRUE);
+   }
 
-    private $folders = [];
-    private $paginas = [];
+   protected function private_core()
+   {
+      if( isset($_POST['guardar']) )
+      {
+         $this->guardar_orden();
+      }
+   }
 
-    public function __construct() {
-        parent::__construct(__CLASS__, 'Ordenar menú', 'admin', FALSE, TRUE);
-    }
-
-    protected function private_core() {
-
-        if (!is_null(filter_input(INPUT_POST, 'accion'))) {
-            $accion = filter_input(INPUT_POST, 'accion');
-            switch ($accion) {
-                case AL_ACCION_GRABAR :
-                    $this->guardar_orden();
-                    break;
-
-                default:
-                    break;
+   private function guardar_orden()
+   {
+      foreach($this->folders() as $folder)
+      {
+         $orden = 0;
+         foreach($_POST as $key => $value)
+         {
+            if( strlen($key) > $folder )
+            {
+               if( substr($key, 0, strlen($folder)) == $folder )
+               {
+                  $page = $this->page->get($value);
+                  $page->orden = $orden;
+                  if( $page->save() )
+                  {
+                     $orden++;
+                  }
+               }
             }
-        }
-
-        $mimenu = $this->user->get_menu();
-        foreach ($mimenu as $menuitem) {
-            if ($menuitem->show_on_menu == 1) {
-                if (!in_array($menuitem->folder, $this->folders))
-                    $this->folders[] = $menuitem->folder;
-                $this->paginas[$menuitem->folder][] = ['name' => $menuitem->name, 'title' => $menuitem->title, 'orden' => $menuitem->orden];
-            }
-        }
-    }
-
-    private function guardar_orden() {
-        $this->template = FALSE;
-        $resultado = [];
-        $elementos = filter_input(INPUT_POST, 'elementos');
-        if ($elementos) {
-            $elementos = explode(',', $elementos);
-
-            $page = new fs_page();
-            foreach ($elementos as $orden => $elemento) {
-                $page->save_orden($elemento, $orden);
-            }
-            $resultado['ERROR'] = 0;
-            $resultado['MENSAJE'] = 'Elementos ordenados.';
-        } else {
-            $resultado['ERROR'] = 1;
-            $resultado['MENSAJE'] = 'No hay elementos.';
-        }
-        echo json_encode($resultado);
-    }
-
-    public function get_menu_folders() {
-        return $this->folders;
-    }
-
-    public function get_menu($folder) {
-
-        return isset($this->paginas[$folder]) ? $this->paginas[$folder] : [];
-    }
-
-    public function url() {
-        return 'index.php?page=admin_orden_menu';
-    }
-
+         }
+      }
+      
+      $this->new_message('Datos guardados.');
+      $this->menu = $this->user->get_menu(TRUE);
+   }
 }

@@ -1,25 +1,55 @@
 {include="header"}
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-  <link rel="stylesheet" href="{#FS_PATH#}view/css/admin_orden_menu.css" />
 
-<script type="text/javascript" src="{$fsc->get_js_location('admin_orden_menu.js')}"></script>
+<script type="text/javascript">
+   $(document).ready(function () {
+      $("#sortable").sortable();
+      $("#sortable").disableSelection();
+   });
+</script>
 
-<h2>Reordenar opciones de menú</h2>
-<div id="accordion">
-    {loop="$fsc->get_menu_folders()"}
-    <h3>{$value1}</h3>
-    <div><ul id="sortable_{$value1}" class="ordenable">
-            {loop="$fsc->get_menu($value1)"}
-            <li class="ordenable ui-state-default" id="{$value2['name']}"><span class=" ordenable ui-icon ui-icon-arrowthick-2-n-s"></span>{$value2['title']}</li>
-            {/loop}
-        </ul>                
-    </div>
-    <script>
-        $("#sortable_{$value1}").sortable();
-        $("#sortable_{$value1}").disableSelection();
-        $("#sortable_{$value1}" ).on( "sortupdate", function(){paso_a_ordenar('sortable_{$value1}','{$fsc->url()}')} );
-    </script>
-    {/loop}
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="page-header">
+            <h1>
+               <i class="fa fa-sort-amount-asc" aria-hidden="true"></i> Reordenar menú
+               <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
+                  <span class="glyphicon glyphicon-refresh"></span>
+               </a>
+            </h1>
+            <p class="help-block">
+               Haz clic y mueve las opciones de cada menú libremente.
+            </p>
+         </div>
+      </div>
+   </div>
+   <form action="{$fsc->url()}" method="post" class="form">
+      <input type="hidden" name="guardar" value="TRUE"/>
+      <div class="row">
+         {loop="$fsc->folders()"}
+         <div class="col-sm-3">
+            <h3>
+               <i class="fa fa-folder-open-o" aria-hidden="true"></i> {$value1}
+            </h3>
+            <ul id="sortable" class="list-group">
+               {loop="$fsc->pages($value1)"}
+               <li class="list-group-item">
+                  <i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp; {$value2->title}
+                  <input type="hidden" name="{$value1}_{$counter2}" value="{$value2->name}"/>
+               </li>
+               {/loop}
+            </ul>
+         </div>
+         {/loop}
+      </div>
+      <div class="row">
+         <div class="col-sm-12">
+            <button class="btn btn-sm btn-primary" type="submit">
+               <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; Guardar
+            </button>
+         </div>
+      </div>
+   </form>
 </div>
 
 {include="footer"}

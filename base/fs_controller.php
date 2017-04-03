@@ -171,20 +171,7 @@ class fs_controller
       if( $this->db->connect() )
       {
          $this->user = new fs_user();
-         $this->page = new fs_page(
-                 array(
-                     'name' => $name,
-                     'title' => $title,
-                     'folder' => $folder,
-                     'version' => $this->version(),
-                     'show_on_menu' => $shmenu,
-                     'important' => $important
-                 )
-         );
-         if($name != '')
-         {
-            $this->page->save();
-         }
+         $this->check_fs_page($name, $title, $folder, $shmenu, $important);
          
          $this->empresa = new empresa();
          $this->default_items = new fs_default_items();
@@ -297,6 +284,47 @@ class fs_controller
       {
          $this->template = 'no_db';
          $this->new_error_msg('¡Imposible conectar con la base de datos <b>'.FS_DB_NAME.'</b>!');
+      }
+   }
+   
+   private function check_fs_page($name, $title, $folder, $shmenu, $important)
+   {
+      /// cargamos los datos de la página o entrada del menú actual
+      $this->page = new fs_page(
+              array(
+                  'name' => $name,
+                  'title' => $title,
+                  'folder' => $folder,
+                  'version' => $this->version(),
+                  'show_on_menu' => $shmenu,
+                  'important' => $important,
+                  'orden' => 100
+              )
+      );
+      
+      /// ahora debemos comprobar si guardar o no
+      if($name)
+      {
+         $page = $this->page->get($name);
+         if($page)
+         {
+            /// la página ya existe ¿Actualizamos?
+            if($page->name != $name OR $page->folder != $folder OR $page->show_on_menu != $shmenu OR $page->important != $important)
+            {
+               $page->name = $name;
+               $page->folder = $folder;
+               $page->show_on_menu = $shmenu;
+               $page->important = $important;
+               $page->save();
+            }
+            
+            $this->page = $page;
+         }
+         else
+         {
+            /// la página no existe, guardamos.
+            $this->page->save();
+         }
       }
    }
    

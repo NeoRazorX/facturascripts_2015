@@ -73,7 +73,7 @@ class fs_page extends fs_model
          
          $this->show_on_menu = $this->str2bool($p['show_on_menu']);
          $this->important = $this->str2bool($p['important']);
-         $this->orden = isset($p['orden'])?$this->intval($p['orden']):1;
+         $this->orden = $this->intval($p['orden']);
       }
       else
       {
@@ -83,7 +83,7 @@ class fs_page extends fs_model
          $this->version = NULL;
          $this->show_on_menu = TRUE;
          $this->important = FALSE;
-         $this->orden = 1;
+         $this->orden = 100;
       }
       
       $this->exists = FALSE;
@@ -162,37 +162,22 @@ class fs_page extends fs_model
                  .", version = ".$this->var2str($this->version)
                  .", show_on_menu = ".$this->var2str($this->show_on_menu)
                  .", important = ".$this->var2str($this->important)
+                 .", orden = ".$this->var2str($this->orden)
                  ."  WHERE name = ".$this->var2str($this->name).";";
       }
       else
       {
-         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu,important) VALUES "
+         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu,important,orden) VALUES "
                  . "(".$this->var2str($this->name)
                  . ",".$this->var2str($this->title)
                  . ",".$this->var2str($this->folder)
                  . ",".$this->var2str($this->version)
                  . ",".$this->var2str($this->show_on_menu)
-                 . ",".$this->var2str($this->important).");";
+                 . ",".$this->var2str($this->important)
+                 . ",".$this->var2str($this->orden).");";
       }
       
       return $this->db->exec($sql);
-   }
-   
-   public function save_orden($name, $orden)
-   {
-      $this->clean_cache();
-      $this->name = $name;
-      if( $this->exists() )
-      {
-         $sql = "UPDATE ".$this->table_name." SET orden = ".$this->intval($orden)
-                 ."  WHERE name = ".$this->var2str($this->name).";";
-      return $this->db->exec($sql);
-      }
-      else
-      {
-         return FALSE;
-      }
-      
    }
    
    public function delete()
@@ -211,7 +196,7 @@ class fs_page extends fs_model
       $pagelist = $this->cache->get_array('m_fs_page_all');
       if( !$pagelist )
       {
-         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(folder) ASC, orden, lower(title) ASC;");
+         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(folder) ASC, orden ASC, lower(title) ASC;");
          if($pages)
          {
             foreach($pages as $p)
