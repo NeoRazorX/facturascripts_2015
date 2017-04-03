@@ -39,6 +39,12 @@
       <nulo>NO</nulo>
       <defecto>false</defecto>
    </columna>
+    <columna>
+        <nombre>orden</nombre>
+        <tipo>int(2)</tipo>
+        <nulo>NO</nulo>
+        <defecto>1</defecto>
+    </columna>   
    <restriccion>
       <nombre>fs_pages_pkey</nombre>
       <consulta>PRIMARY KEY (name)</consulta>
