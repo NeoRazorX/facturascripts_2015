@@ -119,7 +119,8 @@ class fs_controller
    public $template;
    
    /**
-    * La cadena obtenida del formulario de búsqueda
+    * Esta variable contiene el texto enviado como parámetro query por cualquier formulario,
+    * es decir, se corresponde con $_REQUEST['query']
     * @var type 
     */
    public $query;
