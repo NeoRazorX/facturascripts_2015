@@ -72,6 +72,12 @@ class fs_updater
             {
                $this->errores .= 'No se puede escribir sobre el directorio ' . $dir . '<br/>';
             }
+            
+            /// ¿Sigue estando disponible ziparchive?
+            if( !extension_loaded('zip') )
+            {
+               $this->errores .= 'No se encuentra la clase ZipArchive, debes instalar php-zip.<br/>';
+            }
          }
          
          if($this->errores != '')

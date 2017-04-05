@@ -307,8 +307,10 @@ $system_info = str_replace('"', "'", $system_info);
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                <li>
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
-                     <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                     <span class="hidden-xs">
+                        <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp; Ayuda
+                     </span>
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
@@ -318,13 +320,8 @@ $system_info = str_replace('"', "'", $system_info);
                         </a>
                      </li>
                      <li>
-                        <a href="https://www.facturascripts.com/noticias" target="_blank">
-                           <i class="fa fa-newspaper-o" aria-hidden="true"></i>&nbsp; Noticias
-                        </a>
-                     </li>
-                     <li>
-                        <a href="https://www.facturascripts.com/preguntas" target="_blank">
-                           <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp; Preguntas
+                        <a href="https://www.facturascripts.com/contacto" target="_blank">
+                           <i class="fa fa-shield" aria-hidden="true"></i>&nbsp; Soporte oficial
                         </a>
                      </li>
                      <li>
@@ -332,15 +329,10 @@ $system_info = str_replace('"', "'", $system_info);
                            <i class="fa fa-bug" aria-hidden="true"></i>&nbsp; Errores
                         </a>
                      </li>
-                     <li>
-                        <a href="https://www.facturascripts.com/ideas" target="_blank">
-                           <i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp; Ideas
-                        </a>
-                     </li>
                      <li class="divider"></li>
                      <li>
                         <a href="#" id="b_feedback">
-                           <i class="fa fa-send" aria-hidden="true"></i>&nbsp; Informar...
+                           <i class="fa fa-edit" aria-hidden="true"></i>&nbsp; Informar de error...
                         </a>
                      </li>
                   </ul>
@@ -358,22 +350,23 @@ $system_info = str_replace('"', "'", $system_info);
             <div class="modal-content">
                <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                  <h4 class="modal-title">¿Necesitas ayuda?</h4>
+                  <h4 class="modal-title">
+                     <i class="fa fa-edit" aria-hidden="true"></i> Informar de error...
+                  </h4>
                   <p class="help-block">
-                     Usa este formulario para informarnos. Se adjunta información
-                     adicional como la versión de FacturaScripts que usas, listado
-                     de plugins activos, versión de php, etc...
+                     Usa este formulario para informarnos de cualquier error o duda que hayas encontrado.
+                     Para facilitarnos el trabajo este formulario también nos informa de la versión de
+                     FacturaScripts que usas, versión de php, etc...
                   </p>
                </div>
                <div class="modal-body">
                   <div class="form-group">
-                     <label for="feedback_textarea">Detalla tu duda o problema:</label>
-                     <textarea id="feedback_textarea" class="form-control" name="feedback_text" rows="6"></textarea>
+                     <textarea class="form-control" name="feedback_text" rows="6" placeholder="Detalla tu duda o problema..."></textarea>
                   </div>
                   <div class="form-group">
                      <div class="input-group">
                         <span class="input-group-addon">
-                           <span class="glyphicon glyphicon-envelope"></span>
+                           <i class="fa fa-envelope" aria-hidden="true"></i>
                         </span>
                         <input type="email" class="form-control" name="feedback_email" placeholder="Introduce tu email"/>
                      </div>
@@ -381,7 +374,7 @@ $system_info = str_replace('"', "'", $system_info);
                </div>
                <div class="modal-footer">
                   <button type="submit" class="btn btn-sm btn-primary">
-                     <span class="glyphicon glyphicon-send"></span>&nbsp; Enviar
+                     <i class="fa fa-send" aria-hidden="true"></i>&nbsp; Enviar
                   </button>
                </div>
             </div>
@@ -720,24 +713,21 @@ $system_info = str_replace('"', "'", $system_info);
       </div>
       
       <div class="row">
-         <div class="col-sm-10">
+         <div class="col-sm-12">
             <b>Antes de empezar...</b>
             <p class="help-block">
-               Recuerda que tienes el menú de ayuda arriba a la derecha. Si encuentras cualquier problema,
-               haz clic en <b>informar...</b> y describe tu duda, sugerencia o el error que has encontrado.
+               Recuerda que tienes el <b>menú de ayuda</b> arriba a la derecha. Si encuentras cualquier problema,
+               haz clic en <b>informar de error...</b> y describe tu duda, sugerencia o el error que has encontrado.
                No sabemos hacer software perfecto, pero con tu ayuda nos podemos acercar cada vez más ;-)
                <br/><br/>
-               Y si quieres saber más, no olvides seguir a nuestro desarrollador principal
-               en su canal de youtube.
+               Y recuerda que tienes una sección especialmente dedicada a la <b>instalación</b> en nuestra
+               documentación oficial:
             </p>
-            <a href="https://www.youtube.com/watch?v=JWzGkOBP_d4" target="_blank" class="btn btn-sm btn-danger">
-               <span class="glyphicon glyphicon-facetime-video"></span> &nbsp; FacturaScripts en YouTube
+            <a href="https://www.facturascripts.com/documentacion#instalacion" target="_blank" class="btn btn-sm btn-info">
+               <i class="fa fa-book"></i>&nbsp; Documentación
             </a>
-         </div>
-         <div class="col-sm-2">
-            <div class="thumbnail">
-               <img src="view/img/help-menu.png" alt="ayuda"/>
-            </div>
+            <br/>
+            <br/>
          </div>
       </div>
       
@@ -922,7 +912,7 @@ $system_info = str_replace('"', "'", $system_info);
          <div class="row">
             <div class="col-sm-12 text-right">
                <button id="submit_button" class="btn btn-sm btn-primary" type="submit">
-                  <span class="glyphicon glyphicon-ok"></span>&nbsp; Aceptar
+                  <i class="fa fa-check" aria-hidden="true"></i>&nbsp; Aceptar
                </button>
             </div>
          </div>

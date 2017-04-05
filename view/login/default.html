@@ -57,15 +57,17 @@
                <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="index.php">
-               <span class="glyphicon glyphicon-lock"></span> &nbsp;
-               {if="FS_DEMO"}DEMO{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}
+               <i class="fa fa-lock" aria-hidden="true"></i>&nbsp;
+               {if="FS_DEMO"}DEMO FacturaScripts{elseif="$fsc->empresa->nombrecorto"}{$fsc->empresa->nombrecorto}{else}{$fsc->empresa->nombre}{/if}
             </a>
          </div>
          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                <li>
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Ayuda">
-                     <span class="glyphicon glyphicon-question-sign hidden-xs"></span>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                     <span class="hidden-xs">
+                        <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp; Ayuda
+                     </span>
                      <span class="visible-xs">Ayuda</span>
                   </a>
                   <ul class="dropdown-menu">
@@ -75,13 +77,8 @@
                         </a>
                      </li>
                      <li>
-                        <a href="https://www.facturascripts.com/noticias" target="_blank">
-                           <i class="fa fa-newspaper-o" aria-hidden="true"></i>&nbsp; Noticias
-                        </a>
-                     </li>
-                     <li>
-                        <a href="https://www.facturascripts.com/preguntas" target="_blank">
-                           <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp; Preguntas
+                        <a href="https://www.facturascripts.com/contacto" target="_blank">
+                           <i class="fa fa-shield" aria-hidden="true"></i>&nbsp; Soporte oficial
                         </a>
                      </li>
                      <li>
@@ -89,13 +86,12 @@
                            <i class="fa fa-bug" aria-hidden="true"></i>&nbsp; Errores
                         </a>
                      </li>
+                     <li class="divider"></li>
                      <li>
-                        <a href="https://www.facturascripts.com/ideas" target="_blank">
-                           <i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp; Ideas
+                        <a href="#" id="b_feedback">
+                           <i class="fa fa-edit" aria-hidden="true"></i>&nbsp; Informar de error...
                         </a>
                      </li>
-                     <li class="divider"></li>
-                     <li><a href="#" id="b_feedback"><span class="glyphicon glyphicon-send"></span>&nbsp; Informar...</a></li>
                   </ul>
                </li>
             </ul>
@@ -125,15 +121,22 @@
             <div class="col-md-6 col-md-offset-3">
                <div class="page-header">
                   <h1>
-                     <span class="glyphicon glyphicon-user"></span>&nbsp; Iniciar sesión
+                     <i class="fa fa-user" aria-hidden="true"></i>&nbsp; Iniciar sesión
                   </h1>
+                  <p class="help-block">
+                     {if="FS_DEMO"}
+                     Bienvenido a la demo de FacturaScripts, escribe tu email para continuar:
+                     {else}
+                     Debes seleccionar tu usuario e introducir la contraseña para acceder al sistema.
+                     {/if}
+                  </p>
                </div>
                <div class="well well-sm">
                   <br/>
                   <div class="container-fluid">
                      <div class="row">
-                        <div class="col-sm-5">
-                           <div class="thumbnail hidden-sm hidden-xs">
+                        <div class="col-sm-4 col-md-5">
+                           <div class="thumbnail hidden-xs">
                               {if="FS_DEMO"}
                               <img src="{#FS_PATH#}view/img/logo.png" alt="logo"/>
                               {elseif="file_exists(FS_MYDOCS.'images/logo.png')"}
@@ -145,11 +148,10 @@
                               {/if}
                            </div>
                         </div>
-                        <div class="col-sm-7">
+                        <div class="col-sm-8 col-md-7">
                            {if="FS_DEMO"}
                            <input type="hidden" name="password" value="demo"/>
                            <div class="form-group">
-                              Bienvenido a la demo de FacturaScripts, escribe tu email para continuar:
                               <input type="text" name="user" class="form-control input-lg" placeholder="Escribe tu email" required="" autocomplete="off"/>
                            </div>
                            {else}
@@ -172,7 +174,7 @@
                            </div>
                            {/if}
                            <button class="btn btn-block btn-primary" type="submit" id="login">
-                              <span class="glyphicon glyphicon-log-in"></span>&nbsp; Iniciar sesión
+                              <i class="fa fa-sign-in" aria-hidden="true"></i>&nbsp; Iniciar sesión
                            </button>
                         </div>
                      </div>
@@ -222,7 +224,7 @@
                </div>
                <div class="modal-footer">
                   <button type="submit" class="btn btn-sm btn-warning">
-                     <span class="glyphicon glyphicon-wrench"></span>&nbsp; Cambiar
+                     <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp; Cambiar
                   </button>
                </div>
             </form>
@@ -233,11 +235,10 @@
    
    {include="feedback"}
    
+   {if="FS_DB_HISTORY"}
    <hr style="margin-top: 50px;"/>
-   
    <div class="container-fluid" style="margin-bottom: 10px;">
       <div class="row">
-         {if="FS_DB_HISTORY"}
          <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="panel panel-default">
                <div class="panel-heading">
@@ -250,25 +251,27 @@
                </div>
             </div>
          </div>
-         {/if}
-      </div>
-      <div class="row">
-         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
-            <small>
-               Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>.
-            </small>
-         </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs text-center">
-            <span class="label label-default">Consultas: {$fsc->selects()}</span>
-            <span class="label label-default">Transacciones: {$fsc->transactions()}</span>
-         </div>
-         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 text-right">
-            <span class="label label-default">
-               <span class="glyphicon glyphicon-time" aria-hidden="true" title="Página procesada en {$fsc->duration()}"></span>
-               &nbsp; {$fsc->duration()}
-            </span>
-         </div>
       </div>
    </div>
+   {/if}
+   
+   <nav class="navbar navbar-default navbar-fixed-bottom hidden-xs">
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-sm-6">
+               <p class="navbar-text">
+                  Creado con <a class="navbar-link" target="_blank" href="https://www.facturascripts.com"><b>FacturaScripts</b></a>.
+               </p>
+            </div>
+            <div class="col-sm-6">
+               <p class="navbar-text navbar-right">
+                  {$fsc->selects()} consultas:, {$fsc->transactions()} transacciones,&nbsp;
+                  <i class="fa fa-clock-o" aria-hidden="true" title="Página procesada en {$fsc->duration()}"></i>
+                  &nbsp;{$fsc->duration()} &nbsp;
+               </p>
+            </div>
+         </div>
+      </div>
+   </nav>
 </body>
 </html>

@@ -7,11 +7,12 @@
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">
-                  <span class="glyphicon glyphicon-question-sign"></span>
-                  ¿Necesitas ayuda?
+                  <i class="fa fa-edit" aria-hidden="true"></i> Informar de error...
                </h4>
-               <p class='help-block'>
-                  Detalla tu duda o problema si quieres que sea contestada.
+               <p class="help-block">
+                  Usa este formulario para informarnos de cualquier error o duda que hayas encontrado.
+                  Para facilitarnos el trabajo este formulario también nos informa de la versión de
+                  FacturaScripts que usas, lista de plugins activos, versión de php, etc...
                </p>
             </div>
             {if="$fsc->check_for_updates()"}
@@ -30,7 +31,7 @@
                <div class="form-group">
                   <div class="input-group">
                      <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-envelope"></span>
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
                      </span>
                      {if="$fsc->empresa AND $fsc->user->logged_on"}
                      <input type="email" class="form-control" name="feedback_email" placeholder="Tu email" value="{$fsc->empresa->email}"/>
@@ -42,7 +43,7 @@
             </div>
             <div class="modal-footer">
                <button type="submit" class="btn btn-sm btn-primary">
-                  <span class="glyphicon glyphicon-send"></span>&nbsp; Enviar
+                  <i class="fa fa-send" aria-hidden="true"></i>&nbsp; Enviar
                </button>
             </div>
          </div>
