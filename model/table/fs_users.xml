@@ -28,6 +28,12 @@
       <defecto>false</defecto>
    </columna>
    <columna>
+      <nombre>actived</nombre>
+      <tipo>boolean</tipo>
+      <nulo>NO</nulo>
+      <defecto>false</defecto>
+   </columna>   
+   <columna>
       <nombre>codagente</nombre>
       <tipo>character varying(10)</tipo>
       <nulo>YES</nulo>
