@@ -92,7 +92,7 @@ class admin_user extends fs_controller {
                     $this->suser->actived = $_REQUEST['sactived'];
 
                     if ($this->suser->save()) {
-                        $_REQUEST['sactived'] ? $this->new_message('Usuario activado correctamente.') : $this->new_error_msg('Usuario Desactivado correctamente.');
+                        $_REQUEST['sactived'] ? $this->new_message('Usuario Activado correctamente.', TRUE, 'activo', TRUE) : $this->new_error_msg('Usuario Desactivado correctamente.', 'activo', TRUE);
                     } else {
                         $this->new_error_msg('Error al Activar/Desactivar el Usuario');
                     }
