@@ -176,7 +176,7 @@ class fs_user extends \fs_model
          $this->log_key = NULL;
          $this->codagente = NULL;
          $this->admin = FALSE;
-         $this->actived = FALSE;         
+         $this->actived = TRUE;
          $this->last_login = NULL;
          $this->last_login_time = NULL;
          $this->last_ip = NULL;

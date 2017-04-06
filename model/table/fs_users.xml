@@ -31,7 +31,7 @@
       <nombre>actived</nombre>
       <tipo>boolean</tipo>
       <nulo>NO</nulo>
-      <defecto>false</defecto>
+      <defecto>true</defecto>
    </columna>   
    <columna>
       <nombre>codagente</nombre>
