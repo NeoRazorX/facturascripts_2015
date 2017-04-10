@@ -84,6 +84,12 @@ class fs_user extends \fs_model
    public $admin;
    
    /**
+    * TRUE -> el usuario esta activo
+    * @var type
+    */
+   public $actived;
+
+   /**
     * Fecha del último login.
     * @var type 
     */
@@ -138,6 +144,7 @@ class fs_user extends \fs_model
          }
          
          $this->admin = $this->str2bool($a['admin']);
+         $this->actived = $this->str2bool($a['actived']);
          
          $this->last_login = NULL;
          if($a['last_login'])
@@ -169,6 +176,7 @@ class fs_user extends \fs_model
          $this->log_key = NULL;
          $this->codagente = NULL;
          $this->admin = FALSE;
+         $this->actived = TRUE;
          $this->last_login = NULL;
          $this->last_login_time = NULL;
          $this->last_ip = NULL;
@@ -196,13 +204,13 @@ class fs_user extends \fs_model
       $this->new_message('Se ha creado el usuario <b>admin</b> con la contraseña <b>admin</b>.');
       if( $this->db->select("SELECT * FROM agentes WHERE codagente = '1';") )
       {
-         return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
-            VALUES ('admin','".sha1('admin')."',NULL,'1',TRUE);";
+         return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,actived)
+            VALUES ('admin','".sha1('admin')."',NULL,'1',TRUE,TRUE);";
       }
       else
       {
-         return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin)
-            VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE);";
+         return "INSERT INTO ".$this->table_name." (nick,password,log_key,codagente,admin,actived)
+            VALUES ('admin','".sha1('admin')."',NULL,NULL,TRUE,TRUE);";
       }
    }
    
@@ -492,6 +500,7 @@ class fs_user extends \fs_model
                     .", log_key = ".$this->var2str($this->log_key)
                     .", codagente = ".$this->var2str($this->codagente)
                     .", admin = ".$this->var2str($this->admin)
+                    .", actived = " . $this->var2str($this->actived)
                     .", last_login = ".$this->var2str($this->last_login)
                     .", last_ip = ".$this->var2str($this->last_ip)
                     .", last_browser = ".$this->var2str($this->last_browser)
@@ -502,7 +511,7 @@ class fs_user extends \fs_model
          }
          else
          {
-            $sql = "INSERT INTO ".$this->table_name." (nick,password,email,log_key,codagente,admin,
+            $sql = "INSERT INTO ".$this->table_name." (nick,password,email,log_key,codagente,admin,actived,
                last_login,last_login_time,last_ip,last_browser,fs_page,css) VALUES
                (".$this->var2str($this->nick)
                     .",".$this->var2str($this->password)
@@ -510,6 +519,7 @@ class fs_user extends \fs_model
                     .",".$this->var2str($this->log_key)
                     .",".$this->var2str($this->codagente)
                     .",".$this->var2str($this->admin)
+                    .",".$this->var2str($this->actived)
                     .",".$this->var2str($this->last_login)
                     .",".$this->var2str($this->last_login_time)
                     .",".$this->var2str($this->last_ip)

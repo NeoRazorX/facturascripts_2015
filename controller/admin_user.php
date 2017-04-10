@@ -97,6 +97,25 @@ class admin_user extends fs_controller
          {
             $this->modificar_user();
          }
+         else if (isset($_REQUEST['sactived'])) 
+         {
+         	if (!$this->user->admin) {
+                $this->new_error_msg('Solamente un administrador puede activar o desactivar a un Usuario.');
+            } 
+            else if ($this->user->nick != $this->suser->nick) 
+            {
+                // Un usuario no se puede Activar/Desactivar a el mismo.
+                $this->suser->actived = $_REQUEST['sactived'];
+
+                if ($this->suser->save()) {
+					$_REQUEST['sactived'] ? $this->new_message('Usuario Activado correctamente.', TRUE, 'activo', TRUE) : $this->new_error_msg('Usuario Desactivado correctamente.', 'activo', TRUE);                        
+                } else {
+                    $this->new_error_msg('Error al Activar/Desactivar el Usuario');
+                }
+            }else{
+                $this->new_error_msg('No se permite Activar/Desactivar a uno mismo.');
+            }
+        }
          
          /// ¿Estamos modificando nuestro usuario?
          if($this->suser->nick == $this->user->nick)
@@ -315,7 +334,9 @@ class admin_user extends fs_controller
             }
          }
          
-         $this->suser->email = strtolower($_POST['email']);
+		if (isset($_POST['email'])) {
+        	$this->suser->email = strtolower($_POST['email']);
+		}
          
          if( isset($_POST['scodagente']) )
          {

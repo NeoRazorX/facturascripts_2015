@@ -634,7 +634,7 @@ class fs_controller
          {
             $user = $this->user->get($_POST['user']);
             $password = $_POST['password'];
-            if($user)
+            if($user AND $user->actived)
             {
                /**
                 * En versiones anteriores se guardaban las contraseñas siempre en
@@ -675,10 +675,12 @@ class fs_controller
                   $this->new_error_msg('¡Contraseña incorrecta! ('.$_POST['user'].')', 'login', TRUE);
                   $this->banear_ip($ips);
                }
-            }
-            else
-            {
-               $this->new_error_msg('El usuario '.$_POST['user'].' no existe!');
+            }else if ($user AND !$user->actived) {
+                    $this->new_error_msg('El usuario ' . $_POST['user'] . ' está desactivado, habla con tu administrador!', 'login', TRUE);
+                    $this->user->clean_cache(TRUE);
+                    $this->cache->clean();
+            }else{
+               $this->new_error_msg('El usuario o contraseña no coinciden!');
                $this->user->clean_cache(TRUE);
                $this->cache->clean();
             }
@@ -687,7 +689,7 @@ class fs_controller
       else if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
          $user = $this->user->get($_COOKIE['user']);
-         if($user)
+         if($user AND $user->actived)
          {
             if($user->log_key == $_COOKIE['logkey'])
             {
@@ -707,7 +709,7 @@ class fs_controller
          }
          else
          {
-            $this->new_error_msg('¡El usuario '.$_COOKIE['user'].' no existe!');
+            $this->new_error_msg('¡El usuario ' . $_COOKIE['user'] . ' no existe o está desactivado!');
             $this->log_out(TRUE);
             $this->user->clean_cache(TRUE);
             $this->cache->clean();

@@ -118,6 +118,7 @@
                      <th class="text-left">Nick</th>
                      <th class="text-left">Email</th>
                      <th class="text-left">Empleado</th>
+                     <th class="text-center">Activado</th>                     
                      <th class="text-center">Administrador</th>
                      <th class="text-left">IP</th>
                      <th class="text-left">Página de inicio</th>
@@ -129,6 +130,9 @@
                   <td><a href="{$value->url()}">{$value->nick}</a></td>
                   <td>{if="FS_DEMO"}XXX@XXX.com{else}{$value->email}{/if}</td>
                   <td>{$value->get_agente_fullname()}</td>
+                  <td class="text-center">
+                     {if="$value->actived"}<span class="glyphicon glyphicon-ok"></span>{else}<span class="glyphicon glyphicon-lock"></span>{/if}
+                  </td>                  
                   <td class="text-center">
                      {if="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}
                   </td>
