@@ -784,7 +784,6 @@ class admin_home extends fs_controller
             }
          }
          
-         
          /*
           * Desactivamos las páginas que ya no existen
           */
