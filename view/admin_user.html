@@ -59,6 +59,19 @@
                </a>
             </div>
             <div class="btn-group">
+               {if="$fsc->suser->actived"}
+               <a id="b_desactivar_usuario" class="btn btn-sm btn-danger" href="{$fsc->url()}&sactived=0" title="Usuario activado">
+                  <span class="glyphicon glyphicon-lock"></span>
+                  <span class="hidden-xs">&nbsp;Desactivar</span>
+               </a>
+               {else}
+               <a id="b_activar_usuario" class="btn btn-sm btn-success" href="{$fsc->url()}&sactived=1" title="Usuario desactivado">
+                  <span class="glyphicon glyphicon-log-in"></span>
+                  <span class="hidden-xs">&nbsp;Activar</span>
+               </a>
+               {/if}
+            </div>            
+            <div class="btn-group">
             {loop="$fsc->extensions"}
                {if="$value->type=='button'"}
                <a href="index.php?page={$value->from}&snick={$fsc->suser->nick}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
