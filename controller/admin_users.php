@@ -81,7 +81,6 @@ class admin_users extends fs_controller
          if( $nu->set_password($_POST['npassword']) )
          {
             $nu->admin = isset($_POST['nadmin']);
-            $nu->actived = TRUE;
             if( isset($_POST['ncodagente']) )
             {
                if($_POST['ncodagente'] != '')

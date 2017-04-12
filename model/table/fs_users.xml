@@ -28,7 +28,7 @@
       <defecto>false</defecto>
    </columna>
    <columna>
-      <nombre>actived</nombre>
+      <nombre>enabled</nombre>
       <tipo>boolean</tipo>
       <nulo>NO</nulo>
       <defecto>true</defecto>

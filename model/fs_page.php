@@ -73,7 +73,12 @@ class fs_page extends fs_model
          
          $this->show_on_menu = $this->str2bool($p['show_on_menu']);
          $this->important = $this->str2bool($p['important']);
-         $this->orden = $this->intval($p['orden']);
+         
+         $this->orden = 100;
+         if( isset($p['orden']) )
+         {
+            $this->orden = $this->intval($p['orden']);
+         }
       }
       else
       {

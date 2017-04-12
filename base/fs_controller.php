@@ -634,7 +634,7 @@ class fs_controller
          {
             $user = $this->user->get($_POST['user']);
             $password = $_POST['password'];
-            if($user AND $user->actived)
+            if($user AND $user->enabled)
             {
                /**
                 * En versiones anteriores se guardaban las contraseñas siempre en
@@ -675,11 +675,15 @@ class fs_controller
                   $this->new_error_msg('¡Contraseña incorrecta! ('.$_POST['user'].')', 'login', TRUE);
                   $this->banear_ip($ips);
                }
-            }else if ($user AND !$user->actived) {
-                    $this->new_error_msg('El usuario ' . $_POST['user'] . ' está desactivado, habla con tu administrador!', 'login', TRUE);
-                    $this->user->clean_cache(TRUE);
-                    $this->cache->clean();
-            }else{
+            }
+            else if($user AND !$user->enabled)
+            {
+               $this->new_error_msg('El usuario '.$user->nick.' está desactivado, habla con tu administrador!', 'login', TRUE);
+               $this->user->clean_cache(TRUE);
+               $this->cache->clean();
+            }
+            else
+            {
                $this->new_error_msg('El usuario o contraseña no coinciden!');
                $this->user->clean_cache(TRUE);
                $this->cache->clean();
@@ -689,7 +693,7 @@ class fs_controller
       else if( isset($_COOKIE['user']) AND isset($_COOKIE['logkey']) )
       {
          $user = $this->user->get($_COOKIE['user']);
-         if($user AND $user->actived)
+         if($user AND $user->enabled)
          {
             if($user->log_key == $_COOKIE['logkey'])
             {

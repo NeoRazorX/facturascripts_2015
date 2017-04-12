@@ -97,25 +97,38 @@ class admin_user extends fs_controller
          {
             $this->modificar_user();
          }
-         else if (isset($_REQUEST['sactived'])) 
+         else if( isset($_REQUEST['senabled']) )
          {
-         	if (!$this->user->admin) {
+         	if(!$this->user->admin)
+            {
                 $this->new_error_msg('Solamente un administrador puede activar o desactivar a un Usuario.');
             } 
-            else if ($this->user->nick != $this->suser->nick) 
+            else if($this->user->nick == $this->suser->nick)
             {
-                // Un usuario no se puede Activar/Desactivar a el mismo.
-                $this->suser->actived = $_REQUEST['sactived'];
-
-                if ($this->suser->save()) {
-					$_REQUEST['sactived'] ? $this->new_message('Usuario Activado correctamente.', TRUE, 'activo', TRUE) : $this->new_error_msg('Usuario Desactivado correctamente.', 'activo', TRUE);                        
-                } else {
-                    $this->new_error_msg('Error al Activar/Desactivar el Usuario');
-                }
-            }else{
-                $this->new_error_msg('No se permite Activar/Desactivar a uno mismo.');
+               $this->new_error_msg('No se permite Activar/Desactivar a uno mismo.');
             }
-        }
+            else
+            {
+               // Un usuario no se puede Activar/Desactivar a el mismo.
+               $this->suser->enabled = $_REQUEST['senabled'];
+               
+               if( $this->suser->save() )
+               {
+                  if($this->suser->enabled)
+                  {
+                     $this->new_message('Usuario activado correctamente.', TRUE, 'login', TRUE);
+                  }
+                  else
+                  {
+                     $this->new_message('Usuario desactivado correctamente.', TRUE, 'login', TRUE);
+                  }
+               }
+               else
+               {
+                  $this->new_error_msg('Error al Activar/Desactivar el Usuario');
+               }
+            }
+         }
          
          /// ¿Estamos modificando nuestro usuario?
          if($this->suser->nick == $this->user->nick)

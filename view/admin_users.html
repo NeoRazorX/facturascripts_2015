@@ -131,7 +131,7 @@
                   <td>{if="FS_DEMO"}XXX@XXX.com{else}{$value->email}{/if}</td>
                   <td>{$value->get_agente_fullname()}</td>
                   <td class="text-center">
-                     {if="$value->actived"}<span class="glyphicon glyphicon-ok"></span>{else}<span class="glyphicon glyphicon-lock"></span>{/if}
+                     {if="$value->enabled"}<span class="glyphicon glyphicon-ok"></span>{else}<span class="glyphicon glyphicon-lock"></span>{/if}
                   </td>                  
                   <td class="text-center">
                      {if="$value->admin"}<span class="glyphicon glyphicon-ok"></span>{/if}
