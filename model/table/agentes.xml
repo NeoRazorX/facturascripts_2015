@@ -8,8 +8,7 @@
 <tabla>
    <columna>
       <nombre>apellidos</nombre>
-      <tipo>character varying(100)</tipo>
-      <nulo>NO</nulo>
+      <tipo>character varying(200)</tipo>
    </columna>
    <columna>
       <nombre>ciudad</nombre>

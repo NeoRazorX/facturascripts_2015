@@ -233,8 +233,6 @@ class agente extends \fs_model
     */
    public function test()
    {
-      $status = FALSE;
-      
       $this->apellidos = $this->no_html($this->apellidos);
       $this->banco = $this->no_html($this->banco);
       $this->cargo = $this->no_html($this->cargo);
@@ -250,16 +248,13 @@ class agente extends \fs_model
       
       if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
       {
-         $this->new_error_msg("El nombre de empleado no puede superar los 50 caracteres.");
-      }
-      else if( strlen($this->apellidos) < 1 OR strlen($this->apellidos) > 100 )
-      {
-         $this->new_error_msg("Los apellidos del empleado no pueden superar los 100 caracteres.");
+         $this->new_error_msg("El nombre del empleado debe tener entre 1 y 50 caracteres.");
+         return FALSE;
       }
       else
-         $status = TRUE;
-      
-      return $status;
+      {
+         return TRUE;
+      }
    }
    
    /**
