@@ -310,9 +310,9 @@ class fs_controller
          if($page)
          {
             /// la página ya existe ¿Actualizamos?
-            if($page->name != $name OR $page->folder != $folder OR $page->show_on_menu != $shmenu OR $page->important != $important)
+            if($page->title != $title OR $page->folder != $folder OR $page->show_on_menu != $shmenu OR $page->important != $important)
             {
-               $page->name = $name;
+               $page->title = $title;
                $page->folder = $folder;
                $page->show_on_menu = $shmenu;
                $page->important = $important;
