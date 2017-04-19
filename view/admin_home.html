@@ -24,7 +24,8 @@
    function descargar_plugin_inestable(id)
    {
       bootbox.confirm({
-         message: 'Este plugin está marcado como inestable ¿Estas seguro de que quieres descargarlo?',
+         message: 'Este plugin está marcado como inestable. Significa que <b>no se recomienda su uso</b>,\n\
+ que todavía está en desarrollo y puede contener errores. ¿Estas seguro de que quieres descargarlo?',
          title: '<b>Atención</b>',
          callback: function(result) {
             if (result) {
