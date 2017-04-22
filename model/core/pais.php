@@ -329,7 +329,7 @@ class pais extends \fs_model
               . " ('YEM','YE','Yemen'),"
               . " ('DJI','DJ','Yibuti'),"
               . " ('ZMB','ZM','Zambia'),"
-              . " ('ZWE','ZW','Zimbabue'),";
+              . " ('ZWE','ZW','Zimbabue');";
    }
    
    /**
