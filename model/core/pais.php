@@ -485,7 +485,7 @@ class pais extends \fs_model
       if(!$listap)
       {
          /// si no encontramos los datos en caché, leemos de la base de datos
-         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY codpais ASC;");
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
          if($data)
          {
             foreach($data as $p)

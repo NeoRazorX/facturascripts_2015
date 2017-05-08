@@ -221,3 +221,10 @@ function fs_file_download($url, $filename, $timeout = 30)
    
    return $ok;
 }
+
+function fs_fix_html($txt)
+{
+   $a = array('&lt;','&gt;','&quot;','&#39;');
+   $b = array('<','>',"'","'");
+   return trim(str_replace($a, $b, $txt) );
+}

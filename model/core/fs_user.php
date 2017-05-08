@@ -561,20 +561,43 @@ class fs_user extends \fs_model
     */
    public function all()
    {
+      /// consultamos primero en la cache
       $userlist = $this->cache->get_array('m_fs_user_all');
       
       if(!$userlist)
       {
-         $users = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(nick) ASC;");
-         if($users)
+         /// si no está en la cache, consultamos la base de datos
+         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(nick) ASC;");
+         if($data)
          {
-            foreach($users as $u)
+            foreach($data as $u)
             {
                $userlist[] = new \fs_user($u);
             }
          }
          
+         /// guardamos en cache
          $this->cache->set('m_fs_user_all', $userlist);
+      }
+      
+      return $userlist;
+   }
+   
+   /**
+    * Devuelve la lista completa de usuarios activados de FacturaScripts.
+    * @return \fs_user
+    */
+   public function all_enabled()
+   {
+      $userlist = array();
+      
+      $data = $this->db->select("SELECT * FROM ".$this->table_name." WHERE enabled = TRUE ORDER BY lower(nick) ASC;");
+      if($data)
+      {
+         foreach($data as $u)
+         {
+            $userlist[] = new \fs_user($u);
+         }
       }
       
       return $userlist;
