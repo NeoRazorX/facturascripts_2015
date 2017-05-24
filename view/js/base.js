@@ -217,7 +217,8 @@ $(document).ready(function() {
       if(event.which === 1)
       {
          var target = $(this).attr('target');
-         if(typeof target !== typeof undefined && target !== false)
+         var href = $(this).attr('href');
+         if(typeof target !== typeof undefined && target !== false && typeof href !== typeof undefined && href !== false)
          {
             if(target == '_blank')
             {
@@ -228,7 +229,7 @@ $(document).ready(function() {
                parent.document.location = $(this).attr("href");
             }
          }
-         else
+         else if (typeof href !== typeof undefined && href !== false)
          {
             parent.document.location = $(this).attr("href");
          }
