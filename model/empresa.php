@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -24,7 +25,6 @@ require_once 'model/core/empresa.php';
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class empresa extends FacturaScripts\model\empresa
-{
+class empresa extends FacturaScripts\model\empresa {
    
 }

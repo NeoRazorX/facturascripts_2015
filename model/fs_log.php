@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013         Salvador Merino      salvaweb.co@gmail.com
@@ -24,40 +25,38 @@
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_log extends fs_model
-{
+class fs_log extends fs_model {
+
    /**
     * Clave primaria.
     * @var type 
     */
    public $id;
    public $tipo;
-   
+
    /**
     * Texto del log. Sin longitud máxima.
     * @var type text
     */
    public $detalle;
    public $fecha;
-   
+
    /**
     * Nick del usuario.
     * @var type 
     */
    public $usuario;
    public $ip;
-   
+
    /**
     * TRUE -> resaltar en el listado.
     * @var type 
     */
    public $alerta;
 
-   public function __construct($l = FALSE)
-   {
+   public function __construct($l = FALSE) {
       parent::__construct('fs_logs');
-      if($l)
-      {
+      if ($l) {
          $this->id = $l['id'];
          $this->tipo = $l['tipo'];
          $this->detalle = $l['detalle'];
@@ -65,9 +64,7 @@ class fs_log extends fs_model
          $this->usuario = $l['usuario'];
          $this->ip = $l['ip'];
          $this->alerta = $this->str2bool($l['alerta']);
-      }
-      else
-      {
+      } else {
          $this->id = NULL;
          $this->tipo = NULL;
          $this->detalle = NULL;
@@ -78,36 +75,27 @@ class fs_log extends fs_model
       }
    }
 
-   protected function install()
-   {
+   protected function install() {
       return '';
    }
 
-   public function get($id)
-   {
+   public function get($id) {
       $data = $this->db->select("SELECT * FROM fs_logs WHERE id =" . $this->var2str($id) . ";");
-      if($data)
-      {
+      if ($data) {
          return new fs_log($data[0]);
-      }
-      else
+      } else
          return FALSE;
    }
 
-   public function exists()
-   {
-      if( is_null($this->id) )
-      {
+   public function exists() {
+      if (is_null($this->id)) {
          return FALSE;
-      }
-      else
+      } else
          return $this->db->select("SELECT * FROM fs_logs WHERE id =" . $this->var2str($this->id) . ";");
    }
 
-   public function save()
-   {
-      if( $this->exists() )
-      {
+   public function save() {
+      if ($this->exists()) {
          $sql = "UPDATE fs_logs SET fecha = " . $this->var2str($this->fecha)
                  . ", tipo = " . $this->var2str($this->tipo)
                  . ", detalle = " . $this->var2str($this->detalle)
@@ -115,11 +103,9 @@ class fs_log extends fs_model
                  . ", ip = " . $this->var2str($this->ip)
                  . ", alerta = " . $this->var2str($this->alerta)
                  . "  WHERE id=" . $this->var2str($this->id) . ";";
-         
+
          return $this->db->exec($sql);
-      }
-      else
-      {
+      } else {
          $sql = "INSERT INTO fs_logs (fecha,tipo,detalle,usuario,ip,alerta) "
                  . "VALUES (" . $this->var2str($this->fecha) . ","
                  . $this->var2str($this->tipo) . ","
@@ -128,60 +114,52 @@ class fs_log extends fs_model
                  . $this->var2str($this->ip) . ","
                  . $this->var2str($this->alerta) . ");";
 
-         if( $this->db->exec($sql) )
-         {
+         if ($this->db->exec($sql)) {
             $this->id = $this->db->lastval();
             return TRUE;
-         }
-         else
+         } else
             return FALSE;
       }
    }
 
-   public function delete()
-   {
+   public function delete() {
       return $this->db->exec("DELETE FROM fs_logs WHERE id =" . $this->var2str($this->id) . ";");
    }
-   
-   public function all($offset=0, $limit = FS_ITEM_LIMIT)
-   {
+
+   public function all($offset = 0, $limit = FS_ITEM_LIMIT) {
       $lista = array();
-      
+
       $data = $this->db->select_limit("SELECT * FROM fs_logs ORDER BY fecha DESC", $limit, $offset);
-      if($data)
-      {
-         foreach($data as $d)
+      if ($data) {
+         foreach ($data as $d)
             $lista[] = new fs_log($d);
       }
 
       return $lista;
    }
-   
-   public function all_from($usuario)
-   {
+
+   public function all_from($usuario) {
       $lista = array();
 
-      $data = $this->db->select_limit("SELECT * FROM fs_logs WHERE usuario = ".$this->var2str($usuario)." ORDER BY fecha DESC", FS_ITEM_LIMIT, 0);
-      if($data)
-      {
-         foreach($data as $d)
+      $data = $this->db->select_limit("SELECT * FROM fs_logs WHERE usuario = " . $this->var2str($usuario) . " ORDER BY fecha DESC", FS_ITEM_LIMIT, 0);
+      if ($data) {
+         foreach ($data as $d)
             $lista[] = new fs_log($d);
       }
 
       return $lista;
    }
-   
-   public function all_by($tipo)
-   {
+
+   public function all_by($tipo) {
       $lista = array();
 
-      $data = $this->db->select_limit("SELECT * FROM fs_logs WHERE tipo = ".$this->var2str($tipo)." ORDER BY fecha DESC", FS_ITEM_LIMIT, 0);
-      if($data)
-      {
-         foreach($data as $d)
+      $data = $this->db->select_limit("SELECT * FROM fs_logs WHERE tipo = " . $this->var2str($tipo) . " ORDER BY fecha DESC", FS_ITEM_LIMIT, 0);
+      if ($data) {
+         foreach ($data as $d)
             $lista[] = new fs_log($d);
       }
 
       return $lista;
    }
+
 }

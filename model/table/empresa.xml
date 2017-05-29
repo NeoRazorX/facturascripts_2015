@@ -18,7 +18,7 @@
    </columna>
    <columna>
       <nombre>cifnif</nombre>
-      <tipo>character varying(20)</tipo>
+      <tipo>character varying(30)</tipo>
       <nulo>NO</nulo>
    </columna>
    <columna>

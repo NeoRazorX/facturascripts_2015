@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -26,14 +27,14 @@ namespace FacturaScripts\model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class agente extends \fs_model
-{
+class agente extends \fs_model {
+
    /**
     * Clave primaria. Varchar (10).
     * @var type
     */
    public $codagente;
-   
+
    /**
     * Identificador fiscal (CIF/NIF).
     * @var type 
@@ -41,44 +42,43 @@ class agente extends \fs_model
    public $dnicif;
    public $nombre;
    public $apellidos;
-   
    public $email;
    public $telefono;
    public $codpostal;
    public $provincia;
    public $ciudad;
    public $direccion;
-   
+
    /**
     * Nº de la seguridad social.
     * @var type 
     */
    public $seg_social;
-   
+
    /**
     * cargo en la empresa.
     * @var type 
     */
    public $cargo;
-   
+
    /**
     * Cuenta bancaria
     * @var type 
     */
    public $banco;
-   
+
    /**
     * Fecha de nacimiento.
     * @var type 
     */
    public $f_nacimiento;
-   
+
    /**
     * Fecha de alta en la empresa.
     * @var type 
     */
    public $f_alta;
-   
+
    /**
     * Fecha de baja en la empresa.
     * @var type 
@@ -90,12 +90,10 @@ class agente extends \fs_model
     * @var type 
     */
    public $porcomision;
-   
-   public function __construct($a=FALSE)
-   {
+
+   public function __construct($a = FALSE) {
       parent::__construct('agentes');
-      if($a)
-      {
+      if ($a) {
          $this->codagente = $a['codagente'];
          $this->nombre = $a['nombre'];
          $this->apellidos = $a['apellidos'];
@@ -109,28 +107,23 @@ class agente extends \fs_model
          $this->porcomision = floatval($a['porcomision']);
          $this->seg_social = $a['seg_social'];
          $this->banco = $a['banco'];
-         $this->cargo =$a['cargo'];
-         
+         $this->cargo = $a['cargo'];
+
          $this->f_alta = NULL;
-         if($a['f_alta'] != '')
-         {
+         if ($a['f_alta'] != '') {
             $this->f_alta = Date('d-m-Y', strtotime($a['f_alta']));
          }
-         
+
          $this->f_baja = NULL;
-         if($a['f_baja'] != '')
-         {
+         if ($a['f_baja'] != '') {
             $this->f_baja = Date('d-m-Y', strtotime($a['f_baja']));
          }
-         
+
          $this->f_nacimiento = NULL;
-         if($a['f_nacimiento'] != '')
-         {
+         if ($a['f_nacimiento'] != '') {
             $this->f_nacimiento = Date('d-m-Y', strtotime($a['f_nacimiento']));
          }
-      }
-      else
-      {
+      } else {
          $this->codagente = NULL;
          $this->nombre = '';
          $this->apellidos = '';
@@ -147,92 +140,77 @@ class agente extends \fs_model
          $this->cargo = NULL;
          $this->f_alta = Date('d-m-Y');
          $this->f_baja = NULL;
-         $this->f_nacimiento = Date('d-m-Y');        
+         $this->f_nacimiento = Date('d-m-Y');
       }
    }
-   
-   protected function install()
-   {
+
+   protected function install() {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif)
+      return "INSERT INTO " . $this->table_name . " (codagente,nombre,apellidos,dnicif)
          VALUES ('1','Paco','Pepe','00000014Z');";
    }
-   
+
    /**
     * Devuelve nombre + apellidos del agente.
     * @return type
     */
-   public function get_fullname()
-   {
-      return $this->nombre." ".$this->apellidos;
+   public function get_fullname() {
+      return $this->nombre . " " . $this->apellidos;
    }
-   
+
    /**
     * Genera un nuevo código de agente
     * @return int
     */
-   public function get_new_codigo()
-   {
-      $sql = "SELECT MAX(".$this->db->sql_to_int('codagente').") as cod FROM ".$this->table_name.";";
+   public function get_new_codigo() {
+      $sql = "SELECT MAX(" . $this->db->sql_to_int('codagente') . ") as cod FROM " . $this->table_name . ";";
       $cod = $this->db->select($sql);
-      if($cod)
-      {
+      if ($cod) {
          return 1 + intval($cod[0]['cod']);
-      }
-      else
+      } else
          return 1;
    }
-   
+
    /**
     * Devuelve la url donde se pueden ver/modificar estos datos
     * @return string
     */
-   public function url()
-   {
-      if( is_null($this->codagente) )
-      {
+   public function url() {
+      if (is_null($this->codagente)) {
          return "index.php?page=admin_agentes";
-      }
-      else
-         return "index.php?page=admin_agente&cod=".$this->codagente;
+      } else
+         return "index.php?page=admin_agente&cod=" . $this->codagente;
    }
-   
+
    /**
     * Devuelve el empleado/agente con codagente = $cod
     * @param type $cod
     * @return \agente|boolean
     */
-   public function get($cod)
-   {
-      $a = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($cod).";");
-      if($a)
-      {
+   public function get($cod) {
+      $a = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($cod) . ";");
+      if ($a) {
          return new \agente($a[0]);
-      }
-      else
+      } else
          return FALSE;
    }
-   
+
    /**
     * Devuelve TRUE si el agente/empleado existe, false en caso contrario
     * @return boolean
     */
-   public function exists()
-   {
-      if( is_null($this->codagente) )
-      {
+   public function exists() {
+      if (is_null($this->codagente)) {
          return FALSE;
-      }
-      else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
+      } else
+         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
    }
-   
+
    /**
     * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
     * @return boolean
     */
-   public function test()
-   {
+   public function test() {
       $this->apellidos = $this->no_html($this->apellidos);
       $this->banco = $this->no_html($this->banco);
       $this->cargo = $this->no_html($this->cargo);
@@ -245,124 +223,109 @@ class agente extends \fs_model
       $this->provincia = $this->no_html($this->provincia);
       $this->seg_social = $this->no_html($this->seg_social);
       $this->telefono = $this->no_html($this->telefono);
-      
-      if( strlen($this->nombre) < 1 OR strlen($this->nombre) > 50 )
-      {
+
+      if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 50) {
          $this->new_error_msg("El nombre del empleado debe tener entre 1 y 50 caracteres.");
          return FALSE;
-      }
-      else
-      {
+      } else {
          return TRUE;
       }
    }
-   
+
    /**
     * Guarda los datos en la base de datos
     * @return boolean
     */
-   public function save()
-   {
-      if( $this->test() )
-      {
+   public function save() {
+      if ($this->test()) {
          $this->clean_cache();
-         
-         if( $this->exists() )
-         {
-            $sql = "UPDATE ".$this->table_name." SET nombre = ".$this->var2str($this->nombre).
-                    ", apellidos = ".$this->var2str($this->apellidos).
-                    ", dnicif = ".$this->var2str($this->dnicif).
-                    ", telefono = ".$this->var2str($this->telefono).
-                    ", email = ".$this->var2str($this->email).
-                    ", cargo = ".$this->var2str($this->cargo).
-                    ", provincia = ".$this->var2str($this->provincia).
-                    ", ciudad = ".$this->var2str($this->ciudad).
-                    ", direccion = ".$this->var2str($this->direccion).
-                    ", codpostal = ".$this->var2str($this->codpostal).
-                    ", f_nacimiento = ".$this->var2str($this->f_nacimiento).
-                    ", f_alta = ".$this->var2str($this->f_alta).
-                    ", f_baja = ".$this->var2str($this->f_baja).
-                    ", seg_social = ".$this->var2str($this->seg_social).
-                    ", banco = ".$this->var2str($this->banco).
-                    ", porcomision = ".$this->var2str($this->porcomision).
-                    "  WHERE codagente = ".$this->var2str($this->codagente).";";
-         }
-         else
-         {
-            if( is_null($this->codagente) )
-            {
+
+         if ($this->exists()) {
+            $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre) .
+                    ", apellidos = " . $this->var2str($this->apellidos) .
+                    ", dnicif = " . $this->var2str($this->dnicif) .
+                    ", telefono = " . $this->var2str($this->telefono) .
+                    ", email = " . $this->var2str($this->email) .
+                    ", cargo = " . $this->var2str($this->cargo) .
+                    ", provincia = " . $this->var2str($this->provincia) .
+                    ", ciudad = " . $this->var2str($this->ciudad) .
+                    ", direccion = " . $this->var2str($this->direccion) .
+                    ", codpostal = " . $this->var2str($this->codpostal) .
+                    ", f_nacimiento = " . $this->var2str($this->f_nacimiento) .
+                    ", f_alta = " . $this->var2str($this->f_alta) .
+                    ", f_baja = " . $this->var2str($this->f_baja) .
+                    ", seg_social = " . $this->var2str($this->seg_social) .
+                    ", banco = " . $this->var2str($this->banco) .
+                    ", porcomision = " . $this->var2str($this->porcomision) .
+                    "  WHERE codagente = " . $this->var2str($this->codagente) . ";";
+         } else {
+            if (is_null($this->codagente)) {
                $this->codagente = $this->get_new_codigo();
             }
-            
-            $sql = "INSERT INTO ".$this->table_name." (codagente,nombre,apellidos,dnicif,telefono,
+
+            $sql = "INSERT INTO " . $this->table_name . " (codagente,nombre,apellidos,dnicif,telefono,
                email,cargo,provincia,ciudad,direccion,codpostal,f_nacimiento,f_alta,f_baja,seg_social,
-               banco,porcomision) VALUES (".$this->var2str($this->codagente).
-                    ",".$this->var2str($this->nombre).
-                    ",".$this->var2str($this->apellidos).
-                    ",".$this->var2str($this->dnicif).
-                    ",".$this->var2str($this->telefono).
-                    ",".$this->var2str($this->email).
-                    ",".$this->var2str($this->cargo).
-                    ",".$this->var2str($this->provincia).
-                    ",".$this->var2str($this->ciudad).
-                    ",".$this->var2str($this->direccion).
-                    ",".$this->var2str($this->codpostal).
-                    ",".$this->var2str($this->f_nacimiento).
-                    ",".$this->var2str($this->f_alta).
-                    ",".$this->var2str($this->f_baja).
-                    ",".$this->var2str($this->seg_social).
-                    ",".$this->var2str($this->banco).
-                    ",".$this->var2str($this->porcomision).");";
+               banco,porcomision) VALUES (" . $this->var2str($this->codagente) .
+                    "," . $this->var2str($this->nombre) .
+                    "," . $this->var2str($this->apellidos) .
+                    "," . $this->var2str($this->dnicif) .
+                    "," . $this->var2str($this->telefono) .
+                    "," . $this->var2str($this->email) .
+                    "," . $this->var2str($this->cargo) .
+                    "," . $this->var2str($this->provincia) .
+                    "," . $this->var2str($this->ciudad) .
+                    "," . $this->var2str($this->direccion) .
+                    "," . $this->var2str($this->codpostal) .
+                    "," . $this->var2str($this->f_nacimiento) .
+                    "," . $this->var2str($this->f_alta) .
+                    "," . $this->var2str($this->f_baja) .
+                    "," . $this->var2str($this->seg_social) .
+                    "," . $this->var2str($this->banco) .
+                    "," . $this->var2str($this->porcomision) . ");";
          }
-         
+
          return $this->db->exec($sql);
-      }
-      else
+      } else
          return FALSE;
    }
-   
+
    /**
     * Elimina este empleado/agente
     * @return type
     */
-   public function delete()
-   {
+   public function delete() {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codagente = ".$this->var2str($this->codagente).";");
+      return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
    }
-   
+
    /**
     * Limpiamos la caché
     */
-   private function clean_cache()
-   {
+   private function clean_cache() {
       $this->cache->delete('m_agente_all');
    }
-   
+
    /**
     * Devuelve un array con todos los agentes/empleados.
     * @return \agente
     */
-   public function all()
-   {
+   public function all() {
       /// leemos esta lista de la caché
       $listagentes = $this->cache->get_array('m_agente_all');
-      if(!$listagentes)
-      {
+      if (!$listagentes) {
          /// si no está en caché, leemos de la base de datos
-         $data = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY nombre ASC;");
-         if($data)
-         {
-            foreach($data as $a)
-            {
+         $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC;");
+         if ($data) {
+            foreach ($data as $a) {
                $listagentes[] = new \agente($a);
             }
          }
-         
+
          /// guardamos la lista en caché
          $this->cache->set('m_agente_all', $listagentes);
       }
-      
+
       return $listagentes;
    }
+
 }

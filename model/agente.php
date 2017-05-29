@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -26,7 +27,6 @@ require_once 'model/core/agente.php';
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class agente extends \FacturaScripts\model\agente
-{
+class agente extends \FacturaScripts\model\agente {
    
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -30,8 +31,8 @@ require_model('serie.php');
  * Controlador de admin -> empresa.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_empresa extends fs_controller
-{
+class admin_empresa extends fs_controller {
+
    public $almacen;
    public $cuenta_banco;
    public $divisa;
@@ -40,14 +41,12 @@ class admin_empresa extends fs_controller
    public $impresion;
    public $serie;
    public $pais;
-   
-   public function __construct()
-   {
+
+   public function __construct() {
       parent::__construct(__CLASS__, 'Empresa / web', 'admin', TRUE, TRUE);
    }
-   
-   protected function private_core()
-   {
+
+   protected function private_core() {
       /// inicializamos para que se creen las tablas, aunque no vayamos a configurarlo aquí
       $this->almacen = new almacen();
       $this->cuenta_banco = new cuenta_banco();
@@ -56,15 +55,14 @@ class admin_empresa extends fs_controller
       $this->forma_pago = new forma_pago();
       $this->serie = new serie();
       $this->pais = new pais();
-      
-      if( isset($_POST['nombre']) )
-      {
+
+      if (isset($_POST['nombre'])) {
          /// guardamos solamente lo básico, ya que facturacion_base no está activado
          $this->empresa->nombre = $_POST['nombre'];
          $this->empresa->nombrecorto = $_POST['nombrecorto'];
          $this->empresa->web = $_POST['web'];
          $this->empresa->email = $_POST['email'];
-         
+
          /// configuración de email
          $this->empresa->email_config['mail_password'] = $_POST['mail_password'];
          $this->empresa->email_config['mail_bcc'] = $_POST['mail_bcc'];
@@ -75,75 +73,63 @@ class admin_empresa extends fs_controller
          $this->empresa->email_config['mail_enc'] = strtolower($_POST['mail_enc']);
          $this->empresa->email_config['mail_user'] = $_POST['mail_user'];
          $this->empresa->email_config['mail_low_security'] = isset($_POST['mail_low_security']);
-         
-         if( $this->empresa->save() )
-         {
+
+         if ($this->empresa->save()) {
             $this->new_message('Datos guardados correctamente.');
             $this->mail_test();
-         }
-         else
-            $this->new_error_msg ('Error al guardar los datos.');
+         } else
+            $this->new_error_msg('Error al guardar los datos.');
       }
    }
-   
-   private function mail_test()
-   {
-      if( $this->empresa->can_send_mail() )
-      {
+
+   private function mail_test() {
+      if ($this->empresa->can_send_mail()) {
          /// Es imprescindible OpenSSL para enviar emails con los principales proveedores
-         if( extension_loaded('openssl') )
-         {
+         if (extension_loaded('openssl')) {
             $mail = $this->empresa->new_mail();
             $mail->Timeout = 3;
             $mail->FromName = $this->user->nick;
-            
+
             $mail->Subject = 'TEST';
             $mail->AltBody = 'TEST';
             $mail->msgHTML('TEST');
             $mail->isHTML(TRUE);
-            
-            if( !$this->empresa->mail_connect($mail) )
-            {
+
+            if (!$this->empresa->mail_connect($mail)) {
                $this->new_error_msg('No se ha podido conectar por email. ¿La contraseña es correcta?');
-               
-               if($mail->Host == 'smtp.gmail.com')
-               {
+
+               if ($mail->Host == 'smtp.gmail.com') {
                   $this->new_error_msg('Aunque la contraseña de gmail sea correcta, en ciertas '
                           . 'situaciones los servidores de gmail bloquean la conexión. '
                           . 'Para superar esta situación debes crear y usar una '
                           . '<a href="https://support.google.com/accounts/answer/185833?hl=es" '
                           . 'target="_blank">contraseña de aplicación</a>');
-               }
-               else
-               {
+               } else {
                   $this->new_error_msg("¿<a href='https://www.facturascripts.com/comm3/index.php?page=community_item&id=74'"
                           . " target='_blank'>Necesitas ayuda</a>?");
                }
             }
-         }
-         else
-         {
+         } else {
             $this->new_error_msg('No se encuentra la extensión OpenSSL,'
                     . ' imprescindible para enviar emails.');
          }
       }
    }
-   
-   public function encriptaciones()
-   {
+
+   public function encriptaciones() {
       return array(
           'ssl' => 'SSL',
           'tls' => 'TLS',
           '' => 'Ninguna'
       );
    }
-   
-   public function mailers()
-   {
+
+   public function mailers() {
       return array(
           'mail' => 'Mail',
           'sendmail' => 'SendMail',
           'smtp' => 'SMTP'
       );
    }
+
 }

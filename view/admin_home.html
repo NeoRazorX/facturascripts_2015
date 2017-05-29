@@ -5,10 +5,6 @@
    {
       $('#f_enable_pages input:checkbox').prop('checked', true);
    }
-   function fs_marcar_nada()
-   {
-      $('#f_enable_pages input:checkbox').prop('checked', false);
-   }
    function eliminar(name)
    {
       bootbox.confirm({
@@ -56,6 +52,11 @@
       {
          $('#tab_panel_control a[href="#t_avanzado"]').tab('show');
       }
+      
+      $('#marcar_todo_enabled').click(function() {
+         var checked = $(this).prop('checked');
+         $("#f_enable_pages input[name='enabled[]']").prop('checked', checked);
+      });
    });
 </script>
 
@@ -187,43 +188,13 @@
       <div role="tabpanel" class="tab-pane active" id="t_paginas">
          <form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
             <input type="hidden" name="modpages" value="TRUE"/>
-            {if="count($fsc->paginas)>10"}
-            <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
-               <div class="row">
-                  <div class="col-xs-6">
-                     <div class="btn-group">
-                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
-                           <span class="glyphicon glyphicon-check"></span>
-                        </button>
-                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
-                           <span class="glyphicon glyphicon-unchecked"></span>
-                        </button>
-                        <!--
-                        {$sin_activar=0}
-                        {loop="$fsc->paginas"}
-                           {if="!$value->enabled"}{$sin_activar+=1}{/if}
-                        {/loop}
-                        -->
-                        {if="$sin_activar>0"}
-                        <button class="btn btn-sm btn-warning" type="button" onclick="fs_marcar_todo()" title="Hay {$sin_activar} página(s) no activa(s).">
-                           <b>{$sin_activar}</b>
-                        </button>
-                        {/if}
-                     </div>
-                  </div>
-                  <div class="col-xs-6 text-right">
-                     <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
-                        <span class="glyphicon glyphicon-floppy-disk"></span>
-                        <span class="hidden-xs">&nbsp;Guardar</span>
-                     </button>
-                  </div>
-               </div>
-            </div>
-            {/if}
             <div class="table-responsive">
                <table class="table table-hover">
                   <thead>
                      <tr>
+                        <th class="text-center" width="40">
+                           <input id="marcar_todo_enabled" type="checkbox" name="c_enabled" value=""/>
+                        </th>
                         <th class="text-left">Página</th>
                         <th class="text-left">Menú</th>
                         <th class="text-center">Existe</th>
@@ -231,9 +202,15 @@
                   </thead>
                   {loop="$fsc->paginas"}
                   <tr{if="!$value->exists"} class="danger"{/if}>
+                     <td class="text-center">
+                        {if="$value->enabled"}
+                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}" checked=""/>
+                        {else}
+                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"/>
+                        {/if}
+                     </td>
                      <td>
-                        <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"{if="$value->enabled"} checked=""{/if}/>
-                        &nbsp; <a target="_blank" href="{$value->url()}">{$value->name}</a>
+                        <a target="_blank" href="{$value->url()}">{$value->name}</a>
                      </td>
                      <td>
                         {if="$value->important"}
@@ -257,17 +234,7 @@
             </div>
             <div class="container-fluid">
                <div class="row">
-                  <div class="col-xs-6">
-                     <div class="btn-group">
-                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
-                           <span class="glyphicon glyphicon-check"></span>
-                        </button>
-                        <button class="btn btn-sm btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
-                           <span class="glyphicon glyphicon-unchecked"></span>
-                        </button>
-                     </div>
-                  </div>
-                  <div class="col-xs-6 text-right">
+                  <div class="col-xs-12 text-right">
                      <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
                         <span class="glyphicon glyphicon-floppy-disk"></span>
                         <span class="hidden-xs">&nbsp;Guardar</span>
@@ -288,7 +255,6 @@
                      <th class="text-right">
                         <span class="glyphicon glyphicon-flash" aria-hidden="true" title="Prioridad"></span>
                      </th>
-                     <th class="text-right" width="190">Acciones</th>
                   </tr>
                </thead>
                {loop="$fsc->plugin_advanced_list()"}
@@ -304,6 +270,28 @@
                      <a href="https://www.facturascripts.com/plugin/{$value['name']}" target="_blank" class="btn btn-xs btn-default">
                         <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp; más información
                      </a>
+                     {if="$value['enabled']"}
+                     <a class="btn btn-xs btn-warning" href="{$fsc->url()}&disable={$value['name']}#plugins">
+                        <span class="glyphicon glyphicon-remove"></span> Desactivar
+                     </a>
+                     {else}
+                     <div class="btn-group">
+                        {if="!$fsc->disable_rm_plugins"}
+                        <a class="btn btn-xs btn-danger" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
+                           <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                        {/if}
+                        {if="$value['compatible']"}
+                        <a class="btn btn-xs btn-primary" href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable={$value['name']}#plugins">
+                           <span class="glyphicon glyphicon-ok"></span>&nbsp; Activar
+                        </a>
+                        {else}
+                        <a class="btn btn-xs btn-default" href="#" onclick="bootbox.alert({message: 'Le falta el archivo facturascripts.ini',title: '<b>Atención</b>'});">
+                           <span class="glyphicon glyphicon-remove"></span>&nbsp; Incompatible
+                        </a>
+                        {/if}
+                     </div>
+                     {/if}
                   </td>
                   <td class="text-right">
                      <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&plugin={$value['name']}&version={$value['version']}" target="_blank">
@@ -311,30 +299,6 @@
                      </a>
                   </td>
                   <td class="text-right">{$value['prioridad']}</td>
-                  <td class="text-right">
-                     {if="$value['enabled']"}
-                     <a class="btn btn-sm btn-danger" href="{$fsc->url()}&disable={$value['name']}#plugins">
-                        <span class="glyphicon glyphicon-remove"></span>&nbsp; Desactivar
-                     </a>
-                     {else}
-                     <div class="btn-group">
-                        {if="$value['compatible']"}
-                        <a class="btn btn-sm btn-default" href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable={$value['name']}#plugins">
-                           <span class="glyphicon glyphicon-ok"></span>&nbsp; Activar
-                        </a>
-                        {else}
-                        <a class="btn btn-sm btn-default" href="#" onclick="bootbox.alert({message: 'Le falta el archivo facturascripts.ini',title: '<b>Atención</b>'});">
-                           <span class="glyphicon glyphicon-remove"></span>&nbsp; Incompatible
-                        </a>
-                        {/if}
-                        {if="!$fsc->disable_rm_plugins"}
-                        <a class="btn btn-sm btn-default" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
-                           <span class="glyphicon glyphicon-trash"></span>
-                        </a>
-                        {/if}
-                     </div>
-                     {/if}
-                  </td>
                </tr>
                {else}
                <tr class="warning">

@@ -2,16 +2,6 @@
 
 {if="$fsc->suser"}
 <script type="text/javascript">
-   function fs_marcar_todo()
-   {
-      $("#f_user_pages input[name='enabled[]']").prop('checked', true);
-      $("#f_user_pages input[name='allow_delete[]']").prop('checked', true);
-   }
-   function fs_marcar_nada()
-   {
-      $("#f_user_pages input[name='enabled[]']").prop('checked', false);
-      $("#f_user_pages input[name='allow_delete[]']").prop('checked', false);
-   }
    function check_allow_delete(counter)
    {
       if( $("#enabled_"+counter).is(':checked') )
@@ -40,6 +30,14 @@
          event.preventDefault();
          $("#modal_nuevo_agente").modal('show');
          document.f_nuevo_agente.nnombre.focus();
+      });
+      $('#marcar_todo_ver').click(function() {
+         var checked = $(this).prop('checked');
+         $("#f_user_pages input[name='enabled[]']").prop('checked', checked);
+      });
+      $('#marcar_todo_eliminar').click(function() {
+         var checked = $(this).prop('checked');
+         $("#f_user_pages input[name='allow_delete[]']").prop('checked', checked);
       });
    });
 </script>
@@ -237,10 +235,20 @@
                         <th class="text-left">Página</th>
                         <th class="text-left">Menú</th>
                         <th class="text-center">Ver / Modificar</th>
-                        <th></th>
                         <th class="text-center">Permiso de eliminación</th>
                      </tr>
                   </thead>
+                  {if="$fsc->user->admin"}
+                  <tr class="warning">
+                     <td colspan="2"></td>
+                     <td class="text-center" title="Marcar/desmarcar todos">
+                        <input id="marcar_todo_ver" type="checkbox" name="p_ver_modificar" value=""/>
+                     </td>
+                     <td class="text-center" title="Marcar/desmarcar todos">
+                        <input id="marcar_todo_eliminar" type="checkbox" name="p_eliminar" value=""/>
+                     </td>
+                  </tr>
+                  {/if}
                   {if="$fsc->suser->admin"}
                   <tr class="success">
                      <td colspan="5">
@@ -250,7 +258,7 @@
                   </tr>
                   {elseif="!$fsc->user->admin"}
                      {loop="$fsc->all_pages()"}
-                     <tr{if="$value->enabled"} class="{if="$value->allow_delete"}success{else}warning{/if}"{/if}>
+                     <tr>
                         <td>{$value->name}</td>
                         <td>
                            {if="$value->important"}
@@ -268,7 +276,6 @@
                            <span class="glyphicon glyphicon-lock"></span>
                            {/if}
                         </td>
-                        <td class="text-center"></td>
                         <td class="text-center">
                            {if="$value->allow_delete"}
                            <span class="glyphicon glyphicon-check"></span>
@@ -280,7 +287,7 @@
                      {/loop}
                   {else}
                      {loop="$fsc->all_pages()"}
-                     <tr{if="$value->enabled"} class="{if="$value->allow_delete"}success{else}warning{/if}"{/if}>
+                     <tr>
                         <td>{$value->name}</td>
                         <td>
                            {if="$value->important"}
@@ -292,22 +299,18 @@
                            {/if}
                         </td>
                         <td class="text-center">
-                           <input type="checkbox" id="enabled_{$counter}" name="enabled[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')"{if="$value->enabled"} checked=""{/if}/>
-                        </td>
-                        <td class="text-center">
-                           {if="$counter==0"}
-                           <div class="btn-group">
-                              <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_todo()" title="Marcar todo">
-                                 <span class="glyphicon glyphicon-check"></span>
-                              </button>
-                              <button class="btn btn-xs btn-default" type="button" onclick="fs_marcar_nada()" title="Desmarcar todo">
-                                 <span class="glyphicon glyphicon-unchecked"></span>
-                              </button>
-                           </div>
+                           {if="$value->enabled"}
+                           <input type="checkbox" id="enabled_{$counter}" name="enabled[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')" checked=""/>
+                           {else}
+                           <input type="checkbox" id="enabled_{$counter}" name="enabled[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')"/>
                            {/if}
                         </td>
-                        <td class="text-center">
-                           <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"{if="$value->allow_delete"} checked=""{/if} title="el usuario tiene permisos para eliminar en esta página"/>
+                        <td class="text-center" title="el usuario tiene permisos para eliminar en esta página">
+                           {if="$value->allow_delete"}
+                           <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}" checked=""/>
+                           {else}
+                           <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"/>
+                           {/if}
                         </td>
                      </tr>
                      {/loop}
@@ -382,7 +385,7 @@
          {loop="$fsc->extensions"}
             {if="$value->type=='tab'"}
             <div role="tabpanel" class="tab-pane" id="ext_{$value->name}">
-               <iframe src="index.php?page={$value->from}{$value->params}&snick={$fsc->suser->nick}" width="100%" height="2000" frameborder="0"></iframe>
+               <iframe src="index.php?page={$value->from}{$value->params}&snick={$fsc->suser->nick}" width="100%" height="2000"></iframe>
             </div>
             {/if}
          {/loop}

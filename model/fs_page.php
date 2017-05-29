@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -22,8 +23,8 @@
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_page extends fs_model
-{
+class fs_page extends fs_model {
+
    /**
     * Clave primaria. Varchar (30).
     * Nombre de la página (controlador).
@@ -31,57 +32,50 @@ class fs_page extends fs_model
     */
    public $name;
    public $title;
-   
+
    /**
     * Nombre del menú donde queremos colocar el acceso.
     * @var type 
     */
    public $folder;
    public $version;
-   
+
    /**
     * FALSE -> ocultar en el menú.
     * @var type 
     */
    public $show_on_menu;
-   
    public $exists;
    public $enabled;
    public $extra_url;
-   
+
    /**
     * Cuando un usuario no tiene asignada una página por defecto, se selecciona
     * la primera página importante a la que tiene acceso.
     */
    public $important;
    public $orden;
-   
-   public function __construct($p=FALSE)
-   {
+
+   public function __construct($p = FALSE) {
       parent::__construct('fs_pages');
-      if($p)
-      {
+      if ($p) {
          $this->name = $p['name'];
          $this->title = $p['title'];
          $this->folder = $p['folder'];
-         
+
          $this->version = NULL;
-         if( isset($p['version']) )
-         {
+         if (isset($p['version'])) {
             $this->version = $p['version'];
          }
-         
+
          $this->show_on_menu = $this->str2bool($p['show_on_menu']);
          $this->important = $this->str2bool($p['important']);
-         
+
          $this->orden = 100;
-         if( isset($p['orden']) )
-         {
+         if (isset($p['orden'])) {
             $this->orden = $this->intval($p['orden']);
          }
-      }
-      else
-      {
+      } else {
          $this->name = NULL;
          $this->title = NULL;
          $this->folder = NULL;
@@ -90,14 +84,13 @@ class fs_page extends fs_model
          $this->important = FALSE;
          $this->orden = 100;
       }
-      
+
       $this->exists = FALSE;
       $this->enabled = FALSE;
       $this->extra_url = '';
    }
-   
-   public function __clone()
-   {
+
+   public function __clone() {
       $page = new fs_page();
       $page->name = $this->name;
       $page->title = $this->title;
@@ -107,105 +100,83 @@ class fs_page extends fs_model
       $page->important = $this->important;
       $page->orden = $this->orden;
    }
-   
-   protected function install()
-   {
+
+   protected function install() {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu)
+      return "INSERT INTO " . $this->table_name . " (name,title,folder,version,show_on_menu)
          VALUES ('admin_home','panel de control','admin',NULL,TRUE);";
    }
-   
-   public function url()
-   {
-      if( is_null($this->name) )
-      {
+
+   public function url() {
+      if (is_null($this->name)) {
          return 'index.php?page=admin_home';
-      }
-      else
-         return 'index.php?page='.$this->name.$this->extra_url;
+      } else
+         return 'index.php?page=' . $this->name . $this->extra_url;
    }
-   
-   public function is_default()
-   {
+
+   public function is_default() {
       return ( $this->name == $this->default_items->default_page() );
    }
-   
-   public function showing()
-   {
+
+   public function showing() {
       return ( $this->name == $this->default_items->showing_page() );
    }
-   
-   public function exists()
-   {
-      if( is_null($this->name) )
-      {
+
+   public function exists() {
+      if (is_null($this->name)) {
          return FALSE;
-      }
-      else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
+      } else
+         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
    }
-   
-   public function get($name)
-   {
-      $p = $this->db->select("SELECT * FROM ".$this->table_name." WHERE name = ".$this->var2str($name).";");
-      if($p)
-      {
+
+   public function get($name) {
+      $p = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
+      if ($p) {
          return new fs_page($p[0]);
-      }
-      else
+      } else
          return FALSE;
    }
-   
-   public function save()
-   {
+
+   public function save() {
       $this->clean_cache();
-      
-      if( $this->exists() )
-      {
-         $sql = "UPDATE ".$this->table_name." SET title = ".$this->var2str($this->title)
-                 .", folder = ".$this->var2str($this->folder)
-                 .", version = ".$this->var2str($this->version)
-                 .", show_on_menu = ".$this->var2str($this->show_on_menu)
-                 .", important = ".$this->var2str($this->important)
-                 .", orden = ".$this->var2str($this->orden)
-                 ."  WHERE name = ".$this->var2str($this->name).";";
+
+      if ($this->exists()) {
+         $sql = "UPDATE " . $this->table_name . " SET title = " . $this->var2str($this->title)
+                 . ", folder = " . $this->var2str($this->folder)
+                 . ", version = " . $this->var2str($this->version)
+                 . ", show_on_menu = " . $this->var2str($this->show_on_menu)
+                 . ", important = " . $this->var2str($this->important)
+                 . ", orden = " . $this->var2str($this->orden)
+                 . "  WHERE name = " . $this->var2str($this->name) . ";";
+      } else {
+         $sql = "INSERT INTO " . $this->table_name . " (name,title,folder,version,show_on_menu,important,orden) VALUES "
+                 . "(" . $this->var2str($this->name)
+                 . "," . $this->var2str($this->title)
+                 . "," . $this->var2str($this->folder)
+                 . "," . $this->var2str($this->version)
+                 . "," . $this->var2str($this->show_on_menu)
+                 . "," . $this->var2str($this->important)
+                 . "," . $this->var2str($this->orden) . ");";
       }
-      else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (name,title,folder,version,show_on_menu,important,orden) VALUES "
-                 . "(".$this->var2str($this->name)
-                 . ",".$this->var2str($this->title)
-                 . ",".$this->var2str($this->folder)
-                 . ",".$this->var2str($this->version)
-                 . ",".$this->var2str($this->show_on_menu)
-                 . ",".$this->var2str($this->important)
-                 . ",".$this->var2str($this->orden).");";
-      }
-      
+
       return $this->db->exec($sql);
    }
-   
-   public function delete()
-   {
+
+   public function delete() {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE name = ".$this->var2str($this->name).";");
+      return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
    }
-   
-   private function clean_cache()
-   {
+
+   private function clean_cache() {
       $this->cache->delete('m_fs_page_all');
    }
-   
-   public function all()
-   {
+
+   public function all() {
       $pagelist = $this->cache->get_array('m_fs_page_all');
-      if( !$pagelist )
-      {
-         $pages = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY lower(folder) ASC, orden ASC, lower(title) ASC;");
-         if($pages)
-         {
-            foreach($pages as $p)
-            {
+      if (!$pagelist) {
+         $pages = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY lower(folder) ASC, orden ASC, lower(title) ASC;");
+         if ($pages) {
+            foreach ($pages as $p) {
                $pagelist[] = new fs_page($p);
             }
          }
@@ -213,4 +184,5 @@ class fs_page extends fs_model
       }
       return $pagelist;
    }
+
 }

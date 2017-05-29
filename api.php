@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -27,48 +28,34 @@ $db = new fs_db2();
 require_once 'base/fs_model.php';
 require_model('fs_extension.php');
 
-if( $db->connect() )
-{
-   if( !isset($_REQUEST['v']) )
-   {
+if ($db->connect()) {
+   if (!isset($_REQUEST['v'])) {
       echo 'Version de la API de FacturaScripts ausente. Actualiza el cliente.';
-   }
-   else if($_REQUEST['v'] == '2')
-   {
-      if( isset($_REQUEST['f']) )
-      {
+   } else if ($_REQUEST['v'] == '2') {
+      if (isset($_REQUEST['f'])) {
          $ejecutada = FALSE;
          $fsext = new fs_extension();
-         foreach($fsext->all_4_type('api') as $ext)
-         {
-            if($ext->text == $_REQUEST['f'])
-            {
-               try
-               {
+         foreach ($fsext->all_4_type('api') as $ext) {
+            if ($ext->text == $_REQUEST['f']) {
+               try {
                   $_REQUEST['f']();
+               } catch (Exception $e) {
+                  echo 'ERROR: ' . $e->getMessage();
                }
-               catch(Exception $e)
-               {
-                  echo 'ERROR: '.$e->getMessage();
-               }
-               
+
                $ejecutada = TRUE;
                break;
             }
          }
-         
-         if(!$ejecutada)
-         {
+
+         if (!$ejecutada) {
             echo 'Ninguna funcion API ejecutada.';
          }
-      }
-      else
+      } else
          echo 'Ninguna funcion ejecutada.';
    }
-   else
-   {
+   else {
       echo 'Version de la API de FacturaScripts incorrecta. Actualiza el cliente.';
    }
-}
-else
+} else
    echo 'ERROR al conectar a la base de datos';

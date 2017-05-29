@@ -199,6 +199,9 @@ var Base64 = {
 
 }
 
+/*
+ * Esta función sirve para las extensiones tipo modal.
+ */
 function fs_modal(txt,url)
 {
    $("#modal_iframe h4.modal-title").html( Base64.decode(txt) );
@@ -216,10 +219,11 @@ $(document).ready(function() {
    $('.clickableRow').mousedown(function(event) {
       if(event.which === 1)
       {
+         var href = $(this).attr('href');
          var target = $(this).attr('target');
-         if(typeof target !== typeof undefined && target !== false)
+         if(typeof href !== typeof undefined && href !== false)
          {
-            if(target == '_blank')
+            if(typeof target !== typeof undefined && target === '_blank')
             {
                window.open( $(this).attr("href") );
             }
@@ -227,10 +231,6 @@ $(document).ready(function() {
             {
                parent.document.location = $(this).attr("href");
             }
-         }
-         else
-         {
-            parent.document.location = $(this).attr("href");
          }
       }
    });

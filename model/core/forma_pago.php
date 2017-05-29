@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -24,51 +25,49 @@ namespace FacturaScripts\model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class forma_pago extends \fs_model
-{
+class forma_pago extends \fs_model {
+
    /**
     * Clave primaria. Varchar (10).
     * @var type 
     */
    public $codpago;
    public $descripcion;
-   
+
    /**
     * Pagados -> marca las facturas generadas como pagadas.
     * @var type 
     */
    public $genrecibos;
-   
+
    /**
     * Código de la cuenta bancaria asociada.
     * @var type 
     */
    public $codcuenta;
-   
+
    /**
     * Para indicar si hay que mostrar la cuenta bancaria del cliente.
     * @var type 
     */
    public $domiciliado;
-   
+
    /**
     * TRUE (por defecto) -> mostrar los datos en documentos de venta,
     * incluida la cuenta bancaria asociada.
     * @var type 
     */
    public $imprimir;
-   
+
    /**
     * Sirve para generar la fecha de vencimiento de las facturas.
     * @var type 
     */
    public $vencimiento;
-   
-   public function __construct($f = FALSE)
-   {
+
+   public function __construct($f = FALSE) {
       parent::__construct('formaspago');
-      if($f)
-      {
+      if ($f) {
          $this->codpago = $f['codpago'];
          $this->descripcion = $f['descripcion'];
          $this->genrecibos = $f['genrecibos'];
@@ -76,9 +75,7 @@ class forma_pago extends \fs_model
          $this->domiciliado = $this->str2bool($f['domiciliado']);
          $this->imprimir = $this->str2bool($f['imprimir']);
          $this->vencimiento = $f['vencimiento'];
-      }
-      else
-      {
+      } else {
          $this->codpago = NULL;
          $this->descripcion = '';
          $this->genrecibos = 'Emitidos';
@@ -88,163 +85,142 @@ class forma_pago extends \fs_model
          $this->vencimiento = '+1day';
       }
    }
-   
-   public function install()
-   {
+
+   public function install() {
       $this->clean_cache();
-      return "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
+      return "INSERT INTO " . $this->table_name . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
               . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
               . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
               . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
               . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
    }
-   
+
    /**
     * Devuelve la URL donde ver/modificar los datos
     * @return string
     */
-   public function url()
-   {
+   public function url() {
       return 'index.php?page=contabilidad_formas_pago';
    }
-   
+
    /**
     * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
     * @return type
     */
-   public function is_default()
-   {
+   public function is_default() {
       return ( $this->codpago == $this->default_items->codpago() );
    }
-   
+
    /**
     * Devuelve la forma de pago con codpago = $cod
     * @param type $cod
     * @return \FacturaScripts\model\forma_pago|boolean
     */
-   public function get($cod)
-   {
-      $pago = $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = ".$this->var2str($cod).";");
-      if($pago)
-      {
+   public function get($cod) {
+      $pago = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($cod) . ";");
+      if ($pago) {
          return new \forma_pago($pago[0]);
-      }
-      else
+      } else
          return FALSE;
    }
-   
+
    /**
     * Devuelve TRUE si la forma de pago existe
     * @return boolean
     */
-   public function exists()
-   {
-      if( is_null($this->codpago) )
-      {
+   public function exists() {
+      if (is_null($this->codpago)) {
          return FALSE;
-      }
-      else
-         return $this->db->select("SELECT * FROM ".$this->table_name." WHERE codpago = ".$this->var2str($this->codpago).";");
+      } else
+         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
    }
-   
+
    /**
     * Comprueba la validez de los datos de la forma de pago.
     */
-   public function test()
-   {
+   public function test() {
       $this->descripcion = $this->no_html($this->descripcion);
-      
+
       /// comprobamos la validez del vencimiento
       $fecha1 = Date('d-m-Y');
       $fecha2 = Date('d-m-Y', strtotime($this->vencimiento));
-      if( strtotime($fecha1) > strtotime($fecha2) )
-      {
+      if (strtotime($fecha1) > strtotime($fecha2)) {
          /// vencimiento no válido, asignamos el predeterminado
          $this->new_error_msg('Vencimiento no válido.');
          $this->vencimiento = '+1day';
       }
    }
-   
+
    /**
     * Guarda los datos en la base de datos
     * @return type
     */
-   public function save()
-   {
+   public function save() {
       $this->clean_cache();
       $this->test();
-      
-      if( $this->exists() )
-      {
-         $sql = "UPDATE ".$this->table_name." SET descripcion = ".$this->var2str($this->descripcion).
-                 ", genrecibos = ".$this->var2str($this->genrecibos).
-                 ", codcuenta = ".$this->var2str($this->codcuenta).
-                 ", domiciliado = ".$this->var2str($this->domiciliado).
-                 ", imprimir = ".$this->var2str($this->imprimir).
-                 ", vencimiento = ".$this->var2str($this->vencimiento).
-                 "  WHERE codpago = ".$this->var2str($this->codpago).";";
-      }
-      else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (codpago,descripcion,genrecibos,codcuenta
+
+      if ($this->exists()) {
+         $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion) .
+                 ", genrecibos = " . $this->var2str($this->genrecibos) .
+                 ", codcuenta = " . $this->var2str($this->codcuenta) .
+                 ", domiciliado = " . $this->var2str($this->domiciliado) .
+                 ", imprimir = " . $this->var2str($this->imprimir) .
+                 ", vencimiento = " . $this->var2str($this->vencimiento) .
+                 "  WHERE codpago = " . $this->var2str($this->codpago) . ";";
+      } else {
+         $sql = "INSERT INTO " . $this->table_name . " (codpago,descripcion,genrecibos,codcuenta
             ,domiciliado,imprimir,vencimiento) VALUES 
-                  (".$this->var2str($this->codpago).
-                 ",".$this->var2str($this->descripcion).
-                 ",".$this->var2str($this->genrecibos).
-                 ",".$this->var2str($this->codcuenta).
-                 ",".$this->var2str($this->domiciliado).
-                 ",".$this->var2str($this->imprimir).
-                 ",".$this->var2str($this->vencimiento).");";
+                  (" . $this->var2str($this->codpago) .
+                 "," . $this->var2str($this->descripcion) .
+                 "," . $this->var2str($this->genrecibos) .
+                 "," . $this->var2str($this->codcuenta) .
+                 "," . $this->var2str($this->domiciliado) .
+                 "," . $this->var2str($this->imprimir) .
+                 "," . $this->var2str($this->vencimiento) . ");";
       }
-      
+
       return $this->db->exec($sql);
    }
-   
+
    /**
     * Elimina la forma de pago
     * @return type
     */
-   public function delete()
-   {
+   public function delete() {
       $this->clean_cache();
-      return $this->db->exec("DELETE FROM ".$this->table_name." WHERE codpago = ".$this->var2str($this->codpago).";");
+      return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
    }
-   
+
    /**
     * Limpia la caché
     */
-   private function clean_cache()
-   {
+   private function clean_cache() {
       $this->cache->delete('m_forma_pago_all');
    }
-   
+
    /**
     * Devuelve un array con todas las formas de pago
     * @return \forma_pago
     */
-   public function all()
-   {
+   public function all() {
       /// Leemos la lista de la caché
       $listaformas = $this->cache->get_array('m_forma_pago_all');
-      if(!$listaformas)
-      {
+      if (!$listaformas) {
          /// si no está en caché, buscamos en la base de datos
-         $formas = $this->db->select("SELECT * FROM ".$this->table_name." ORDER BY descripcion ASC;");
-         if($formas)
-         {
-            foreach($formas as $f)
-            {
+         $formas = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;");
+         if ($formas) {
+            foreach ($formas as $f) {
                $listaformas[] = new \forma_pago($f);
             }
          }
-         
+
          /// guardamos la lista en caché
          $this->cache->set('m_forma_pago_all', $listaformas);
       }
-      
+
       return $listaformas;
    }
-   
+
    /**
     * A partir de una fecha devuelve la nueva fecha de vencimiento en base a esta forma de pago.
     * Si se proporciona $dias_de_pago se usarán para la nueva fecha.
@@ -252,69 +228,56 @@ class forma_pago extends \fs_model
     * @param type $dias_de_pago dias de pago específicos para el cliente (separados por comas).
     * @return type
     */
-   public function calcular_vencimiento($fecha_inicio, $dias_de_pago = '')
-   {
+   public function calcular_vencimiento($fecha_inicio, $dias_de_pago = '') {
       $fecha = $this->calcular_vencimiento2($fecha_inicio);
-      
+
       /// validamos los días de pago
       $array_dias = array();
-      foreach( str_getcsv($dias_de_pago) as $d )
-      {
-         if( intval($d) >= 1 AND intval($d) <= 31 )
-         {
+      foreach (str_getcsv($dias_de_pago) as $d) {
+         if (intval($d) >= 1 AND intval($d) <= 31) {
             $array_dias[] = intval($d);
          }
       }
-      
-      if($array_dias)
-      {
-         foreach($array_dias as $i => $dia_de_pago)
-         {
-            if($i == 0)
-            {
+
+      if ($array_dias) {
+         foreach ($array_dias as $i => $dia_de_pago) {
+            if ($i == 0) {
                $fecha = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
-            }
-            else
-            {
+            } else {
                /// si hay varios dias de pago, elegimos la fecha más cercana
                $fecha_temp = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
-               if( strtotime($fecha_temp) < strtotime($fecha) )
-               {
+               if (strtotime($fecha_temp) < strtotime($fecha)) {
                   $fecha = $fecha_temp;
                }
             }
          }
       }
-      
+
       return $fecha;
    }
-   
-   private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0)
-   {
-      if($dia_de_pago == 0)
-      {
-         return date('d-m-Y', strtotime($fecha_inicio.' '.$this->vencimiento));
-      }
-      else
-      {
-         $fecha = date('d-m-Y', strtotime($fecha_inicio.' '.$this->vencimiento));
+
+   private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0) {
+      if ($dia_de_pago == 0) {
+         return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
+      } else {
+         $fecha = date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
          $tmp_dia = date('d', strtotime($fecha));
          $tmp_mes = date('m', strtotime($fecha));
          $tmp_anyo = date('Y', strtotime($fecha));
-         
-         if($tmp_dia > $dia_de_pago)
-         {
+
+         if ($tmp_dia > $dia_de_pago) {
             /// calculamos el dia de cobro para el mes siguiente
-            $fecha = date('d-m-Y', strtotime($fecha.' +1 month'));
+            $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
             $tmp_mes = date('m', strtotime($fecha));
             $tmp_anyo = date('Y', strtotime($fecha));
          }
-         
+
          /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-         $tmp_dia = min( array($dia_de_pago, intval( date('t', strtotime($fecha)) )) );
-         
+         $tmp_dia = min(array($dia_de_pago, intval(date('t', strtotime($fecha)))));
+
          /// y por último generamos la fecha
-         return date('d-m-Y', strtotime($tmp_dia.'-'.$tmp_mes.'-'.$tmp_anyo));
+         return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
       }
    }
+
 }

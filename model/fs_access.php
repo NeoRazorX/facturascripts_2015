@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -23,101 +24,85 @@
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_access extends fs_model
-{
+class fs_access extends fs_model {
+
    /**
     * Nick del usuario.
     * @var type 
     */
    public $fs_user;
-   
+
    /**
     * Nombre de la página (nombre del controlador).
     * @var type 
     */
    public $fs_page;
-   
+
    /**
     * Otorga permisos al usuario a eliminar elementos en la página.
     * @var type 
     */
    public $allow_delete;
-   
-   public function __construct($a=FALSE)
-   {
+
+   public function __construct($a = FALSE) {
       parent::__construct('fs_access');
-      if($a)
-      {
+      if ($a) {
          $this->fs_user = $a['fs_user'];
          $this->fs_page = $a['fs_page'];
          $this->allow_delete = $this->str2bool($a['allow_delete']);
-      }
-      else
-      {
+      } else {
          $this->fs_user = NULL;
          $this->fs_page = NULL;
          $this->allow_delete = FALSE;
       }
    }
-   
-   protected function install()
-   {
+
+   protected function install() {
       return '';
    }
-   
-   public function exists()
-   {
-      if( is_null($this->fs_page) )
-      {
+
+   public function exists() {
+      if (is_null($this->fs_page)) {
          return FALSE;
-      }
-      else
-      {
-         return $this->db->select("SELECT * FROM ".$this->table_name
-                 ." WHERE fs_user = ".$this->var2str($this->fs_user)
-                 ." AND fs_page = ".$this->var2str($this->fs_page).";");
+      } else {
+         return $this->db->select("SELECT * FROM " . $this->table_name
+                         . " WHERE fs_user = " . $this->var2str($this->fs_user)
+                         . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
       }
    }
-   
-   public function save()
-   {
-      if( $this->exists() )
-      {
-         $sql = "UPDATE ".$this->table_name." SET allow_delete = ".$this->var2str($this->allow_delete)
-                 ." WHERE fs_user = ".$this->var2str($this->fs_user)
-                 ." AND fs_page = ".$this->var2str($this->fs_page).";";
+
+   public function save() {
+      if ($this->exists()) {
+         $sql = "UPDATE " . $this->table_name . " SET allow_delete = " . $this->var2str($this->allow_delete)
+                 . " WHERE fs_user = " . $this->var2str($this->fs_user)
+                 . " AND fs_page = " . $this->var2str($this->fs_page) . ";";
+      } else {
+         $sql = "INSERT INTO " . $this->table_name . " (fs_user,fs_page,allow_delete) VALUES "
+                 . "(" . $this->var2str($this->fs_user)
+                 . "," . $this->var2str($this->fs_page)
+                 . "," . $this->var2str($this->allow_delete) . ");";
       }
-      else
-      {
-         $sql = "INSERT INTO ".$this->table_name." (fs_user,fs_page,allow_delete) VALUES "
-                 . "(".$this->var2str($this->fs_user)
-                 . ",".$this->var2str($this->fs_page)
-                 . ",".$this->var2str($this->allow_delete).");";
-      }
-      
+
       return $this->db->exec($sql);
    }
-   
-   public function delete()
-   {
-      return $this->db->exec("DELETE FROM ".$this->table_name
-              ." WHERE fs_user = ".$this->var2str($this->fs_user)
-              ." AND fs_page = ".$this->var2str($this->fs_page).";");
+
+   public function delete() {
+      return $this->db->exec("DELETE FROM " . $this->table_name
+                      . " WHERE fs_user = " . $this->var2str($this->fs_user)
+                      . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
    }
-   
-   public function all_from_nick($nick)
-   {
+
+   public function all_from_nick($nick) {
       $accesslist = array();
-      
-      $access = $this->db->select("SELECT * FROM ".$this->table_name." WHERE fs_user = ".$this->var2str($nick).";");
-      if($access)
-      {
-         foreach($access as $a)
-         {
+
+      $access = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE fs_user = " . $this->var2str($nick) . ";");
+      if ($access) {
+         foreach ($access as $a) {
             $accesslist[] = new fs_access($a);
          }
       }
-      
+
       return $accesslist;
    }
+
 }

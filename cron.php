@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -39,21 +40,17 @@ require_model('empresa.php');
 require_model('fs_var.php');
 require_model('fs_log.php');
 
-if( $db->connect() )
-{
+if ($db->connect()) {
    $fsvar = new fs_var();
-   $cron_vars = $fsvar->array_get( array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE) );
-   
-   if($cron_vars['cron_lock'])
-   {
+   $cron_vars = $fsvar->array_get(array('cron_exists' => FALSE, 'cron_lock' => FALSE, 'cron_error' => FALSE));
+
+   if ($cron_vars['cron_lock']) {
       echo "\nERROR: Ya hay un cron en ejecución. Si crees que es un error,"
       . " ve a Admin > Información del sistema para solucionar el problema.";
-      
+
       /// marcamos el error en el cron
       $cron_vars['cron_error'] = 'TRUE';
-   }
-   else
-   {
+   } else {
       /**
        * He detectado que a veces, con el plugin kiwimaru,
        * el proceso cron tarda más de una hora, y por tanto se encadenan varios
@@ -63,74 +60,67 @@ if( $db->connect() )
        */
       $cron_vars['cron_lock'] = 'TRUE';
       $cron_vars['cron_exists'] = 'TRUE';
-      
+
       /// guardamos las variables
       $fsvar->array_save($cron_vars);
-      
+
       /// indicamos el inicio en el log
       $fslog = new fs_log();
       $fslog->tipo = 'cron';
       $fslog->detalle = 'Ejecutando el cron...';
       $fslog->save();
-      
+
       /// establecemos los elementos por defecto
       $fs_default_items = new fs_default_items();
       $empresa = new empresa();
-      $fs_default_items->set_codalmacen( $empresa->codalmacen );
-      $fs_default_items->set_coddivisa( $empresa->coddivisa );
-      $fs_default_items->set_codejercicio( $empresa->codejercicio );
-      $fs_default_items->set_codpago( $empresa->codpago );
-      $fs_default_items->set_codpais( $empresa->codpais );
-      $fs_default_items->set_codserie( $empresa->codserie );
-      
+      $fs_default_items->set_codalmacen($empresa->codalmacen);
+      $fs_default_items->set_coddivisa($empresa->coddivisa);
+      $fs_default_items->set_codejercicio($empresa->codejercicio);
+      $fs_default_items->set_codpago($empresa->codpago);
+      $fs_default_items->set_codpais($empresa->codpais);
+      $fs_default_items->set_codserie($empresa->codserie);
+
       /*
        * Ahora ejecutamos el cron de cada plugin que tenga cron y esté activado
        */
-      foreach($GLOBALS['plugins'] as $plugin)
-      {
-         if( file_exists('plugins/'.$plugin.'/cron.php') )
-         {
-            echo "\n***********************\nEjecutamos el cron.php del plugin ".$plugin."\n";
-            
-            include 'plugins/'.$plugin.'/cron.php';
-            
+      foreach ($GLOBALS['plugins'] as $plugin) {
+         if (file_exists('plugins/' . $plugin . '/cron.php')) {
+            echo "\n***********************\nEjecutamos el cron.php del plugin " . $plugin . "\n";
+
+            include 'plugins/' . $plugin . '/cron.php';
+
             echo "\n***********************";
          }
       }
-      
+
       /// indicamos el fin en el log
       $fslog = new fs_log();
       $fslog->tipo = 'cron';
       $fslog->detalle = 'Terminada la ejecución del cron.';
       $fslog->save();
-      
+
       /// Eliminamos la variable cron_lock puesto que ya hemos terminado
       $cron_vars['cron_lock'] = FALSE;
    }
-   
+
    /// guardamos las variables
    $fsvar->array_save($cron_vars);
-   
-   foreach($fsvar->get_errors() as $err)
-   {
-      echo "\nERROR: ".$err."\n";
+
+   foreach ($fsvar->get_errors() as $err) {
+      echo "\nERROR: " . $err . "\n";
    }
-   foreach($db->get_errors() as $err)
-   {
-      echo "\nERROR: ".$err."\n";
+   foreach ($db->get_errors() as $err) {
+      echo "\nERROR: " . $err . "\n";
    }
-   
+
    $db->close();
-}
-else
-{
+} else {
    echo "¡Imposible conectar a la base de datos!\n";
-   
-   foreach($db->get_errors() as $err)
-   {
-      echo $err."\n";
+
+   foreach ($db->get_errors() as $err) {
+      echo $err . "\n";
    }
 }
 
 $tiempo = explode(' ', microtime());
-echo "\nTiempo de ejecución: ".number_format($tiempo[1] + $tiempo[0] - $uptime, 3)." s\n";
+echo "\nTiempo de ejecución: " . number_format($tiempo[1] + $tiempo[0] - $uptime, 3) . " s\n";

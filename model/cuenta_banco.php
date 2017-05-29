@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -24,7 +25,6 @@ require_once 'model/core/cuenta_banco.php';
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class cuenta_banco extends FacturaScripts\model\cuenta_banco
-{
+class cuenta_banco extends FacturaScripts\model\cuenta_banco {
    
 }
