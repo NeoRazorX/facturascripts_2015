@@ -205,25 +205,20 @@ class fs_mysql {
     * @return type
     */
    public function get_constraints($table) {
-      $sql = "SELECT t1.constraint_name as restriccion,
-            t1.constraint_type as tipo,
-            t2.column_name,
-            t2.referenced_table_name AS foreign_table_name,
-            t2.referenced_column_name AS foreign_column_name,
-            t3.update_rule AS on_update,
-            t3.delete_rule AS on_delete
-         FROM information_schema.table_constraints t1
-         LEFT JOIN information_schema.key_column_usage t2
-            ON t1.table_schema = t2.table_schema
-            AND t1.table_name = t2.table_name
-            AND t1.constraint_name = t2.constraint_name
-         LEFT JOIN information_schema.referential_constraints t3
-            ON t3.constraint_schema = t1.table_schema
-            AND t3.constraint_name = t1.constraint_name
-         WHERE t1.table_schema = SCHEMA() AND t1.table_name = '" . $table . "'
-         ORDER BY tipo DESC, restriccion ASC;";
+      $constraints = array();
 
-      return $this->select($sql);
+      $aux = $this->select("SELECT * FROM information_schema.table_constraints
+         WHERE table_schema = schema() AND table_name = '" . $table . "';");
+      if ($aux) {
+         foreach ($aux as $a) {
+            $constraints[] = array(
+                'restriccion' => $a['CONSTRAINT_NAME'],
+                'tipo' => $a['CONSTRAINT_TYPE']
+            );
+         }
+      }
+
+      return $constraints;
    }
 
    /**
