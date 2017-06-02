@@ -146,8 +146,7 @@ class admin_home extends fs_controller {
                $this->clean_cache();
             } else
                $this->new_error_msg('Error al abrir el archivo ZIP. Código: ' . $res);
-         }
-         else {
+         } else {
             $this->new_error_msg('Archivo no encontrado. ¿Pesa más de '
                     . $this->get_max_file_upload() . ' MB? Ese es el límite que tienes'
                     . ' configurado en tu servidor.');

@@ -57,8 +57,8 @@ if (!file_exists('config.php')) {
 
    /// ¿Qué controlador usar?
    $pagename = '';
-   if (isset($_GET['page'])) {
-      $pagename = $_GET['page'];
+   if (filter_input(INPUT_GET, 'page')) {
+      $pagename = filter_input(INPUT_GET, 'page');
    } else if (defined('FS_HOMEPAGE')) {
       $pagename = FS_HOMEPAGE;
    }
@@ -111,7 +111,7 @@ if (!file_exists('config.php')) {
       $fsc = new fs_controller();
    }
 
-   if (!isset($_GET['page'])) {
+   if (is_null(filter_input(INPUT_GET, 'page'))) {
       /// redireccionamos a la página definida por el usuario
       $fsc->select_default_page();
    }
@@ -138,12 +138,13 @@ if (!file_exists('config.php')) {
       $tpl = new RainTPL();
       $tpl->assign('fsc', $fsc);
 
-      if (isset($_POST['user'])) {
-         $tpl->assign('nlogin', $_POST['user']);
-      } else if (isset($_COOKIE['user'])) {
-         $tpl->assign('nlogin', $_COOKIE['user']);
-      } else
+      if (filter_input(INPUT_POST, 'user')) {
+         $tpl->assign('nlogin', filter_input(INPUT_POST, 'user'));
+      } else if (filter_input(INPUT_COOKIE, 'user')) {
+         $tpl->assign('nlogin', filter_input(INPUT_COOKIE, 'user'));
+      } else {
          $tpl->assign('nlogin', '');
+      }
 
       $tpl->draw($fsc->template);
    }

@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -309,20 +309,32 @@ class agente extends \fs_model {
     * Devuelve un array con todos los agentes/empleados.
     * @return \agente
     */
-   public function all() {
-      /// leemos esta lista de la caché
-      $listagentes = $this->cache->get_array('m_agente_all');
-      if (!$listagentes) {
-         /// si no está en caché, leemos de la base de datos
-         $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC;");
+   public function all($incluir_debaja = FALSE) {
+
+      if ($incluir_debaja) {
+         $listagentes = array();
+         $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC, apellidos ASC;");
          if ($data) {
             foreach ($data as $a) {
                $listagentes[] = new \agente($a);
             }
          }
+      } else {
+         /// leemos esta lista de la caché
+         $listagentes = $this->cache->get_array('m_agente_all');
 
-         /// guardamos la lista en caché
-         $this->cache->set('m_agente_all', $listagentes);
+         if (!$listagentes) {
+            /// si no está en caché, leemos de la base de datos
+            $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
+            if ($data) {
+               foreach ($data as $a) {
+                  $listagentes[] = new \agente($a);
+               }
+            }
+
+            /// guardamos la lista en caché
+            $this->cache->set('m_agente_all', $listagentes);
+         }
       }
 
       return $listagentes;

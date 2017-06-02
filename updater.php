@@ -696,25 +696,29 @@ if ($updater->errores != '') {
                   </div>
                </div>
             </div>
-            <div class="col-sm-1"></div>
-            <div class="col-sm-2">
-               <a href="https://www.facturascripts.com/promo" target="_blank" class="thumbnail" style="margin-bottom: 0px;">
-                  <img src='https://i.imgur.com/5XRa2Cm.png' alt="adminlte"/>
-               </a>
-               <p class="help-block">
-                  Hemos trabajado en un <b>nuevo diseño</b> para dar un aspecto más moderno a FacturaScripts,
-                  con un nuevo menú lateral, buscador integrado, más visibilidad del usuario,
-                  más y mejores iconos y un largo etcétera. Este es el resultado.
-               </p>
-               <br/>
-               <a href="https://www.facturascripts.com/ideas#mejoras" target="_blank" class="btn btn-block btn-default">
-                  <i class="fa fa-trophy fa-3x" aria-hidden="true"></i>
-                  <br/>Mejoras
-               </a>
-               <p class="help-block">
-                  Tenemos una serie de mejoras en el horno que te pueden interesar,
-                  pero necesitan financiación ¿Te apuntas? Sólo necesitas <b>5 €</b>.
-               </p>
+            <div class="col-sm-3">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">Financiación</h3>
+                  </div>
+                  <div class="panel-body">
+                     <div class="progress">
+                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
+                           <span class="sr-only">25% Complete</span>
+                        </div>
+                     </div>
+                     <p class="help-block">
+                        Hemos activado la financiación colectiva de FacturaScripts
+                        para que podáis colaborar en financiar la documentación,
+                        planificación, diseño, programación y mantenimiento de
+                        todo el proyecto, de forma que podamos desarrollar cada
+                        vez más plugins y actualizaciones.
+                     </p>
+                     <a href="https://www.facturascripts.com/store/producto/patrocinar-facturascripts/" target="_blank" class="btn btn-success">
+                        Aportar 5 €
+                     </a>
+                  </div>
+               </div>
             </div>
          </div>
       </div>

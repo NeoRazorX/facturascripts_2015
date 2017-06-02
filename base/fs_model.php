@@ -40,14 +40,14 @@ abstract class fs_model {
 
    /**
     * Nombre de la tabla en la base de datos.
-    * @var type 
+    * @var string 
     */
    protected $table_name;
 
    /**
     * Directorio donde se encuentra el directorio table con
     * el XML con la estructura de la tabla.
-    * @var type 
+    * @var string 
     */
    protected $base_dir;
 
@@ -68,8 +68,8 @@ abstract class fs_model {
    private static $messages;
 
    /**
-    * 
-    * @param type $name nombre de la tabla de la base de datos.
+    * Constructor.
+    * @param string $name nombre de la tabla de la base de datos.
     */
    public function __construct($name = '') {
       $this->cache = new fs_cache();
@@ -87,21 +87,15 @@ abstract class fs_model {
 
       $this->default_items = new fs_default_items();
 
-      if (!self::$errors) {
+      if (!isset(self::$checked_tables)) {
          self::$errors = array();
-      }
-
-      if (!self::$messages) {
          self::$messages = array();
-      }
 
-      if (!self::$checked_tables) {
          self::$checked_tables = $this->cache->get_array('fs_checked_tables');
          if (self::$checked_tables) {
             /// nos aseguramos de que existan todas las tablas que se suponen comprobadas
-            $tables = $this->db->list_tables();
             foreach (self::$checked_tables as $ct) {
-               if (!$this->db->table_exists($ct, $tables)) {
+               if (!$this->db->table_exists($ct)) {
                   $this->clean_checked_tables();
                   break;
                }
@@ -129,7 +123,7 @@ abstract class fs_model {
 
    /**
     * Muestra al usuario un mensaje de error
-    * @param type $msg mensaje de error
+    * @param string $msg mensaje de error
     */
    protected function new_error_msg($msg = FALSE) {
       if ($msg) {
@@ -154,7 +148,7 @@ abstract class fs_model {
 
    /**
     * Muestra al usuario un mensaje.
-    * @param type $msg
+    * @param string $msg
     */
    protected function new_message($msg = FALSE) {
       if ($msg) {
@@ -202,8 +196,8 @@ abstract class fs_model {
 
    /**
     * Escapa las comillas de una cadena de texto.
-    * @param type $s cadena de texto a escapar
-    * @return type cadena de texto resultante
+    * @param string $s cadena de texto a escapar
+    * @return string cadena de texto resultante
     */
    protected function escape_string($s = '') {
       return $this->db->escape_string($s);
@@ -221,15 +215,16 @@ abstract class fs_model {
       } else if (is_bool($v)) {
          if ($v) {
             return 'TRUE';
-         } else
+         } else {
             return 'FALSE';
-      }
-      else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $v)) { /// es una fecha
+         }
+      } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $v)) { /// es una fecha
          return "'" . Date($this->db->date_style(), strtotime($v)) . "'";
       } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $v)) { /// es una fecha+hora
          return "'" . Date($this->db->date_style() . ' H:i:s', strtotime($v)) . "'";
-      } else
+      } else {
          return "'" . $this->db->escape_string($v) . "'";
+      }
    }
 
    /**
@@ -241,8 +236,9 @@ abstract class fs_model {
    protected function bin2str($v) {
       if (is_null($v)) {
          return 'NULL';
-      } else
+      } else {
          return "'" . base64_encode($v) . "'";
+      }
    }
 
    /**
@@ -254,16 +250,17 @@ abstract class fs_model {
    protected function str2bin($v) {
       if (is_null($v)) {
          return NULL;
-      } else
+      } else {
          return base64_decode($v);
+      }
    }
 
    /**
     * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
     * Esta función devuelve TRUE si el valor se corresponde con
     * alguno de los anteriores.
-    * @param type $v
-    * @return type
+    * @param string $v
+    * @return boolean
     */
    public function str2bool($v) {
       return ($v == 't' OR $v == '1');
@@ -278,23 +275,30 @@ abstract class fs_model {
    public function intval($s) {
       if (is_null($s)) {
          return NULL;
-      } else
+      } else {
          return intval($s);
+      }
    }
 
    /**
     * Compara dos números en coma flotante con una precisión de $precision,
     * devuelve TRUE si son iguales, FALSE en caso contrario.
+    * @param type $f1
+    * @param type $f2
+    * @param integer $precision
+    * @param boolean $round
+    * @return boolean
     */
    public function floatcmp($f1, $f2, $precision = 10, $round = FALSE) {
       if ($round OR ! function_exists('bccomp')) {
          return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
-      } else
+      } else {
          return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
+      }
    }
 
    /**
-    * Devuelve un array() con todas las fechas entre $first y $last.
+    * Devuelve un array con todas las fechas entre $first y $last.
     * @param type $first
     * @param type $last
     * @param type $step
@@ -323,6 +327,8 @@ abstract class fs_model {
     * 
     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
     * porque te encontrarás con muchas sorpresas desagradables.
+    * @param string $t
+    * @return string
     */
    public function no_html($t) {
       $newt = str_replace(
@@ -334,8 +340,8 @@ abstract class fs_model {
 
    /**
     * Devuelve una cadena de texto aleatorio de longitud $length
-    * @param type $length
-    * @return type
+    * @param integer $length
+    * @return string
     */
    protected function random_string($length = 10) {
       return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
@@ -343,45 +349,50 @@ abstract class fs_model {
 
    /**
     * Comprueba y actualiza la estructura de la tabla si es necesario
-    * @param type $table_name
+    * @param string $table_name
     * @return boolean
     */
    protected function check_table($table_name) {
       $done = TRUE;
-      $consulta = '';
-      $xml_columnas = array();
-      $xml_restricciones = array();
+      $sql = '';
+      $xml_cols = array();
+      $xml_cons = array();
 
-      if ($this->get_xml_table($table_name, $xml_columnas, $xml_restricciones)) {
+      if ($this->get_xml_table($table_name, $xml_cols, $xml_cons)) {
          if ($this->db->table_exists($table_name)) {
             if (!$this->db->check_table_aux($table_name)) {
                $this->new_error_msg('Error al convertir la tabla a InnoDB.');
             }
 
-            /// eliminamos restricciones
-            $restricciones = $this->db->get_constraints($table_name);
-            $consulta2 = $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones, TRUE);
-            if ($consulta2 != '') {
-               if (!$this->db->exec($consulta2)) {
+            /**
+             * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
+             * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
+             */
+            $db_cons = $this->db->get_constraints($table_name);
+            $sql2 = $this->db->compare_constraints($table_name, $xml_cons, $db_cons, TRUE);
+            if ($sql2 != '') {
+               if (!$this->db->exec($sql2)) {
                   $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
                }
+               
+               /// leemos de nuevo las restricciones
+               $db_cons = $this->db->get_constraints($table_name);
             }
 
             /// comparamos las columnas
-            $columnas = $this->db->get_columns($table_name);
-            $consulta .= $this->db->compare_columns($table_name, $xml_columnas, $columnas);
+            $db_cols = $this->db->get_columns($table_name);
+            $sql .= $this->db->compare_columns($table_name, $xml_cols, $db_cols);
 
             /// comparamos las restricciones
-            $restricciones = $this->db->get_constraints($table_name);
-            $consulta .= $this->db->compare_constraints($table_name, $xml_restricciones, $restricciones);
+            $sql .= $this->db->compare_constraints($table_name, $xml_cons, $db_cons);
          } else {
             /// generamos el sql para crear la tabla
-            $consulta .= $this->db->generate_table($table_name, $xml_columnas, $xml_restricciones);
-            $consulta .= $this->install();
+            $sql .= $this->db->generate_table($table_name, $xml_cols, $xml_cons);
+            $sql .= $this->install();
          }
 
-         if ($consulta != '') {
-            if (!$this->db->exec($consulta)) {
+         if ($sql != '') {
+            if (!$this->db->exec($sql)) {
                $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
                $done = FALSE;
             }
@@ -396,13 +407,13 @@ abstract class fs_model {
 
    /**
     * Obtiene las columnas y restricciones del fichero xml para una tabla
-    * @param type $table_name
-    * @param type $columnas
-    * @param type $restricciones
+    * @param string $table_name
+    * @param type $columns
+    * @param type $constraints
     * @return boolean
     */
-   protected function get_xml_table($table_name, &$columnas, &$restricciones) {
-      $retorno = FALSE;
+   protected function get_xml_table($table_name, &$columns, &$constraints) {
+      $return = FALSE;
       $filename = $this->base_dir . 'model/table/' . $table_name . '.xml';
 
       if (file_exists($filename)) {
@@ -411,42 +422,45 @@ abstract class fs_model {
             if ($xml->columna) {
                $i = 0;
                foreach ($xml->columna as $col) {
-                  $columnas[$i]['nombre'] = $col->nombre;
-                  $columnas[$i]['tipo'] = $col->tipo;
+                  $columns[$i]['nombre'] = (string) $col->nombre;
+                  $columns[$i]['tipo'] = (string) $col->tipo;
 
-                  $columnas[$i]['nulo'] = 'YES';
+                  $columns[$i]['nulo'] = 'YES';
                   if ($col->nulo) {
                      if (strtolower($col->nulo) == 'no') {
-                        $columnas[$i]['nulo'] = 'NO';
+                        $columns[$i]['nulo'] = 'NO';
                      }
                   }
 
                   if ($col->defecto == '') {
-                     $columnas[$i]['defecto'] = NULL;
-                  } else
-                     $columnas[$i]['defecto'] = $col->defecto;
+                     $columns[$i]['defecto'] = NULL;
+                  } else {
+                     $columns[$i]['defecto'] = (string) $col->defecto;
+                  }
 
                   $i++;
                }
 
                /// debe de haber columnas, sino es un fallo
-               $retorno = TRUE;
+               $return = TRUE;
             }
 
             if ($xml->restriccion) {
                $i = 0;
                foreach ($xml->restriccion as $col) {
-                  $restricciones[$i]['nombre'] = $col->nombre;
-                  $restricciones[$i]['consulta'] = $col->consulta;
+                  $constraints[$i]['nombre'] = (string) $col->nombre;
+                  $constraints[$i]['consulta'] = (string) $col->consulta;
                   $i++;
                }
             }
-         } else
+         } else {
             $this->new_error_msg('Error al leer el archivo ' . $filename);
-      } else
+         }
+      } else {
          $this->new_error_msg('Archivo ' . $filename . ' no encontrado.');
+      }
 
-      return $retorno;
+      return $return;
    }
 
 }

@@ -32,6 +32,7 @@ class admin_info extends fs_controller {
    public $b_ip;
    public $b_tipo;
    public $b_usuario;
+   public $db_tables;
    public $modulos_eneboo;
    public $resultados;
 
@@ -40,8 +41,6 @@ class admin_info extends fs_controller {
    }
 
    protected function private_core() {
-      $this->share_extensions();
-
       /// ¿El usuario tiene permiso para eliminar en esta página?
       $this->allow_delete = $this->user->admin;
 
@@ -103,6 +102,7 @@ class admin_info extends fs_controller {
       }
 
       $this->buscar_en_log();
+      $this->get_db_tables();
       $this->modulos_eneboo();
    }
 
@@ -127,15 +127,7 @@ class admin_info extends fs_controller {
    }
 
    public function get_db_tables() {
-      return $this->db->list_tables();
-   }
-
-   private function share_extensions() {
-      foreach ($this->extensions as $ext) {
-         if ($ext->name == 'bootstrap-table') {
-            $ext->delete();
-         }
-      }
+      $this->db_tables = $this->db->list_tables();
    }
 
    private function buscar_en_log() {
