@@ -422,7 +422,11 @@ class fs_mysql {
     */
    public function begin_transaction() {
       if (self::$link) {
-         return self::$link->begin_transaction();
+         /**
+          * Ejecutamos START TRANSACTION en lugar de begin_transaction()
+          * para mayor compatibilidad.
+          */
+         return self::$link->query("START TRANSACTION;");
       } else {
          return FALSE;
       }
