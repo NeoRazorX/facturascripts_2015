@@ -214,6 +214,46 @@ class fs_postgresql {
 
       return $constraints;
    }
+   
+   /**
+    * Devuelve una array con las restricciones de una tabla dada, pero aportando muchos más detalles.
+    * @param string $table_name
+    * @return type
+    */
+   public function get_constraints_extended($table_name) {
+      $constraints = array();
+      $sql = "SELECT tc.constraint_name as name,
+            tc.constraint_type as type,
+            kcu.column_name,
+            ccu.table_name AS foreign_table_name,
+            ccu.column_name AS foreign_column_name,
+            rc.update_rule AS on_update,
+            rc.delete_rule AS on_delete
+         FROM information_schema.table_constraints AS tc
+         LEFT JOIN information_schema.key_column_usage AS kcu
+            ON kcu.constraint_schema = tc.constraint_schema
+            AND kcu.constraint_catalog = tc.constraint_catalog
+            AND kcu.constraint_name = tc.constraint_name
+         LEFT JOIN information_schema.constraint_column_usage AS ccu
+            ON ccu.constraint_schema = tc.constraint_schema
+            AND ccu.constraint_catalog = tc.constraint_catalog
+            AND ccu.constraint_name = tc.constraint_name
+         LEFT JOIN information_schema.referential_constraints rc
+            ON rc.constraint_schema = tc.constraint_schema
+            AND rc.constraint_catalog = tc.constraint_catalog
+            AND rc.constraint_name = tc.constraint_name
+         WHERE tc.table_name = '" . $table_name . "' AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')
+         ORDER BY type DESC, name ASC;";
+
+      $aux = $this->select($sql);
+      if ($aux) {
+         foreach ($aux as $a) {
+            $constraints[] = $a;
+         }
+      }
+
+      return $constraints;
+   }
 
    /**
     * Devuelve una array con los indices de una tabla dada.

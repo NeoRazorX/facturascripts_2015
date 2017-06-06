@@ -148,12 +148,17 @@ class fs_db2 {
    /**
     * Devuelve una array con las restricciones de una tabla dada.
     * @param string $table_name
+    * @param boolean $extended
     * @return type
     */
-   public function get_constraints($table_name) {
-      return self::$engine->get_constraints($table_name);
+   public function get_constraints($table_name, $extended = FALSE) {
+      if($extended) {
+         return self::$engine->get_constraints_extended($table_name);
+      } else {
+         return self::$engine->get_constraints($table_name);
+      }
    }
-
+   
    /**
     * Devuelve una array con los indices de una tabla dada.
     * @param string $table_name

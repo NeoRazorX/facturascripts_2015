@@ -215,6 +215,41 @@ class fs_mysql {
 
       return $constraints;
    }
+   
+   /**
+    * Devuelve una array con las restricciones de una tabla dada, pero aportando muchos más detalles.
+    * @param string $table_name
+    * @return type
+    */
+   public function get_constraints_extended($table_name) {
+      $constraints = array();
+      $sql = "SELECT t1.constraint_name as name,
+            t1.constraint_type as type,
+            t2.column_name,
+            t2.referenced_table_name AS foreign_table_name,
+            t2.referenced_column_name AS foreign_column_name,
+            t3.update_rule AS on_update,
+            t3.delete_rule AS on_delete
+         FROM information_schema.table_constraints t1
+         LEFT JOIN information_schema.key_column_usage t2
+            ON t1.table_schema = t2.table_schema
+            AND t1.table_name = t2.table_name
+            AND t1.constraint_name = t2.constraint_name
+         LEFT JOIN information_schema.referential_constraints t3
+            ON t3.constraint_schema = t1.table_schema
+            AND t3.constraint_name = t1.constraint_name
+         WHERE t1.table_schema = SCHEMA() AND t1.table_name = '" . $table_name . "'
+         ORDER BY type DESC, name ASC;";
+
+      $aux = $this->select($sql);
+      if ($aux) {
+         foreach ($aux as $a) {
+            $constraints[] = $a;
+         }
+      }
+
+      return $constraints;
+   }
 
    /**
     * Devuelve una array con los indices de una tabla dada.
