@@ -50,4 +50,10 @@ ul.dropdown-menu li a:first-letter {
    cursor: pointer;
 }
 
-.modal-dialog {z-index: 1050;}
+.modal-dialog {
+   z-index: 1050;
+}
+
+iframe {
+   border: 0px;
+}
