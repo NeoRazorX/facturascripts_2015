@@ -35,7 +35,10 @@ function fatal_handler() {
    }
 }
 
-if (!file_exists('config.php')) {
+if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
+   /// comprobamos la versión de PHP
+   die('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP ' . phpversion());
+} else if (!file_exists('config.php')) {
    /// si no hay config.php redirigimos al instalador
    header('Location: install.php');
 } else {

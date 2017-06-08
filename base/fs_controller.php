@@ -163,11 +163,6 @@ class fs_controller {
       $this->cache = new fs_cache();
       $this->db = new fs_db2();
 
-      /// comprobamos la versión de PHP
-      if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
-         $this->new_error_msg('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP ' . phpversion() . '.', 'error', FALSE, FALSE);
-      }
-
       if ($this->db->connect()) {
          $this->user = new fs_user();
          $this->check_fs_page($name, $title, $folder, $shmenu, $important);
