@@ -269,7 +269,7 @@ class fs_controller {
 
       if ($this->ip_baneada($ips)) {
          $this->banear_ip($ips);
-         $this->new_error_msg('Tu IP ha sido baneada ' . $_POST['user'] . '. '
+         $this->new_error_msg('Tu IP ha sido baneada, ' . $_POST['user'] . '. '
                  . 'Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
       } else if ($_POST['new_password'] != $_POST['new_password2']) {
          $this->new_error_msg('Las contraseñas no coinciden ' . $_POST['user']);
