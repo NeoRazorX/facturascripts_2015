@@ -1197,7 +1197,6 @@ class fs_controller {
     * @return type
     */
    public function get_js_location($filename) {
-      $found = FALSE;
       foreach ($GLOBALS['plugins'] as $plugin) {
          if (file_exists('plugins/' . $plugin . '/view/js/' . $filename)) {
             return FS_PATH . 'plugins/' . $plugin . '/view/js/' . $filename . '?updated=' . date('YmdH');
