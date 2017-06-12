@@ -61,14 +61,14 @@ class admin_home extends fs_controller {
       $this->get_download_list();
       $fsvar = new fs_var();
 
-      if (isset($_GET['check4updates'])) {
+      if (filter_input(INPUT_GET, (string)'check4updates')) {
          $this->template = FALSE;
          if ($this->check_for_updates2()) {
             echo 'Hay actualizaciones disponibles.';
          } else
             echo 'No hay actualizaciones.';
       }
-      else if (isset($_GET['updated'])) {
+      else if (filter_input(INPUT_GET, (string)'updated')) {
          /// el sistema ya se ha actualizado
          $fsvar->simple_delete('updates');
          $this->activar_comprobacion_columnas();
@@ -79,12 +79,12 @@ class admin_home extends fs_controller {
                  . '<a href="https://www.facturascripts.com/comm3/index.php?page=community_questions">sección preguntas</a>.');
       } else if (!$this->user->admin) {
          $this->new_error_msg('Sólo un administrador puede hacer cambios en esta página.');
-      } else if (isset($_GET['skip'])) {
+      } else if (filter_input(INPUT_GET, (string)'skip')) {
          if ($this->step == '1') {
             $this->step = '2';
             $fsvar->simple_save('install_step', $this->step);
          }
-      } else if (isset($_POST['modpages'])) {
+      } else if (filter_input(INPUT_POST, (string)'modpages')) {
          /// activar/desactivas páginas del menú
 
          if (!$this->step) {
@@ -98,40 +98,40 @@ class admin_home extends fs_controller {
                   $this->new_message('Se ha eliminado automáticamente la página ' . $p->name .
                           ' ya que no tiene un controlador asociado en la carpeta controller.');
                }
-            } else if (!isset($_POST['enabled'])) { /// ninguna página marcada
+            } else if (!filter_input(INPUT_POST, (string)'enabled')) { /// ninguna página marcada
                $this->disable_page($p);
-            } else if (!$p->enabled AND in_array($p->name, $_POST['enabled'])) { /// página no activa marcada para activar
+            } else if (!$p->enabled AND in_array($p->name, filter_input(INPUT_POST, (string)'enabled'))) { /// página no activa marcada para activar
                $this->enable_page($p);
-            } else if ($p->enabled AND ! in_array($p->name, $_POST['enabled'])) { /// págine activa no marcada (desactivar)
+            } else if ($p->enabled AND ! in_array($p->name, filter_input(INPUT_POST, (string)'enabled'))) { /// págine activa no marcada (desactivar)
                $this->disable_page($p);
             }
          }
 
          $this->new_message('Datos guardados correctamente.');
-      } else if (isset($_GET['enable'])) {
+      } else if (filter_input(INPUT_GET, (string)'enable')) {
          /// activar plugin
-         $this->enable_plugin($_GET['enable']);
+         $this->enable_plugin(filter_input(INPUT_GET, (string)'enable'));
 
          if ($this->step == '1') {
             $this->step = '2';
             $fsvar->simple_save('install_step', $this->step);
          }
-      } else if (isset($_GET['disable'])) {
+      } else if (filter_input(INPUT_GET, (string)'disable')) {
          /// desactivar plugin
-         $this->disable_plugin($_GET['disable']);
-      } else if (isset($_GET['delete_plugin'])) {
+         $this->disable_plugin(filter_input(INPUT_GET, (string)'disable'));
+      } else if (filter_input(INPUT_GET, (string)'delete_plugin')) {
          /// eliminar plugin
          if ($this->disable_rm_plugins) {
             $this->new_error_msg('No tienes permiso para eliminar plugins.');
-         } else if (is_writable('plugins/' . $_GET['delete_plugin'])) {
-            if ($this->del_tree('plugins/' . $_GET['delete_plugin'])) {
-               $this->new_message('Plugin ' . $_GET['delete_plugin'] . ' eliminado correctamente.', TRUE);
+         } else if (is_writable('plugins/' . filter_input(INPUT_GET, (string)'delete_plugin'))) {
+            if ($this->del_tree('plugins/' . filter_input(INPUT_GET, (string)'delete_plugin'))) {
+               $this->new_message('Plugin ' . filter_input(INPUT_GET, (string)'delete_plugin') . ' eliminado correctamente.', TRUE);
             } else
-               $this->new_error_msg('Imposible eliminar el plugin ' . $_GET['delete_plugin']);
+               $this->new_error_msg('Imposible eliminar el plugin ' . filter_input(INPUT_GET, (string)'delete_plugin'));
          } else
-            $this->new_error_msg('No tienes permisos de escritura sobre la carpeta plugins/' . $_GET['delete_plugin']);
+            $this->new_error_msg('No tienes permisos de escritura sobre la carpeta plugins/' . filter_input(INPUT_GET, (string)'delete_plugin'));
       }
-      else if (isset($_POST['install'])) {
+      else if (filter_input(INPUT_POST, (string)'install')) {
          /// instalar plugin (copiarlo y descomprimirlo)
          if ($this->disable_add_plugins) {
             $this->new_error_msg('La subida de plugins está desactivada.');
@@ -151,21 +151,21 @@ class admin_home extends fs_controller {
                     . $this->get_max_file_upload() . ' MB? Ese es el límite que tienes'
                     . ' configurado en tu servidor.');
          }
-      } else if (isset($_GET['download'])) {
+      } else if (filter_input(INPUT_GET, (string)'download')) {
          if ($this->disable_mod_plugins) {
             $this->new_error_msg('No tienes permiso para descargar plugins.');
          } else {
             /// descargamos un plugin de la lista fija
             $this->download1();
          }
-      } else if (isset($_GET['download2'])) {
+      } else if (filter_input(INPUT_GET, (string)'download2')) {
          if ($this->disable_mod_plugins) {
             $this->new_error_msg('No tienes permiso para descargar plugins.');
          } else {
             /// descargamos un plugin de la lista de la comunidad
             $this->download2();
          }
-      } else if (isset($_GET['reset'])) {
+      } else if (filter_input(INPUT_GET, (string)'reset')) {
          /// reseteamos la configuración avanzada
          if (file_exists('tmp/' . FS_TMP_NAME . 'config2.ini')) {
             unlink('tmp/' . FS_TMP_NAME . 'config2.ini');
@@ -176,8 +176,8 @@ class admin_home extends fs_controller {
          /// ¿Guardamos las opciones de la pestaña avanzado?
          $guardar = FALSE;
          foreach ($GLOBALS['config2'] as $i => $value) {
-            if (isset($_POST[$i])) {
-               $GLOBALS['config2'][$i] = $_POST[$i];
+            if (filter_input(INPUT_POST, (string)$i)) {
+               $GLOBALS['config2'][$i] = filter_input(INPUT_POST, (string)$i);
                $guardar = TRUE;
             }
          }
@@ -728,10 +728,10 @@ class admin_home extends fs_controller {
     * Descarga un plugin de la lista de plugins fijos.
     */
    private function download1() {
-      if (isset($this->download_list[$_GET['download']])) {
-         $this->new_message('Descargando el plugin ' . $_GET['download']);
+      if (isset($this->download_list[filter_input(INPUT_GET, (string)'download')])) {
+         $this->new_message('Descargando el plugin ' . filter_input(INPUT_GET, (string)'download'));
 
-         if (@fs_file_download($this->download_list[$_GET['download']]['url'], 'download.zip')) {
+         if (@fs_file_download($this->download_list[filter_input(INPUT_GET, (string)'download')]['url'], 'download.zip')) {
             $zip = new ZipArchive();
             $res = $zip->open('download.zip', ZipArchive::CHECKCONS);
             if ($res === TRUE) {
@@ -752,14 +752,14 @@ class admin_home extends fs_controller {
                      }
 
                      if (!$encontrado2) {
-                        rename('plugins/' . $f, 'plugins/' . $_GET['download']);
+                        rename('plugins/' . $f, 'plugins/' . filter_input(INPUT_GET, (string)'download'));
                         break;
                      }
                   }
                }
 
                $this->new_message('Plugin añadido correctamente.');
-               $this->enable_plugin($_GET['download']);
+               $this->enable_plugin(filter_input(INPUT_GET, (string)'download'));
 
                if ($this->step == '1') {
                   $this->step = '2';
@@ -771,7 +771,7 @@ class admin_home extends fs_controller {
          }
          else {
             $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
-                    . '<a href="' . $this->download_list[$_GET['download']]['url'] . '" target="_blank">aquí</a> '
+                    . '<a href="' . $this->download_list[filter_input(INPUT_GET, (string)'download')]['url'] . '" target="_blank">aquí</a> '
                     . 'y añadirlo desde la pestaña <b>plugins</b>.');
          }
       } else
@@ -784,7 +784,7 @@ class admin_home extends fs_controller {
    private function download2() {
       $encontrado = FALSE;
       foreach ($this->download_list2 as $item) {
-         if ($item->id == intval($_GET['download2'])) {
+         if ($item->id == intval(filter_input(INPUT_GET, (string)'download2'))) {
             $this->new_message('Descargando el plugin ' . $item->nombre);
             $encontrado = TRUE;
 

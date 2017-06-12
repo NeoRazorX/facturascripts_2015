@@ -38,13 +38,13 @@ class admin_users extends fs_controller {
       $this->agente = new agente();
       $this->rol = new fs_rol();
 
-      if (isset($_POST['nnick'])) {
+      if (filter_input(INPUT_POST, (string)'nnick')) {
          $this->add_user();
-      } else if (isset($_GET['delete'])) {
+      } else if (filter_input(INPUT_GET, (string)'delete')) {
          $this->delete_user();
-      } else if (isset($_POST['nrol'])) {
+      } else if (filter_input(INPUT_POST, (string)'nrol')) {
          $this->add_rol();
-      } else if (isset($_GET['delete_rol'])) {
+      } else if (filter_input(INPUT_GET, (string)'delete_rol')) {
          $this->delete_rol();
       }
 
@@ -54,21 +54,21 @@ class admin_users extends fs_controller {
    }
 
    private function add_user() {
-      $nu = $this->user->get($_POST['nnick']);
+      $nu = $this->user->get(filter_input(INPUT_POST, (string)'nnick'));
       if ($nu) {
          $this->new_error_msg('El usuario <a href="' . $nu->url() . '">ya existe</a>.');
       } else if (!$this->user->admin) {
          $this->new_error_msg('Solamente un administrador puede crear usuarios.', TRUE, 'login', TRUE);
       } else {
          $nu = new fs_user();
-         $nu->nick = $_POST['nnick'];
-         $nu->email = strtolower($_POST['nemail']);
+         $nu->nick = filter_input(INPUT_POST, (string)'nnick');
+         $nu->email = strtolower(filter_input(INPUT_POST, (string)'nemail'));
 
-         if ($nu->set_password($_POST['npassword'])) {
-            $nu->admin = isset($_POST['nadmin']);
-            if (isset($_POST['ncodagente'])) {
-               if ($_POST['ncodagente'] != '') {
-                  $nu->codagente = $_POST['ncodagente'];
+         if ($nu->set_password(filter_input(INPUT_POST, (string)'npassword'))) {
+            $nu->admin = filter_input(INPUT_POST, (string)'nadmin');
+            if (filter_input(INPUT_POST, (string)'ncodagente')) {
+               if (filter_input(INPUT_POST, (string)'ncodagente') != '') {
+                  $nu->codagente = filter_input(INPUT_POST, (string)'ncodagente');
                }
             }
 
@@ -76,8 +76,8 @@ class admin_users extends fs_controller {
                $this->new_message('Usuario ' . $nu->nick . ' creado correctamente.', TRUE, 'login', TRUE);
 
                /// algún rol marcado
-               if (!$nu->admin AND isset($_POST['roles'])) {
-                  foreach ($_POST['roles'] as $codrol) {
+               if (!$nu->admin AND filter_input(INPUT_POST, (string)'roles')) {
+                  foreach (filter_input(INPUT_POST, (string)'roles') as $codrol) {
                      $rol = $this->rol->get($codrol);
                      if ($rol) {
                         $fru = new fs_rol_user();
@@ -105,7 +105,7 @@ class admin_users extends fs_controller {
    }
 
    private function delete_user() {
-      $nu = $this->user->get($_GET['delete']);
+      $nu = $this->user->get(filter_input(INPUT_GET, (string)'delete'));
       if ($nu) {
          if (FS_DEMO) {
             $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar usuarios.
@@ -121,8 +121,8 @@ class admin_users extends fs_controller {
    }
 
    private function add_rol() {
-      $this->rol->codrol = $_POST['nrol'];
-      $this->rol->descripcion = $_POST['descripcion'];
+      $this->rol->codrol = filter_input(INPUT_POST, (string)'nrol');
+      $this->rol->descripcion = filter_input(INPUT_POST, (string)'descripcion');
 
       if ($this->rol->save()) {
          $this->new_message('Datos guardados correctamente.');
@@ -133,7 +133,7 @@ class admin_users extends fs_controller {
    }
 
    private function delete_rol() {
-      $rol = $this->rol->get($_GET['delete_rol']);
+      $rol = $this->rol->get(filter_input(INPUT_GET, (string)'delete_rol'));
       if ($rol) {
          if ($rol->delete()) {
             $this->new_message('Rol eliminado correctamente.');

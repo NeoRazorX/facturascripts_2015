@@ -52,8 +52,8 @@ function guarda_config($nombre_archivo) {
       fwrite($archivo, "define('FS_DB_USER', '" . filter_input(INPUT_POST,'db_user') . "'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
       fwrite($archivo, "define('FS_DB_PASS', '" . filter_input(INPUT_POST,'db_pass') . "');\n");
 
-      if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' AND filter_input(INPUT_POST, 'mysql_socket') != '') {
-         fwrite($archivo, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
+      if (filter_input(INPUT_POST, (string)'db_type') == 'MYSQL' AND filter_input(INPUT_POST, (string)'mysql_socket') != '') {
+         fwrite($archivo, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, (string)'mysql_socket') . "');\n");
       }
 
       fwrite($archivo, "\n");
@@ -82,9 +82,9 @@ function guarda_config($nombre_archivo) {
       fwrite($archivo, " * FacturaScripts conectadas al mismo servidor memcache.\n");
       fwrite($archivo, " */\n");
       fwrite($archivo, "\n");
-      fwrite($archivo, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, 'cache_host') . "');\n");
-      fwrite($archivo, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, 'cache_port') . "');\n");
-      fwrite($archivo, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, 'cache_prefix') . "');\n");
+      fwrite($archivo, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, (string)'cache_host') . "');\n");
+      fwrite($archivo, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, (string)'cache_port') . "');\n");
+      fwrite($archivo, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, (string)'cache_prefix') . "');\n");
       fwrite($archivo, "\n");
       fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
       fwrite($archivo, "define('FS_COOKIES_EXPIRE', 604800);\n");
@@ -101,11 +101,11 @@ function guarda_config($nombre_archivo) {
       fwrite($archivo, "/// desactiva el poder eliminar plugins manualmente\n");
       fwrite($archivo, "define('FS_DISABLE_RM_PLUGINS', FALSE);\n");
 
-      if (filter_input(INPUT_POST, 'proxy_type')) {
+      if (filter_input(INPUT_POST, (string)'proxy_type')) {
          fwrite($archivo, "\n");
-         fwrite($archivo, "define('FS_PROXY_TYPE', '" . filter_input(INPUT_POST, 'proxy_type') . "');\n");
-         fwrite($archivo, "define('FS_PROXY_HOST', '" . filter_input(INPUT_POST, 'proxy_host') . "');\n");
-         fwrite($archivo, "define('FS_PROXY_PORT', '" . filter_input(INPUT_POST, 'proxy_port') . "');\n");
+         fwrite($archivo, "define('FS_PROXY_TYPE', '" . filter_input(INPUT_POST, (string)'proxy_type') . "');\n");
+         fwrite($archivo, "define('FS_PROXY_HOST', '" . filter_input(INPUT_POST, (string)'proxy_host') . "');\n");
+         fwrite($archivo, "define('FS_PROXY_PORT', '" . filter_input(INPUT_POST, (string)'proxy_port') . "');\n");
       }
 
       fclose($archivo);
@@ -139,24 +139,24 @@ if (file_exists('config.php')) {
 } else if (!is_writable(getcwd())) {
    $errors[] = "permisos";
 } else if (filter_input(INPUT_POST,'db_type')) {
-   if (filter_input(INPUT_POST, 'db_type') == 'MYSQL') {
+   if (filter_input(INPUT_POST, (string)'db_type') == 'MYSQL') {
       if (class_exists('mysqli')) {
-         if (filter_input(INPUT_POST, 'mysql_socket') != '') {
-            ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
+         if (filter_input(INPUT_POST, (string)'mysql_socket') != '') {
+            ini_set('mysqli.default_socket', filter_input(INPUT_POST, (string)'mysql_socket'));
          }
 
          // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
-         $connection = @new mysqli(filter_input(INPUT_POST, 'db_host'), filter_input(INPUT_POST, 'db_user'), filter_input(INPUT_POST, 'db_pass'), "", intval(filter_input(INPUT_POST, 'db_port')));
+         $connection = @new mysqli(filter_input(INPUT_POST, (string)'db_host'), filter_input(INPUT_POST, (string)'db_user'), filter_input(INPUT_POST, (string)'db_pass'), "", intval(filter_input(INPUT_POST, (string)'db_port')));
          if ($connection->connect_error) {
             $errors[] = "db_mysql";
             $errors2[] = $connection->connect_error;
          } else {
             // Comprobamos que la BD exista, de lo contrario la creamos
-            $db_selected = mysqli_select_db($connection, filter_input(INPUT_POST, 'db_name'));
+            $db_selected = mysqli_select_db($connection, filter_input(INPUT_POST, (string)'db_name'));
             if ($db_selected) {
                guarda_config($nombre_archivo);
             } else {
-               $sqlCrearBD = "CREATE DATABASE `" . filter_input(INPUT_POST, 'db_name') . "`;";
+               $sqlCrearBD = "CREATE DATABASE `" . filter_input(INPUT_POST, (string)'db_name') . "`;";
                if (mysqli_query($connection, $sqlCrearBD)) {
                   guarda_config($nombre_archivo);
                } else {
@@ -169,18 +169,18 @@ if (file_exists('config.php')) {
          $errors[] = "db_mysql";
          $errors2[] = 'No tienes instalada la extensión de PHP para MySQL.';
       }
-   } else if (filter_input(INPUT_POST, 'db_type') == 'POSTGRESQL') {
+   } else if (filter_input(INPUT_POST, (string)'db_type') == 'POSTGRESQL') {
       if (function_exists('pg_connect')) {
-         $connection = @pg_connect('host=' . filter_input(INPUT_POST, 'db_host') . ' port=' . filter_input(INPUT_POST, 'db_port') . ' user=' . filter_input(INPUT_POST, 'db_user') . ' password=' . filter_input(INPUT_POST, 'db_pass'));
+         $connection = @pg_connect('host=' . filter_input(INPUT_POST, (string)'db_host') . ' port=' . filter_input(INPUT_POST, (string)'db_port') . ' user=' . filter_input(INPUT_POST, (string)'db_user') . ' password=' . filter_input(INPUT_POST, (string)'db_pass'));
          if ($connection) {
             // Comprobamos que la BD exista, de lo contrario la creamos
-            $connection2 = @pg_connect('host=' . filter_input(INPUT_POST, 'db_host') . ' port=' . filter_input(INPUT_POST, 'db_port') . ' dbname=' . filter_input(INPUT_POST, 'db_name')
-                            . ' user=' . filter_input(INPUT_POST, 'db_user') . ' password=' . filter_input(INPUT_POST, 'db_pass'));
+            $connection2 = @pg_connect('host=' . filter_input(INPUT_POST, (string)'db_host') . ' port=' . filter_input(INPUT_POST, (string)'db_port') . ' dbname=' . filter_input(INPUT_POST, (string)'db_name')
+                            . ' user=' . filter_input(INPUT_POST, (string)'db_user') . ' password=' . filter_input(INPUT_POST, (string)'db_pass'));
 
             if ($connection2) {
                guarda_config($nombre_archivo);
             } else {
-               $sqlCrearBD = 'CREATE DATABASE "' . filter_input(INPUT_POST, 'db_name') . '";';
+               $sqlCrearBD = 'CREATE DATABASE "' . filter_input(INPUT_POST, (string)'db_name') . '";';
                if (pg_query($connection, $sqlCrearBD)) {
                   guarda_config($nombre_archivo);
                } else {
@@ -198,11 +198,11 @@ if (file_exists('config.php')) {
       }
    }
 
-   $db_type = filter_input(INPUT_POST, 'db_type');
-   $db_host = filter_input(INPUT_POST, 'db_host');
-   $db_port = filter_input(INPUT_POST, 'db_port');
-   $db_name = filter_input(INPUT_POST, 'db_name');
-   $db_user = filter_input(INPUT_POST, 'db_user');
+   $db_type = filter_input(INPUT_POST, (string)'db_type');
+   $db_host = filter_input(INPUT_POST, (string)'db_host');
+   $db_port = filter_input(INPUT_POST, (string)'db_port');
+   $db_name = filter_input(INPUT_POST, (string)'db_name');
+   $db_user = filter_input(INPUT_POST, (string)'db_user');
 }
 
 $system_info = 'facturascripts: ' . file_get_contents('VERSION') . "\n";

@@ -37,15 +37,15 @@ class admin_rol extends fs_controller {
       /// ¿El usuario tiene permiso para eliminar en esta página?
       $this->allow_delete = $this->user->admin;
 
-      if (isset($_REQUEST['codrol'])) {
+      if (filter_input(INPUT_POST, (string)'codrol')) {
          $fs_rol = new fs_rol();
-         $this->rol = $fs_rol->get($_REQUEST['codrol']);
+         $this->rol = $fs_rol->get(filter_input(INPUT_POST, (string)'codrol'));
       }
 
       if ($this->rol) {
-         if (isset($_POST['descripcion'])) {
+         if (filter_input(INPUT_POST, (string)'descripcion')) {
             $this->modify();
-         } else if (isset($_GET['aplicar'])) {
+         } else if (filter_input(INPUT_GET, (string)'aplicar')) {
             $this->aplicar_permisos();
          }
       } else {
@@ -107,7 +107,7 @@ class admin_rol extends fs_controller {
    }
 
    private function modify() {
-      $this->rol->descripcion = $_POST['descripcion'];
+      $this->rol->descripcion = filter_input(INPUT_POST, (string)'descripcion');
 
       if ($this->rol->save()) {
          /// para cada página, comprobamos si hay que darle acceso o no
@@ -118,17 +118,17 @@ class admin_rol extends fs_controller {
              * si ya estaba en la base de datos. Eso lo hace el modelo.
              */
             $a = new fs_rol_access(array('codrol' => $this->rol->codrol, 'fs_page' => $p->name, 'allow_delete' => FALSE));
-            if (isset($_POST['allow_delete'])) {
-               $a->allow_delete = in_array($p->name, $_POST['allow_delete']);
+            if (filter_input(INPUT_POST, (string)'allow_delete')) {
+               $a->allow_delete = in_array($p->name, filter_input(INPUT_POST, (string)'allow_delete'));
             }
 
-            if (!isset($_POST['enabled'])) {
+            if (!filter_input(INPUT_POST, (string)'enabled')) {
                /**
                 * No se ha marcado ningún checkbox de autorizado, así que eliminamos el acceso
                 * a todas las páginas. Una a una.
                 */
                $a->delete();
-            } else if (in_array($p->name, $_POST['enabled'])) {
+            } else if (in_array($p->name, filter_input(INPUT_POST, (string)'enabled'))) {
                /// la página ha sido marcada como autorizada.
                $a->save();
             } else {
@@ -146,13 +146,13 @@ class admin_rol extends fs_controller {
              */
             $a = new fs_rol_user(array('codrol' => $this->rol->codrol, 'fs_user' => $u->nick));
 
-            if (!isset($_POST['iuser'])) {
+            if (!filter_input(INPUT_POST, (string)'iuser')) {
                /**
                 * No se ha marcado ningún checkbox de autorizado, así que eliminamos la relación
                 * con todos los usuarios, uno a uno.
                 */
                $a->delete();
-            } else if (in_array($u->nick, $_POST['iuser'])) {
+            } else if (in_array($u->nick, filter_input(INPUT_POST, (string)'iuser'))) {
                /// el usuario ha sido marcado como incluido.
                $a->save();
             } else {

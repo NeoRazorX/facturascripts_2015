@@ -29,16 +29,16 @@ require_once 'base/fs_model.php';
 require_model('fs_extension.php');
 
 if ($db->connect()) {
-   if (!filter_input(INPUT_GET, 'v')) {
+   if (!filter_input(INPUT_GET, (string)'v')) {
       echo 'Version de la API de FacturaScripts ausente. Actualiza el cliente.';
-   } else if (filter_input(INPUT_GET, 'v') == '2') {
-      if (filter_input(INPUT_GET, 'f')) {
+   } else if (filter_input(INPUT_GET, (string)'v') == '2') {
+      if (filter_input(INPUT_GET, (string)'f')) {
          $ejecutada = FALSE;
          $fsext = new fs_extension();
          foreach ($fsext->all_4_type('api') as $ext) {
-            if ($ext->text == filter_input(INPUT_GET, 'f')) {
+            if ($ext->text == filter_input(INPUT_GET, (string)'f')) {
                try {
-                  filter_input(INPUT_GET, 'f')();
+                  filter_input(INPUT_GET, (string)'f')();
                } catch (Exception $e) {
                   echo 'ERROR: ' . $e->getMessage();
                }
