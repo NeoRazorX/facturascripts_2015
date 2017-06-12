@@ -121,7 +121,7 @@ class fs_controller {
 
    /**
     * Esta variable contiene el texto enviado como parámetro query por cualquier formulario,
-    * es decir, se corresponde con filter_input(INPUT_POST, (string) 'query']
+    * es decir, se corresponde con filter_input(INPUT_POST, 'query']
     * @var type 
     */
    public $query;
@@ -184,10 +184,10 @@ class fs_controller {
             }
          }
 
-         if (filter_input(INPUT_GET, (string) 'logout')) {
+         if (filter_input(INPUT_GET, 'logout')) {
             $this->template = 'login/default';
             $this->log_out();
-         } else if (filter_input(INPUT_POST, (string) 'new_password') AND filter_input(INPUT_POST, (string) 'new_password2') AND filter_input(INPUT_POST, (string) 'user')) {
+         } else if (filter_input(INPUT_POST, 'new_password') AND filter_input(INPUT_POST, 'new_password2') AND filter_input(INPUT_POST, 'user')) {
             $this->fs_change_user_passwd();
          } else if (!$this->log_in()) {
             $this->template = 'login/default';
@@ -201,8 +201,8 @@ class fs_controller {
                $this->template = $name;
 
                $this->query = '';
-               if (filter_input(INPUT_POST, (string) 'query')) {
-                  $this->query = filter_input(INPUT_POST, (string) 'query');
+               if (filter_input(INPUT_POST, 'query')) {
+                  $this->query = filter_input(INPUT_POST, 'query');
                }
 
                /// quitamos extensiones de páginas a las que el usuario no tenga acceso
@@ -269,23 +269,23 @@ class fs_controller {
 
       if ($this->ip_baneada($ips)) {
          $this->banear_ip($ips);
-         $this->new_error_msg('Tu IP ha sido baneada ' . filter_input(INPUT_POST, (string) 'user') . '. '
+         $this->new_error_msg('Tu IP ha sido baneada ' . (STRING)filter_input(INPUT_POST, 'user') . '. '
                  . 'Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
-      } else if (filter_input(INPUT_POST, (string) 'new_password') != filter_input(INPUT_POST, (string) 'new_password2')) {
-         $this->new_error_msg('Las contraseñas no coinciden ' . filter_input(INPUT_POST, (string) 'user'));
-      } else if (filter_input(INPUT_POST, (string) 'new_password') == '') {
-         $this->new_error_msg('Tienes que escribir una contraseña nueva ' . filter_input(INPUT_POST, (string) 'user'));
-      } else if (filter_input(INPUT_POST, (string) 'db_password') != FS_DB_PASS) {
+      } else if (filter_input(INPUT_POST, 'new_password') != filter_input(INPUT_POST, 'new_password2')) {
+         $this->new_error_msg('Las contraseñas no coinciden ' . (STRING)filter_input(INPUT_POST, 'user'));
+      } else if (filter_input(INPUT_POST, 'new_password') == '') {
+         $this->new_error_msg('Tienes que escribir una contraseña nueva ' . (STRING)filter_input(INPUT_POST, 'user'));
+      } else if (filter_input(INPUT_POST, 'db_password') != FS_DB_PASS) {
          $this->banear_ip($ips);
-         $this->new_error_msg('La contraseña de la base de datos es incorrecta ' . filter_input(INPUT_POST, (string) 'user'));
+         $this->new_error_msg('La contraseña de la base de datos es incorrecta ' . (STRING)filter_input(INPUT_POST, 'user'));
       } else {
-         $suser = $this->user->get(filter_input(INPUT_POST, (string) 'user'));
+         $suser = $this->user->get(filter_input(INPUT_POST, 'user'));
          if ($suser) {
-            $suser->set_password(filter_input(INPUT_POST, (string) 'new_password'));
+            $suser->set_password(filter_input(INPUT_POST, 'new_password'));
             if ($suser->save()) {
-               $this->new_message('Contraseña cambiada correctamente ' . filter_input(INPUT_POST, (string) 'user'));
+               $this->new_message('Contraseña cambiada correctamente ' . (STRING)filter_input(INPUT_POST, 'user'));
             } else
-               $this->new_error_msg('Imposible cambiar la contraseña del usuario ' . filter_input(INPUT_POST, (string) 'user'));
+               $this->new_error_msg('Imposible cambiar la contraseña del usuario ' . (STRING)filter_input(INPUT_POST, 'user'));
          }
       }
 
@@ -503,10 +503,10 @@ class fs_controller {
       if ($this->ip_baneada($ips)) {
          $this->banear_ip($ips);
          $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.', 'login', TRUE);
-      } else if (filter_input(INPUT_POST, (string) 'user') AND filter_input(INPUT_POST, (string) 'password')) {
+      } else if (filter_input(INPUT_POST, 'user') AND filter_input(INPUT_POST, 'password')) {
          if (FS_DEMO) { /// en el modo demo nos olvidamos de la contraseña
-            if (filter_var(filter_input(INPUT_POST, (string) 'user'), FILTER_VALIDATE_EMAIL)) {
-               $aux = explode('@', filter_input(INPUT_POST, (string) 'user'));
+            if (filter_var(filter_input(INPUT_POST, 'user'), FILTER_VALIDATE_EMAIL)) {
+               $aux = explode('@', filter_input(INPUT_POST, 'user'));
                $nick = substr($aux[0], 0, 12);
                if ($nick == 'admin') {
                   $nick .= $this->random_string(7);
@@ -517,14 +517,14 @@ class fs_controller {
                   $user = new fs_user();
                   $user->nick = $nick;
                   $user->set_password('demo');
-                  $user->email = filter_input(INPUT_POST, (string) 'user');
+                  $user->email = filter_input(INPUT_POST, 'user');
 
                   /// creamos un agente para asociarlo
                   $agente = new agente();
                   $agente->codagente = $agente->get_new_codigo();
                   $agente->nombre = $nick;
                   $agente->apellidos = 'Demo';
-                  $agente->email = filter_input(INPUT_POST, (string) 'user');
+                  $agente->email = filter_input(INPUT_POST, 'user');
 
                   if ($agente->save()) {
                      $user->codagente = $agente->codagente;
@@ -542,8 +542,8 @@ class fs_controller {
                $this->new_error_msg('Email no válido');
             }
          } else {
-            $user = $this->user->get(filter_input(INPUT_POST, (string) 'user'));
-            $password = filter_input(INPUT_POST, (string) 'password');
+            $user = $this->user->get(filter_input(INPUT_POST, 'user'));
+            $password = filter_input(INPUT_POST, 'password');
             if ($user AND $user->enabled) {
                /**
                 * En versiones anteriores se guardaban las contraseñas siempre en
@@ -573,7 +573,7 @@ class fs_controller {
                      $this->cache->clean();
                   }
                } else {
-                  $this->new_error_msg('¡Contraseña incorrecta! (' . filter_input(INPUT_POST, (string) 'user') . ')', 'login', TRUE);
+                  $this->new_error_msg('¡Contraseña incorrecta! (' . (STRING)filter_input(INPUT_POST, 'user') . ')', 'login', TRUE);
                   $this->banear_ip($ips);
                }
             } else if ($user AND ! $user->enabled) {
@@ -586,10 +586,10 @@ class fs_controller {
                $this->cache->clean();
             }
          }
-      } else if (filter_input(INPUT_COOKIE, (string) 'user') AND filter_input(INPUT_COOKIE, (string) 'logkey')) {
-         $user = $this->user->get(filter_input(INPUT_COOKIE, (string) 'user'));
+      } else if (filter_input(INPUT_COOKIE, 'user') AND filter_input(INPUT_COOKIE, 'logkey')) {
+         $user = $this->user->get(filter_input(INPUT_COOKIE, 'user'));
          if ($user AND $user->enabled) {
-            if ($user->log_key == filter_input(INPUT_COOKIE, (string) 'logkey')) {
+            if ($user->log_key == filter_input(INPUT_COOKIE, 'logkey')) {
                $user->logged_on = TRUE;
                $user->update_login();
                setcookie('user', $user->nick, time() + FS_COOKIES_EXPIRE);
@@ -602,7 +602,7 @@ class fs_controller {
                $this->log_out();
             }
          } else {
-            $this->new_error_msg('¡El usuario ' . filter_input(INPUT_COOKIE, (string) 'user') . ' no existe o está desactivado!');
+            $this->new_error_msg('¡El usuario ' . (STRING)filter_input(INPUT_COOKIE, 'user') . ' no existe o está desactivado!');
             $this->log_out(TRUE);
             $this->user->clean_cache(TRUE);
             $this->cache->clean();
@@ -628,7 +628,7 @@ class fs_controller {
       }
 
       /// borramos las cookies
-      if (filter_input(INPUT_COOKIE, (string) 'logkey')) {
+      if (filter_input(INPUT_COOKIE, 'logkey')) {
          setcookie('logkey', '', time() - FS_COOKIES_EXPIRE);
          setcookie('logkey', '', time() - FS_COOKIES_EXPIRE, $path);
          if ($path != '/') {
@@ -637,7 +637,7 @@ class fs_controller {
       }
 
       /// ¿Eliminamos la cookie del usuario?
-      if ($rmuser AND filter_input(INPUT_COOKIE, (string) 'user')) {
+      if ($rmuser AND filter_input(INPUT_COOKIE, 'user')) {
          setcookie('user', '', time() - FS_COOKIES_EXPIRE);
          setcookie('user', '', time() - FS_COOKIES_EXPIRE, $path);
       }
@@ -648,8 +648,8 @@ class fs_controller {
       $fslog->detalle = 'El usuario ha cerrado la sesión.';
       $fslog->ip = $_SERVER['REMOTE_ADDR'];
 
-      if (filter_input(INPUT_COOKIE, (string) 'user')) {
-         $fslog->usuario = filter_input(INPUT_COOKIE, (string) 'user');
+      if (filter_input(INPUT_COOKIE, 'user')) {
+         $fslog->usuario = filter_input(INPUT_COOKIE, 'user');
       }
 
       $fslog->save();
@@ -777,8 +777,8 @@ class fs_controller {
     */
    private function set_default_items() {
       /// gestionamos la página de inicio
-      if (filter_input(INPUT_GET, (string) 'default_page')) {
-         if (filter_input(INPUT_GET, (string) 'default_page') == 'FALSE') {
+      if (filter_input(INPUT_GET, 'default_page')) {
+         if (filter_input(INPUT_GET, 'default_page') == 'FALSE') {
             $this->default_items->set_default_page(NULL);
             $this->user->fs_page = NULL;
          } else {
@@ -797,20 +797,20 @@ class fs_controller {
 
       $this->default_items->set_codejercicio($this->empresa->codejercicio);
 
-      if (filter_input(INPUT_COOKIE, (string) 'default_almacen')) {
-         $this->default_items->set_codalmacen(filter_input(INPUT_COOKIE, (string) 'default_almacen'));
+      if (filter_input(INPUT_COOKIE, 'default_almacen')) {
+         $this->default_items->set_codalmacen(filter_input(INPUT_COOKIE, 'default_almacen'));
       } else {
          $this->default_items->set_codalmacen($this->empresa->codalmacen);
       }
 
-      if (filter_input(INPUT_COOKIE, (string) 'default_formapago')) {
-         $this->default_items->set_codpago(filter_input(INPUT_COOKIE, (string) 'default_formapago'));
+      if (filter_input(INPUT_COOKIE, 'default_formapago')) {
+         $this->default_items->set_codpago(filter_input(INPUT_COOKIE, 'default_formapago'));
       } else {
          $this->default_items->set_codpago($this->empresa->codpago);
       }
 
-      if (filter_input(INPUT_COOKIE, (string) 'default_impuesto')) {
-         $this->default_items->set_codimpuesto(filter_input(INPUT_COOKIE, (string) 'default_impuesto'));
+      if (filter_input(INPUT_COOKIE, 'default_impuesto')) {
+         $this->default_items->set_codimpuesto(filter_input(INPUT_COOKIE, 'default_impuesto'));
       }
 
       $this->default_items->set_codpais($this->empresa->codpais);

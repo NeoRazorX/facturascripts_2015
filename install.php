@@ -45,15 +45,15 @@ function guarda_config($nombre_archivo) {
       fwrite($archivo, " * pass: la contraseña del usuario.\n");
       fwrite($archivo, " * history: TRUE si quieres ver todas las consultas que se hacen en cada página.\n");
       fwrite($archivo, " */\n");
-      fwrite($archivo, "define('FS_DB_TYPE', '" . filter_input(INPUT_POST,'db_type') . "'); /// MYSQL o POSTGRESQL\n");
-      fwrite($archivo, "define('FS_DB_HOST', '" . filter_input(INPUT_POST,'db_host') . "');\n");
-      fwrite($archivo, "define('FS_DB_PORT', '" . filter_input(INPUT_POST,'db_port') . "'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
-      fwrite($archivo, "define('FS_DB_NAME', '" . filter_input(INPUT_POST,'db_name') . "');\n");
-      fwrite($archivo, "define('FS_DB_USER', '" . filter_input(INPUT_POST,'db_user') . "'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
-      fwrite($archivo, "define('FS_DB_PASS', '" . filter_input(INPUT_POST,'db_pass') . "');\n");
+      fwrite($archivo, "define('FS_DB_TYPE', '" . (STRING)filter_input(INPUT_POST,'db_type') . "'); /// MYSQL o POSTGRESQL\n");
+      fwrite($archivo, "define('FS_DB_HOST', '" . (STRING)filter_input(INPUT_POST,'db_host') . "');\n");
+      fwrite($archivo, "define('FS_DB_PORT', '" . (STRING)filter_input(INPUT_POST,'db_port') . "'); /// MYSQL -> 3306, POSTGRESQL -> 5432\n");
+      fwrite($archivo, "define('FS_DB_NAME', '" . (STRING)filter_input(INPUT_POST,'db_name') . "');\n");
+      fwrite($archivo, "define('FS_DB_USER', '" . (STRING)filter_input(INPUT_POST,'db_user') . "'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
+      fwrite($archivo, "define('FS_DB_PASS', '" . (STRING)filter_input(INPUT_POST,'db_pass') . "');\n");
 
       if (filter_input(INPUT_POST, (string)'db_type') == 'MYSQL' AND filter_input(INPUT_POST, (string)'mysql_socket') != '') {
-         fwrite($archivo, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, (string)'mysql_socket') . "');\n");
+         fwrite($archivo, "ini_set('mysqli.default_socket', '" . (STRING)filter_input(INPUT_POST, (string)'mysql_socket') . "');\n");
       }
 
       fwrite($archivo, "\n");
@@ -82,9 +82,9 @@ function guarda_config($nombre_archivo) {
       fwrite($archivo, " * FacturaScripts conectadas al mismo servidor memcache.\n");
       fwrite($archivo, " */\n");
       fwrite($archivo, "\n");
-      fwrite($archivo, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, (string)'cache_host') . "');\n");
-      fwrite($archivo, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, (string)'cache_port') . "');\n");
-      fwrite($archivo, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, (string)'cache_prefix') . "');\n");
+      fwrite($archivo, "define('FS_CACHE_HOST', '" . (STRING)filter_input(INPUT_POST, (string)'cache_host') . "');\n");
+      fwrite($archivo, "define('FS_CACHE_PORT', '" . (STRING)filter_input(INPUT_POST, (string)'cache_port') . "');\n");
+      fwrite($archivo, "define('FS_CACHE_PREFIX', '" . (STRING)filter_input(INPUT_POST, (string)'cache_prefix') . "');\n");
       fwrite($archivo, "\n");
       fwrite($archivo, "/// caducidad (en segundos) de todas las cookies\n");
       fwrite($archivo, "define('FS_COOKIES_EXPIRE', 604800);\n");
@@ -103,9 +103,9 @@ function guarda_config($nombre_archivo) {
 
       if (filter_input(INPUT_POST, (string)'proxy_type')) {
          fwrite($archivo, "\n");
-         fwrite($archivo, "define('FS_PROXY_TYPE', '" . filter_input(INPUT_POST, (string)'proxy_type') . "');\n");
-         fwrite($archivo, "define('FS_PROXY_HOST', '" . filter_input(INPUT_POST, (string)'proxy_host') . "');\n");
-         fwrite($archivo, "define('FS_PROXY_PORT', '" . filter_input(INPUT_POST, (string)'proxy_port') . "');\n");
+         fwrite($archivo, "define('FS_PROXY_TYPE', '" . (STRING)filter_input(INPUT_POST, (string)'proxy_type') . "');\n");
+         fwrite($archivo, "define('FS_PROXY_HOST', '" . (STRING)filter_input(INPUT_POST, (string)'proxy_host') . "');\n");
+         fwrite($archivo, "define('FS_PROXY_PORT', '" . (STRING)filter_input(INPUT_POST, (string)'proxy_port') . "');\n");
       }
 
       fclose($archivo);
@@ -156,7 +156,7 @@ if (file_exists('config.php')) {
             if ($db_selected) {
                guarda_config($nombre_archivo);
             } else {
-               $sqlCrearBD = "CREATE DATABASE `" . filter_input(INPUT_POST, (string)'db_name') . "`;";
+               $sqlCrearBD = "CREATE DATABASE `" . (STRING)filter_input(INPUT_POST, (string)'db_name') . "`;";
                if (mysqli_query($connection, $sqlCrearBD)) {
                   guarda_config($nombre_archivo);
                } else {
@@ -171,16 +171,16 @@ if (file_exists('config.php')) {
       }
    } else if (filter_input(INPUT_POST, (string)'db_type') == 'POSTGRESQL') {
       if (function_exists('pg_connect')) {
-         $connection = @pg_connect('host=' . filter_input(INPUT_POST, (string)'db_host') . ' port=' . filter_input(INPUT_POST, (string)'db_port') . ' user=' . filter_input(INPUT_POST, (string)'db_user') . ' password=' . filter_input(INPUT_POST, (string)'db_pass'));
+         $connection = @pg_connect('host=' . (STRING)filter_input(INPUT_POST, (string)'db_host') . ' port=' . (STRING)filter_input(INPUT_POST, (string)'db_port') . ' user=' . (STRING)filter_input(INPUT_POST, (string)'db_user') . ' password=' . (STRING)filter_input(INPUT_POST, (string)'db_pass'));
          if ($connection) {
             // Comprobamos que la BD exista, de lo contrario la creamos
-            $connection2 = @pg_connect('host=' . filter_input(INPUT_POST, (string)'db_host') . ' port=' . filter_input(INPUT_POST, (string)'db_port') . ' dbname=' . filter_input(INPUT_POST, (string)'db_name')
-                            . ' user=' . filter_input(INPUT_POST, (string)'db_user') . ' password=' . filter_input(INPUT_POST, (string)'db_pass'));
+            $connection2 = @pg_connect('host=' . (STRING)filter_input(INPUT_POST, (string)'db_host') . ' port=' . (STRING)filter_input(INPUT_POST, (string)'db_port') . ' dbname=' . (STRING)filter_input(INPUT_POST, (string)'db_name')
+                            . ' user=' . (STRING)filter_input(INPUT_POST, (string)'db_user') . ' password=' . (STRING)filter_input(INPUT_POST, (string)'db_pass'));
 
             if ($connection2) {
                guarda_config($nombre_archivo);
             } else {
-               $sqlCrearBD = 'CREATE DATABASE "' . filter_input(INPUT_POST, (string)'db_name') . '";';
+               $sqlCrearBD = 'CREATE DATABASE "' . (STRING)filter_input(INPUT_POST, (string)'db_name') . '";';
                if (pg_query($connection, $sqlCrearBD)) {
                   guarda_config($nombre_archivo);
                } else {

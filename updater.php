@@ -83,7 +83,7 @@ class fs_updater {
             $this->actualizar_plugin_pago();
          } else if (filter_input(INPUT_GET, (string)'idplugin') AND filter_input(INPUT_GET, (string)'name') AND filter_input(INPUT_POST, (string)'key')) {
             $private_key = filter_input(INPUT_POST, (string)'key');
-            if (file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . filter_input(INPUT_GET, (string)'idplugin'), $private_key)) {
+            if (file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . (STRING)filter_input(INPUT_GET, (string)'idplugin'), $private_key)) {
                $this->mensajes = 'Clave añadida correctamente.';
                $this->cache->clean();
             } else
@@ -307,7 +307,7 @@ class fs_updater {
 
    private function actualizar_plugin() {
       /// leemos el ini del plugin
-      $plugin_ini = parse_ini_file('plugins/' . filter_input(INPUT_GET, (string)'plugin') . '/facturascripts.ini');
+      $plugin_ini = parse_ini_file('plugins/' . (STRING)filter_input(INPUT_GET, (string)'plugin') . '/facturascripts.ini');
       if ($plugin_ini) {
          /// descargamos el zip
          if (@fs_file_download($plugin_ini['update_url'], 'update.zip')) {
@@ -324,7 +324,7 @@ class fs_updater {
                $plugins_list = scandir(getcwd() . '/plugins');
 
                /// eliminamos los archivos antiguos
-               $this->del_tree('plugins/' . filter_input(INPUT_GET, (string)'plugin'));
+               $this->del_tree('plugins/' . (STRING)filter_input(INPUT_GET, (string)'plugin'));
 
                /// descomprimimos
                $zip->extractTo('plugins/');
@@ -343,7 +343,7 @@ class fs_updater {
                      }
 
                      if (!$encontrado2) {
-                        rename('plugins/' . $f, 'plugins/' . filter_input(INPUT_GET, (string)'plugin'));
+                        rename('plugins/' . $f, 'plugins/' . (STRING)filter_input(INPUT_GET, (string)'plugin'));
                         break;
                      }
                   }
@@ -355,7 +355,7 @@ class fs_updater {
          } else
             $this->errores = 'Error al descargar el archivo zip. Intente de nuevo en unos minutos.';
       } else
-         $this->errores = 'Error al leer el archivo plugins/' . filter_input(INPUT_GET, (string)'plugin') . '/facturascripts.ini';
+         $this->errores = 'Error al leer el archivo plugins/' . (STRING)filter_input(INPUT_GET, (string)'plugin') . '/facturascripts.ini';
    }
 
    /**
@@ -378,7 +378,7 @@ class fs_updater {
 
    private function actualizar_plugin_pago() {
       $url = 'https://www.facturascripts.com/comm3/index.php?page=community_edit_plugin&id=' .
-              filter_input(INPUT_GET, (string)'idplugin') . '&xid=' . $this->xid . '&key=' . filter_input(INPUT_GET, (string)'key');
+              filter_input(INPUT_GET, (string)'idplugin') . '&xid=' . $this->xid . '&key=' . (STRING)filter_input(INPUT_GET, (string)'key');
 
       /// descargamos el zip
       if (@fs_file_download($url, 'update.zip')) {
@@ -392,16 +392,16 @@ class fs_updater {
             $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
          } else {
             /// eliminamos los archivos antiguos
-            $this->del_tree('plugins/' . filter_input(INPUT_GET, (string)'name'));
+            $this->del_tree('plugins/' . (STRING)filter_input(INPUT_GET, (string)'name'));
 
             /// descomprimimos
             $zip->extractTo('plugins/');
             $zip->close();
             unlink('update.zip');
 
-            if (file_exists('plugins/' . filter_input(INPUT_GET, (string)'name') . '-master')) {
+            if (file_exists('plugins/' . (STRING)filter_input(INPUT_GET, (string)'name') . '-master')) {
                /// renombramos el directorio
-               rename('plugins/' . filter_input(INPUT_GET, (string)'name') . '-master', 'plugins/' . filter_input(INPUT_GET, (string)'name'));
+               rename('plugins/' . (STRING)filter_input(INPUT_GET, (string)'name') . '-master', 'plugins/' . (STRING)filter_input(INPUT_GET, (string)'name'));
             }
 
             $this->mensajes = 'Plugin actualizado correctamente.';
@@ -409,7 +409,7 @@ class fs_updater {
          }
       } else
          $this->errores = 'Error al descargar el archivo zip. <a href="updater.php?idplugin=' .
-                 filter_input(INPUT_GET, (string)'idplugin') . '&name=' . filter_input(INPUT_GET, (string)'name') . '">¿Clave incorrecta?</a>';
+                 filter_input(INPUT_GET, (string)'idplugin') . '&name=' . (STRING)filter_input(INPUT_GET, (string)'name') . '">¿Clave incorrecta?</a>';
    }
 
    private function recurse_copy($src, $dst) {
