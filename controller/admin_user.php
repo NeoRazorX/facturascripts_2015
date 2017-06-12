@@ -59,15 +59,15 @@ class admin_user extends fs_controller {
             $this->allow_delete = FALSE;
          }
 
-         if (filter_input(INPUT_POST, (string)'nnombre')) {
+         if (filter_input(INPUT_POST, 'nnombre')) {
             /// Nuevo empleado
             $age0 = new agente();
             $age0->codagente = $age0->get_new_codigo();
-            $age0->nombre = filter_input(INPUT_POST, (string)'nnombre');
-            $age0->apellidos = filter_input(INPUT_POST, (string)'napellidos');
-            $age0->dnicif = filter_input(INPUT_POST, (string)'ndnicif');
-            $age0->telefono = filter_input(INPUT_POST, (string)'ntelefono');
-            $age0->email = strtolower(filter_input(INPUT_POST, (string)'nemail'));
+            $age0->nombre = filter_input(INPUT_POST, 'nnombre');
+            $age0->apellidos = filter_input(INPUT_POST, 'napellidos');
+            $age0->dnicif = filter_input(INPUT_POST, 'ndnicif');
+            $age0->telefono = filter_input(INPUT_POST, 'ntelefono');
+            $age0->email = strtolower(filter_input(INPUT_POST, 'nemail'));
 
             if (!$this->user->admin) {
                $this->new_error_msg('Solamente un administrador puede crear y asignar un empleado desde aquí.');
@@ -82,16 +82,16 @@ class admin_user extends fs_controller {
             } else
                $this->new_error_msg("¡Imposible guardar el agente!");
          }
-         else if (filter_input(INPUT_POST, (string)'spassword') OR filter_input(INPUT_POST, (string)'scodagente') OR filter_input(INPUT_POST, (string)'sadmin')) {
+         else if (filter_input(INPUT_POST, 'spassword') OR filter_input(INPUT_POST, 'scodagente') OR filter_input(INPUT_POST, 'sadmin')) {
             $this->modificar_user();
-         } else if (filter_input(INPUT_POST, (string)'senabled')) {
+         } else if (filter_input(INPUT_POST, 'senabled')) {
             if (!$this->user->admin) {
                $this->new_error_msg('Solamente un administrador puede activar o desactivar a un Usuario.');
             } else if ($this->user->nick == $this->suser->nick) {
                $this->new_error_msg('No se permite Activar/Desactivar a uno mismo.');
             } else {
                // Un usuario no se puede Activar/Desactivar a el mismo.
-               $this->suser->enabled = filter_input(INPUT_POST, (string)'senabled');
+               $this->suser->enabled = filter_input(INPUT_POST, 'senabled');
 
                if ($this->suser->save()) {
                   if ($this->suser->enabled) {
@@ -278,9 +278,9 @@ class admin_user extends fs_controller {
       } else {
          $user_no_more_admin = FALSE;
          $error = FALSE;
-         if (filter_input(INPUT_POST, (string)'spassword') != '') {
-            if (filter_input(INPUT_POST, (string)'spassword') == filter_input(INPUT_POST, (string)'spassword2')) {
-               if ($this->suser->set_password(filter_input(INPUT_POST, (string)'spassword'))) {
+         if (filter_input(INPUT_POST, 'spassword') != '') {
+            if (filter_input(INPUT_POST, 'spassword') == filter_input(INPUT_POST, 'spassword2')) {
+               if ($this->suser->set_password(filter_input(INPUT_POST, 'spassword'))) {
                   $this->new_message('Se ha cambiado la contraseña del usuario ' . $this->suser->nick, TRUE, 'login', TRUE);
                }
             } else {
@@ -289,14 +289,14 @@ class admin_user extends fs_controller {
             }
          }
 
-         if (filter_input(INPUT_POST, (string)'email')) {
-            $this->suser->email = strtolower(filter_input(INPUT_POST, (string)'email'));
+         if (filter_input(INPUT_POST, 'email')) {
+            $this->suser->email = strtolower(filter_input(INPUT_POST, 'email'));
          }
 
-         if (filter_input(INPUT_POST, (string)'scodagente')) {
+         if (filter_input(INPUT_POST, 'scodagente')) {
             $this->suser->codagente = NULL;
-            if (filter_input(INPUT_POST, (string)'scodagente') != '') {
-               $this->suser->codagente = filter_input(INPUT_POST, (string)'scodagente');
+            if (filter_input(INPUT_POST, 'scodagente') != '') {
+               $this->suser->codagente = filter_input(INPUT_POST, 'scodagente');
             }
          }
 
@@ -312,20 +312,20 @@ class admin_user extends fs_controller {
                 * Si un usuario es administrador y deja de serlo, hay que darle acceso
                 * a algunas páginas, en caso contrario no podrá continuar
                 */
-               if ($this->suser->admin AND ! filter_input(INPUT_POST, (string)'sadmin')) {
+               if ($this->suser->admin AND ! filter_input(INPUT_POST, 'sadmin')) {
                   $user_no_more_admin = TRUE;
                }
-               $this->suser->admin = filter_input(INPUT_POST, (string)'sadmin');
+               $this->suser->admin = filter_input(INPUT_POST, 'sadmin');
             }
          }
 
          $this->suser->fs_page = NULL;
-         if (filter_input(INPUT_POST, (string)'udpage')) {
-            $this->suser->fs_page = filter_input(INPUT_POST, (string)'udpage');
+         if (filter_input(INPUT_POST, 'udpage')) {
+            $this->suser->fs_page = filter_input(INPUT_POST, 'udpage');
          }
 
-         if (filter_input(INPUT_POST, (string)'css')) {
-            $this->suser->css = filter_input(INPUT_POST, (string)'css');
+         if (filter_input(INPUT_POST, 'css')) {
+            $this->suser->css = filter_input(INPUT_POST, 'css');
          }
 
          if ($error) {
@@ -342,8 +342,8 @@ class admin_user extends fs_controller {
                    * si ya estaba en la base de datos. Eso lo hace el modelo.
                    */
                   $a = new fs_access(array('fs_user' => $this->suser->nick, 'fs_page' => $p->name, 'allow_delete' => FALSE));
-                  if (filter_input(INPUT_POST, (string)'allow_delete')) {
-                     $a->allow_delete = in_array($p->name, filter_input(INPUT_POST, (string)'allow_delete'));
+                  if (filter_input(INPUT_POST, 'allow_delete')) {
+                     $a->allow_delete = in_array($p->name, filter_input(INPUT_POST, 'allow_delete'));
                   }
 
                   if ($user_no_more_admin) {
@@ -352,13 +352,13 @@ class admin_user extends fs_controller {
                       * a algunas páginas, en caso contrario no podrá continuar.
                       */
                      $a->save();
-                  } else if (!filter_input(INPUT_POST, (string)'enabled')) {
+                  } else if (!filter_input(INPUT_POST, 'enabled')) {
                      /**
                       * No se ha marcado ningún checkbox de autorizado, así que eliminamos el acceso
                       * a todas las páginas. Una a una.
                       */
                      $a->delete();
-                  } else if (in_array($p->name, filter_input(INPUT_POST, (string)'enabled'))) {
+                  } else if (in_array($p->name, filter_input(INPUT_POST, 'enabled'))) {
                      /// la página ha sido marcada como autorizada.
                      $a->save();
 

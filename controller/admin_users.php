@@ -38,11 +38,11 @@ class admin_users extends fs_controller {
       $this->agente = new agente();
       $this->rol = new fs_rol();
 
-      if (filter_input(INPUT_POST, (string)'nnick')) {
+      if (filter_input(INPUT_POST, 'nnick')) {
          $this->add_user();
       } else if (filter_input(INPUT_GET, (string)'delete')) {
          $this->delete_user();
-      } else if (filter_input(INPUT_POST, (string)'nrol')) {
+      } else if (filter_input(INPUT_POST, 'nrol')) {
          $this->add_rol();
       } else if (filter_input(INPUT_GET, (string)'delete_rol')) {
          $this->delete_rol();
@@ -54,21 +54,21 @@ class admin_users extends fs_controller {
    }
 
    private function add_user() {
-      $nu = $this->user->get(filter_input(INPUT_POST, (string)'nnick'));
+      $nu = $this->user->get(filter_input(INPUT_POST, 'nnick'));
       if ($nu) {
          $this->new_error_msg('El usuario <a href="' . $nu->url() . '">ya existe</a>.');
       } else if (!$this->user->admin) {
          $this->new_error_msg('Solamente un administrador puede crear usuarios.', TRUE, 'login', TRUE);
       } else {
          $nu = new fs_user();
-         $nu->nick = filter_input(INPUT_POST, (string)'nnick');
-         $nu->email = strtolower(filter_input(INPUT_POST, (string)'nemail'));
+         $nu->nick = filter_input(INPUT_POST, 'nnick');
+         $nu->email = strtolower(filter_input(INPUT_POST, 'nemail'));
 
-         if ($nu->set_password(filter_input(INPUT_POST, (string)'npassword'))) {
-            $nu->admin = filter_input(INPUT_POST, (string)'nadmin');
-            if (filter_input(INPUT_POST, (string)'ncodagente')) {
-               if (filter_input(INPUT_POST, (string)'ncodagente') != '') {
-                  $nu->codagente = filter_input(INPUT_POST, (string)'ncodagente');
+         if ($nu->set_password(filter_input(INPUT_POST, 'npassword'))) {
+            $nu->admin = filter_input(INPUT_POST, 'nadmin');
+            if (filter_input(INPUT_POST, 'ncodagente')) {
+               if (filter_input(INPUT_POST, 'ncodagente') != '') {
+                  $nu->codagente = filter_input(INPUT_POST, 'ncodagente');
                }
             }
 
@@ -76,8 +76,8 @@ class admin_users extends fs_controller {
                $this->new_message('Usuario ' . $nu->nick . ' creado correctamente.', TRUE, 'login', TRUE);
 
                /// algún rol marcado
-               if (!$nu->admin AND filter_input(INPUT_POST, (string)'roles')) {
-                  foreach (filter_input(INPUT_POST, (string)'roles') as $codrol) {
+               if (!$nu->admin AND filter_input(INPUT_POST, 'roles')) {
+                  foreach (filter_input(INPUT_POST, 'roles') as $codrol) {
                      $rol = $this->rol->get($codrol);
                      if ($rol) {
                         $fru = new fs_rol_user();
@@ -121,8 +121,8 @@ class admin_users extends fs_controller {
    }
 
    private function add_rol() {
-      $this->rol->codrol = filter_input(INPUT_POST, (string)'nrol');
-      $this->rol->descripcion = filter_input(INPUT_POST, (string)'descripcion');
+      $this->rol->codrol = filter_input(INPUT_POST, 'nrol');
+      $this->rol->descripcion = filter_input(INPUT_POST, 'descripcion');
 
       if ($this->rol->save()) {
          $this->new_message('Datos guardados correctamente.');

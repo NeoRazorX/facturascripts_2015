@@ -179,7 +179,7 @@ class fs_var extends fs_model {
     * Guarda en la base de datos los pares clave, valor de un array simple.
     * ATENCIÓN: si el valor es FALSE, elimina la clave de la tabla.
     * 
-    * @param type $array
+    * @param array $array
     */
    public function array_save($array) {
       $done = TRUE;
