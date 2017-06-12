@@ -123,13 +123,13 @@ class admin_home extends fs_controller {
          /// eliminar plugin
          if ($this->disable_rm_plugins) {
             $this->new_error_msg('No tienes permiso para eliminar plugins.');
-         } else if (is_writable('plugins/' . (STRING)filter_input(INPUT_GET, (string)'delete_plugin'))) {
-            if ($this->del_tree('plugins/' . (STRING)filter_input(INPUT_GET, (string)'delete_plugin'))) {
-               $this->new_message('Plugin ' . (STRING)filter_input(INPUT_GET, (string)'delete_plugin') . ' eliminado correctamente.', TRUE);
+         } else if (is_writable('plugins/' . filter_input(INPUT_GET, (string)'delete_plugin'))) {
+            if ($this->del_tree('plugins/' . filter_input(INPUT_GET, (string)'delete_plugin'))) {
+               $this->new_message('Plugin ' . filter_input(INPUT_GET, (string)'delete_plugin') . ' eliminado correctamente.', TRUE);
             } else
-               $this->new_error_msg('Imposible eliminar el plugin ' . (STRING)filter_input(INPUT_GET, (string)'delete_plugin'));
+               $this->new_error_msg('Imposible eliminar el plugin ' . filter_input(INPUT_GET, (string)'delete_plugin'));
          } else
-            $this->new_error_msg('No tienes permisos de escritura sobre la carpeta plugins/' . (STRING)filter_input(INPUT_GET, (string)'delete_plugin'));
+            $this->new_error_msg('No tienes permisos de escritura sobre la carpeta plugins/' . filter_input(INPUT_GET, (string)'delete_plugin'));
       }
       else if (filter_input(INPUT_POST, (string)'install')) {
          /// instalar plugin (copiarlo y descomprimirlo)
@@ -729,7 +729,7 @@ class admin_home extends fs_controller {
     */
    private function download1() {
       if (isset($this->download_list[filter_input(INPUT_GET, (string)'download')])) {
-         $this->new_message('Descargando el plugin ' . (STRING)filter_input(INPUT_GET, (string)'download'));
+         $this->new_message('Descargando el plugin ' . filter_input(INPUT_GET, (string)'download'));
 
          if (@fs_file_download($this->download_list[filter_input(INPUT_GET, (string)'download')]['url'], 'download.zip')) {
             $zip = new ZipArchive();
@@ -752,7 +752,7 @@ class admin_home extends fs_controller {
                      }
 
                      if (!$encontrado2) {
-                        rename('plugins/' . $f, 'plugins/' . (STRING)filter_input(INPUT_GET, (string)'download'));
+                        rename('plugins/' . $f, 'plugins/' . filter_input(INPUT_GET, (string)'download'));
                         break;
                      }
                   }

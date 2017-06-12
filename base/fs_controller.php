@@ -269,23 +269,23 @@ class fs_controller {
 
       if ($this->ip_baneada($ips)) {
          $this->banear_ip($ips);
-         $this->new_error_msg('Tu IP ha sido baneada ' . (STRING)filter_input(INPUT_POST, 'user') . '. '
+         $this->new_error_msg('Tu IP ha sido baneada ' . filter_input(INPUT_POST, 'user') . '. '
                  . 'Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
       } else if (filter_input(INPUT_POST, 'new_password') != filter_input(INPUT_POST, 'new_password2')) {
-         $this->new_error_msg('Las contraseñas no coinciden ' . (STRING)filter_input(INPUT_POST, 'user'));
+         $this->new_error_msg('Las contraseñas no coinciden ' . filter_input(INPUT_POST, 'user'));
       } else if (filter_input(INPUT_POST, 'new_password') == '') {
-         $this->new_error_msg('Tienes que escribir una contraseña nueva ' . (STRING)filter_input(INPUT_POST, 'user'));
+         $this->new_error_msg('Tienes que escribir una contraseña nueva ' . filter_input(INPUT_POST, 'user'));
       } else if (filter_input(INPUT_POST, 'db_password') != FS_DB_PASS) {
          $this->banear_ip($ips);
-         $this->new_error_msg('La contraseña de la base de datos es incorrecta ' . (STRING)filter_input(INPUT_POST, 'user'));
+         $this->new_error_msg('La contraseña de la base de datos es incorrecta ' . filter_input(INPUT_POST, 'user'));
       } else {
          $suser = $this->user->get(filter_input(INPUT_POST, 'user'));
          if ($suser) {
             $suser->set_password(filter_input(INPUT_POST, 'new_password'));
             if ($suser->save()) {
-               $this->new_message('Contraseña cambiada correctamente ' . (STRING)filter_input(INPUT_POST, 'user'));
+               $this->new_message('Contraseña cambiada correctamente ' . filter_input(INPUT_POST, 'user'));
             } else
-               $this->new_error_msg('Imposible cambiar la contraseña del usuario ' . (STRING)filter_input(INPUT_POST, 'user'));
+               $this->new_error_msg('Imposible cambiar la contraseña del usuario ' . filter_input(INPUT_POST, 'user'));
          }
       }
 
@@ -313,7 +313,7 @@ class fs_controller {
 
    /**
     * Muestra al usuario un mensaje de error
-    * @param type $msg el mensaje a mostrar
+    * @param string $msg el mensaje a mostrar
     */
    public function new_error_msg($msg = FALSE, $tipo = 'error', $alerta = FALSE, $guardar = TRUE) {
       if ($msg) {
@@ -573,7 +573,7 @@ class fs_controller {
                      $this->cache->clean();
                   }
                } else {
-                  $this->new_error_msg('¡Contraseña incorrecta! (' . (STRING)filter_input(INPUT_POST, 'user') . ')', 'login', TRUE);
+                  $this->new_error_msg('¡Contraseña incorrecta! (' . filter_input(INPUT_POST, 'user') . ')', 'login', TRUE);
                   $this->banear_ip($ips);
                }
             } else if ($user AND ! $user->enabled) {
@@ -602,7 +602,7 @@ class fs_controller {
                $this->log_out();
             }
          } else {
-            $this->new_error_msg('¡El usuario ' . (STRING)filter_input(INPUT_COOKIE, 'user') . ' no existe o está desactivado!');
+            $this->new_error_msg('¡El usuario ' . filter_input(INPUT_COOKIE, 'user') . ' no existe o está desactivado!');
             $this->log_out(TRUE);
             $this->user->clean_cache(TRUE);
             $this->cache->clean();
