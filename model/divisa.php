@@ -26,5 +26,5 @@ require_once 'model/core/divisa.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class divisa extends FacturaScripts\model\divisa {
-   
+    
 }

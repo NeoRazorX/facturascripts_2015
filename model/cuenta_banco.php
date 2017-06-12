@@ -26,5 +26,5 @@ require_once 'model/core/cuenta_banco.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class cuenta_banco extends FacturaScripts\model\cuenta_banco {
-   
+    
 }

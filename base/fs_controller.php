@@ -121,7 +121,7 @@ class fs_controller {
 
     /**
      * Esta variable contiene el texto enviado como parámetro query por cualquier formulario,
-     * es decir, se corresponde con $_POST['query']
+     * es decir, se corresponde con $_REQUEST['query']
      * @var string
      */
     public $query;
@@ -199,6 +199,8 @@ class fs_controller {
                     $this->query = '';
                     if (filter_input(INPUT_POST, 'query')) {
                         $this->query = filter_input(INPUT_POST, 'query');
+                    } else if (filter_input(INPUT_GET, 'query')) {
+                        $this->query = filter_input(INPUT_GET, 'query');
                     }
 
                     /// quitamos extensiones de páginas a las que el usuario no tenga acceso
@@ -330,7 +332,7 @@ class fs_controller {
                 $fslog = new fs_log();
                 $fslog->tipo = $tipo;
                 $fslog->detalle = $msg;
-                $fslog->ip = $_SERVER['REMOTE_ADDR'];
+                $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
                 $fslog->alerta = $alerta;
 
                 if ($this->user) {
@@ -379,7 +381,7 @@ class fs_controller {
                 $fslog = new fs_log();
                 $fslog->tipo = $tipo;
                 $fslog->detalle = $msg;
-                $fslog->ip = $_SERVER['REMOTE_ADDR'];
+                $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
                 $fslog->alerta = $alerta;
 
                 if ($this->user) {
@@ -449,7 +451,7 @@ class fs_controller {
                     $linea = explode(';', trim(fgets($file)));
 
                     if (intval($linea[2]) > time()) {
-                        if ($linea[0] == $_SERVER['REMOTE_ADDR'] AND intval($linea[1]) > 5) {
+                        if ($linea[0] == filter_input(INPUT_SERVER, 'REMOTE_ADDR') AND intval($linea[1]) > 5) {
                             $baneada = TRUE;
                         }
 
@@ -474,7 +476,7 @@ class fs_controller {
             $encontrada = FALSE;
 
             foreach ($ips as $ip) {
-                if ($ip[0] == $_SERVER['REMOTE_ADDR']) {
+                if ($ip[0] == filter_input(INPUT_SERVER, 'REMOTE_ADDR')) {
                     fwrite($file, $ip[0] . ';' . ( 1 + intval($ip[1]) ) . ';' . ( time() + 600 ));
                     $encontrada = TRUE;
                 } else
@@ -482,7 +484,7 @@ class fs_controller {
             }
 
             if (!$encontrada) {
-                fwrite($file, $_SERVER['REMOTE_ADDR'] . ';1;' . ( time() + 600 ));
+                fwrite($file, filter_input(INPUT_SERVER, 'REMOTE_ADDR') . ';1;' . ( time() + 600 ));
             }
 
             fclose($file);
@@ -628,8 +630,8 @@ class fs_controller {
      */
     private function log_out($rmuser = FALSE) {
         $path = '/';
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $aux = parse_url(str_replace('/index.php', '', $_SERVER['REQUEST_URI']));
+        if (filter_input(INPUT_SERVER, 'REQUEST_URI')) {
+            $aux = parse_url(str_replace('/index.php', '', filter_input(INPUT_SERVER, 'REQUEST_URI')));
             if (isset($aux['path'])) {
                 $path = $aux['path'];
                 if (substr($path, -1) != '/') {
@@ -657,7 +659,7 @@ class fs_controller {
         $fslog = new fs_log();
         $fslog->tipo = 'login';
         $fslog->detalle = 'El usuario ha cerrado la sesión.';
-        $fslog->ip = $_SERVER['REMOTE_ADDR'];
+        $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
 
         if (filter_input(INPUT_COOKIE, 'user')) {
             $fslog->usuario = filter_input(INPUT_COOKIE, 'user');
@@ -987,13 +989,15 @@ class fs_controller {
                 if ($this->cache->connected()) {
                     $txt .= "memcache: YES\n";
                     $txt .= 'memcache version: ' . $this->cache->version() . "\n";
-                } else
+                } else {
                     $txt .= "memcache: NO\n";
+                }
 
                 if (function_exists('curl_init')) {
                     $txt .= "curl: YES\n";
-                } else
+                } else {
                     $txt .= "curl: NO\n";
+                }
 
                 $txt .= 'plugins: ' . join(',', $GLOBALS['plugins']) . "\n";
 
@@ -1001,8 +1005,8 @@ class fs_controller {
                     $txt .= "updated: NO\n";
                 }
 
-                if (isset($_SERVER['REQUEST_URI'])) {
-                    $txt .= 'url: ' . $_SERVER['REQUEST_URI'] . "\n------";
+                if (filter_input(INPUT_SERVER, 'REQUEST_URI')) {
+                    $txt .= 'url: ' . filter_input(INPUT_SERVER, 'REQUEST_URI') . "\n------";
                 }
             }
         } else {
@@ -1214,7 +1218,6 @@ class fs_controller {
      * @return string
      */
     public function get_js_location($filename) {
-        $found = FALSE;
         foreach ($GLOBALS['plugins'] as $plugin) {
             if (file_exists('plugins/' . $plugin . '/view/js/' . $filename)) {
                 return FS_PATH . 'plugins/' . $plugin . '/view/js/' . $filename . '?updated=' . date('YmdH');

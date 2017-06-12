@@ -26,183 +26,183 @@ require_model('fs_rol.php');
  */
 class admin_users extends fs_controller {
 
-   public $agente;
-   public $historial;
-   public $rol;
+    public $agente;
+    public $historial;
+    public $rol;
 
-   public function __construct() {
-      parent::__construct(__CLASS__, 'Usuarios', 'admin', TRUE, TRUE);
-   }
+    public function __construct() {
+        parent::__construct(__CLASS__, 'Usuarios', 'admin', TRUE, TRUE);
+    }
 
-   protected function private_core() {
-      $this->agente = new agente();
-      $this->rol = new fs_rol();
+    protected function private_core() {
+        $this->agente = new agente();
+        $this->rol = new fs_rol();
 
-      if (filter_input(INPUT_POST, 'nnick')) {
-         $this->add_user();
-      } else if (filter_input(INPUT_GET, (string)'delete')) {
-         $this->delete_user();
-      } else if (filter_input(INPUT_POST, 'nrol')) {
-         $this->add_rol();
-      } else if (filter_input(INPUT_GET, (string)'delete_rol')) {
-         $this->delete_rol();
-      }
+        if (filter_input(INPUT_POST, 'nnick')) {
+            $this->add_user();
+        } else if (filter_input(INPUT_GET, 'delete')) {
+            $this->delete_user();
+        } else if (filter_input(INPUT_POST, 'nrol')) {
+            $this->add_rol();
+        } else if (filter_input(INPUT_GET, 'delete_rol')) {
+            $this->delete_rol();
+        }
 
-      /// cargamos el historial
-      $fslog = new fs_log();
-      $this->historial = $fslog->all_by('login');
-   }
+        /// cargamos el historial
+        $fslog = new fs_log();
+        $this->historial = $fslog->all_by('login');
+    }
 
-   private function add_user() {
-      $nu = $this->user->get(filter_input(INPUT_POST, 'nnick'));
-      if ($nu) {
-         $this->new_error_msg('El usuario <a href="' . $nu->url() . '">ya existe</a>.');
-      } else if (!$this->user->admin) {
-         $this->new_error_msg('Solamente un administrador puede crear usuarios.', TRUE, 'login', TRUE);
-      } else {
-         $nu = new fs_user();
-         $nu->nick = filter_input(INPUT_POST, 'nnick');
-         $nu->email = strtolower(filter_input(INPUT_POST, 'nemail'));
+    private function add_user() {
+        $nu = $this->user->get(filter_input(INPUT_POST, 'nnick'));
+        if ($nu) {
+            $this->new_error_msg('El usuario <a href="' . $nu->url() . '">ya existe</a>.');
+        } else if (!$this->user->admin) {
+            $this->new_error_msg('Solamente un administrador puede crear usuarios.', TRUE, 'login', TRUE);
+        } else {
+            $nu = new fs_user();
+            $nu->nick = filter_input(INPUT_POST, 'nnick');
+            $nu->email = strtolower(filter_input(INPUT_POST, 'nemail'));
 
-         if ($nu->set_password(filter_input(INPUT_POST, 'npassword'))) {
-            $nu->admin = filter_input(INPUT_POST, 'nadmin');
-            if (filter_input(INPUT_POST, 'ncodagente')) {
-               if (filter_input(INPUT_POST, 'ncodagente') != '') {
-                  $nu->codagente = filter_input(INPUT_POST, 'ncodagente');
-               }
-            }
+            if ($nu->set_password(filter_input(INPUT_POST, 'npassword'))) {
+                $nu->admin = (bool) filter_input(INPUT_POST, 'nadmin');
+                if (filter_input(INPUT_POST, 'ncodagente')) {
+                    if (filter_input(INPUT_POST, 'ncodagente') != '') {
+                        $nu->codagente = filter_input(INPUT_POST, 'ncodagente');
+                    }
+                }
 
-            if ($nu->save()) {
-               $this->new_message('Usuario ' . $nu->nick . ' creado correctamente.', TRUE, 'login', TRUE);
+                if ($nu->save()) {
+                    $this->new_message('Usuario ' . $nu->nick . ' creado correctamente.', TRUE, 'login', TRUE);
 
-               /// algún rol marcado
-               if (!$nu->admin AND filter_input(INPUT_POST, 'roles')) {
-                  foreach (filter_input(INPUT_POST, 'roles') as $codrol) {
-                     $rol = $this->rol->get($codrol);
-                     if ($rol) {
-                        $fru = new fs_rol_user();
-                        $fru->codrol = $codrol;
-                        $fru->fs_user = $nu->nick;
+                    /// algún rol marcado
+                    if (!$nu->admin AND filter_input(INPUT_POST, 'roles')) {
+                        foreach (filter_input(INPUT_POST, 'roles') as $codrol) {
+                            $rol = $this->rol->get($codrol);
+                            if ($rol) {
+                                $fru = new fs_rol_user();
+                                $fru->codrol = $codrol;
+                                $fru->fs_user = $nu->nick;
 
-                        if ($fru->save()) {
-                           foreach ($rol->get_accesses() as $p) {
-                              $a = new fs_access();
-                              $a->fs_page = $p->fs_page;
-                              $a->fs_user = $nu->nick;
-                              $a->allow_delete = $p->allow_delete;
-                              $a->save();
-                           }
+                                if ($fru->save()) {
+                                    foreach ($rol->get_accesses() as $p) {
+                                        $a = new fs_access();
+                                        $a->fs_page = $p->fs_page;
+                                        $a->fs_user = $nu->nick;
+                                        $a->allow_delete = $p->allow_delete;
+                                        $a->save();
+                                    }
+                                }
+                            }
                         }
-                     }
-                  }
-               }
+                    }
 
-               Header('location: index.php?page=admin_user&snick=' . $nu->nick);
-            } else
-               $this->new_error_msg("¡Imposible guardar el usuario!");
-         }
-      }
-   }
+                    Header('location: index.php?page=admin_user&snick=' . $nu->nick);
+                } else
+                    $this->new_error_msg("¡Imposible guardar el usuario!");
+            }
+        }
+    }
 
-   private function delete_user() {
-      $nu = $this->user->get(filter_input(INPUT_GET, (string)'delete'));
-      if ($nu) {
-         if (FS_DEMO) {
-            $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar usuarios.
+    private function delete_user() {
+        $nu = $this->user->get(filter_input(INPUT_GET, 'delete'));
+        if ($nu) {
+            if (FS_DEMO) {
+                $this->new_error_msg('En el modo <b>demo</b> no se pueden eliminar usuarios.
                Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
-         } else if (!$this->user->admin) {
-            $this->new_error_msg("Solamente un administrador puede eliminar usuarios.", 'login', TRUE);
-         } else if ($nu->delete()) {
-            $this->new_message("Usuario " . $nu->nick . " eliminado correctamente.", TRUE, 'login', TRUE);
-         } else
-            $this->new_error_msg("¡Imposible eliminar al usuario!");
-      } else
-         $this->new_error_msg("¡Usuario no encontrado!");
-   }
+            } else if (!$this->user->admin) {
+                $this->new_error_msg("Solamente un administrador puede eliminar usuarios.", 'login', TRUE);
+            } else if ($nu->delete()) {
+                $this->new_message("Usuario " . $nu->nick . " eliminado correctamente.", TRUE, 'login', TRUE);
+            } else
+                $this->new_error_msg("¡Imposible eliminar al usuario!");
+        } else
+            $this->new_error_msg("¡Usuario no encontrado!");
+    }
 
-   private function add_rol() {
-      $this->rol->codrol = filter_input(INPUT_POST, 'nrol');
-      $this->rol->descripcion = filter_input(INPUT_POST, 'descripcion');
+    private function add_rol() {
+        $this->rol->codrol = filter_input(INPUT_POST, 'nrol');
+        $this->rol->descripcion = filter_input(INPUT_POST, 'descripcion');
 
-      if ($this->rol->save()) {
-         $this->new_message('Datos guardados correctamente.');
-         header('Location: ' . $this->rol->url());
-      } else {
-         $this->new_error_msg('Error al crear el rol.');
-      }
-   }
+        if ($this->rol->save()) {
+            $this->new_message('Datos guardados correctamente.');
+            header('Location: ' . $this->rol->url());
+        } else {
+            $this->new_error_msg('Error al crear el rol.');
+        }
+    }
 
-   private function delete_rol() {
-      $rol = $this->rol->get(filter_input(INPUT_GET, (string)'delete_rol'));
-      if ($rol) {
-         if ($rol->delete()) {
-            $this->new_message('Rol eliminado correctamente.');
-         } else {
-            $this->new_error_msg('Error al eliminar el rol #' . $rol->id);
-         }
-      } else {
-         $this->new_error_msg('Rol no encontrado.');
-      }
-   }
-
-   public function all_pages() {
-      $returnlist = array();
-
-      /// Obtenemos la lista de páginas. Todas
-      foreach ($this->menu as $m) {
-         $m->enabled = FALSE;
-         $m->allow_delete = FALSE;
-         $m->users = array();
-         $returnlist[] = $m;
-      }
-
-      $users = $this->user->all();
-      /// colocamos a los administradores primero
-      usort($users, function($a, $b) {
-         if ($a->admin) {
-            return -1;
-         } else if ($b->admin) {
-            return 1;
-         } else {
-            return 0;
-         }
-      });
-
-      /// completamos con los permisos de los usuarios
-      foreach ($users as $user) {
-         if ($user->admin) {
-            foreach ($returnlist as $i => $value) {
-               $returnlist[$i]->users[$user->nick] = array(
-                   'modify' => TRUE,
-                   'delete' => TRUE,
-               );
+    private function delete_rol() {
+        $rol = $this->rol->get(filter_input(INPUT_GET, 'delete_rol'));
+        if ($rol) {
+            if ($rol->delete()) {
+                $this->new_message('Rol eliminado correctamente.');
+            } else {
+                $this->new_error_msg('Error al eliminar el rol #' . $rol->id);
             }
-         } else {
-            foreach ($returnlist as $i => $value) {
-               $returnlist[$i]->users[$user->nick] = array(
-                   'modify' => FALSE,
-                   'delete' => FALSE,
-               );
+        } else {
+            $this->new_error_msg('Rol no encontrado.');
+        }
+    }
+
+    public function all_pages() {
+        $returnlist = array();
+
+        /// Obtenemos la lista de páginas. Todas
+        foreach ($this->menu as $m) {
+            $m->enabled = FALSE;
+            $m->allow_delete = FALSE;
+            $m->users = array();
+            $returnlist[] = $m;
+        }
+
+        $users = $this->user->all();
+        /// colocamos a los administradores primero
+        usort($users, function($a, $b) {
+            if ($a->admin) {
+                return -1;
+            } else if ($b->admin) {
+                return 1;
+            } else {
+                return 0;
             }
+        });
 
-            foreach ($user->get_accesses() as $a) {
-               foreach ($returnlist as $i => $value) {
-                  if ($a->fs_page == $value->name) {
-                     $returnlist[$i]->users[$user->nick]['modify'] = TRUE;
-                     $returnlist[$i]->users[$user->nick]['delete'] = $a->allow_delete;
-                     break;
-                  }
-               }
+        /// completamos con los permisos de los usuarios
+        foreach ($users as $user) {
+            if ($user->admin) {
+                foreach ($returnlist as $i => $value) {
+                    $returnlist[$i]->users[$user->nick] = array(
+                        'modify' => TRUE,
+                        'delete' => TRUE,
+                    );
+                }
+            } else {
+                foreach ($returnlist as $i => $value) {
+                    $returnlist[$i]->users[$user->nick] = array(
+                        'modify' => FALSE,
+                        'delete' => FALSE,
+                    );
+                }
+
+                foreach ($user->get_accesses() as $a) {
+                    foreach ($returnlist as $i => $value) {
+                        if ($a->fs_page == $value->name) {
+                            $returnlist[$i]->users[$user->nick]['modify'] = TRUE;
+                            $returnlist[$i]->users[$user->nick]['delete'] = $a->allow_delete;
+                            break;
+                        }
+                    }
+                }
             }
-         }
-      }
+        }
 
-      /// ordenamos por nombre
-      usort($returnlist, function($a, $b) {
-         return strcmp($a->name, $b->name);
-      });
+        /// ordenamos por nombre
+        usort($returnlist, function($a, $b) {
+            return strcmp($a->name, $b->name);
+        });
 
-      return $returnlist;
-   }
+        return $returnlist;
+    }
 
 }

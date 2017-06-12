@@ -27,5 +27,5 @@ require_once 'model/core/serie.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class serie extends FacturaScripts\model\serie {
-   
+    
 }

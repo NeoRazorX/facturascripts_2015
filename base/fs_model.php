@@ -112,7 +112,7 @@ abstract class fs_model {
             }
         }
     }
-    
+
     public function table_name() {
         return $this->table_name;
     }
@@ -129,7 +129,7 @@ abstract class fs_model {
      * Muestra al usuario un mensaje de error
      * @param string $msg mensaje de error
      */
-    protected function new_error_msg($msg = FALSE) {
+    protected function new_error_msg($msg = '') {
         if ($msg) {
             self::$errors[] = $msg;
         }
@@ -154,7 +154,7 @@ abstract class fs_model {
      * Muestra al usuario un mensaje.
      * @param string $msg
      */
-    protected function new_message($msg = FALSE) {
+    protected function new_message($msg = '') {
         if ($msg) {
             self::$messages[] = $msg;
         }

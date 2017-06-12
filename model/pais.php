@@ -26,5 +26,5 @@ require_once 'model/core/pais.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class pais extends FacturaScripts\model\pais {
-   
+    
 }

@@ -26,5 +26,5 @@ require_once 'model/core/empresa.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class empresa extends FacturaScripts\model\empresa {
-   
+    
 }

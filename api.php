@@ -29,33 +29,34 @@ require_once 'base/fs_model.php';
 require_model('fs_extension.php');
 
 if ($db->connect()) {
-   if (!filter_input(INPUT_GET, (string)'v')) {
-      echo 'Version de la API de FacturaScripts ausente. Actualiza el cliente.';
-   } else if (filter_input(INPUT_GET, (string)'v') == '2') {
-      if (filter_input(INPUT_GET, (string)'f')) {
-         $ejecutada = FALSE;
-         $fsext = new fs_extension();
-         foreach ($fsext->all_4_type('api') as $ext) {
-            if ($ext->text == filter_input(INPUT_GET, (string)'f')) {
-               try {
-                  filter_input(INPUT_GET, (string)'f')();
-               } catch (Exception $e) {
-                  echo 'ERROR: ' . $e->getMessage();
-               }
+    if (!fs_filter_input_req('v')) {
+        echo 'Version de la API de FacturaScripts ausente. Actualiza el cliente.';
+    } else if (fs_filter_input_req('v') == '2') {
+        if (isset(fs_filter_input_req('f'))) {
+            $ejecutada = FALSE;
+            $fsext = new fs_extension();
+            foreach ($fsext->all_4_type('api') as $ext) {
+                if ($ext->text == fs_filter_input_req('f')) {
+                    try {
+                        fs_filter_input_req('f')();
+                    } catch (Exception $e) {
+                        echo 'ERROR: ' . $e->getMessage();
+                    }
 
-               $ejecutada = TRUE;
-               break;
+                    $ejecutada = TRUE;
+                    break;
+                }
             }
-         }
 
-         if (!$ejecutada) {
-            echo 'Ninguna funcion API ejecutada.';
-         }
-      } else
-         echo 'Ninguna funcion ejecutada.';
-   }
-   else {
-      echo 'Version de la API de FacturaScripts incorrecta. Actualiza el cliente.';
-   }
+            if (!$ejecutada) {
+                echo 'Ninguna funcion API ejecutada.';
+            }
+        } else {
+            echo 'Ninguna funcion ejecutada.';
+        }
+    }
+    else {
+        echo 'Version de la API de FacturaScripts incorrecta. Actualiza el cliente.';
+    }
 } else
-   echo 'ERROR al conectar a la base de datos';
+    echo 'ERROR al conectar a la base de datos';
