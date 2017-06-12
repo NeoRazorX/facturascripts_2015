@@ -59,9 +59,9 @@ class fs_updater {
       $this->version = '';
       $this->xid();
 
-      if (isset($_COOKIE['user']) AND isset($_COOKIE['logkey'])) {
+      if (filter_input(INPUT_COOKIE, 'user') AND filter_input(INPUT_COOKIE, 'logkey')) {
          /// solamente comprobamos si no hay que hacer nada
-         if (!isset($_GET['update']) AND ! isset($_GET['reinstall']) AND ! isset($_GET['plugin']) AND ! isset($_GET['idplugin'])) {
+         if (!filter_input(INPUT_GET, 'update') AND ! filter_input(INPUT_GET, 'reinstall') AND ! filter_input(INPUT_GET, 'plugin') AND ! filter_input(INPUT_GET, 'idplugin')) {
             /// ¿Están todos los permisos correctos?
             foreach ($this->__are_writable($this->__get_all_sub_directories('.')) as $dir) {
                $this->errores .= 'No se puede escribir sobre el directorio ' . $dir . '<br/>';
@@ -75,15 +75,15 @@ class fs_updater {
 
          if ($this->errores != '') {
             $this->errores .= 'Tienes que corregir estos errores antes de continuar.';
-         } else if (isset($_GET['update']) OR isset($_GET['reinstall'])) {
+         } else if (filter_input(INPUT_GET, 'update') OR filter_input(INPUT_GET, 'reinstall')) {
             $this->actualizar_nucleo();
-         } else if (isset($_GET['plugin'])) {
+         } else if (filter_input(INPUT_GET, 'plugin')) {
             $this->actualizar_plugin();
-         } else if (isset($_GET['idplugin']) AND isset($_GET['name']) AND isset($_GET['key'])) {
+         } else if (filter_input(INPUT_GET, 'idplugin') AND filter_input(INPUT_GET, 'name') AND filter_input(INPUT_GET, 'key')) {
             $this->actualizar_plugin_pago();
-         } else if (isset($_GET['idplugin']) AND isset($_GET['name']) AND isset($_POST['key'])) {
-            $private_key = $_POST['key'];
-            if (file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . $_GET['idplugin'], $private_key)) {
+         } else if (filter_input(INPUT_GET, 'idplugin') AND filter_input(INPUT_GET, 'name') AND filter_input(INPUT_POST, 'key')) {
+            $private_key = filter_input(INPUT_POST, 'key');
+            if (file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . filter_input(INPUT_GET, 'idplugin'), $private_key)) {
                $this->mensajes = 'Clave añadida correctamente.';
                $this->cache->clean();
             } else
@@ -307,7 +307,7 @@ class fs_updater {
 
    private function actualizar_plugin() {
       /// leemos el ini del plugin
-      $plugin_ini = parse_ini_file('plugins/' . $_GET['plugin'] . '/facturascripts.ini');
+      $plugin_ini = parse_ini_file('plugins/' . filter_input(INPUT_GET, 'plugin') . '/facturascripts.ini');
       if ($plugin_ini) {
          /// descargamos el zip
          if (@fs_file_download($plugin_ini['update_url'], 'update.zip')) {
@@ -324,7 +324,7 @@ class fs_updater {
                $plugins_list = scandir(getcwd() . '/plugins');
 
                /// eliminamos los archivos antiguos
-               $this->del_tree('plugins/' . $_GET['plugin']);
+               $this->del_tree('plugins/' . filter_input(INPUT_GET, 'plugin'));
 
                /// descomprimimos
                $zip->extractTo('plugins/');
@@ -343,19 +343,19 @@ class fs_updater {
                      }
 
                      if (!$encontrado2) {
-                        rename('plugins/' . $f, 'plugins/' . $_GET['plugin']);
+                        rename('plugins/' . $f, 'plugins/' . filter_input(INPUT_GET, 'plugin'));
                         break;
                      }
                   }
                }
 
                $this->mensajes = 'Plugin actualizado correctamente.';
-               $this->actualizacion_correcta($_GET['plugin']);
+               $this->actualizacion_correcta(filter_input(INPUT_GET, 'plugin'));
             }
          } else
             $this->errores = 'Error al descargar el archivo zip. Intente de nuevo en unos minutos.';
       } else
-         $this->errores = 'Error al leer el archivo plugins/' . $_GET['plugin'] . '/facturascripts.ini';
+         $this->errores = 'Error al leer el archivo plugins/' . filter_input(INPUT_GET, 'plugin') . '/facturascripts.ini';
    }
 
    /**
@@ -378,7 +378,7 @@ class fs_updater {
 
    private function actualizar_plugin_pago() {
       $url = 'https://www.facturascripts.com/comm3/index.php?page=community_edit_plugin&id=' .
-              $_GET['idplugin'] . '&xid=' . $this->xid . '&key=' . $_GET['key'];
+              filter_input(INPUT_GET, 'idplugin') . '&xid=' . $this->xid . '&key=' . filter_input(INPUT_GET, 'key');
 
       /// descargamos el zip
       if (@fs_file_download($url, 'update.zip')) {
@@ -392,24 +392,24 @@ class fs_updater {
             $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
          } else {
             /// eliminamos los archivos antiguos
-            $this->del_tree('plugins/' . $_GET['name']);
+            $this->del_tree('plugins/' . filter_input(INPUT_GET, 'name'));
 
             /// descomprimimos
             $zip->extractTo('plugins/');
             $zip->close();
             unlink('update.zip');
 
-            if (file_exists('plugins/' . $_GET['name'] . '-master')) {
+            if (file_exists('plugins/' . filter_input(INPUT_GET, 'name') . '-master')) {
                /// renombramos el directorio
-               rename('plugins/' . $_GET['name'] . '-master', 'plugins/' . $_GET['name']);
+               rename('plugins/' . filter_input(INPUT_GET, 'name') . '-master', 'plugins/' . filter_input(INPUT_GET, 'name'));
             }
 
             $this->mensajes = 'Plugin actualizado correctamente.';
-            $this->actualizacion_correcta($_GET['name']);
+            $this->actualizacion_correcta(filter_input(INPUT_GET, 'name'));
          }
       } else
          $this->errores = 'Error al descargar el archivo zip. <a href="updater.php?idplugin=' .
-                 $_GET['idplugin'] . '&name=' . $_GET['name'] . '">¿Clave incorrecta?</a>';
+                 filter_input(INPUT_GET, 'idplugin') . '&name=' . filter_input(INPUT_GET, 'name') . '">¿Clave incorrecta?</a>';
    }
 
    private function recurse_copy($src, $dst) {
@@ -573,11 +573,11 @@ class fs_updater {
       $e = $this->cache->get_array('empresa');
       if ($e) {
          $this->xid = $e[0]['xid'];
-         if (!isset($_COOKIE['uxid'])) {
+         if (!filter_input(INPUT_COOKIE, 'uxid')) {
             setcookie('uxid', $this->xid, 10800);
          }
-      } else if (isset($_COOKIE['uxid'])) {
-         $this->xid = $_COOKIE['uxid'];
+      } else if (filter_input(INPUT_COOKIE, 'uxid')) {
+         $this->xid = filter_input(INPUT_COOKIE, 'uxid');
       }
    }
 
