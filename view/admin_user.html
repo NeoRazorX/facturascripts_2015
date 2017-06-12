@@ -76,12 +76,12 @@
                </a>
                {/if}
                {if="$fsc->suser->enabled"}
-               <a id="b_desactivar_usuario" class="btn btn-sm btn-warning" href="{$fsc->url()}&senabled=0">
+               <a id="b_desactivar_usuario" class="btn btn-sm btn-warning" href="{$fsc->url()}&senabled=FALSE">
                   <span class="glyphicon glyphicon-lock"></span>
                   <span class="hidden-xs">&nbsp;Desactivar</span>
                </a>
                {else}
-               <a id="b_activar_usuario" class="btn btn-sm btn-default" href="{$fsc->url()}&senabled=1">
+               <a id="b_activar_usuario" class="btn btn-sm btn-default" href="{$fsc->url()}&senabled=TRUE">
                   <i class="fa fa-check" aria-hidden="true"></i>
                   <span class="hidden-xs">&nbsp;Activar</span>
                </a>

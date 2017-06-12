@@ -90,8 +90,8 @@ class admin_user extends fs_controller {
                 } else if ($this->user->nick == $this->suser->nick) {
                     $this->new_error_msg('No se permite Activar/Desactivar a uno mismo.');
                 } else {
-                    // Un usuario no se puede Activar/Desactivar a el mismo.
-                    $this->suser->enabled = fs_filter_input_req('senabled');
+                    // Un usuario no se puede Activar/Desactivar a él mismo.
+                    $this->suser->enabled = (fs_filter_input_req('senabled') == 'TRUE');
 
                     if ($this->suser->save()) {
                         if ($this->suser->enabled) {
