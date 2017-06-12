@@ -119,10 +119,11 @@ class fs_controller {
     */
    public $template;
 
+  
    /**
     * Esta variable contiene el texto enviado como parámetro query por cualquier formulario,
-    * es decir, se corresponde con filter_input(INPUT_POST, 'query']
-    * @var type 
+    * es decir, se corresponde con $_POST['query']
+    * @var string
     */
    public $query;
 
@@ -316,7 +317,7 @@ class fs_controller {
     * @param string $msg el mensaje a mostrar
     */
    public function new_error_msg($msg = FALSE, $tipo = 'error', $alerta = FALSE, $guardar = TRUE) {
-      if ($msg) {
+   	if ($msg) {
          $this->errors[] = str_replace("\n", ' ', $msg);
 
          if ($guardar) {
@@ -357,9 +358,13 @@ class fs_controller {
       return $this->errors;
    }
 
+
    /**
     * Muestra un mensaje al usuario
-    * @param type $msg mensaje a mostrar
+    * @param string $msg
+    * @param boolean $save
+    * @param string $tipo
+    * @param boolean $alerta
     */
    public function new_message($msg = FALSE, $save = FALSE, $tipo = 'msg', $alerta = FALSE) {
       if ($msg) {

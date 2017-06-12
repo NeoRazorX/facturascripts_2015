@@ -492,7 +492,7 @@ class admin_home extends fs_controller {
 
    /**
     * Elimina recursivamente un directorio
-    * @param type $dir
+    * @param string $dir
     * @return type
     */
    private function del_tree($dir) {
