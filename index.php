@@ -60,8 +60,8 @@ if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
 
    /// ¿Qué controlador usar?
    $pagename = '';
-   if (filter_input(INPUT_GET, 'page')) {
-      $pagename = filter_input(INPUT_GET, 'page');
+   if (filter_input(INPUT_GET, (string)'page')) {
+      $pagename = filter_input(INPUT_GET, (string)'page');
    } else if (defined('FS_HOMEPAGE')) {
       $pagename = FS_HOMEPAGE;
    }
@@ -114,7 +114,7 @@ if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
       $fsc = new fs_controller();
    }
 
-   if (is_null(filter_input(INPUT_GET, 'page'))) {
+   if (is_null(filter_input(INPUT_GET, (string)'page'))) {
       /// redireccionamos a la página definida por el usuario
       $fsc->select_default_page();
    }
@@ -141,10 +141,10 @@ if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
       $tpl = new RainTPL();
       $tpl->assign('fsc', $fsc);
 
-      if (filter_input(INPUT_POST, 'user')) {
-         $tpl->assign('nlogin', filter_input(INPUT_POST, 'user'));
-      } else if (filter_input(INPUT_COOKIE, 'user')) {
-         $tpl->assign('nlogin', filter_input(INPUT_COOKIE, 'user'));
+      if (filter_input(INPUT_POST, (string)'user')) {
+         $tpl->assign('nlogin', filter_input(INPUT_POST, (string)'user'));
+      } else if (filter_input(INPUT_COOKIE, (string)'user')) {
+         $tpl->assign('nlogin', filter_input(INPUT_COOKIE, (string)'user'));
       } else {
          $tpl->assign('nlogin', '');
       }

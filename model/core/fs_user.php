@@ -46,7 +46,7 @@ class fs_user extends \fs_model {
 
    /**
     * Email del usuario.
-    * @var type 
+    * @var  string 
     */
    public $email;
 

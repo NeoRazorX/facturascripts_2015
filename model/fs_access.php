@@ -40,7 +40,7 @@ class fs_access extends fs_model {
 
    /**
     * Otorga permisos al usuario a eliminar elementos en la página.
-    * @var type 
+    * @var boolean 
     */
    public $allow_delete;
 

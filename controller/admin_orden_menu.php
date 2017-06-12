@@ -30,7 +30,7 @@ class admin_orden_menu extends fs_controller {
    }
 
    protected function private_core() {
-      if (isset($_POST['guardar'])) {
+      if (filter_input(INPUT_POST, (string)'guardar')) {
          $this->guardar_orden();
       }
    }
@@ -38,7 +38,7 @@ class admin_orden_menu extends fs_controller {
    private function guardar_orden() {
       foreach ($this->folders() as $folder) {
          $orden = 0;
-         foreach ($_POST as $key => $value) {
+         foreach (filter_input_array(INPUT_POST) as $key => $value) {
             if (strlen($key) > $folder) {
                if (substr($key, 0, strlen($folder)) == $folder) {
                   $page = $this->page->get($value);

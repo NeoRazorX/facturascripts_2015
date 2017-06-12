@@ -36,7 +36,7 @@ class fs_log extends fs_model {
 
    /**
     * Texto del log. Sin longitud máxima.
-    * @var type text
+    * @var string 
     */
    public $detalle;
    public $fecha;
