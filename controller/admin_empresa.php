@@ -56,23 +56,23 @@ class admin_empresa extends fs_controller {
       $this->serie = new serie();
       $this->pais = new pais();
 
-      if (isset($_POST['nombre'])) {
+      if (filter_input(INPUT_POST, (string)'nombre')) {
          /// guardamos solamente lo básico, ya que facturacion_base no está activado
-         $this->empresa->nombre = $_POST['nombre'];
-         $this->empresa->nombrecorto = $_POST['nombrecorto'];
-         $this->empresa->web = $_POST['web'];
-         $this->empresa->email = $_POST['email'];
+         $this->empresa->nombre = filter_input(INPUT_POST, (string)'nombre');
+         $this->empresa->nombrecorto = filter_input(INPUT_POST, (string)'nombrecorto');
+         $this->empresa->web = filter_input(INPUT_POST, (string)'web');
+         $this->empresa->email = filter_input(INPUT_POST, (string)'email');
 
          /// configuración de email
-         $this->empresa->email_config['mail_password'] = $_POST['mail_password'];
-         $this->empresa->email_config['mail_bcc'] = $_POST['mail_bcc'];
-         $this->empresa->email_config['mail_firma'] = $_POST['mail_firma'];
-         $this->empresa->email_config['mail_mailer'] = $_POST['mail_mailer'];
-         $this->empresa->email_config['mail_host'] = $_POST['mail_host'];
-         $this->empresa->email_config['mail_port'] = intval($_POST['mail_port']);
-         $this->empresa->email_config['mail_enc'] = strtolower($_POST['mail_enc']);
-         $this->empresa->email_config['mail_user'] = $_POST['mail_user'];
-         $this->empresa->email_config['mail_low_security'] = isset($_POST['mail_low_security']);
+         $this->empresa->email_config['mail_password'] = filter_input(INPUT_POST, (string)'mail_password');
+         $this->empresa->email_config['mail_bcc'] = filter_input(INPUT_POST, (string)'mail_bcc');
+         $this->empresa->email_config['mail_firma'] = filter_input(INPUT_POST, (string)'mail_firma');
+         $this->empresa->email_config['mail_mailer'] = filter_input(INPUT_POST, (string)'mail_mailer');
+         $this->empresa->email_config['mail_host'] = filter_input(INPUT_POST, (string)'mail_host');
+         $this->empresa->email_config['mail_port'] = intval(filter_input(INPUT_POST, (string)'mail_port'));
+         $this->empresa->email_config['mail_enc'] = strtolower(filter_input(INPUT_POST, (string)'mail_enc'));
+         $this->empresa->email_config['mail_user'] = filter_input(INPUT_POST, (string)'mail_user');
+         $this->empresa->email_config['mail_low_security'] = filter_input(INPUT_POST, (string)'mail_low_security');
 
          if ($this->empresa->save()) {
             $this->new_message('Datos guardados correctamente.');
