@@ -3,6 +3,7 @@
 /plugins/
 /doc/
 /tmp/
+/vendor/
 .DS_Store
 .htaccess
 config.php
