@@ -59,13 +59,13 @@
                         </li>
                      </ul>
                   </li>
-                  {if="filter_input(INPUT_GET, (string)'page')"}
+                  {if="filter_input(INPUT_GET, 'page')"}
                   <li>
                      <b>¿Eres programador y estas intentando hacer un plugin?</b>
                      <ul>
                         <li>
                            Entonces te comento que lo que ha pasado es que no encuentro
-                           el archivo <b>{filter_input(INPUT_GET, (string)'page')}.php</b>, que debería estar en
+                           el archivo <b>{function="filter_input(INPUT_GET, 'page')"}.php</b>, que debería estar en
                            el directorio <b>controller</b> de tu plugin.
                         </li>
                      </ul>

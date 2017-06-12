@@ -46,7 +46,7 @@ class fs_user extends \fs_model {
 
    /**
     * Email del usuario.
-    * @var type 
+    * @var  string 
     */
    public $email;
 
@@ -62,7 +62,7 @@ class fs_user extends \fs_model {
    /**
     * TRUE -> el usuario ha iniciado sesión
     * No se guarda en la base de datos
-    * @var type 
+    * @var boolean 
     */
    public $logged_on;
 
