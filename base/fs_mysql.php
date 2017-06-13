@@ -500,7 +500,7 @@ class fs_mysql {
      * @param string $table_name
      * @param array $xml_cols
      * @param array $db_cols
-     * @return type
+     * @return string
      */
     public function compare_columns($table_name, $xml_cols, $db_cols) {
         $sql = '';
