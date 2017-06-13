@@ -752,7 +752,6 @@ class fs_controller {
     public function select_default_page() {
         if ($this->db->connected()) {
             if ($this->user->logged_on) {
-                $page = '';
                 if (is_null($this->user->fs_page)) {
                     $page = 'admin_home';
 
@@ -768,8 +767,9 @@ class fs_controller {
                             }
                         }
                     }
-                } else
+                } else {
                     $page = $this->user->fs_page;
+                }
 
                 header('Location: index.php?page=' . $page);
             }

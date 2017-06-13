@@ -66,8 +66,8 @@ class cuenta_banco extends \fs_model {
 
     /**
      * Devuelve el IBAN con o sin espacios.
-     * @param type $espacios
-     * @return type
+     * @param boolean $espacios
+     * @return string
      */
     public function iban($espacios = FALSE) {
         if ($espacios) {
@@ -92,7 +92,7 @@ class cuenta_banco extends \fs_model {
 
     /**
      * Devuelve la cuenta bancaria con codcuenta = $cod
-     * @param type $cod
+     * @param string $cod
      * @return boolean|\cuenta_banco
      */
     public function get($cod) {
@@ -184,8 +184,8 @@ class cuenta_banco extends \fs_model {
 
     /**
      * Calcula el IBAN a partir de la cuenta bancaria del cliente CCC
-     * @param type $ccc
-     * @return type
+     * @param string $ccc
+     * @return string
      */
     public function calcular_iban($ccc) {
         $codpais = substr($this->empresa->codpais, 0, 2);

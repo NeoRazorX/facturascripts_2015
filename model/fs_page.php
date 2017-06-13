@@ -171,8 +171,15 @@ class fs_page extends fs_model {
         $this->cache->delete('m_fs_page_all');
     }
 
+    /**
+     * Devuelve todas las páginas o entradas del menú
+     * @return \fs_page
+     */
     public function all() {
+        /// comprobamos en la caché
         $pagelist = $this->cache->get_array('m_fs_page_all');
+
+        /// si no está en la caché, comprobamos en la base de datos
         if (!$pagelist) {
             $pages = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY lower(folder) ASC, orden ASC, lower(title) ASC;");
             if ($pages) {
@@ -180,8 +187,11 @@ class fs_page extends fs_model {
                     $pagelist[] = new fs_page($p);
                 }
             }
+
+            /// guardamos en la caché
             $this->cache->set('m_fs_page_all', $pagelist);
         }
+
         return $pagelist;
     }
 

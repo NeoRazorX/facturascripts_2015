@@ -254,8 +254,8 @@ class fs_user extends \fs_model {
 
     /**
      * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
-     * @param type $reload
-     * @return type
+     * @param boolean $reload
+     * @return \fs_page
      */
     public function get_menu($reload = FALSE) {
         if (!isset($this->menu) OR $reload) {
@@ -282,7 +282,7 @@ class fs_user extends \fs_model {
 
     /**
      * Devuelve TRUE si el usuario tiene acceso a la página solicitada.
-     * @param type $page_name
+     * @param string $page_name
      * @return boolean
      */
     public function have_access_to($page_name) {
@@ -299,7 +299,7 @@ class fs_user extends \fs_model {
 
     /**
      * Devuelve TRUE si el usuario tiene permiso para eliminar elementos en la página solicitada.
-     * @param type $page_name
+     * @param string $page_name
      * @return type
      */
     public function allow_delete_on($page_name) {

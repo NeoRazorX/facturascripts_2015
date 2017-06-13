@@ -83,6 +83,10 @@ class fs_var extends fs_model {
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
     }
 
+    /**
+     * Devuelve un array con todos los elementos de la tabla.
+     * @return \fs_var
+     */
     public function all() {
         $vlist = array();
 
@@ -98,7 +102,7 @@ class fs_var extends fs_model {
 
     /**
      * Devuelve el valor de una clave dada.
-     * @param type $name
+     * @param string $name
      * @return boolean
      */
     public function simple_get($name) {
@@ -111,9 +115,9 @@ class fs_var extends fs_model {
 
     /**
      * Almacena el par clave/valor proporcionado.
-     * @param type $name
-     * @param type $value
-     * @return type
+     * @param string $name
+     * @param string $value
+     * @return boolean
      */
     public function simple_save($name, $value) {
         $comillas = '';
@@ -134,8 +138,8 @@ class fs_var extends fs_model {
 
     /**
      * Elimina de la base de datos la tupla con ese nombre.
-     * @param type $name
-     * @return type
+     * @param string $name
+     * @return boolean
      */
     public function simple_delete($name) {
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
@@ -150,7 +154,7 @@ class fs_var extends fs_model {
      * Sustituye los valores por FALSE si no los encentra en la base de datos,
      * a menos que pongas FALSE en el segundo parámetro.
      * 
-     * @param type $array
+     * @param array $array
      */
     public function array_get($array, $replace = TRUE) {
         /// obtenemos todos los resultados y seleccionamos los que necesitamos
@@ -179,7 +183,7 @@ class fs_var extends fs_model {
      * Guarda en la base de datos los pares clave, valor de un array simple.
      * ATENCIÓN: si el valor es FALSE, elimina la clave de la tabla.
      * 
-     * @param type $array
+     * @param array $array
      */
     public function array_save($array) {
         $done = TRUE;

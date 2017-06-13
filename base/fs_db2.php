@@ -319,8 +319,8 @@ class fs_db2 {
     /**
      * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
      * @param string $table_name
-     * @param type $xml_cols
-     * @param type $db_cols
+     * @param array $xml_cols
+     * @param array $db_cols
      * @return string
      */
     public function compare_columns($table_name, $xml_cols, $db_cols) {
@@ -330,8 +330,8 @@ class fs_db2 {
     /**
      * Compara dos arrays de restricciones, devuelve una sentencia sql en caso de encontrar diferencias.
      * @param string $table_name
-     * @param type $xml_cons
-     * @param type $db_cons
+     * @param array $xml_cons
+     * @param array $db_cons
      * @param boolean $delete_only
      * @return string
      */
@@ -342,8 +342,8 @@ class fs_db2 {
     /**
      * Devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada.
      * @param string $table_name
-     * @param type $xml_cols
-     * @param type $xml_cons
+     * @param array $xml_cols
+     * @param array $xml_cons
      * @return string
      */
     public function generate_table($table_name, $xml_cols, $xml_cons) {

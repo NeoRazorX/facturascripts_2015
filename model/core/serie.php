@@ -105,7 +105,7 @@ class serie extends \fs_model {
 
     /**
      * Devuelve la serie solicitada o false si no la encuentra.
-     * @param type $cod
+     * @param string $cod
      * @return \serie|boolean
      */
     public function get($cod) {

@@ -347,7 +347,7 @@ class pais extends \fs_model {
 
     /**
      * Devuelve el pais con codpais = $cod
-     * @param type $cod
+     * @param string $cod
      * @return boolean|\FacturaScripts\model\pais
      */
     public function get($cod) {
@@ -360,7 +360,7 @@ class pais extends \fs_model {
 
     /**
      * Devuelve el pais con codido = $cod
-     * @param type $cod
+     * @param string $cod
      * @return \pais|boolean
      */
     public function get_by_iso($cod) {

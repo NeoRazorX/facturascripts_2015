@@ -152,7 +152,7 @@ class agente extends \fs_model {
 
     /**
      * Devuelve nombre + apellidos del agente.
-     * @return type
+     * @return string
      */
     public function get_fullname() {
         return $this->nombre . " " . $this->apellidos;
@@ -184,7 +184,7 @@ class agente extends \fs_model {
 
     /**
      * Devuelve el empleado/agente con codagente = $cod
-     * @param type $cod
+     * @param string $cod
      * @return \agente|boolean
      */
     public function get($cod) {
@@ -291,7 +291,7 @@ class agente extends \fs_model {
 
     /**
      * Elimina este empleado/agente
-     * @return type
+     * @return boolean
      */
     public function delete() {
         $this->clean_cache();

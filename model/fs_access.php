@@ -92,6 +92,11 @@ class fs_access extends fs_model {
                         . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
     }
 
+    /**
+     * Devuelve todos los permisos de acceso del usuario.
+     * @param string $nick
+     * @return \fs_access
+     */
     public function all_from_nick($nick) {
         $accesslist = array();
 

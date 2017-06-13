@@ -112,7 +112,7 @@ class divisa extends \fs_model {
 
     /**
      * Devuelve TRUE si esta es la divisa predeterminada de la empresa
-     * @return type
+     * @return boolean
      */
     public function is_default() {
         return ( $this->coddivisa == $this->default_items->coddivisa() );
@@ -120,7 +120,7 @@ class divisa extends \fs_model {
 
     /**
      * Devuelve la divisa con coddivsa = $cod
-     * @param type $cod
+     * @param string $cod
      * @return boolean|\FacturaScripts\model\divisa
      */
     public function get($cod) {
@@ -197,7 +197,7 @@ class divisa extends \fs_model {
 
     /**
      * Elimina esta divisa
-     * @return type
+     * @return boolean
      */
     public function delete() {
         $this->clean_cache();

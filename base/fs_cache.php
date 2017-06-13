@@ -215,8 +215,8 @@ class fs_cache {
 
     /**
      * Devuelve un array almacenado en cache
-     * @param type $key
-     * @return type
+     * @param string $key
+     * @return array
      */
     public function get_array($key) {
         $aa = array();
@@ -239,9 +239,9 @@ class fs_cache {
     /**
      * Devuelve un array almacenado en cache, tal y como get_array(), pero con la direfencia
      * de que si no se encuentra en cache, se pone $error a true.
-     * @param type $key
-     * @param type $error
-     * @return type
+     * @param string $key
+     * @param boolean $error
+     * @return array
      */
     public function get_array2($key, &$error) {
         $aa = array();

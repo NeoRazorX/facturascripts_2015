@@ -31,46 +31,29 @@ class admin_home extends fs_controller {
     public $download_list2;
     public $paginas;
     public $step;
+    private $fs_var;
 
     public function __construct() {
         parent::__construct(__CLASS__, 'Panel de control', 'admin');
     }
 
     protected function private_core() {
+        $this->fs_var = new fs_var();
+
         $this->check_htaccess();
-
-        $this->disable_mod_plugins = FALSE;
-        $this->disable_add_plugins = FALSE;
-        $this->disable_rm_plugins = FALSE;
-        if (defined('FS_DISABLE_MOD_PLUGINS')) {
-            $this->disable_mod_plugins = FS_DISABLE_MOD_PLUGINS;
-            $this->disable_add_plugins = FS_DISABLE_MOD_PLUGINS;
-            $this->disable_rm_plugins = FS_DISABLE_MOD_PLUGINS;
-        }
-
-        if (!$this->disable_mod_plugins) {
-            if (defined('FS_DISABLE_ADD_PLUGINS')) {
-                $this->disable_add_plugins = FS_DISABLE_ADD_PLUGINS;
-            }
-
-            if (defined('FS_DISABLE_RM_PLUGINS')) {
-                $this->disable_rm_plugins = FS_DISABLE_RM_PLUGINS;
-            }
-        }
-
+        $this->chech_config();
         $this->get_download_list();
-        $fsvar = new fs_var();
 
         if (filter_input(INPUT_GET, 'check4updates')) {
-            $this->template = FALSE;
+            $this->template = '';
             if ($this->check_for_updates2()) {
                 echo 'Hay actualizaciones disponibles.';
-            } else
+            } else {
                 echo 'No hay actualizaciones.';
-        }
-        else if (filter_input(INPUT_GET, 'updated')) {
+            }
+        } else if (filter_input(INPUT_GET, 'updated')) {
             /// el sistema ya se ha actualizado
-            $fsvar->simple_delete('updates');
+            $this->fs_var->simple_delete('updates');
             $this->activar_comprobacion_columnas();
             $this->clean_cache();
         } else if (FS_DEMO) {
@@ -82,76 +65,23 @@ class admin_home extends fs_controller {
         } else if (filter_input(INPUT_GET, 'skip')) {
             if ($this->step == '1') {
                 $this->step = '2';
-                $fsvar->simple_save('install_step', $this->step);
+                $this->fs_var->simple_save('install_step', $this->step);
             }
         } else if (filter_input(INPUT_POST, 'modpages')) {
             /// activar/desactivas páginas del menú
-
-            if (!$this->step) {
-                $this->step = '1';
-                $fsvar->simple_save('install_step', $this->step);
-            }
-
-            $enabled = filter_input(INPUT_POST, 'enabled', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            foreach ($this->all_pages() as $p) {
-                if (!$p->exists) { /// la página está en la base de datos pero ya no existe el controlador
-                    if ($p->delete()) {
-                        $this->new_message('Se ha eliminado automáticamente la página ' . $p->name .
-                                ' ya que no tiene un controlador asociado en la carpeta controller.');
-                    }
-                } else if (!$enabled) { /// ninguna página marcada
-                    $this->disable_page($p);
-                } else if (!$p->enabled AND in_array($p->name, $enabled)) { /// página no activa marcada para activar
-                    $this->enable_page($p);
-                } else if ($p->enabled AND ! in_array($p->name, $enabled)) { /// págine activa no marcada (desactivar)
-                    $this->disable_page($p);
-                }
-            }
-
-            $this->new_message('Datos guardados correctamente.');
+            $this->enable_pages();
         } else if (filter_input(INPUT_GET, 'enable')) {
             /// activar plugin
             $this->enable_plugin(filter_input(INPUT_GET, 'enable'));
-
-            if ($this->step == '1') {
-                $this->step = '2';
-                $fsvar->simple_save('install_step', $this->step);
-            }
         } else if (filter_input(INPUT_GET, 'disable')) {
             /// desactivar plugin
             $this->disable_plugin(filter_input(INPUT_GET, 'disable'));
         } else if (filter_input(INPUT_GET, 'delete_plugin')) {
             /// eliminar plugin
-            if ($this->disable_rm_plugins) {
-                $this->new_error_msg('No tienes permiso para eliminar plugins.');
-            } else if (is_writable('plugins/' . filter_input(INPUT_GET, 'delete_plugin'))) {
-                if ($this->del_tree('plugins/' . filter_input(INPUT_GET, 'delete_plugin'))) {
-                    $this->new_message('Plugin ' . filter_input(INPUT_GET, 'delete_plugin') . ' eliminado correctamente.', TRUE);
-                } else
-                    $this->new_error_msg('Imposible eliminar el plugin ' . filter_input(INPUT_GET, 'delete_plugin'));
-            } else
-                $this->new_error_msg('No tienes permisos de escritura sobre la carpeta plugins/' . filter_input(INPUT_GET, 'delete_plugin'));
-        }
-        else if (filter_input(INPUT_POST, 'install')) {
+            $this->delete_plugin(filter_input(INPUT_GET, 'delete_plugin'));
+        } else if (filter_input(INPUT_POST, 'install')) {
             /// instalar plugin (copiarlo y descomprimirlo)
-            if ($this->disable_add_plugins) {
-                $this->new_error_msg('La subida de plugins está desactivada.');
-            } else if (is_uploaded_file($_FILES['fplugin']['tmp_name'])) {
-                $zip = new ZipArchive();
-                $res = $zip->open($_FILES['fplugin']['tmp_name'], ZipArchive::CHECKCONS);
-                if ($res === TRUE) {
-                    $zip->extractTo('plugins/');
-                    $zip->close();
-                    $this->new_message('Plugin ' . $_FILES['fplugin']['name'] . ' añadido correctamente. Ya puedes activarlo.');
-
-                    $this->clean_cache();
-                } else
-                    $this->new_error_msg('Error al abrir el archivo ZIP. Código: ' . $res);
-            } else {
-                $this->new_error_msg('Archivo no encontrado. ¿Pesa más de '
-                        . $this->get_max_file_upload() . ' MB? Ese es el límite que tienes'
-                        . ' configurado en tu servidor.');
-            }
+            $this->install_plugin();
         } else if (filter_input(INPUT_GET, 'download')) {
             if ($this->disable_mod_plugins) {
                 $this->new_error_msg('No tienes permiso para descargar plugins.');
@@ -175,40 +105,89 @@ class admin_home extends fs_controller {
             $this->new_message('Configuración reiniciada correctamente, pulsa <a href="' . $this->url() . '#avanzado">aquí</a> para continuar.', TRUE);
         } else {
             /// ¿Guardamos las opciones de la pestaña avanzado?
-            $guardar = FALSE;
-            foreach ($GLOBALS['config2'] as $i => $value) {
-                if (filter_input(INPUT_POST, $i)) {
-                    $GLOBALS['config2'][$i] = filter_input(INPUT_POST, $i);
-                    $guardar = TRUE;
-                }
-            }
-
-            if ($guardar) {
-                $file = fopen('tmp/' . FS_TMP_NAME . 'config2.ini', 'w');
-                if ($file) {
-                    foreach ($GLOBALS['config2'] as $i => $value) {
-                        if (is_numeric($value)) {
-                            fwrite($file, $i . " = " . $value . ";\n");
-                        } else {
-                            fwrite($file, $i . " = '" . $value . "';\n");
-                        }
-                    }
-
-                    fclose($file);
-                }
-
-                $this->new_message('Datos guardados correctamente.');
-            }
+            $this->save_avanzado();
         }
-
 
         $this->paginas = $this->all_pages();
         $this->load_menu(TRUE);
     }
 
+    private function chech_config() {
+        $this->disable_mod_plugins = FALSE;
+        $this->disable_add_plugins = FALSE;
+        $this->disable_rm_plugins = FALSE;
+        if (defined('FS_DISABLE_MOD_PLUGINS')) {
+            $this->disable_mod_plugins = FS_DISABLE_MOD_PLUGINS;
+            $this->disable_add_plugins = FS_DISABLE_MOD_PLUGINS;
+            $this->disable_rm_plugins = FS_DISABLE_MOD_PLUGINS;
+        }
+
+        if (!$this->disable_mod_plugins) {
+            if (defined('FS_DISABLE_ADD_PLUGINS')) {
+                $this->disable_add_plugins = FS_DISABLE_ADD_PLUGINS;
+            }
+
+            if (defined('FS_DISABLE_RM_PLUGINS')) {
+                $this->disable_rm_plugins = FS_DISABLE_RM_PLUGINS;
+            }
+        }
+    }
+
+    private function enable_pages() {
+        if (!$this->step) {
+            $this->step = '1';
+            $this->fs_var->simple_save('install_step', $this->step);
+        }
+
+        $enabled = filter_input(INPUT_POST, 'enabled', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+        foreach ($this->all_pages() as $p) {
+            if (!$p->exists) { /// la página está en la base de datos pero ya no existe el controlador
+                if ($p->delete()) {
+                    $this->new_message('Se ha eliminado automáticamente la página ' . $p->name .
+                            ' ya que no tiene un controlador asociado en la carpeta controller.');
+                }
+            } else if (!$enabled) { /// ninguna página marcada
+                $this->disable_page($p);
+            } else if (!$p->enabled AND in_array($p->name, $enabled)) { /// página no activa marcada para activar
+                $this->enable_page($p);
+            } else if ($p->enabled AND ! in_array($p->name, $enabled)) { /// págine activa no marcada (desactivar)
+                $this->disable_page($p);
+            }
+        }
+
+        $this->new_message('Datos guardados correctamente.');
+    }
+
+    private function save_avanzado() {
+        $guardar = FALSE;
+        foreach ($GLOBALS['config2'] as $i => $value) {
+            if (filter_input(INPUT_POST, $i)) {
+                $GLOBALS['config2'][$i] = filter_input(INPUT_POST, $i);
+                $guardar = TRUE;
+            }
+        }
+
+        if ($guardar) {
+            $file = fopen('tmp/' . FS_TMP_NAME . 'config2.ini', 'w');
+            if ($file) {
+                foreach ($GLOBALS['config2'] as $i => $value) {
+                    if (is_numeric($value)) {
+                        fwrite($file, $i . " = " . $value . ";\n");
+                    } else {
+                        fwrite($file, $i . " = '" . $value . "';\n");
+                    }
+                }
+
+                fclose($file);
+            }
+
+            $this->new_message('Datos guardados correctamente.');
+        }
+    }
+
     /**
      * Devuelve las páginas/controladore de los plugins activos.
-     * @return type
+     * @return \fs_page
      */
     private function all_pages() {
         $pages = array();
@@ -281,7 +260,7 @@ class admin_home extends fs_controller {
 
     /**
      * Devuelve la lista de plugins instalados y activados
-     * @return type
+     * @return array
      */
     private function plugins() {
         return $GLOBALS['plugins'];
@@ -289,7 +268,7 @@ class admin_home extends fs_controller {
 
     /**
      * Activa una página/controlador.
-     * @param type $page
+     * @param fs_page $page
      */
     private function enable_page($page) {
         /// primero buscamos en los plugins
@@ -327,7 +306,7 @@ class admin_home extends fs_controller {
 
     /**
      * Desactiva una página/controlador.
-     * @param type $page
+     * @param fs_page $page
      */
     private function disable_page($page) {
         if ($page->name == $this->page->name) {
@@ -339,7 +318,7 @@ class admin_home extends fs_controller {
 
     /**
      * Devuelve la lista de elementos a traducir
-     * @return type
+     * @return array
      */
     public function traducciones() {
         $clist = array();
@@ -379,7 +358,7 @@ class admin_home extends fs_controller {
 
     /**
      * Lista de opciones para NF0
-     * @return type
+     * @return array
      */
     public function nf0() {
         return array(0, 1, 2, 3, 4, 5);
@@ -387,7 +366,7 @@ class admin_home extends fs_controller {
 
     /**
      * Lista de opciones para NF1
-     * @return type
+     * @return array
      */
     public function nf1() {
         return array(
@@ -399,7 +378,7 @@ class admin_home extends fs_controller {
 
     /**
      * Devuelve la lista completada de plugins instalados
-     * @return type
+     * @return array
      */
     public function plugin_advanced_list() {
         $plugins = array();
@@ -494,7 +473,7 @@ class admin_home extends fs_controller {
     /**
      * Elimina recursivamente un directorio
      * @param string $dir
-     * @return type
+     * @return boolean
      */
     private function del_tree($dir) {
         $files = array_diff(scandir($dir), array('.', '..'));
@@ -504,9 +483,30 @@ class admin_home extends fs_controller {
         return rmdir($dir);
     }
 
+    private function install_plugin() {
+        if ($this->disable_add_plugins) {
+            $this->new_error_msg('La subida de plugins está desactivada.');
+        } else if (is_uploaded_file($_FILES['fplugin']['tmp_name'])) {
+            $zip = new ZipArchive();
+            $res = $zip->open($_FILES['fplugin']['tmp_name'], ZipArchive::CHECKCONS);
+            if ($res === TRUE) {
+                $zip->extractTo('plugins/');
+                $zip->close();
+                $this->new_message('Plugin ' . $_FILES['fplugin']['name'] . ' añadido correctamente. Ya puedes activarlo.');
+
+                $this->clean_cache();
+            } else
+                $this->new_error_msg('Error al abrir el archivo ZIP. Código: ' . $res);
+        } else {
+            $this->new_error_msg('Archivo no encontrado. ¿Pesa más de '
+                    . $this->get_max_file_upload() . ' MB? Ese es el límite que tienes'
+                    . ' configurado en tu servidor.');
+        }
+    }
+
     /**
      * Activa un plugin
-     * @param type $name
+     * @param string $name
      */
     private function enable_plugin($name) {
         if (strpos($name, '-master') !== FALSE) {
@@ -590,11 +590,16 @@ class admin_home extends fs_controller {
             } else
                 $this->new_error_msg('Imposible activar el plugin <b>' . $name . '</b>.');
         }
+
+        if ($this->step == '1') {
+            $this->step = '2';
+            $this->fs_var->simple_save('install_step', $this->step);
+        }
     }
 
     /**
      * Desactiva un plugin
-     * @param type $name
+     * @param string $name
      */
     private function disable_plugin($name) {
         if (file_exists('tmp/' . FS_TMP_NAME . 'enabled_plugins.list')) {
@@ -673,6 +678,24 @@ class admin_home extends fs_controller {
     }
 
     /**
+     * Elimina el plugin del directorio
+     * @param string $name
+     */
+    private function delete_plugin($name) {
+        if ($this->disable_rm_plugins) {
+            $this->new_error_msg('No tienes permiso para eliminar plugins.');
+        } else if (is_writable('plugins/' . $name)) {
+            if ($this->del_tree('plugins/' . $name)) {
+                $this->new_message('Plugin ' . $name . ' eliminado correctamente.', TRUE);
+            } else {
+                $this->new_error_msg('Imposible eliminar el plugin ' . $name);
+            }
+        } else {
+            $this->new_error_msg('No tienes permisos de escritura sobre la carpeta plugins/' . $name);
+        }
+    }
+
+    /**
      * Comprueba actualizaciones de los plugins y del núcleo.
      * @return boolean
      */
@@ -680,8 +703,6 @@ class admin_home extends fs_controller {
         if (!$this->user->admin) {
             return FALSE;
         } else {
-            $fsvar = new fs_var();
-
             /// comprobamos actualizaciones en los plugins
             $updates = FALSE;
             foreach ($this->plugin_advanced_list() as $plugin) {
@@ -715,11 +736,11 @@ class admin_home extends fs_controller {
             }
 
             if ($updates) {
-                $fsvar->simple_save('updates', 'true');
+                $this->fs_var->simple_save('updates', 'true');
                 return TRUE;
             } else {
-                $fsvar->name = 'updates';
-                $fsvar->delete();
+                $this->fs_var->name = 'updates';
+                $this->fs_var->delete();
                 return FALSE;
             }
         }
@@ -764,19 +785,19 @@ class admin_home extends fs_controller {
 
                     if ($this->step == '1') {
                         $this->step = '2';
-                        $fsvar = new fs_var();
-                        $fsvar->simple_save('install_step', $this->step);
+                        $this->fs_var->simple_save('install_step', $this->step);
                     }
-                } else
+                } else {
                     $this->new_error_msg('Error al abrir el ZIP. Código: ' . $res);
-            }
-            else {
+                }
+            } else {
                 $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
                         . '<a href="' . $this->download_list[filter_input(INPUT_GET, 'download')]['url'] . '" target="_blank">aquí</a> '
                         . 'y añadirlo desde la pestaña <b>plugins</b>.');
             }
-        } else
+        } else {
             $this->new_error_msg('Descarga no encontrada.');
+        }
     }
 
     /**
@@ -818,8 +839,9 @@ class admin_home extends fs_controller {
 
                         $this->new_message('Plugin añadido correctamente.');
                         $this->enable_plugin($item->nombre);
-                    } else
+                    } else {
                         $this->new_error_msg('Error al abrir el ZIP. Código: ' . $res);
+                    }
                 }
                 else {
                     $this->new_error_msg('Error al descargar. Tendrás que descargarlo manualmente desde '
@@ -885,8 +907,7 @@ class admin_home extends fs_controller {
                 'description' => 'Plugin de adaptación de FacturaScripts a <b>Venezuela</b>.'
             ),
         );
-        $fsvar = new fs_var();
-        $this->step = $fsvar->simple_get('install_step');
+        $this->step = $this->fs_var->simple_get('install_step');
 
         /**
          * Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.

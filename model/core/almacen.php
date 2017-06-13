@@ -104,7 +104,7 @@ class almacen extends \fs_model {
 
     /**
      * Devuelve el almacén con codalmacen = $cod
-     * @param type $cod
+     * @param string $cod
      * @return \almacen|boolean
      */
     public function get($cod) {

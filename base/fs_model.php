@@ -146,7 +146,7 @@ abstract class fs_model {
 
     /**
      * Devuelve la lista de mensajes de error de los modelos.
-     * @return type lista de errores.
+     * @return array lista de errores.
      */
     public function get_errors() {
         return self::$core_log->get_errors();
@@ -257,7 +257,7 @@ abstract class fs_model {
     /**
      * Convierte un texto a binario.
      * Lo hace con base64.
-     * @param type $v
+     * @param string $v
      * @return type
      */
     protected function str2bin($v) {
@@ -283,7 +283,7 @@ abstract class fs_model {
      * Devuelve el valor entero de la variable $s,
      * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
      * @param type $s
-     * @return type
+     * @return integer
      */
     public function intval($s) {
         if (is_null($s)) {
@@ -421,8 +421,8 @@ abstract class fs_model {
     /**
      * Obtiene las columnas y restricciones del fichero xml para una tabla
      * @param string $table_name
-     * @param type $columns
-     * @param type $constraints
+     * @param array $columns
+     * @param array $constraints
      * @return boolean
      */
     protected function get_xml_table($table_name, &$columns, &$constraints) {

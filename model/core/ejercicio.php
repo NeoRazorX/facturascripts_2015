@@ -120,7 +120,7 @@ class ejercicio extends \fs_model {
 
     /**
      * Devuelve un nuevo código para un ejercicio
-     * @param type $cod
+     * @param string $cod
      * @return string
      */
     public function get_new_codigo($cod = '0001') {
@@ -156,9 +156,9 @@ class ejercicio extends \fs_model {
 
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
-     * @param type $fecha
-     * @param type $show_error
-     * @return type
+     * @param staring $fecha
+     * @param boolean $show_error
+     * @return string
      */
     public function get_best_fecha($fecha, $show_error = FALSE) {
         $fecha2 = strtotime($fecha);
@@ -198,9 +198,9 @@ class ejercicio extends \fs_model {
     /**
      * Devuelve el ejercicio para la fecha indicada.
      * Si no existe, lo crea.
-     * @param type $fecha
-     * @param type $solo_abierto
-     * @param type $crear
+     * @param string $fecha
+     * @param boolean $solo_abierto
+     * @param boolean $crear
      * @return boolean|\ejercicio
      */
     public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE) {

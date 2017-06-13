@@ -113,7 +113,7 @@ class forma_pago extends \fs_model {
 
     /**
      * Devuelve la forma de pago con codpago = $cod
-     * @param type $cod
+     * @param string $cod
      * @return \FacturaScripts\model\forma_pago|boolean
      */
     public function get($cod) {
@@ -224,9 +224,9 @@ class forma_pago extends \fs_model {
     /**
      * A partir de una fecha devuelve la nueva fecha de vencimiento en base a esta forma de pago.
      * Si se proporciona $dias_de_pago se usarán para la nueva fecha.
-     * @param type $fecha_inicio
-     * @param type $dias_de_pago dias de pago específicos para el cliente (separados por comas).
-     * @return type
+     * @param string $fecha_inicio
+     * @param string $dias_de_pago dias de pago específicos para el cliente (separados por comas).
+     * @return string
      */
     public function calcular_vencimiento($fecha_inicio, $dias_de_pago = '') {
         $fecha = $this->calcular_vencimiento2($fecha_inicio);
