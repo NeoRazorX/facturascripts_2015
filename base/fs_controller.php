@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_core_log.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_db2.php';
 require_once 'base/fs_default_items.php';
@@ -54,28 +55,24 @@ class fs_controller {
     protected $cache;
 
     /**
+     * Este objeto contiene los mensajes, errores y consejos volcados por controladores,
+     * modelos y base de datos.
+     * @var fs_core_log 
+     */
+    private $core_log;
+
+    /**
+     * Nombre del controlador (lo utilizamos en lugar de __CLASS__ porque __CLASS__
+     * en las funciones de la clase padre es el nombre de la clase padre).
+     * @var string 
+     */
+    protected $class_name;
+
+    /**
      * Permite calcular cuanto tarda en procesarse la página.
      * @var string 
      */
     private $uptime;
-
-    /**
-     * Listado de errores en pantalla.
-     * @var array 
-     */
-    private $errors;
-
-    /**
-     * Listado de mensajes en pantalla.
-     * @var array 
-     */
-    private $messages;
-
-    /**
-     * Listado de consejos en pantalla.
-     * @var array 
-     */
-    private $advices;
 
     /**
      * Listado con los últimos cambios en documentos.
@@ -152,15 +149,14 @@ class fs_controller {
      * @param boolean $shmenu debe ser TRUE si quieres añadir el acceso directo en el menú
      * @param boolean $important debe ser TRUE si quieres que aparezca en el menú de destacado
      */
-    public function __construct($name = '', $title = 'home', $folder = '', $admin = FALSE, $shmenu = TRUE, $important = FALSE) {
+    public function __construct($name = __CLASS__, $title = 'home', $folder = '', $admin = FALSE, $shmenu = TRUE, $important = FALSE) {
         $tiempo = explode(' ', microtime());
         $this->uptime = $tiempo[1] + $tiempo[0];
-        $this->errors = array();
-        $this->messages = array();
-        $this->advices = array();
         $this->simbolo_divisas = array();
         $this->extensions = array();
 
+        $this->class_name = $name;
+        $this->core_log = new fs_core_log($name);
         $this->cache = new fs_cache();
         $this->db = new fs_db2();
 
@@ -275,26 +271,30 @@ class fs_controller {
      */
     private function fs_change_user_passwd() {
         $ips = array();
+        $db_password = filter_input(INPUT_POST, 'db_password');
+        $nick = filter_input(INPUT_POST, 'user');
+        $new_password = filter_input(INPUT_POST, 'new_password');
+        $new_password2 = filter_input(INPUT_POST, 'new_password2');
 
         if ($this->ip_baneada($ips)) {
             $this->banear_ip($ips);
-            $this->new_error_msg('Tu IP ha sido baneada ' . filter_input(INPUT_POST, 'user') . '. '
+            $this->new_error_msg('Tu IP ha sido baneada ' . $nick . '. '
                     . 'Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
-        } else if (filter_input(INPUT_POST, 'new_password') != filter_input(INPUT_POST, 'new_password2')) {
-            $this->new_error_msg('Las contraseñas no coinciden ' . filter_input(INPUT_POST, 'user'));
-        } else if (filter_input(INPUT_POST, 'new_password') == '') {
-            $this->new_error_msg('Tienes que escribir una contraseña nueva ' . filter_input(INPUT_POST, 'user'));
-        } else if (filter_input(INPUT_POST, 'db_password') != FS_DB_PASS) {
+        } else if ($new_password != $new_password2) {
+            $this->new_error_msg('Las contraseñas no coinciden ' . $nick);
+        } else if ($new_password == '') {
+            $this->new_error_msg('Tienes que escribir una contraseña nueva ' . $nick);
+        } else if ($db_password != FS_DB_PASS) {
             $this->banear_ip($ips);
-            $this->new_error_msg('La contraseña de la base de datos es incorrecta ' . filter_input(INPUT_POST, 'user'));
+            $this->new_error_msg('La contraseña de la base de datos es incorrecta ' . $nick);
         } else {
-            $suser = $this->user->get(filter_input(INPUT_POST, 'user'));
+            $suser = $this->user->get($nick);
             if ($suser) {
-                $suser->set_password(filter_input(INPUT_POST, 'new_password'));
+                $suser->set_password($new_password);
                 if ($suser->save()) {
-                    $this->new_message('Contraseña cambiada correctamente ' . filter_input(INPUT_POST, 'user'));
+                    $this->new_message('Contraseña cambiada correctamente ' . $nick);
                 } else
-                    $this->new_error_msg('Imposible cambiar la contraseña del usuario ' . filter_input(INPUT_POST, 'user'));
+                    $this->new_error_msg('Imposible cambiar la contraseña del usuario ' . $nick);
             }
         }
 
@@ -326,7 +326,10 @@ class fs_controller {
      */
     public function new_error_msg($msg = '', $tipo = 'error', $alerta = FALSE, $guardar = TRUE) {
         if ($msg) {
-            $this->errors[] = str_replace("\n", ' ', $msg);
+            if ($this->class_name == $this->core_log->controller_name()) {
+                /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
+                $this->core_log->new_error($msg);
+            }
 
             if ($guardar) {
                 $fslog = new fs_log();
@@ -334,7 +337,6 @@ class fs_controller {
                 $fslog->detalle = $msg;
                 $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
                 $fslog->alerta = $alerta;
-
                 if ($this->user) {
                     $fslog->usuario = $this->user->nick;
                 }
@@ -349,21 +351,7 @@ class fs_controller {
      * @return array lista de errores
      */
     public function get_errors() {
-        /// registramos los errores en la base de datos
-        foreach ($this->db->get_errors() as $err) {
-            $this->new_error_msg($err, 'db');
-        }
-        $this->db->clean_errors();
-
-        if (isset($this->empresa)) {
-            /// registramos los errores en los modelos
-            foreach ($this->empresa->get_errors() as $err) {
-                $this->new_error_msg($err, 'model');
-            }
-            $this->empresa->clean_errors();
-        }
-
-        return $this->errors;
+        return $this->core_log->get_errors();
     }
 
     /**
@@ -375,7 +363,10 @@ class fs_controller {
      */
     public function new_message($msg = '', $save = FALSE, $tipo = 'msg', $alerta = FALSE) {
         if ($msg) {
-            $this->messages[] = str_replace("\n", ' ', $msg);
+            if ($this->class_name == $this->core_log->controller_name()) {
+                /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
+                $this->core_log->new_message($msg);
+            }
 
             if ($save) {
                 $fslog = new fs_log();
@@ -383,7 +374,6 @@ class fs_controller {
                 $fslog->detalle = $msg;
                 $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
                 $fslog->alerta = $alerta;
-
                 if ($this->user) {
                     $fslog->usuario = $this->user->nick;
                 }
@@ -398,15 +388,7 @@ class fs_controller {
      * @return array lista de mensajes
      */
     public function get_messages() {
-        if (isset($this->empresa)) {
-            /// registramos los mensajes en los modelos
-            foreach ($this->empresa->get_messages() as $msg) {
-                $this->new_message($msg, TRUE, 'model');
-            }
-            $this->empresa->clean_messages();
-        }
-
-        return $this->messages;
+        return $this->core_log->get_messages();
     }
 
     /**
@@ -414,8 +396,9 @@ class fs_controller {
      * @param string $msg el consejo a mostrar
      */
     public function new_advice($msg = '') {
-        if ($msg) {
-            $this->advices[] = str_replace("\n", ' ', $msg);
+        if ($msg AND $this->class_name == $this->core_log->controller_name()) {
+            /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
+            $this->core_log->new_advice($msg);
         }
     }
 
@@ -424,7 +407,7 @@ class fs_controller {
      * @return array lista de consejos
      */
     public function get_advices() {
-        return $this->advices;
+        return $this->core_log->get_advices();
     }
 
     /**
@@ -442,6 +425,7 @@ class fs_controller {
      */
     private function ip_baneada(&$ips) {
         $baneada = FALSE;
+        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
 
         if (file_exists('tmp/' . FS_TMP_NAME . 'ip.log')) {
             $file = fopen('tmp/' . FS_TMP_NAME . 'ip.log', 'r');
@@ -451,7 +435,7 @@ class fs_controller {
                     $linea = explode(';', trim(fgets($file)));
 
                     if (intval($linea[2]) > time()) {
-                        if ($linea[0] == filter_input(INPUT_SERVER, 'REMOTE_ADDR') AND intval($linea[1]) > 5) {
+                        if ($linea[0] == $ip AND intval($linea[1]) > 5) {
                             $baneada = TRUE;
                         }
 
@@ -471,20 +455,23 @@ class fs_controller {
      * @param array $ips es un array de IP;intentos;hora
      */
     private function banear_ip(&$ips) {
+        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+
         $file = fopen('tmp/' . FS_TMP_NAME . 'ip.log', 'w');
         if ($file) {
             $encontrada = FALSE;
 
             foreach ($ips as $ip) {
-                if ($ip[0] == filter_input(INPUT_SERVER, 'REMOTE_ADDR')) {
+                if ($ip[0] == $ip) {
                     fwrite($file, $ip[0] . ';' . ( 1 + intval($ip[1]) ) . ';' . ( time() + 600 ));
                     $encontrada = TRUE;
-                } else
+                } else {
                     fwrite($file, join(';', $ip));
+                }
             }
 
             if (!$encontrada) {
-                fwrite($file, filter_input(INPUT_SERVER, 'REMOTE_ADDR') . ';1;' . ( time() + 600 ));
+                fwrite($file, $ip . ';1;' . ( time() + 600 ));
             }
 
             fclose($file);
@@ -511,51 +498,17 @@ class fs_controller {
      */
     private function log_in() {
         $ips = array();
+        $nick = filter_input(INPUT_POST, 'user');
+        $password = filter_input(INPUT_POST, 'password');
 
         if ($this->ip_baneada($ips)) {
             $this->banear_ip($ips);
             $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.', 'login', TRUE);
-        } else if (filter_input(INPUT_POST, 'user') AND filter_input(INPUT_POST, 'password')) {
+        } else if ($nick AND $password) {
             if (FS_DEMO) { /// en el modo demo nos olvidamos de la contraseña
-                if (filter_var(filter_input(INPUT_POST, 'user'), FILTER_VALIDATE_EMAIL)) {
-                    $aux = explode('@', filter_input(INPUT_POST, 'user'));
-                    $nick = substr($aux[0], 0, 12);
-                    if ($nick == 'admin') {
-                        $nick .= $this->random_string(7);
-                    }
-
-                    $user = $this->user->get($nick);
-                    if (!$user) {
-                        $user = new fs_user();
-                        $user->nick = $nick;
-                        $user->set_password('demo');
-                        $user->email = filter_input(INPUT_POST, 'user');
-
-                        /// creamos un agente para asociarlo
-                        $agente = new agente();
-                        $agente->codagente = $agente->get_new_codigo();
-                        $agente->nombre = $nick;
-                        $agente->apellidos = 'Demo';
-                        $agente->email = filter_input(INPUT_POST, 'user');
-
-                        if ($agente->save()) {
-                            $user->codagente = $agente->codagente;
-                        }
-                    }
-
-                    $user->new_logkey();
-                    if ($user->save()) {
-                        setcookie('user', $user->nick, time() + FS_COOKIES_EXPIRE);
-                        setcookie('logkey', $user->log_key, time() + FS_COOKIES_EXPIRE);
-                        $this->user = $user;
-                        $this->load_menu();
-                    }
-                } else {
-                    $this->new_error_msg('Email no válido');
-                }
+                $this->login_demo($nick);
             } else {
-                $user = $this->user->get(filter_input(INPUT_POST, 'user'));
-                $password = filter_input(INPUT_POST, 'password');
+                $user = $this->user->get($nick);
                 if ($user AND $user->enabled) {
                     /**
                      * En versiones anteriores se guardaban las contraseñas siempre en
@@ -585,7 +538,7 @@ class fs_controller {
                             $this->cache->clean();
                         }
                     } else {
-                        $this->new_error_msg('¡Contraseña incorrecta! (' . filter_input(INPUT_POST, 'user') . ')', 'login', TRUE);
+                        $this->new_error_msg('¡Contraseña incorrecta! (' . $nick . ')', 'login', TRUE);
                         $this->banear_ip($ips);
                     }
                 } else if ($user AND ! $user->enabled) {
@@ -599,9 +552,12 @@ class fs_controller {
                 }
             }
         } else if (filter_input(INPUT_COOKIE, 'user') AND filter_input(INPUT_COOKIE, 'logkey')) {
-            $user = $this->user->get(filter_input(INPUT_COOKIE, 'user'));
+            $nick = filter_input(INPUT_COOKIE, 'user');
+            $logkey = filter_input(INPUT_COOKIE, 'logkey');
+
+            $user = $this->user->get($nick);
             if ($user AND $user->enabled) {
-                if ($user->log_key == filter_input(INPUT_COOKIE, 'logkey')) {
+                if ($user->log_key == $logkey) {
                     $user->logged_on = TRUE;
                     $user->update_login();
                     setcookie('user', $user->nick, time() + FS_COOKIES_EXPIRE);
@@ -614,7 +570,7 @@ class fs_controller {
                     $this->log_out();
                 }
             } else {
-                $this->new_error_msg('¡El usuario ' . filter_input(INPUT_COOKIE, 'user') . ' no existe o está desactivado!');
+                $this->new_error_msg('¡El usuario ' . $nick . ' no existe o está desactivado!');
                 $this->log_out(TRUE);
                 $this->user->clean_cache(TRUE);
                 $this->cache->clean();
@@ -622,6 +578,45 @@ class fs_controller {
         }
 
         return $this->user->logged_on;
+    }
+
+    private function login_demo($email) {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $aux = explode('@', $email);
+            $nick = substr($aux[0], 0, 12);
+            if ($nick == 'admin') {
+                $nick .= $this->random_string(7);
+            }
+
+            $user = $this->user->get($nick);
+            if (!$user) {
+                $user = new fs_user();
+                $user->nick = $nick;
+                $user->set_password('demo');
+                $user->email = $email;
+
+                /// creamos un agente para asociarlo
+                $agente = new agente();
+                $agente->codagente = $agente->get_new_codigo();
+                $agente->nombre = $nick;
+                $agente->apellidos = 'Demo';
+                $agente->email = $email;
+
+                if ($agente->save()) {
+                    $user->codagente = $agente->codagente;
+                }
+            }
+
+            $user->new_logkey();
+            if ($user->save()) {
+                setcookie('user', $user->nick, time() + FS_COOKIES_EXPIRE);
+                setcookie('logkey', $user->log_key, time() + FS_COOKIES_EXPIRE);
+                $this->user = $user;
+                $this->load_menu();
+            }
+        } else {
+            $this->new_error_msg('Email no válido');
+        }
     }
 
     /**
@@ -698,7 +693,7 @@ class fs_controller {
      * @return array lista de consultas SQL
      */
     public function get_db_history() {
-        return $this->db->get_history();
+        return $this->core_log->get_sql_history();
     }
 
     /**

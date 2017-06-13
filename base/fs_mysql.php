@@ -29,38 +29,31 @@ class fs_mysql {
      * El enlace con la base de datos.
      * @var type 
      */
-    protected static $link;
+    private static $link;
 
     /**
      * Nº de selects ejecutados.
      * @var integer 
      */
-    protected static $t_selects;
+    private static $t_selects;
 
     /**
      * Nº de transacciones ejecutadas.
      * @var integer 
      */
-    protected static $t_transactions;
-
+    private static $t_transactions;
+    
     /**
-     * Historial de consultas SQL.
-     * @var type 
+     * Gestiona el log de todos los controladores, modelos y base de datos.
+     * @var fs_core_log 
      */
-    protected static $history;
-
-    /**
-     * Lista de errores.
-     * @var type 
-     */
-    protected static $errors;
+    private static $core_log;
 
     public function __construct() {
         if (!isset(self::$link)) {
             self::$t_selects = 0;
             self::$t_transactions = 0;
-            self::$history = array();
-            self::$errors = array();
+            self::$core_log = new fs_core_log();
         }
     }
 
@@ -77,7 +70,7 @@ class fs_mysql {
             self::$link = @new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, intval(FS_DB_PORT));
 
             if (self::$link->connect_error) {
-                self::$errors[] = self::$link->connect_error;
+                self::$core_log->new_error(self::$link->connect_error);
                 self::$link = NULL;
             } else {
                 self::$link->set_charset('utf8');
@@ -92,7 +85,7 @@ class fs_mysql {
                 self::$link->autocommit(FALSE);
             }
         } else {
-            self::$errors[] = 'No tienes instalada la extensión de PHP para MySQL.';
+            self::$core_log->new_error('No tienes instalada la extensión de PHP para MySQL.');
         }
 
         return $connected;
@@ -137,14 +130,14 @@ class fs_mysql {
      * @return type
      */
     public function get_errors() {
-        return self::$errors;
+        return self::$core_log->get_errors();
     }
 
     /**
      * Vacía la lista de errores.
      */
     public function clean_errors() {
-        self::$errors = array();
+        self::$core_log->clean_errors();
     }
 
     /**
@@ -168,7 +161,7 @@ class fs_mysql {
      * @return type
      */
     public function get_history() {
-        return self::$history;
+        return self::$core_log->get_sql_history();
     }
 
     /**
@@ -307,7 +300,7 @@ class fs_mysql {
 
         if (self::$link) {
             /// añadimos la consulta sql al historial
-            self::$history[] = $sql;
+            self::$core_log->new_sql($sql);
 
             $aux = self::$link->query($sql);
             if ($aux) {
@@ -318,7 +311,7 @@ class fs_mysql {
                 $aux->free();
             } else {
                 /// añadimos el error a la lista de errores
-                self::$errors[] = self::$link->error;
+                self::$core_log->new_error(self::$link->error);
             }
 
             /// aumentamos el contador de selects realizados
@@ -347,7 +340,7 @@ class fs_mysql {
             $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
 
             /// añadimos la consulta sql al historial
-            self::$history[] = $sql;
+            self::$core_log->new_sql($sql);
 
             $aux = self::$link->query($sql);
             if ($aux) {
@@ -358,7 +351,7 @@ class fs_mysql {
                 $aux->free();
             } else {
                 /// añadimos el error a la lista de errores
-                self::$errors[] = self::$link->error;
+                self::$core_log->new_error(self::$link->error);
             }
 
             /// aumentamos el contador de selects realizados
@@ -384,7 +377,7 @@ class fs_mysql {
 
         if (self::$link) {
             /// añadimos la consulta sql al historial
-            self::$history[] = $sql;
+            self::$core_log->new_sql($sql);
 
             if ($transaction) {
                 $this->begin_transaction();
@@ -398,8 +391,8 @@ class fs_mysql {
             }
 
             if (self::$link->errno) {
-                self::$errors[] = 'Error al ejecutar la consulta ' . $i . ': ' . self::$link->error .
-                        '. La secuencia ocupa la posición ' . count(self::$history);
+                self::$core_log->new_error('Error al ejecutar la consulta ' . $i . ': ' . self::$link->error .
+                        '. La secuencia ocupa la posición ' . count(self::$core_log->get_sql_history()));
             } else {
                 $result = TRUE;
             }
@@ -814,8 +807,8 @@ class fs_mysql {
         if ($data) {
             if ($data[0]['Engine'] != 'InnoDB') {
                 if (!$this->exec("ALTER TABLE " . $table_name . " ENGINE=InnoDB;")) {
-                    self::$errors[] = 'Imposible convertir la tabla ' . $table_name . ' a InnoDB.'
-                            . ' Imprescindible para FacturaScripts.';
+                    self::$core_log->new_error('Imposible convertir la tabla ' . $table_name . ' a InnoDB.'
+                            . ' Imprescindible para FacturaScripts.');
                     $return = FALSE;
                 }
             }

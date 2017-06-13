@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_core_log.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_db2.php';
 require_once 'base/fs_functions.php';
@@ -63,9 +64,18 @@ abstract class fs_model {
      * @var fs_default_items
      */
     protected $default_items;
+    
+    /**
+     * Lista de tablas ya comprobadas.
+     * @var array 
+     */
     private static $checked_tables;
-    private static $errors;
-    private static $messages;
+    
+    /**
+     * Gestiona el log de todos los controladores, modelos y base de datos.
+     * @var fs_core_log 
+     */
+    private static $core_log;
 
     /**
      * Constructor.
@@ -88,8 +98,7 @@ abstract class fs_model {
         $this->default_items = new fs_default_items();
 
         if (!isset(self::$checked_tables)) {
-            self::$errors = array();
-            self::$messages = array();
+            self::$core_log = new fs_core_log();
 
             self::$checked_tables = $this->cache->get_array('fs_checked_tables');
             if (self::$checked_tables) {
@@ -131,7 +140,7 @@ abstract class fs_model {
      */
     protected function new_error_msg($msg = '') {
         if ($msg) {
-            self::$errors[] = $msg;
+            self::$core_log->new_error($msg);
         }
     }
 
@@ -140,14 +149,14 @@ abstract class fs_model {
      * @return type lista de errores.
      */
     public function get_errors() {
-        return self::$errors;
+        return self::$core_log->get_errors();
     }
 
     /**
      * Vacía la lista de errores de los modelos.
      */
     public function clean_errors() {
-        self::$errors = array();
+        self::$core_log->clean_errors();
     }
 
     /**
@@ -156,7 +165,7 @@ abstract class fs_model {
      */
     protected function new_message($msg = '') {
         if ($msg) {
-            self::$messages[] = $msg;
+            self::$core_log->new_message($msg);
         }
     }
 
@@ -165,14 +174,14 @@ abstract class fs_model {
      * @return type
      */
     public function get_messages() {
-        return self::$messages;
+        return self::$core_log->get_messages();
     }
 
     /**
      * Vacía la lista de mensajes de los modelos.
      */
     public function clean_messages() {
-        self::$messages = array();
+        self::$core_log->clean_messages();
     }
 
     /**
