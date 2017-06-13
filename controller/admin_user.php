@@ -126,8 +126,8 @@ class admin_user extends fs_controller {
         }
 
         /// ordenamos por nombre
-        usort($returnlist, function($a, $b) {
-            return strcmp($a->name, $b->name);
+        usort($returnlist, function($val1, $val2) {
+            return strcmp($val1->name, $val2->name);
         });
 
         return $returnlist;
@@ -264,9 +264,10 @@ class admin_user extends fs_controller {
         } else {
             $user_no_more_admin = FALSE;
             $error = FALSE;
-            if ($_POST['spassword'] != '') {
-                if ($_POST['spassword'] == $_POST['spassword2']) {
-                    if ($this->suser->set_password($_POST['spassword'])) {
+            $spassword = filter_input(INPUT_POST, 'spassword');
+            if ($spassword != '') {
+                if ($spassword == filter_input(INPUT_POST, 'spassword2')) {
+                    if ($this->suser->set_password($spassword)) {
                         $this->new_message('Se ha cambiado la contraseña del usuario ' . $this->suser->nick, TRUE, 'login', TRUE);
                     }
                 } else {
@@ -276,13 +277,13 @@ class admin_user extends fs_controller {
             }
 
             if (isset($_POST['email'])) {
-                $this->suser->email = strtolower($_POST['email']);
+                $this->suser->email = strtolower(filter_input(INPUT_POST, 'email'));
             }
 
             if (isset($_POST['scodagente'])) {
                 $this->suser->codagente = NULL;
                 if ($_POST['scodagente'] != '') {
-                    $this->suser->codagente = $_POST['scodagente'];
+                    $this->suser->codagente = filter_input(INPUT_POST, 'scodagente');
                 }
             }
 
@@ -307,15 +308,15 @@ class admin_user extends fs_controller {
 
             $this->suser->fs_page = NULL;
             if (isset($_POST['udpage'])) {
-                $this->suser->fs_page = $_POST['udpage'];
+                $this->suser->fs_page = filter_input(INPUT_POST, 'udpage');
             }
 
             if (isset($_POST['css'])) {
-                $this->suser->css = $_POST['css'];
+                $this->suser->css = filter_input(INPUT_POST, 'css');
             }
 
             if ($error) {
-                
+                /// si se han producido errores, no hacemos nada más
             } else if ($this->suser->save()) {
                 if (!$this->user->admin) {
                     /// si no eres administrador, no puedes cambiar los permisos
