@@ -55,11 +55,11 @@ class admin_info extends fs_controller {
                   'cron_error' => FALSE)
       );
 
-      if (isset($_GET['fix'])) {
+      if (filter_input(INPUT_GET, (string)'fix')) {
          $cron_vars['cron_error'] = FALSE;
          $cron_vars['cron_lock'] = FALSE;
          $fsvar->array_save($cron_vars);
-      } else if (isset($_GET['clean_cache'])) {
+      } else if (filter_input(INPUT_GET, (string)'clean_cache')) {
          /// borramos los archivos php del directorio tmp
          foreach (scandir(getcwd() . '/tmp/' . FS_TMP_NAME) as $f) {
             if (substr($f, -4) == '.php') {
@@ -81,7 +81,7 @@ class admin_info extends fs_controller {
          $this->new_advice('Se está ejecutando el cron.');
       }
 
-      $this->b_alerta = isset($_REQUEST['b_alerta']);
+      $this->b_alerta = filter_input(INPUT_GET, (string)'b_alerta');
       $this->b_desde = '';
       $this->b_detalle = '';
       $this->b_hasta = '';
@@ -89,16 +89,16 @@ class admin_info extends fs_controller {
       $this->b_tipo = '';
       $this->b_usuario = '';
 
-      if (isset($_REQUEST['b_desde'])) {
-         $this->b_desde = $_REQUEST['b_desde'];
-         $this->b_detalle = $_REQUEST['b_detalle'];
-         $this->b_hasta = $_REQUEST['b_hasta'];
-         $this->b_tipo = $_REQUEST['b_tipo'];
-         $this->b_usuario = $_REQUEST['b_usuario'];
+      if (filter_input(INPUT_GET, (string)'b_desde')) {
+         $this->b_desde = filter_input(INPUT_GET, (string)'b_desde');
+         $this->b_detalle = filter_input(INPUT_GET, (string)'b_detalle');
+         $this->b_hasta = filter_input(INPUT_GET, (string)'b_hasta');
+         $this->b_tipo = filter_input(INPUT_GET, (string)'b_tipo');
+         $this->b_usuario = filter_input(INPUT_GET, (string)'b_usuario');
       }
 
-      if (isset($_REQUEST['b_ip'])) {
-         $this->b_ip = $_REQUEST['b_ip'];
+      if (filter_input(INPUT_GET, (string)'b_ip')) {
+         $this->b_ip = filter_input(INPUT_GET, (string)'b_ip');
       }
 
       $this->buscar_en_log();

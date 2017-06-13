@@ -203,10 +203,11 @@ abstract class fs_model {
       return $this->db->escape_string($s);
    }
 
+
    /**
     * Transforma una variable en una cadena de texto válida para ser
     * utilizada en una consulta SQL.
-    * @param type $v
+    * @param mixed $v
     * @return string
     */
    public function var2str($v) {
