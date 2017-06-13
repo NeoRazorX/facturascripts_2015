@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,6 +36,7 @@ class admin_user extends fs_controller {
 
     public function private_core() {
         $this->share_extensions();
+        $this->agente = new agente();
 
         /// ¿El usuario tiene permiso para eliminar en esta página?
         $this->allow_delete = $this->user->admin;
@@ -43,11 +44,9 @@ class admin_user extends fs_controller {
         /// ¿El usuario tiene permiso para modificar en esta página?
         $this->allow_modify = $this->user->admin;
 
-        $this->agente = new agente();
-
         $this->suser = FALSE;
         if (isset($_GET['snick'])) {
-            $this->suser = $this->user->get($_GET['snick']);
+            $this->suser = $this->user->get(filter_input(INPUT_GET, 'snick'));
         }
 
         if ($this->suser) {
@@ -60,49 +59,11 @@ class admin_user extends fs_controller {
             }
 
             if (isset($_POST['nnombre'])) {
-                /// Nuevo empleado
-                $age0 = new agente();
-                $age0->codagente = $age0->get_new_codigo();
-                $age0->nombre = $_POST['nnombre'];
-                $age0->apellidos = $_POST['napellidos'];
-                $age0->dnicif = $_POST['ndnicif'];
-                $age0->telefono = $_POST['ntelefono'];
-                $age0->email = strtolower($_POST['nemail']);
-
-                if (!$this->user->admin) {
-                    $this->new_error_msg('Solamente un administrador puede crear y asignar un empleado desde aquí.');
-                } else if ($age0->save()) {
-                    $this->new_message("Empleado " . $age0->codagente . " guardado correctamente.");
-                    $this->suser->codagente = $age0->codagente;
-
-                    if ($this->suser->save()) {
-                        $this->new_message("Empleado " . $age0->codagente . " asignado correctamente.");
-                    } else
-                        $this->new_error_msg("¡Imposible asignar el agente!");
-                } else
-                    $this->new_error_msg("¡Imposible guardar el agente!");
-            }
-            else if (isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin'])) {
+                $this->nuevo_empleado();
+            } else if (isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin'])) {
                 $this->modificar_user();
             } else if (fs_filter_input_req('senabled')) {
-                if (!$this->user->admin) {
-                    $this->new_error_msg('Solamente un administrador puede activar o desactivar a un Usuario.');
-                } else if ($this->user->nick == $this->suser->nick) {
-                    $this->new_error_msg('No se permite Activar/Desactivar a uno mismo.');
-                } else {
-                    // Un usuario no se puede Activar/Desactivar a él mismo.
-                    $this->suser->enabled = (fs_filter_input_req('senabled') == 'TRUE');
-
-                    if ($this->suser->save()) {
-                        if ($this->suser->enabled) {
-                            $this->new_message('Usuario activado correctamente.', TRUE, 'login', TRUE);
-                        } else {
-                            $this->new_message('Usuario desactivado correctamente.', TRUE, 'login', TRUE);
-                        }
-                    } else {
-                        $this->new_error_msg('Error al Activar/Desactivar el Usuario');
-                    }
-                }
+                $this->desactivar_usuario();
             }
 
             /// ¿Estamos modificando nuestro usuario?
@@ -269,6 +230,31 @@ class admin_user extends fs_controller {
         }
     }
 
+    private function nuevo_empleado() {
+        $age0 = new agente();
+        $age0->codagente = $age0->get_new_codigo();
+        $age0->nombre = filter_input(INPUT_POST, 'nnombre');
+        $age0->apellidos = filter_input(INPUT_POST, 'napellidos');
+        $age0->dnicif = filter_input(INPUT_POST, 'ndnicif');
+        $age0->telefono = filter_input(INPUT_POST, 'ntelefono');
+        $age0->email = strtolower(filter_input(INPUT_POST, 'nemail'));
+
+        if (!$this->user->admin) {
+            $this->new_error_msg('Solamente un administrador puede crear y asignar un empleado desde aquí.');
+        } else if ($age0->save()) {
+            $this->new_message("Empleado " . $age0->codagente . " guardado correctamente.");
+            $this->suser->codagente = $age0->codagente;
+
+            if ($this->suser->save()) {
+                $this->new_message("Empleado " . $age0->codagente . " asignado correctamente.");
+            } else {
+                $this->new_error_msg("¡Imposible asignar el agente!");
+            }
+        } else {
+            $this->new_error_msg("¡Imposible guardar el agente!");
+        }
+    }
+
     private function modificar_user() {
         if (FS_DEMO AND $this->user->nick != $this->suser->nick) {
             $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
@@ -377,6 +363,27 @@ class admin_user extends fs_controller {
                 $this->new_message("Datos modificados correctamente.");
             } else {
                 $this->new_error_msg("¡Imposible modificar los datos!");
+            }
+        }
+    }
+
+    private function desactivar_usuario() {
+        if (!$this->user->admin) {
+            $this->new_error_msg('Solamente un administrador puede activar o desactivar a un Usuario.');
+        } else if ($this->user->nick == $this->suser->nick) {
+            $this->new_error_msg('No se permite Activar/Desactivar a uno mismo.');
+        } else {
+            // Un usuario no se puede Activar/Desactivar a él mismo.
+            $this->suser->enabled = (fs_filter_input_req('senabled') == 'TRUE');
+
+            if ($this->suser->save()) {
+                if ($this->suser->enabled) {
+                    $this->new_message('Usuario activado correctamente.', TRUE, 'login', TRUE);
+                } else {
+                    $this->new_message('Usuario desactivado correctamente.', TRUE, 'login', TRUE);
+                }
+            } else {
+                $this->new_error_msg('Error al Activar/Desactivar el Usuario');
             }
         }
     }

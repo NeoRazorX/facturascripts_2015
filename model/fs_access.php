@@ -28,13 +28,13 @@ class fs_access extends fs_model {
 
     /**
      * Nick del usuario.
-     * @var type 
+     * @var string 
      */
     public $fs_user;
 
     /**
      * Nombre de la página (nombre del controlador).
-     * @var type 
+     * @var string
      */
     public $fs_page;
 

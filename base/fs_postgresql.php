@@ -27,7 +27,7 @@ class fs_postgresql {
 
     /**
      * El enlace con la base de datos.
-     * @var type 
+     * @var integer 
      */
     private static $link;
 

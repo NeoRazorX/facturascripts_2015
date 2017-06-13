@@ -31,37 +31,37 @@ class fs_extension extends fs_model {
     /**
      * Identificador de la extensión para poder buscarlo fácilemnte.
      * No es la clave primaria. La clave primaria es name+from.
-     * @var type 
+     * @var string 
      */
     public $name;
 
     /**
      * Nombre de la página (controlador) que ofrece la extensión.
-     * @var type 
+     * @var string 
      */
     public $from;
 
     /**
      * Nombre de la página (controlador) que recibe la extensión.
-     * @var type 
+     * @var string 
      */
     public $to;
 
     /**
      * Tipo de extensión: head, css, button, tab...
-     * @var type 
+     * @var string 
      */
     public $type;
 
     /**
      * Texto del botón, del tab...
-     * @var type 
+     * @var string 
      */
     public $text;
 
     /**
      * Parámetros extra para la URL. Debes añadir el &
-     * @var type 
+     * @var string 
      */
     public $params;
 

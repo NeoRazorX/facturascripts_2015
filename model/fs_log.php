@@ -29,7 +29,7 @@ class fs_log extends fs_model {
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var integer 
      */
     public $id;
     public $tipo;
@@ -43,21 +43,21 @@ class fs_log extends fs_model {
 
     /**
      * Nick del usuario.
-     * @var type 
+     * @var string
      */
     public $usuario;
     public $ip;
 
     /**
      * TRUE -> resaltar en el listado.
-     * @var type 
+     * @var boolean
      */
     public $alerta;
 
     public function __construct($l = FALSE) {
         parent::__construct('fs_logs');
         if ($l) {
-            $this->id = $l['id'];
+            $this->id = intval($l['id']);
             $this->tipo = $l['tipo'];
             $this->detalle = $l['detalle'];
             $this->fecha = date('d-m-Y H:i:s', strtotime($l['fecha']));

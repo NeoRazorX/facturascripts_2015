@@ -31,13 +31,13 @@ class agente extends \fs_model {
 
     /**
      * Clave primaria. Varchar (10).
-     * @var type
+     * @var string
      */
     public $codagente;
 
     /**
      * Identificador fiscal (CIF/NIF).
-     * @var type 
+     * @var string
      */
     public $dnicif;
     public $nombre;
@@ -51,43 +51,43 @@ class agente extends \fs_model {
 
     /**
      * Nº de la seguridad social.
-     * @var type 
+     * @var string
      */
     public $seg_social;
 
     /**
      * cargo en la empresa.
-     * @var type 
+     * @var string
      */
     public $cargo;
 
     /**
      * Cuenta bancaria
-     * @var type 
+     * @var string
      */
     public $banco;
 
     /**
      * Fecha de nacimiento.
-     * @var type 
+     * @var string
      */
     public $f_nacimiento;
 
     /**
      * Fecha de alta en la empresa.
-     * @var type 
+     * @var string
      */
     public $f_alta;
 
     /**
      * Fecha de baja en la empresa.
-     * @var type 
+     * @var string
      */
     public $f_baja;
 
     /**
      * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, albaranes y facturas.
-     * @var type 
+     * @var float
      */
     public $porcomision;
 

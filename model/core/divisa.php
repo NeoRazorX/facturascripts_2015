@@ -29,26 +29,26 @@ class divisa extends \fs_model {
 
     /**
      * Clave primaria. Varchar (3).
-     * @var type 
+     * @var string 
      */
     public $coddivisa;
     public $descripcion;
 
     /**
      * Tasa de conversión respecto al euro.
-     * @var type 
+     * @var float
      */
     public $tasaconv;
 
     /**
      * Tasa de conversión respecto al euro (para compras).
-     * @var type 
+     * @var float
      */
     public $tasaconv_compra;
 
     /**
      * código ISO 4217 en número: http://en.wikipedia.org/wiki/ISO_4217
-     * @var type
+     * @var string
      */
     public $codiso;
     public $simbolo;

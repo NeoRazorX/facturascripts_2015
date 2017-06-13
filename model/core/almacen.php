@@ -29,7 +29,7 @@ class almacen extends \fs_model {
 
     /**
      * Clave primaria. Varchar (4).
-     * @var type 
+     * @var string
      */
     public $codalmacen;
     public $nombre;
@@ -44,7 +44,7 @@ class almacen extends \fs_model {
 
     /**
      * Todavía sin uso.
-     * @var type 
+     * @var string 
      */
     public $observaciones;
 

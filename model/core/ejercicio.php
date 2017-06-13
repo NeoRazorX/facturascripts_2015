@@ -29,7 +29,7 @@ class ejercicio extends \fs_model {
 
     /**
      * Clave primaria. Varchar(4).
-     * @var type 
+     * @var string 
      */
     public $codejercicio;
     public $nombre;
@@ -38,39 +38,39 @@ class ejercicio extends \fs_model {
 
     /**
      * Estado del ejercicio: ABIERTO|CERRADO
-     * @var type 
+     * @var string 
      */
     public $estado;
 
     /**
      * ID del asiento de cierre del ejercicio.
-     * @var type 
+     * @var integer 
      */
     public $idasientocierre;
 
     /**
      * ID del asiento de pérdidas y ganancias.
-     * @var type 
+     * @var integer 
      */
     public $idasientopyg;
 
     /**
      * ID del asiento de apertura.
-     * @var type 
+     * @var integer 
      */
     public $idasientoapertura;
 
     /**
      * Identifica el plan contable utilizado. Esto solamente es necesario
      * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
-     * @var type 
+     * @var string 
      */
     public $plancontable;
 
     /**
      * Longitud de caracteres de las subcuentas asignadas. Esto solamente es necesario
      * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
-     * @var type 
+     * @var integer
      */
     public $longsubcuenta;
 

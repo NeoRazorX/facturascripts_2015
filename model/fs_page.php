@@ -28,21 +28,21 @@ class fs_page extends fs_model {
     /**
      * Clave primaria. Varchar (30).
      * Nombre de la página (controlador).
-     * @var type 
+     * @var string 
      */
     public $name;
     public $title;
 
     /**
      * Nombre del menú donde queremos colocar el acceso.
-     * @var type 
+     * @var string 
      */
     public $folder;
     public $version;
 
     /**
      * FALSE -> ocultar en el menú.
-     * @var type 
+     * @var boolean
      */
     public $show_on_menu;
     public $exists;

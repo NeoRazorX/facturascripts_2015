@@ -29,39 +29,39 @@ class forma_pago extends \fs_model {
 
     /**
      * Clave primaria. Varchar (10).
-     * @var type 
+     * @var string 
      */
     public $codpago;
     public $descripcion;
 
     /**
      * Pagados -> marca las facturas generadas como pagadas.
-     * @var type 
+     * @var string 
      */
     public $genrecibos;
 
     /**
      * Código de la cuenta bancaria asociada.
-     * @var type 
+     * @var string 
      */
     public $codcuenta;
 
     /**
      * Para indicar si hay que mostrar la cuenta bancaria del cliente.
-     * @var type 
+     * @var boolean
      */
     public $domiciliado;
 
     /**
      * TRUE (por defecto) -> mostrar los datos en documentos de venta,
      * incluida la cuenta bancaria asociada.
-     * @var type 
+     * @var boolean
      */
     public $imprimir;
 
     /**
      * Sirve para generar la fecha de vencimiento de las facturas.
-     * @var type 
+     * @var string
      */
     public $vencimiento;
 

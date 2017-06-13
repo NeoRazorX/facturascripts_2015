@@ -29,7 +29,7 @@ class cuenta_banco extends \fs_model {
 
     /**
      * Clave primaria. Varchar (6).
-     * @var type 
+     * @var string 
      */
     public $codcuenta;
     public $descripcion;
@@ -38,7 +38,7 @@ class cuenta_banco extends \fs_model {
 
     /**
      * Código de la subcuenta de contabilidad
-     * @var type 
+     * @var string 
      */
     public $codsubcuenta;
 

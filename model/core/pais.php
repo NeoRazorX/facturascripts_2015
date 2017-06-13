@@ -29,7 +29,7 @@ class pais extends \fs_model {
 
     /**
      * Clave primaria. Varchar(3).
-     * @var type Código alfa-3 del país.
+     * @var string Código alfa-3 del país.
      * http://es.wikipedia.org/wiki/ISO_3166-1
      */
     public $codpais;
@@ -37,13 +37,13 @@ class pais extends \fs_model {
     /**
      * Código alfa-2 del país.
      * http://es.wikipedia.org/wiki/ISO_3166-1
-     * @var type 
+     * @var string 
      */
     public $codiso;
 
     /**
      * Nombre del pais.
-     * @var type 
+     * @var string 
      */
     public $nombre;
 

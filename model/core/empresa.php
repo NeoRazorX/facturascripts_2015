@@ -44,43 +44,43 @@ class empresa extends \fs_model {
     /**
      * TRUE -> activa la contabilidad integrada. Se genera el asiento correspondiente
      * cada vez que se crea/modifica una factura.
-     * @var type 
+     * @var boolean
      */
     public $contintegrada;
 
     /**
      * TRUE -> activa el uso de recargo de equivalencia en los albaranes y facturas de compra.
-     * @var type 
+     * @var boolean
      */
     public $recequivalencia;
 
     /**
      * Código de la serie por defecto.
-     * @var type 
+     * @var string
      */
     public $codserie;
 
     /**
      * Código del almacén predeterminado.
-     * @var type 
+     * @var string
      */
     public $codalmacen;
 
     /**
      * Código de la forma de pago predeterminada.
-     * @var type 
+     * @var string
      */
     public $codpago;
 
     /**
      * Código de la divisa predeterminada.
-     * @var type 
+     * @var string
      */
     public $coddivisa;
 
     /**
      * Código del ejercicio predeterminado.
-     * @var type 
+     * @var string
      */
     public $codejercicio;
     public $web;
@@ -88,13 +88,13 @@ class empresa extends \fs_model {
 
     /**
      * @deprecated since version 2015.053
-     * @var type 
+     * @var string
      */
     public $email_firma;
 
     /**
      * @deprecated since version 2015.053
-     * @var type 
+     * @var string
      */
     public $email_password;
     public $fax;
@@ -108,13 +108,13 @@ class empresa extends \fs_model {
 
     /**
      * Nombre del administrador de la empresa.
-     * @var type 
+     * @var string
      */
     public $administrador;
 
     /**
      * Actualmente sin uso.
-     * @var type 
+     * @var string
      */
     public $codedi;
     public $cifnif;
@@ -122,37 +122,37 @@ class empresa extends \fs_model {
 
     /**
      * Nombre corto de la empresa, para mostrar en el menú
-     * @var type Nombre a mostrar en el menú de facturaScripts.
+     * @var string Nombre a mostrar en el menú de facturaScripts.
      */
     public $nombrecorto;
 
     /**
      * Lema de la empresa
-     * @var type 
+     * @var string
      */
     public $lema;
 
     /**
      * Horario de apertura
-     * @var type 
+     * @var string
      */
     public $horario;
 
     /**
      * Texto al pié de las facturas de venta.
-     * @var type 
+     * @var string
      */
     public $pie_factura;
 
     /**
      * Fecha de inicio de la actividad.
-     * @var type 
+     * @var string
      */
     public $inicio_actividad;
 
     /**
      * Régimen de IVA de la empresa.
-     * @var type 
+     * @var string
      */
     public $regimeniva;
     public $email_config;

@@ -27,13 +27,13 @@ class fs_var extends fs_model {
 
     /**
      * Clave primaria. Varchar(35).
-     * @var type 
+     * @var string 
      */
     public $name;
 
     /**
      * Valor almacenado. Text.
-     * @var type 
+     * @var string 
      */
     public $varchar;
 

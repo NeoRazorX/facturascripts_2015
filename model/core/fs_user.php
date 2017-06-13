@@ -34,19 +34,19 @@ class fs_user extends \fs_model {
 
     /**
      * Clave primaria. Varchar (12).
-     * @var type 
+     * @var string 
      */
     public $nick;
 
     /**
      * Contraseña, en sha1
-     * @var type 
+     * @var string 
      */
     public $password;
 
     /**
      * Email del usuario.
-     * @var  string 
+     * @var string 
      */
     public $email;
 
@@ -55,74 +55,74 @@ class fs_user extends \fs_model {
      * sirve para no tener que guardar la contraseña.
      * Se regenera cada vez que el cliente inicia sesión. Así se
      * impide que dos personas accedan con el mismo usuario.
-     * @var type 
+     * @var string 
      */
     public $log_key;
 
     /**
      * TRUE -> el usuario ha iniciado sesión
      * No se guarda en la base de datos
-     * @var type 
+     * @var boolen 
      */
     public $logged_on;
 
     /**
      * Código del agente/empleado asociado
-     * @var type 
+     * @var string 
      */
     public $codagente;
 
     /**
      * El objeto agente asignado. Hay que llamar previamente la función get_agente().
-     * @var type 
+     * @var agente 
      */
     public $agente;
 
     /**
      * TRUE -> el usuario es un administrador
-     * @var type 
+     * @var boolean 
      */
     public $admin;
 
     /**
      * TRUE -> el usuario esta activo
-     * @var type
+     * @var boolean
      */
     public $enabled;
 
     /**
      * Fecha del último login.
-     * @var type 
+     * @var string
      */
     public $last_login;
 
     /**
      * Hora del último login.
-     * @var type 
+     * @var string
      */
     public $last_login_time;
 
     /**
      * Última IP usada
-     * @var type 
+     * @var string
      */
     public $last_ip;
 
     /**
      * Último identificador de navegador usado
-     * @var type 
+     * @var string
      */
     public $last_browser;
 
     /**
      * Página de inicio.
-     * @var type 
+     * @var string
      */
     public $fs_page;
 
     /**
      * Plantilla CSS predeterminada.
-     * @var type 
+     * @var string
      */
     public $css;
     private $menu;

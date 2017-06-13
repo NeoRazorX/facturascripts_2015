@@ -30,32 +30,32 @@ class serie extends \fs_model {
 
     /**
      * Clave primaria. Varchar (2).
-     * @var type 
+     * @var string 
      */
     public $codserie;
     public $descripcion;
 
     /**
      * TRUE -> las facturas asociadas no encluyen IVA.
-     * @var type 
+     * @var boolean
      */
     public $siniva;
 
     /**
      * % de retención IRPF de las facturas asociadas.
-     * @var type 
+     * @var float
      */
     public $irpf;
 
     /**
      * ejercicio para el que asignamos la numeración inicial de la serie.
-     * @var type 
+     * @var string
      */
     public $codejercicio;
 
     /**
      * numeración inicial para las facturas de esta serie.
-     * @var type 
+     * @var integer
      */
     public $numfactura;
 
