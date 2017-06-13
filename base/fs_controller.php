@@ -425,7 +425,7 @@ class fs_controller {
      */
     private function ip_baneada(&$ips) {
         $baneada = FALSE;
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $remote_addr = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
 
         if (file_exists('tmp/' . FS_TMP_NAME . 'ip.log')) {
             $file = fopen('tmp/' . FS_TMP_NAME . 'ip.log', 'r');
@@ -435,7 +435,7 @@ class fs_controller {
                     $linea = explode(';', trim(fgets($file)));
 
                     if (intval($linea[2]) > time()) {
-                        if ($linea[0] == $ip AND intval($linea[1]) > 5) {
+                        if ($linea[0] == $remote_addr AND intval($linea[1]) > 5) {
                             $baneada = TRUE;
                         }
 
@@ -455,14 +455,13 @@ class fs_controller {
      * @param array $ips es un array de IP;intentos;hora
      */
     private function banear_ip(&$ips) {
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $remote_addr = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
 
         $file = fopen('tmp/' . FS_TMP_NAME . 'ip.log', 'w');
         if ($file) {
             $encontrada = FALSE;
-
             foreach ($ips as $ip) {
-                if ($ip[0] == $ip) {
+                if ($ip[0] == $remote_addr) {
                     fwrite($file, $ip[0] . ';' . ( 1 + intval($ip[1]) ) . ';' . ( time() + 600 ));
                     $encontrada = TRUE;
                 } else {
@@ -471,7 +470,7 @@ class fs_controller {
             }
 
             if (!$encontrada) {
-                fwrite($file, $ip . ';1;' . ( time() + 600 ));
+                fwrite($file, $remote_addr . ';1;' . ( time() + 600 ));
             }
 
             fclose($file);
