@@ -258,7 +258,7 @@ abstract class fs_model {
      * Convierte un texto a binario.
      * Lo hace con base64.
      * @param string $v
-     * @return type
+     * @return null|string
      */
     protected function str2bin($v) {
         if (is_null($v)) {
@@ -296,8 +296,8 @@ abstract class fs_model {
     /**
      * Compara dos números en coma flotante con una precisión de $precision,
      * devuelve TRUE si son iguales, FALSE en caso contrario.
-     * @param type $f1
-     * @param type $f2
+     * @param double $f1
+     * @param double $f2
      * @param integer $precision
      * @param boolean $round
      * @return boolean

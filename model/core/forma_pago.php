@@ -105,7 +105,7 @@ class forma_pago extends \fs_model {
 
     /**
      * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
-     * @return type
+     * @return boolean
      */
     public function is_default() {
         return ( $this->codpago == $this->default_items->codpago() );
@@ -153,7 +153,7 @@ class forma_pago extends \fs_model {
 
     /**
      * Guarda los datos en la base de datos
-     * @return type
+     * @return boolean
      */
     public function save() {
         $this->clean_cache();
@@ -184,7 +184,7 @@ class forma_pago extends \fs_model {
 
     /**
      * Elimina la forma de pago
-     * @return type
+     * @return boolean
      */
     public function delete() {
         $this->clean_cache();
@@ -256,6 +256,9 @@ class forma_pago extends \fs_model {
         return $fecha;
     }
 
+    /**
+     * @param string $fecha_inicio
+     */
     private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0) {
         if ($dia_de_pago == 0) {
             return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));

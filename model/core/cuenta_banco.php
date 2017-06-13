@@ -129,7 +129,7 @@ class cuenta_banco extends \fs_model {
 
     /**
      * Guarda los datos en la base de datos.
-     * @return type
+     * @return boolean
      */
     public function save() {
         $this->descripcion = $this->no_html($this->descripcion);
@@ -155,7 +155,7 @@ class cuenta_banco extends \fs_model {
 
     /**
      * Elimina esta cuenta bancaria
-     * @return type
+     * @return boolean
      */
     public function delete() {
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");

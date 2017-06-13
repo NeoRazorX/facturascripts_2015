@@ -358,7 +358,7 @@ class admin_home extends fs_controller {
 
     /**
      * Lista de opciones para NF0
-     * @return array
+     * @return integer[]
      */
     public function nf0() {
         return array(0, 1, 2, 3, 4, 5);
