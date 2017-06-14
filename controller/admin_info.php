@@ -132,9 +132,7 @@ class admin_info extends fs_controller {
 
     private function buscar_en_log() {
         $this->resultados = array();
-
         $sql = "SELECT * FROM fs_logs";
-        $and = ' WHERE ';
 
         if ($this->b_usuario != '') {
             $sql .= $and . ' usuario = ' . $this->empresa->var2str($this->b_usuario);

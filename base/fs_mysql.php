@@ -27,7 +27,7 @@ class fs_mysql {
 
       /**
        * El enlace con la base de datos.
-       * @var integer 
+       * @var mysqli
        */
       private static $link;
 
@@ -454,7 +454,7 @@ class fs_mysql {
 
       /**
        * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
-       * @return integer
+       * @return integer|false
        */
       public function lastval() {
          $aux = $this->select('SELECT LAST_INSERT_ID() as num;');

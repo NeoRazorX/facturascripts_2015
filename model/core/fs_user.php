@@ -62,7 +62,7 @@ class fs_user extends \fs_model {
     /**
      * TRUE -> el usuario ha iniciado sesión
      * No se guarda en la base de datos
-     * @var boolen 
+     * @var boolean 
      */
     public $logged_on;
 
@@ -187,7 +187,7 @@ class fs_user extends \fs_model {
 
     /**
      * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
-     * @return type
+     * @return string
      */
     protected function install() {
         $this->clean_cache(TRUE);
@@ -255,7 +255,7 @@ class fs_user extends \fs_model {
     /**
      * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
      * @param boolean $reload
-     * @return \fs_page
+     * @return array
      */
     public function get_menu($reload = FALSE) {
         if (!isset($this->menu) OR $reload) {

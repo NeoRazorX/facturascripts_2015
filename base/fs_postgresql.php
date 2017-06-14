@@ -27,7 +27,7 @@ class fs_postgresql {
 
     /**
      * El enlace con la base de datos.
-     * @var integer 
+     * @var resource
      */
     private static $link;
 
@@ -461,7 +461,7 @@ class fs_postgresql {
 
     /**
      * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
-     * @return integer
+     * @return integer|false
      */
     public function lastval() {
         $aux = $this->select('SELECT lastval() as num;');

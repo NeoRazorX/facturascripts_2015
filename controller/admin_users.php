@@ -138,7 +138,7 @@ class admin_users extends fs_controller {
             if ($rol->delete()) {
                 $this->new_message('Rol eliminado correctamente.');
             } else {
-                $this->new_error_msg('Error al eliminar el rol #' . $rol->id);
+                $this->new_error_msg('Error al eliminar el rol #' . $rol->codrol);
             }
         } else {
             $this->new_error_msg('Rol no encontrado.');
