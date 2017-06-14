@@ -105,12 +105,14 @@ class php_file_cache {
      * @return bool true if the data was removed successfully
      */
     public function delete($key) {
+        $done = TRUE;
+        
         $ruta = $this->get_route($key);
         if (file_exists($ruta)) {
-            return unlink($ruta);
-        } else {
-            return TRUE;
+            $done = unlink($ruta);
         }
+        
+        return $done;
     }
 
     /**
