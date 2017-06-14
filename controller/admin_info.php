@@ -135,38 +135,31 @@ class admin_info extends fs_controller {
         $sql = "SELECT * FROM fs_logs";
 
         if ($this->b_usuario != '') {
-            $sql .= $and . ' usuario = ' . $this->empresa->var2str($this->b_usuario);
-            $and = ' AND ';
+            $sql .= ' AND usuario = ' . $this->empresa->var2str($this->b_usuario);
         }
 
         if ($this->b_tipo != '') {
-            $sql .= $and . ' tipo = ' . $this->empresa->var2str($this->b_tipo);
-            $and = ' AND ';
+            $sql .= ' AND tipo = ' . $this->empresa->var2str($this->b_tipo);
         }
 
         if ($this->b_alerta != '') {
-            $sql .= $and . ' alerta';
-            $and = ' AND ';
+            $sql .= ' AND alerta';
         }
 
         if ($this->b_detalle != '') {
-            $sql .= $and . " lower(detalle) LIKE '%" . $this->empresa->no_html(mb_strtolower($this->b_detalle, 'UTF8')) . "%'";
-            $and = ' AND ';
+            $sql .= " AND lower(detalle) LIKE '%" . $this->empresa->no_html(mb_strtolower($this->b_detalle, 'UTF8')) . "%'";
         }
 
         if ($this->b_ip != '') {
-            $sql .= $and . " ip LIKE '" . $this->empresa->no_html($this->b_ip) . "%'";
-            $and = ' AND ';
+            $sql .= " AND ip LIKE '" . $this->empresa->no_html($this->b_ip) . "%'";
         }
 
         if ($this->b_desde != '') {
-            $sql .= $and . ' fecha >= ' . $this->empresa->var2str($this->b_desde);
-            $and = ' AND ';
+            $sql .= ' AND fecha >= ' . $this->empresa->var2str($this->b_desde);
         }
 
         if ($this->b_hasta != '') {
-            $sql .= $and . ' fecha <= ' . $this->empresa->var2str($this->b_hasta);
-            $and = ' AND ';
+            $sql .= ' AND fecha <= ' . $this->empresa->var2str($this->b_hasta);
         }
 
         $sql .= ' ORDER BY fecha DESC';
