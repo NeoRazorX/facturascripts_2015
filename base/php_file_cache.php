@@ -106,7 +106,6 @@ class php_file_cache {
      */
     public function delete($key) {
         $done = TRUE;
-        
         $ruta = $this->get_route($key);
         if (file_exists($ruta)) {
             $done = unlink($ruta);
@@ -138,11 +137,12 @@ class php_file_cache {
      * @return bool if the file has expired or not
      */
     public function file_expired($file, $time = NULL) {
-        if (!file_exists($file)) {
-            return TRUE;
-        } else {
-            return (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
+        $done = TRUE;
+        if (file_exists($file)) {
+            $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
         }
+        
+        return $done;
     }
 
 }

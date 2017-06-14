@@ -98,7 +98,7 @@ class admin_info extends fs_controller {
         }
 
         if (fs_filter_input_req('b_ip')) {
-            $this->b_ip = fs_filter_input_req('b_ip');
+            $this->b_ip = (string) fs_filter_input_req('b_ip');
         }
 
         $this->buscar_en_log();
