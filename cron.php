@@ -30,6 +30,7 @@ require_once 'base/config2.php';
 $tiempo = explode(' ', microtime());
 $uptime = $tiempo[1] + $tiempo[0];
 
+require_once 'base/fs_core_log.php';
 require_once 'base/fs_db2.php';
 $db = new fs_db2();
 
@@ -94,10 +95,10 @@ if ($db->connect()) {
         }
 
         /// indicamos el fin en el log
-        $fslog = new fs_log();
-        $fslog->tipo = 'cron';
-        $fslog->detalle = 'Terminada la ejecución del cron.';
-        $fslog->save();
+        $fslog2 = new fs_log();
+        $fslog2->tipo = 'cron';
+        $fslog2->detalle = 'Terminada la ejecución del cron.';
+        $fslog2->save();
 
         /// Eliminamos la variable cron_lock puesto que ya hemos terminado
         $cron_vars['cron_lock'] = FALSE;
@@ -106,21 +107,19 @@ if ($db->connect()) {
     /// guardamos las variables
     $fsvar->array_save($cron_vars);
 
-    foreach ($fsvar->get_errors() as $err) {
-        echo "\nERROR: " . $err . "\n";
-    }
-    foreach ($db->get_errors() as $err) {
+    /// mostramos el errores que se hayan podido producir
+    $core_log = new fs_core_log();
+    foreach ($core_log->get_errors() as $err) {
         echo "\nERROR: " . $err . "\n";
     }
 
     $db->close();
 } else {
     echo "¡Imposible conectar a la base de datos!\n";
-
     foreach ($db->get_errors() as $err) {
         echo $err . "\n";
     }
 }
 
-$tiempo = explode(' ', microtime());
-echo "\nTiempo de ejecución: " . number_format($tiempo[1] + $tiempo[0] - $uptime, 3) . " s\n";
+$tiempo2 = explode(' ', microtime());
+echo "\nTiempo de ejecución: " . number_format($tiempo2[1] + $tiempo2[0] - $uptime, 3) . " s\n";
