@@ -185,7 +185,7 @@ class fs_controller {
                 $this->template = 'login/default';
                 $this->public_core();
             } else if ($this->user->have_access_to($this->page->name)) {
-                if ($name == '') {
+                if ($name == __CLASS__) {
                     $this->template = 'index';
                 } else {
                     $this->set_default_items();
