@@ -112,7 +112,7 @@ class fs_controller {
 
     /**
      * Indica que archivo HTML hay que cargar
-     * @var string 
+     * @var string|false 
      */
     public $template;
 

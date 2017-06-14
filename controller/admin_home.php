@@ -45,7 +45,7 @@ class admin_home extends fs_controller {
         $this->get_download_list();
 
         if (filter_input(INPUT_GET, 'check4updates')) {
-            $this->template = '';
+            $this->template = FALSE;
             if ($this->check_for_updates2()) {
                 echo 'Hay actualizaciones disponibles.';
             } else {
