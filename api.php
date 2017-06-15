@@ -40,7 +40,7 @@ if (!$db->connect()) {
     foreach ($fsext->all_4_type('api') as $ext) {
         if ($ext->text == fs_filter_input_req('f')) {
             try {
-                fs_filter_input_req('f')();
+                call_user_func(fs_filter_input_req('f'));
             } catch (Exception $exception) {
                 echo 'ERROR: ' . $exception->getMessage();
             }
