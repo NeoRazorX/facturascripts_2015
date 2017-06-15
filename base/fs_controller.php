@@ -82,7 +82,7 @@ class fs_controller {
 
     /**
      * Almecena el simbolo de la divisa predeterminada de la empresa.
-     * @var string 
+     * @var array
      */
     private $simbolo_divisas;
 
@@ -106,7 +106,7 @@ class fs_controller {
 
     /**
      * Contiene el menú de FacturaScripts
-     * @var array 
+     * @var array
      */
     protected $menu;
 
@@ -185,7 +185,7 @@ class fs_controller {
                 $this->template = 'login/default';
                 $this->public_core();
             } else if ($this->user->have_access_to($this->page->name)) {
-                if ($name == '') {
+                if ($name == __CLASS__) {
                     $this->template = 'index';
                 } else {
                     $this->set_default_items();
@@ -1023,7 +1023,7 @@ class fs_controller {
      * @return string
      */
     public function simbolo_divisa($coddivisa = FALSE) {
-        if (!$coddivisa) {
+        if ($coddivisa === FALSE) {
             $coddivisa = $this->empresa->coddivisa;
         }
 

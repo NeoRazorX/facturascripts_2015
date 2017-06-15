@@ -219,7 +219,7 @@ abstract class fs_model {
     /**
      * Transforma una variable en una cadena de texto válida para ser
      * utilizada en una consulta SQL.
-     * @param type $val
+     * @param mixed $val
      * @return string
      */
     public function var2str($val) {
