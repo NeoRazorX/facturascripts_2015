@@ -15,6 +15,10 @@
    <link rel="stylesheet" href="{#FS_PATH#}view/css/font-awesome.min.css" />
    <link rel="stylesheet" href="{#FS_PATH#}view/css/datepicker.css" />
    <link rel="stylesheet" href="{#FS_PATH#}view/css/custom.css?updated={$fsc->today()}" />
+   {if="$fsc->has_submenu==1"}
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/sm-core-css.css" />
+   <link rel="stylesheet" href="{#FS_PATH#}view/css/sm-clean.css" />
+   {/if}
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
@@ -22,6 +26,28 @@
    <script type="text/javascript" src="{#FS_PATH#}view/js/jquery-ui.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/bootbox.min.js"></script>
    <script type="text/javascript" src="{#FS_PATH#}view/js/base.js?updated={$fsc->today()}"></script>
+   
+   {if="$fsc->has_submenu==1"}
+   <script type="text/javascript" src="{#FS_PATH#}view/js/jquery.smartmenus.min.js"></script>
+   <script type="text/javascript">
+      function showMenu($ul, complete){
+        $ul.slideDown(50, complete);
+      }
+
+      function hideMenu($ul, complete){
+        $ul.slideUp(50, complete);
+      }
+
+      $(document).ready(function() {
+         $('.sm').smartmenus({
+           showFunction: showMenu,
+           hideFunction: hideMenu,
+           showOnClick: true
+         }); // end smartmenus
+      }); // end ready
+   </script>
+   {/if}
+   
    <script type="text/javascript">
       bootbox.setLocale("es");
       
@@ -68,10 +94,10 @@
          </div>
          
          <div class="collapse navbar-collapse" id="fs-navbar-collapse-1">
-            <ul class="nav navbar-nav">
+            <ul class="{if="$fsc->has_submenu==1"}sm sm-clean{/if} nav navbar-nav">
                {loop="$fsc->folders()"}
-               <li class='dropdown{if="$value1==$fsc->page->folder"} active{/if}'>
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+               <li {if="!$fsc->has_submenu==1"}class='dropdown{if="$value1==$fsc->page->folder"} active{/if}'{/if}>
+                  <a href="#" {if="!$fsc->has_submenu==1"}class="dropdown-toggle" data-toggle="dropdown"{/if} role="button" aria-expanded="false">
                      {if="$value1=='admin'"}
                      <i class="fa fa-wrench hidden-xs" aria-hidden="true" title="Administración"></i>
                      <span class="text-capitalize visible-xs">{$value1}</span>
@@ -81,8 +107,10 @@
                   </a>
                   <ul class="dropdown-menu">
                      {loop="$fsc->pages($value1)"}
-                     <li{if="$value2->showing()"} class="active"{/if}><a href="{$value2->url()}">{$value2->title}</a></li>
+                        {if="$fsc->has_submenu==1"}{$fsc->subfolder($value2->subfolder, FALSE)}{/if}
+                        <li{if="$value2->showing()"} class="active"{/if}><a href="{$value2->url()}">{$value2->title}</a></li>
                      {/loop}
+                     {if="$fsc->has_submenu==1"}{$fsc->subfolder('', TRUE)}{/if}
                   </ul>
                </li>
                {/loop}

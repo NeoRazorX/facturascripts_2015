@@ -38,6 +38,7 @@ class fs_page extends fs_model {
      * @var string 
      */
     public $folder;
+    public $subfolder;
     public $version;
 
     /**
@@ -61,8 +62,11 @@ class fs_page extends fs_model {
         if ($p) {
             $this->name = $p['name'];
             $this->title = $p['title'];
-            $this->folder = $p['folder'];
 
+            $folders = explode('/', $p['folder']);
+            $this->folder = $folders[0];
+            $this->subfolder = (count($folders) > 1) ? $folders[1] : '';
+            
             $this->version = NULL;
             if (isset($p['version'])) {
                 $this->version = $p['version'];
@@ -79,6 +83,7 @@ class fs_page extends fs_model {
             $this->name = NULL;
             $this->title = NULL;
             $this->folder = NULL;
+            $this->subfolder = '';
             $this->version = NULL;
             $this->show_on_menu = TRUE;
             $this->important = FALSE;
@@ -95,6 +100,7 @@ class fs_page extends fs_model {
         $page->name = $this->name;
         $page->title = $this->title;
         $page->folder = $this->folder;
+        $page->subfolder = $this->subfolder;
         $page->version = $this->version;
         $page->show_on_menu = $this->show_on_menu;
         $page->important = $this->important;
@@ -140,9 +146,13 @@ class fs_page extends fs_model {
     public function save() {
         $this->clean_cache();
 
+        $folder = $this->folder;
+        if ($this->subfolder)
+           $folder .= '/' .$this->subfolder;
+        
         if ($this->exists()) {
             $sql = "UPDATE " . $this->table_name . " SET title = " . $this->var2str($this->title)
-                    . ", folder = " . $this->var2str($this->folder)
+                    . ", folder = " . $this->var2str($folder)
                     . ", version = " . $this->var2str($this->version)
                     . ", show_on_menu = " . $this->var2str($this->show_on_menu)
                     . ", important = " . $this->var2str($this->important)
@@ -152,7 +162,7 @@ class fs_page extends fs_model {
             $sql = "INSERT INTO " . $this->table_name . " (name,title,folder,version,show_on_menu,important,orden) VALUES "
                     . "(" . $this->var2str($this->name)
                     . "," . $this->var2str($this->title)
-                    . "," . $this->var2str($this->folder)
+                    . "," . $this->var2str($folder)
                     . "," . $this->var2str($this->version)
                     . "," . $this->var2str($this->show_on_menu)
                     . "," . $this->var2str($this->important)
@@ -181,7 +191,7 @@ class fs_page extends fs_model {
 
         /// si no está en la caché, comprobamos en la base de datos
         if (!$pagelist) {
-            $pages = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY lower(folder) ASC, orden ASC, lower(title) ASC;");
+            $pages = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY lower(folder || 'z') ASC, orden ASC, lower(title) ASC;");
             if ($pages) {
                 foreach ($pages as $p) {
                     $pagelist[] = new fs_page($p);
@@ -194,5 +204,4 @@ class fs_page extends fs_model {
 
         return $pagelist;
     }
-
 }
