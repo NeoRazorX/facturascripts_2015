@@ -45,7 +45,7 @@ class fs_db2 {
     
     /**
      * Última lista de tablas de la base de datos.
-     * @var array 
+     * @var array|false 
      */
     private static $table_list;
 
@@ -229,7 +229,7 @@ class fs_db2 {
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
      * @param string $sql
-     * @return array
+     * @return array|false
      */
     public function select($sql) {
         return self::$engine->select($sql);
@@ -243,7 +243,7 @@ class fs_db2 {
      * @param string $sql
      * @param integer $limit
      * @param integer $offset
-     * @return array
+     * @return array|false
      */
     public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
         return self::$engine->select_limit($sql, $limit, $offset);
