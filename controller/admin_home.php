@@ -161,7 +161,7 @@ class admin_home extends fs_controller {
     private function save_avanzado() {
         $guardar = FALSE;
         foreach ($GLOBALS['config2'] as $i => $value) {
-            if (filter_input(INPUT_POST, $i)) {
+            if (filter_input(INPUT_POST, $i) !== NULL) {
                 $GLOBALS['config2'][$i] = filter_input(INPUT_POST, $i);
                 $guardar = TRUE;
             }

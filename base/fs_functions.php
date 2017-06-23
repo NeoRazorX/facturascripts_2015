@@ -43,11 +43,9 @@ function require_model($name) {
             }
         }
 
-        if (!$found) {
-            if (file_exists('model/' . $name)) {
-                require_once 'model/' . $name;
-                $GLOBALS['models'][] = $name;
-            }
+        if (!$found && file_exists('model/' . $name)) {
+            require_once 'model/' . $name;
+            $GLOBALS['models'][] = $name;
         }
     }
 }
@@ -131,8 +129,9 @@ function fs_file_get_contents($url, $timeout = 10) {
             curl_close($ch);
             return $data;
         }
-    } else
-        return file_get_contents($url);
+    }
+
+    return file_get_contents($url);
 }
 
 /**
@@ -164,11 +163,11 @@ function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false) {
     if ($curlopt_header) {
         curl_close($ch);
         return $data;
-    } else {
-        list(, $body) = explode("\r\n\r\n", $data, 2);
-        curl_close($ch);
-        return $body;
     }
+
+    list(, $body) = explode("\r\n\r\n", $data, 2);
+    curl_close($ch);
+    return $body;
 }
 
 /**
@@ -183,10 +182,8 @@ function fs_file_download($url, $filename, $timeout = 30) {
 
     try {
         $data = fs_file_get_contents($url, $timeout);
-        if ($data) {
-            if (file_put_contents($filename, $data) !== FALSE) {
-                $ok = TRUE;
-            }
+        if ($data && file_put_contents($filename, $data) !== FALSE) {
+            $ok = TRUE;
         }
     } catch (Exception $e) {
         /// nada
@@ -214,7 +211,7 @@ function fs_fix_html($txt) {
 function fs_filter_input_req($name) {
     if (isset($_REQUEST[$name])) {
         return $_REQUEST[$name];
-    } else {
-        return FALSE;
     }
+
+    return FALSE;
 }

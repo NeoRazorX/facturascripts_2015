@@ -1029,15 +1029,16 @@ class fs_controller {
 
         if (isset($this->simbolo_divisas[$coddivisa])) {
             return $this->simbolo_divisas[$coddivisa];
-        } else {
-            $divisa = new divisa();
-            $divi0 = $divisa->get($coddivisa);
-            if ($divi0) {
-                $this->simbolo_divisas[$coddivisa] = $divi0->simbolo;
-                return $divi0->simbolo;
-            } else
-                return '?';
         }
+
+        $divisa = new divisa();
+        $divi0 = $divisa->get($coddivisa);
+        if ($divi0) {
+            $this->simbolo_divisas[$coddivisa] = $divi0->simbolo;
+            return $divi0->simbolo;
+        }
+
+        return '?';
     }
 
     /**
@@ -1057,15 +1058,16 @@ class fs_controller {
         if (FS_POS_DIVISA == 'right') {
             if ($simbolo) {
                 return number_format($precio, $dec, FS_NF1, FS_NF2) . ' ' . $this->simbolo_divisa($coddivisa);
-            } else
-                return number_format($precio, $dec, FS_NF1, FS_NF2) . ' ' . $coddivisa;
+            }
+
+            return number_format($precio, $dec, FS_NF1, FS_NF2) . ' ' . $coddivisa;
         }
-        else {
-            if ($simbolo) {
-                return $this->simbolo_divisa($coddivisa) . number_format($precio, $dec, FS_NF1, FS_NF2);
-            } else
-                return $coddivisa . ' ' . number_format($precio, $dec, FS_NF1, FS_NF2);
+
+        if ($simbolo) {
+            return $this->simbolo_divisa($coddivisa) . number_format($precio, $dec, FS_NF1, FS_NF2);
         }
+
+        return $coddivisa . ' ' . number_format($precio, $dec, FS_NF1, FS_NF2);
     }
 
     /**
@@ -1078,8 +1080,9 @@ class fs_controller {
     public function show_numero($num = 0, $decimales = FS_NF0, $js = FALSE) {
         if ($js) {
             return number_format($num, $decimales, '.', '');
-        } else
-            return number_format($num, $decimales, FS_NF1, FS_NF2);
+        }
+        
+        return number_format($num, $decimales, FS_NF1, FS_NF2);
     }
 
     /**
@@ -1101,9 +1104,9 @@ class fs_controller {
                 $original = $precio * $tasaconv;
                 return $this->divisa_convert($original, $coddivisa, $this->empresa->coddivisa);
             }
-        } else {
-            return $this->divisa_convert($precio, 'EUR', $this->empresa->coddivisa);
         }
+        
+        return $this->divisa_convert($precio, 'EUR', $this->empresa->coddivisa);
     }
 
     /**

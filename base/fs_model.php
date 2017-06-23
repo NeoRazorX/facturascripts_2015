@@ -171,7 +171,7 @@ abstract class fs_model {
 
     /**
      * Devuelve la lista de mensajes de los modelos.
-     * @return type
+     * @return array
      */
     public function get_messages() {
         return self::$core_log->get_messages();
@@ -235,23 +235,23 @@ abstract class fs_model {
             return "'" . Date($this->db->date_style(), strtotime($val)) . "'";
         } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $val)) { /// es una fecha+hora
             return "'" . Date($this->db->date_style() . ' H:i:s', strtotime($val)) . "'";
-        } else {
-            return "'" . $this->db->escape_string($val) . "'";
         }
+
+        return "'" . $this->db->escape_string($val) . "'";
     }
 
     /**
      * Convierte una variable con contenido binario a texto.
      * Lo hace en base64.
-     * @param type $val
+     * @param mixed $val
      * @return string
      */
     protected function bin2str($val) {
         if (is_null($val)) {
             return 'NULL';
-        } else {
-            return "'" . base64_encode($val) . "'";
         }
+
+        return "'" . base64_encode($val) . "'";
     }
 
     /**
@@ -263,9 +263,9 @@ abstract class fs_model {
     protected function str2bin($val) {
         if (is_null($val)) {
             return NULL;
-        } else {
-            return base64_decode($val);
         }
+
+        return base64_decode($val);
     }
 
     /**
@@ -282,15 +282,15 @@ abstract class fs_model {
     /**
      * Devuelve el valor entero de la variable $s,
      * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
-     * @param type $str
+     * @param string $str
      * @return integer
      */
     public function intval($str) {
         if (is_null($str)) {
             return NULL;
-        } else {
-            return intval($str);
         }
+
+        return intval($str);
     }
 
     /**
@@ -305,18 +305,18 @@ abstract class fs_model {
     public function floatcmp($f1, $f2, $precision = 10, $round = FALSE) {
         if ($round OR ! function_exists('bccomp')) {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
-        } else {
-            return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
         }
+
+        return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
     }
 
     /**
      * Devuelve un array con todas las fechas entre $first y $last.
-     * @param type $first
-     * @param type $last
-     * @param type $step
-     * @param type $format
-     * @return type
+     * @param string $first
+     * @param string $last
+     * @param string $step
+     * @param string $format
+     * @return array
      */
     protected function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y') {
         $dates = array();
