@@ -26,5 +26,5 @@ require_once 'model/core/almacen.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class almacen extends FacturaScripts\model\almacen {
-   
+    
 }

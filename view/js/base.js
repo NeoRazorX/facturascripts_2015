@@ -16,60 +16,60 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var input_number = 'number';
-if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
+var input_number = "number";
+if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1)
 {
-   input_number = 'text';
+    input_number = "text";
 }
 
 function fs_round(value, precision, mode)
 {
-   var m, f, isHalf, sgn;
-   precision |= 0;
-   m = Math.pow(10, precision);
-   value *= m;
-   sgn = (value > 0) | -(value < 0);
-   isHalf = value % 1 === 0.5 * sgn;
-   f = Math.floor(value);
-   
-   if(isHalf)
-   {
-      switch (mode) {
-         case 'PHP_ROUND_HALF_DOWN':
-            value = f + (sgn < 0);
-            break;
-            
-         case 'PHP_ROUND_HALF_EVEN':
-            value = f + (f % 2 * sgn);
-            break;
-            
-         case 'PHP_ROUND_HALF_ODD':
-            value = f + !(f % 2);
-            break;
-            
-         default:
-            value = f + (sgn > 0);
-      }
-   }
-   
-   return (isHalf ? value : Math.round(value)) / m;
+    var m, f, isHalf, sgn;
+    precision |= 0;
+    m = Math.pow(10, precision);
+    value *= m;
+    sgn = (value > 0) | -(value < 0);
+    isHalf = value % 1 === 0.5 * sgn;
+    f = Math.floor(value);
+
+    if (isHalf)
+    {
+        switch (mode) {
+            case "PHP_ROUND_HALF_DOWN":
+                value = f + (sgn < 0);
+                break;
+
+            case "PHP_ROUND_HALF_EVEN":
+                value = f + (f % 2 * sgn);
+                break;
+
+            case "PHP_ROUND_HALF_ODD":
+                value = f + !(f % 2);
+                break;
+
+            default:
+                value = f + (sgn > 0);
+        }
+    }
+
+    return (isHalf ? value : Math.round(value)) / m;
 }
 
 function number_format(number, decimals, dec_point, thousands_sep)
 {
-   var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
-   var d = dec_point == undefined ? "," : dec_point;
-   var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
-   var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
-   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
+    var d = (dec_point == undefined) ? "," : dec_point;
+    var t = (thousands_sep == undefined) ? "." : thousands_sep, s = n < 0 ? "-" : "";
+    var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
 }
 
 var Base64 = {
     // private property
-    _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+    _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 
     // public method for encoding
-    encode : function (input) {
+    encode: function (input) {
         var output = "";
         var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
         var i = 0;
@@ -94,8 +94,8 @@ var Base64 = {
             }
 
             output = output +
-            this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-            this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+                    this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+                    this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
 
         }
 
@@ -103,7 +103,7 @@ var Base64 = {
     },
 
     // public method for decoding
-    decode : function (input) {
+    decode: function (input) {
         var output = "";
         var chr1, chr2, chr3;
         var enc1, enc2, enc3, enc4;
@@ -140,8 +140,8 @@ var Base64 = {
     },
 
     // private method for UTF-8 encoding
-    _utf8_encode : function (string) {
-        string = string.replace(/\r\n/g,"\n");
+    _utf8_encode: function (string) {
+        string = string.replace(/\r\n/g, "\n");
         var utftext = "";
 
         for (var n = 0; n < string.length; n++) {
@@ -150,12 +150,10 @@ var Base64 = {
 
             if (c < 128) {
                 utftext += String.fromCharCode(c);
-            }
-            else if((c > 127) && (c < 2048)) {
+            } else if ((c > 127) && (c < 2048)) {
                 utftext += String.fromCharCode((c >> 6) | 192);
                 utftext += String.fromCharCode((c & 63) | 128);
-            }
-            else {
+            } else {
                 utftext += String.fromCharCode((c >> 12) | 224);
                 utftext += String.fromCharCode(((c >> 6) & 63) | 128);
                 utftext += String.fromCharCode((c & 63) | 128);
@@ -167,27 +165,25 @@ var Base64 = {
     },
 
     // private method for UTF-8 decoding
-    _utf8_decode : function (utftext) {
+    _utf8_decode: function (utftext) {
         var string = "";
         var i = 0;
         var c = c1 = c2 = 0;
 
-        while ( i < utftext.length ) {
+        while (i < utftext.length) {
 
             c = utftext.charCodeAt(i);
 
             if (c < 128) {
                 string += String.fromCharCode(c);
                 i++;
-            }
-            else if((c > 191) && (c < 224)) {
-                c2 = utftext.charCodeAt(i+1);
+            } else if ((c > 191) && (c < 224)) {
+                c2 = utftext.charCodeAt(i + 1);
                 string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
                 i += 2;
-            }
-            else {
-                c2 = utftext.charCodeAt(i+1);
-                c3 = utftext.charCodeAt(i+2);
+            } else {
+                c2 = utftext.charCodeAt(i + 1);
+                c3 = utftext.charCodeAt(i + 2);
                 string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
                 i += 3;
             }
@@ -202,40 +198,39 @@ var Base64 = {
 /*
  * Esta función sirve para las extensiones tipo modal.
  */
-function fs_modal(txt,url)
+function fs_modal(txt, url)
 {
-   $("#modal_iframe h4.modal-title").html( Base64.decode(txt) );
-   $("#modal_iframe iframe").attr('src', url);
-   $("#modal_iframe").modal('show');
+    $("#modal_iframe h4.modal-title").html(Base64.decode(txt));
+    $("#modal_iframe iframe").attr("src", url);
+    $("#modal_iframe").modal("show");
 }
 
-$(document).ready(function() {
-   $('.datepicker').datepicker();
-   $("#b_feedback").click(function(event) {
-      event.preventDefault();
-      $("#modal_feedback").modal('show');
-      document.f_feedback.feedback_text.focus();
-   });
-   $('.clickableRow').mousedown(function(event) {
-      if(event.which === 1)
-      {
-         var href = $(this).attr('href');
-         var target = $(this).attr('target');
-         if(typeof href !== typeof undefined && href !== false)
-         {
-            if(typeof target !== typeof undefined && target === '_blank')
+$(document).ready(function () {
+    $(".datepicker").datepicker();
+    $("#b_feedback").click(function (event) {
+        event.preventDefault();
+        $("#modal_feedback").modal("show");
+        document.f_feedback.feedback_text.focus();
+    });
+    $(".clickableRow").mousedown(function (event) {
+        if (event.which === 1)
+        {
+            var href = $(this).attr("href");
+            var target = $(this).attr("target");
+            if (typeof href !== typeof undefined && href !== false)
             {
-               window.open( $(this).attr("href") );
+                if (typeof target !== typeof undefined && target === "_blank")
+                {
+                    window.open($(this).attr("href"));
+                } else
+                {
+                    parent.document.location = $(this).attr("href");
+                }
             }
-            else
-            {
-               parent.document.location = $(this).attr("href");
-            }
-         }
-      }
-   });
-   $(".cancel_clickable").mousedown(function(event) {
-      event.preventDefault();
-      event.stopPropagation();
-   });
+        }
+    });
+    $(".cancel_clickable").mousedown(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    });
 });

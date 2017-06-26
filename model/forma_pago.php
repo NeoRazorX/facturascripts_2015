@@ -26,5 +26,5 @@ require_once 'model/core/forma_pago.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class forma_pago extends FacturaScripts\model\forma_pago {
-   
+    
 }

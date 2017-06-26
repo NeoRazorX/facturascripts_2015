@@ -26,5 +26,5 @@ require_once 'model/core/ejercicio.php';
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class ejercicio extends FacturaScripts\model\ejercicio {
-   
+    
 }
