@@ -22,6 +22,7 @@ require_once 'base/fs_core_log.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_db2.php';
 require_once 'base/fs_default_items.php';
+require_once 'base/fs_ip_filter.php';
 require_once 'base/fs_model.php';
 
 require_model('agente.php');
@@ -188,26 +189,9 @@ class fs_controller {
                 if ($name == __CLASS__) {
                     $this->template = 'index';
                 } else {
-                    $this->set_default_items();
-
                     $this->template = $name;
-
-                    $this->query = '';
-                    if (filter_input(INPUT_POST, 'query')) {
-                        $this->query = filter_input(INPUT_POST, 'query');
-                    } else if (filter_input(INPUT_GET, 'query')) {
-                        $this->query = filter_input(INPUT_GET, 'query');
-                    }
-
-                    /// quitamos extensiones de páginas a las que el usuario no tenga acceso
-                    foreach ($this->extensions as $i => $value) {
-                        if ($value->type != 'config') {
-                            if (!$this->user->have_access_to($value->from)) {
-                                unset($this->extensions[$i]);
-                            }
-                        }
-                    }
-
+                    $this->set_default_items();
+                    $this->pre_private_core();
                     $this->private_core();
                 }
             } else if ($name == '') {
@@ -220,6 +204,24 @@ class fs_controller {
         } else {
             $this->template = 'no_db';
             $this->new_error_msg('¡Imposible conectar con la base de datos <b>' . FS_DB_NAME . '</b>!');
+        }
+    }
+
+    private function pre_private_core() {
+        $this->query = '';
+        if (filter_input(INPUT_POST, 'query')) {
+            $this->query = filter_input(INPUT_POST, 'query');
+        } else if (filter_input(INPUT_GET, 'query')) {
+            $this->query = filter_input(INPUT_GET, 'query');
+        }
+
+        /// quitamos extensiones de páginas a las que el usuario no tenga acceso
+        foreach ($this->extensions as $i => $value) {
+            if ($value->type != 'config') {
+                if (!$this->user->have_access_to($value->from)) {
+                    unset($this->extensions[$i]);
+                }
+            }
         }
     }
 
@@ -270,14 +272,15 @@ class fs_controller {
      * Cambia la contraseña del usuario.
      */
     private function fs_change_user_passwd() {
-        $ips = array();
         $db_password = filter_input(INPUT_POST, 'db_password');
+        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $ipFilter = new fs_ip_filter();
         $nick = filter_input(INPUT_POST, 'user');
         $new_password = filter_input(INPUT_POST, 'new_password');
         $new_password2 = filter_input(INPUT_POST, 'new_password2');
 
-        if ($this->ip_baneada($ips)) {
-            $this->banear_ip($ips);
+        if ($ipFilter->isBanned($ip)) {
+            $ipFilter->setAttempt($ip);
             $this->new_error_msg('Tu IP ha sido baneada ' . $nick . '. '
                     . 'Tendrás que esperar 10 minutos antes de volver a intentar entrar.');
         } else if ($new_password != $new_password2) {
@@ -285,7 +288,7 @@ class fs_controller {
         } else if ($new_password == '') {
             $this->new_error_msg('Tienes que escribir una contraseña nueva ' . $nick);
         } else if ($db_password != FS_DB_PASS) {
-            $this->banear_ip($ips);
+            $ipFilter->setAttempt($ip);
             $this->new_error_msg('La contraseña de la base de datos es incorrecta ' . $nick);
         } else {
             $suser = $this->user->get($nick);
@@ -307,10 +310,10 @@ class fs_controller {
      */
     public function version() {
         if (file_exists('VERSION')) {
-            $v = file_get_contents('VERSION');
-            return trim($v);
-        } else
-            return '0';
+            return trim(file_get_contents('VERSION'));
+        }
+
+        return '0';
     }
 
     /**
@@ -320,29 +323,31 @@ class fs_controller {
         $this->db->close();
     }
 
+    private function new_log_msg($tipo, $detalle, $alerta = FALSE) {
+        $fslog = new fs_log();
+        $fslog->tipo = $tipo;
+        $fslog->detalle = $detalle;
+        $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $fslog->alerta = $alerta;
+        if ($this->user) {
+            $fslog->usuario = $this->user->nick;
+        }
+
+        $fslog->save();
+    }
+
     /**
      * Muestra al usuario un mensaje de error
      * @param string $msg el mensaje a mostrar
      */
     public function new_error_msg($msg = '', $tipo = 'error', $alerta = FALSE, $guardar = TRUE) {
-        if ($msg) {
-            if ($this->class_name == $this->core_log->controller_name()) {
-                /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
-                $this->core_log->new_error($msg);
-            }
+        if ($msg && $this->class_name == $this->core_log->controller_name()) {
+            /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
+            $this->core_log->new_error($msg);
+        }
 
-            if ($guardar) {
-                $fslog = new fs_log();
-                $fslog->tipo = $tipo;
-                $fslog->detalle = $msg;
-                $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-                $fslog->alerta = $alerta;
-                if ($this->user) {
-                    $fslog->usuario = $this->user->nick;
-                }
-
-                $fslog->save();
-            }
+        if ($msg && $guardar) {
+            $this->new_log_msg($tipo, $msg, $alerta);
         }
     }
 
@@ -362,24 +367,13 @@ class fs_controller {
      * @param boolean $alerta
      */
     public function new_message($msg = '', $save = FALSE, $tipo = 'msg', $alerta = FALSE) {
-        if ($msg) {
-            if ($this->class_name == $this->core_log->controller_name()) {
-                /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
-                $this->core_log->new_message($msg);
-            }
+        if ($msg && $this->class_name == $this->core_log->controller_name()) {
+            /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
+            $this->core_log->new_message($msg);
+        }
 
-            if ($save) {
-                $fslog = new fs_log();
-                $fslog->tipo = $tipo;
-                $fslog->detalle = $msg;
-                $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-                $fslog->alerta = $alerta;
-                if ($this->user) {
-                    $fslog->usuario = $this->user->nick;
-                }
-
-                $fslog->save();
-            }
+        if ($msg && $save) {
+            $this->new_log_msg($tipo, $msg, $alerta);
         }
     }
 
@@ -419,89 +413,17 @@ class fs_controller {
     }
 
     /**
-     * Una IP será baneada si falla más de 5 intentos de login en menos de 10 minutos
-     * @param array $ips es un array de IP;intentos;hora
-     * @return boolean
-     */
-    private function ip_baneada(&$ips) {
-        $baneada = FALSE;
-        $remote_addr = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-
-        if (file_exists('tmp/' . FS_TMP_NAME . 'ip.log')) {
-            $file = fopen('tmp/' . FS_TMP_NAME . 'ip.log', 'r');
-            if ($file) {
-                /// leemos las líneas
-                while (!feof($file)) {
-                    $linea = explode(';', trim(fgets($file)));
-
-                    if (intval($linea[2]) > time()) {
-                        if ($linea[0] == $remote_addr AND intval($linea[1]) > 5) {
-                            $baneada = TRUE;
-                        }
-
-                        $ips[] = $linea;
-                    }
-                }
-
-                fclose($file);
-            }
-        }
-
-        return $baneada;
-    }
-
-    /**
-     * Baneamos las IPs que fallan más de 5 intentos de login en 10 minutos
-     * @param array $ips es un array de IP;intentos;hora
-     */
-    private function banear_ip(&$ips) {
-        $remote_addr = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-
-        $file = fopen('tmp/' . FS_TMP_NAME . 'ip.log', 'w');
-        if ($file) {
-            $encontrada = FALSE;
-            foreach ($ips as $ip) {
-                if ($ip[0] == $remote_addr) {
-                    fwrite($file, $ip[0] . ';' . ( 1 + intval($ip[1]) ) . ';' . ( time() + 600 ));
-                    $encontrada = TRUE;
-                } else {
-                    fwrite($file, join(';', $ip));
-                }
-            }
-
-            if (!$encontrada) {
-                fwrite($file, $remote_addr . ';1;' . ( time() + 600 ));
-            }
-
-            fclose($file);
-        }
-    }
-
-    /**
-     * Devuelve TRUE si la IP proporcionada está en la lista de IPs permitidas.
-     * La lista de IPs permitidas están en Admin > Panel de control > Avanzado.
-     * @param string $ip
-     */
-    private function ip_in_whitelist($ip) {
-        if (FS_IP_WHITELIST == '*') {
-            return TRUE;
-        } else {
-            $aux = explode(',', FS_IP_WHITELIST);
-            return in_array($ip, $aux);
-        }
-    }
-
-    /**
      * Devuelve TRUE si el usuario realmente tiene acceso a esta página
      * @return boolean
      */
     private function log_in() {
-        $ips = array();
+        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $ipFilter = new fs_ip_filter();
         $nick = filter_input(INPUT_POST, 'user');
         $password = filter_input(INPUT_POST, 'password');
 
-        if ($this->ip_baneada($ips)) {
-            $this->banear_ip($ips);
+        if ($ipFilter->isBanned($ip)) {
+            $ipFilter->setAttempt($ip);
             $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.', 'login', TRUE);
         } else if ($nick AND $password) {
             if (FS_DEMO) { /// en el modo demo nos olvidamos de la contraseña
@@ -517,7 +439,7 @@ class fs_controller {
                     if ($user->password == sha1($password) OR $user->password == sha1(mb_strtolower($password, 'UTF8'))) {
                         $user->new_logkey();
 
-                        if (!$user->admin AND ! $this->ip_in_whitelist($user->last_ip)) {
+                        if (!$user->admin AND ! $ipFilter->inWhiteList($ip)) {
                             $this->new_error_msg('No puedes acceder desde esta IP.', 'login', TRUE);
                         } else if ($user->save()) {
                             setcookie('user', $user->nick, time() + FS_COOKIES_EXPIRE);
@@ -526,19 +448,14 @@ class fs_controller {
                             $this->load_menu();
 
                             /// añadimos el mensaje al log
-                            $fslog = new fs_log();
-                            $fslog->usuario = $user->nick;
-                            $fslog->tipo = 'login';
-                            $fslog->detalle = 'Login correcto.';
-                            $fslog->ip = $user->last_ip;
-                            $fslog->save();
+                            $this->new_log_msg('login', 'Login correcto.');
                         } else {
                             $this->new_error_msg('Imposible guardar los datos de usuario.');
                             $this->cache->clean();
                         }
                     } else {
                         $this->new_error_msg('¡Contraseña incorrecta! (' . $nick . ')', 'login', TRUE);
-                        $this->banear_ip($ips);
+                        $ipFilter->setAttempt($ip);
                     }
                 } else if ($user AND ! $user->enabled) {
                     $this->new_error_msg('El usuario ' . $user->nick . ' está desactivado, habla con tu administrador!', 'login', TRUE);
@@ -650,16 +567,7 @@ class fs_controller {
         }
 
         /// guardamos el evento en el log
-        $fslog = new fs_log();
-        $fslog->tipo = 'login';
-        $fslog->detalle = 'El usuario ha cerrado la sesión.';
-        $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-
-        if (filter_input(INPUT_COOKIE, 'user')) {
-            $fslog->usuario = filter_input(INPUT_COOKIE, 'user');
-        }
-
-        $fslog->save();
+        $this->new_log_msg('login', 'El usuario ha cerrado la sesión.');
     }
 
     /**
@@ -1081,7 +989,7 @@ class fs_controller {
         if ($js) {
             return number_format($num, $decimales, '.', '');
         }
-        
+
         return number_format($num, $decimales, FS_NF1, FS_NF2);
     }
 
@@ -1105,7 +1013,7 @@ class fs_controller {
                 return $this->divisa_convert($original, $coddivisa, $this->empresa->coddivisa);
             }
         }
-        
+
         return $this->divisa_convert($precio, 'EUR', $this->empresa->coddivisa);
     }
 
@@ -1230,13 +1138,7 @@ class fs_controller {
      * @return integer
      */
     public function get_max_file_upload() {
-        $max = intval(ini_get('post_max_size'));
-
-        if (intval(ini_get('upload_max_filesize')) < $max) {
-            $max = intval(ini_get('upload_max_filesize'));
-        }
-
-        return $max;
+        return fs_get_max_file_upload();
     }
 
 }

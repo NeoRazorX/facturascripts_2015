@@ -215,3 +215,13 @@ function fs_filter_input_req($name) {
 
     return FALSE;
 }
+
+function fs_get_max_file_upload() {
+    $max = intval(ini_get('post_max_size'));
+
+    if (intval(ini_get('upload_max_filesize')) < $max) {
+        $max = intval(ini_get('upload_max_filesize'));
+    }
+
+    return $max;
+}
