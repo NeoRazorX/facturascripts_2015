@@ -52,7 +52,7 @@ function require_model($name) {
 
 /**
  * Devuelve el nombre de la clase del objeto, pero sin el namespace.
- * @param type $object
+ * @param mixed $object
  * @return string
  */
 function get_class_name($object = NULL) {
