@@ -99,9 +99,9 @@ class fs_postgresql {
             $return = pg_close(self::$link);
             self::$link = NULL;
             return $return;
-        } else {
-            return TRUE;
         }
+
+        return TRUE;
     }
 
     /**
@@ -112,9 +112,9 @@ class fs_postgresql {
         if (self::$link) {
             $aux = pg_version(self::$link);
             return 'POSTGRESQL ' . $aux['server'];
-        } else {
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**

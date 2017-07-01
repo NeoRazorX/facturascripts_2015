@@ -109,7 +109,7 @@ class fs_mysql {
             self::$link = NULL;
             return $return;
         }
-        
+
         return TRUE;
     }
 
@@ -121,7 +121,7 @@ class fs_mysql {
         if (self::$link) {
             return 'MYSQL ' . self::$link->server_version;
         }
-        
+
         return FALSE;
     }
 
@@ -421,7 +421,7 @@ class fs_mysql {
              */
             return self::$link->query("START TRANSACTION;");
         }
-        
+
         return FALSE;
     }
 
@@ -436,7 +436,7 @@ class fs_mysql {
 
             return self::$link->commit();
         }
-        
+
         return FALSE;
     }
 
@@ -448,7 +448,7 @@ class fs_mysql {
         if (self::$link) {
             return self::$link->rollback();
         }
-        
+
         return FALSE;
     }
 
@@ -461,7 +461,7 @@ class fs_mysql {
         if ($aux) {
             return $aux[0]['num'];
         }
-        
+
         return FALSE;
     }
 
@@ -474,7 +474,7 @@ class fs_mysql {
         if (self::$link) {
             return self::$link->escape_string($str);
         }
-        
+
         return $str;
     }
 
@@ -804,14 +804,10 @@ class fs_mysql {
 
         /// ¿La tabla no usa InnoDB?
         $data = $this->select("SHOW TABLE STATUS FROM `" . FS_DB_NAME . "` LIKE '" . $table_name . "';");
-        if ($data) {
-            if ($data[0]['Engine'] != 'InnoDB') {
-                if (!$this->exec("ALTER TABLE " . $table_name . " ENGINE=InnoDB;")) {
-                    self::$core_log->new_error('Imposible convertir la tabla ' . $table_name . ' a InnoDB.'
-                            . ' Imprescindible para FacturaScripts.');
-                    $return = FALSE;
-                }
-            }
+        if ($data && $data[0]['Engine'] != 'InnoDB' && !$this->exec("ALTER TABLE " . $table_name . " ENGINE=InnoDB;")) {
+            self::$core_log->new_error('Imposible convertir la tabla ' . $table_name . ' a InnoDB.'
+                    . ' Imprescindible para FacturaScripts.');
+            $return = FALSE;
         }
 
         return $return;
