@@ -424,7 +424,6 @@ class fs_controller {
         $password = filter_input(INPUT_POST, 'password');
 
         if ($ipFilter->isBanned($ip)) {
-            $ipFilter->setAttempt($ip);
             $this->new_error_msg('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.', 'login', TRUE);
         } else if ($nick AND $password) {
             if (FS_DEMO) { /// en el modo demo nos olvidamos de la contraseña
