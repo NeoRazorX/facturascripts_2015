@@ -23,7 +23,7 @@
 function fatal_handler() {
     $error = error_get_last();
     if ($error !== NULL) {
-        if (substr($error["message"], 0, 19) != 'Memcache::connect()') {
+        if (substr($error["message"], 0, 19) != 'Memcache::connect()' && strpos($error["file"], '/tcpdf/') === FALSE) {
             echo "<h1>Error fatal</h1>"
             . "<ul>"
             . "<li><b>Tipo:</b> " . $error["type"] . "</li>"

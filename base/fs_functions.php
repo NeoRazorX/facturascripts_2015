@@ -109,11 +109,18 @@ function fs_file_get_contents($url, $timeout = 10) {
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        if (is_null(ini_get('open_basedir'))) {
+        if (ini_get('open_basedir') === NULL) {
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         }
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        
+        /**
+         * En algunas configuraciones de php es necesario desactivar estos flags.
+         * Pero no encuentro la documentación de este hecho. Así que por ahora lo
+         * desactivo.
+         */
+        ///curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        ///curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        
         if (defined('FS_PROXY_TYPE')) {
             curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
             curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
@@ -125,10 +132,10 @@ function fs_file_get_contents($url, $timeout = 10) {
         if ($info['http_code'] == 301 OR $info['http_code'] == 302) {
             $redirs = 0;
             return fs_curl_redirect_exec($ch, $redirs);
-        } else {
-            curl_close($ch);
-            return $data;
         }
+
+        curl_close($ch);
+        return $data;
     }
 
     return file_get_contents($url);
