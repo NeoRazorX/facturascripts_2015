@@ -65,7 +65,7 @@ class fs_ip_filter {
     }
     
     public function inWhiteList($ip) {
-        if (FS_IP_WHITELIST == '*') {
+        if (FS_IP_WHITELIST === '*' || FS_IP_WHITELIST === '') {
             return TRUE;
         }
         

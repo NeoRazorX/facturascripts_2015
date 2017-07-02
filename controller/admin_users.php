@@ -58,7 +58,7 @@ class admin_users extends fs_controller {
         if ($nu) {
             $this->new_error_msg('El usuario <a href="' . $nu->url() . '">ya existe</a>.');
         } else if (!$this->user->admin) {
-            $this->new_error_msg('Solamente un administrador puede crear usuarios.', TRUE, 'login', TRUE);
+            $this->new_error_msg('Solamente un administrador puede crear usuarios.', 'login', TRUE, TRUE);
         } else {
             $nu = new fs_user();
             $nu->nick = filter_input(INPUT_POST, 'nnick');
@@ -98,8 +98,9 @@ class admin_users extends fs_controller {
                     }
 
                     Header('location: index.php?page=admin_user&snick=' . $nu->nick);
-                } else
+                } else {
                     $this->new_error_msg("¡Imposible guardar el usuario!");
+                }
             }
         }
     }
@@ -114,10 +115,12 @@ class admin_users extends fs_controller {
                 $this->new_error_msg("Solamente un administrador puede eliminar usuarios.", 'login', TRUE);
             } else if ($nu->delete()) {
                 $this->new_message("Usuario " . $nu->nick . " eliminado correctamente.", TRUE, 'login', TRUE);
-            } else
+            } else {
                 $this->new_error_msg("¡Imposible eliminar al usuario!");
-        } else
+            }
+        } else {
             $this->new_error_msg("¡Usuario no encontrado!");
+        }
     }
 
     private function add_rol() {
