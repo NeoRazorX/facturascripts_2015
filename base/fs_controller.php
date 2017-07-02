@@ -296,8 +296,9 @@ class fs_controller {
                 $suser->set_password($new_password);
                 if ($suser->save()) {
                     $this->new_message('Contraseña cambiada correctamente ' . $nick);
-                } else
+                } else {
                     $this->new_error_msg('Imposible cambiar la contraseña del usuario ' . $nick);
+                }
             }
         }
 

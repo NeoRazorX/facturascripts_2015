@@ -164,9 +164,9 @@ class agente extends \fs_model {
      */
     public function get_new_codigo() {
         $sql = "SELECT MAX(" . $this->db->sql_to_int('codagente') . ") as cod FROM " . $this->table_name . ";";
-        $cod = $this->db->select($sql);
-        if ($cod) {
-            return (string) 1 + intval($cod[0]['cod']);
+        $data = $this->db->select($sql);
+        if ($data) {
+            return (string) (1 + (int) $data[0]['cod']);
         }
 
         return '1';
