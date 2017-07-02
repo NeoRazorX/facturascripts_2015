@@ -134,7 +134,7 @@ class agente extends \fs_model {
             $this->provincia = NULL;
             $this->ciudad = NULL;
             $this->direccion = NULL;
-            $this->porcomision = 0;
+            $this->porcomision = 0.00;
             $this->seg_social = NULL;
             $this->banco = NULL;
             $this->cargo = NULL;
@@ -160,15 +160,16 @@ class agente extends \fs_model {
 
     /**
      * Genera un nuevo código de agente
-     * @return int
+     * @return string
      */
     public function get_new_codigo() {
         $sql = "SELECT MAX(" . $this->db->sql_to_int('codagente') . ") as cod FROM " . $this->table_name . ";";
         $cod = $this->db->select($sql);
         if ($cod) {
-            return 1 + intval($cod[0]['cod']);
-        } else
-            return 1;
+            return (string) 1 + intval($cod[0]['cod']);
+        }
+
+        return '1';
     }
 
     /**
@@ -178,8 +179,9 @@ class agente extends \fs_model {
     public function url() {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
+
+        return "index.php?page=admin_agente&cod=" . $this->codagente;
     }
 
     /**
@@ -191,8 +193,9 @@ class agente extends \fs_model {
         $a = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($cod) . ";");
         if ($a) {
             return new \agente($a[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -202,8 +205,9 @@ class agente extends \fs_model {
     public function exists() {
         if (is_null($this->codagente)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
+        }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codagente = " . $this->var2str($this->codagente) . ";");
     }
 
     /**
@@ -227,9 +231,9 @@ class agente extends \fs_model {
         if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 50) {
             $this->new_error_msg("El nombre del empleado debe tener entre 1 y 50 caracteres.");
             return FALSE;
-        } else {
-            return TRUE;
         }
+
+        return TRUE;
     }
 
     /**
@@ -285,8 +289,9 @@ class agente extends \fs_model {
             }
 
             return $this->db->exec($sql);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -310,7 +315,6 @@ class agente extends \fs_model {
      * @return \agente
      */
     public function all($incluir_debaja = FALSE) {
-
         if ($incluir_debaja) {
             $listagentes = array();
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC, apellidos ASC;");
@@ -323,7 +327,7 @@ class agente extends \fs_model {
             /// leemos esta lista de la caché
             $listagentes = $this->cache->get_array('m_agente_all');
 
-            if (!$listagentes) {
+            if (empty($listagentes)) {
                 /// si no está en caché, leemos de la base de datos
                 $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE f_baja IS NULL ORDER BY nombre ASC, apellidos ASC;");
                 if ($data) {

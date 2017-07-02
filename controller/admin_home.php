@@ -652,7 +652,7 @@ class admin_home extends fs_controller {
                     }
                 }
             }
-            if ($eliminadas) {
+            if (!empty($eliminadas)) {
                 $this->new_message('Se han eliminado automáticamente las siguientes páginas: ' . join(', ', $eliminadas));
             }
 

@@ -35,34 +35,26 @@ function fatal_handler() {
     }
 }
 
-if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
+register_shutdown_function("fatal_handler");
+
+if ((float) substr(phpversion(), 0, 3) < 5.3) {
     /// comprobamos la versión de PHP
     die('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP ' . phpversion());
-} else if (!file_exists('config.php')) {
+} elseif (!file_exists('config.php')) {
     /// si no hay config.php redirigimos al instalador
     header('Location: install.php');
 } else {
     /// cargamos las constantes de configuración
     require_once 'config.php';
     require_once 'base/config2.php';
-
     require_once 'base/fs_controller.php';
     require_once 'raintpl/rain.tpl.class.php';
-
-    if (FS_DB_HISTORY) {
-        /**
-         * Si está activado el historial SQL, registramos además la función para
-         * capturar los fatal error. Información importante a la hora de depurar
-         * errores.
-         */
-        register_shutdown_function("fatal_handler");
-    }
 
     /// ¿Qué controlador usar?
     $pagename = '';
     if (filter_input(INPUT_GET, 'page')) {
         $pagename = filter_input(INPUT_GET, 'page');
-    } else if (defined('FS_HOMEPAGE')) {
+    } elseif (defined('FS_HOMEPAGE')) {
         $pagename = FS_HOMEPAGE;
     }
 
@@ -121,7 +113,7 @@ if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
 
     if ($fsc_error) {
         die();
-    } else if ($fsc->template) {
+    } elseif ($fsc->template) {
         /// configuramos rain.tpl
         raintpl::configure('base_url', NULL);
         raintpl::configure('tpl_dir', 'view/');
@@ -143,7 +135,7 @@ if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
 
         if (filter_input(INPUT_POST, 'user')) {
             $tpl->assign('nlogin', filter_input(INPUT_POST, 'user'));
-        } else if (filter_input(INPUT_COOKIE, 'user')) {
+        } elseif (filter_input(INPUT_COOKIE, 'user')) {
             $tpl->assign('nlogin', filter_input(INPUT_COOKIE, 'user'));
         } else {
             $tpl->assign('nlogin', '');

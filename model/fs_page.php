@@ -110,8 +110,9 @@ class fs_page extends fs_model {
     public function url() {
         if (is_null($this->name)) {
             return 'index.php?page=admin_home';
-        } else
-            return 'index.php?page=' . $this->name . $this->extra_url;
+        }
+
+        return 'index.php?page=' . $this->name . $this->extra_url;
     }
 
     public function is_default() {
@@ -125,16 +126,18 @@ class fs_page extends fs_model {
     public function exists() {
         if (is_null($this->name)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
+        }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
     }
 
     public function get($name) {
         $p = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
         if ($p) {
             return new fs_page($p[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     public function save() {
@@ -180,7 +183,7 @@ class fs_page extends fs_model {
         $pagelist = $this->cache->get_array('m_fs_page_all');
 
         /// si no está en la caché, comprobamos en la base de datos
-        if (!$pagelist) {
+        if (empty($pagelist)) {
             $pages = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY lower(folder) ASC, orden ASC, lower(title) ASC;");
             if ($pages) {
                 foreach ($pages as $p) {

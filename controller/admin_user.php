@@ -99,8 +99,9 @@ class admin_user extends fs_controller {
             return parent::url();
         } else if ($this->suser) {
             return $this->suser->url();
-        } else
-            return $this->page->url();
+        }
+        
+        return $this->page->url();
     }
 
     public function all_pages() {

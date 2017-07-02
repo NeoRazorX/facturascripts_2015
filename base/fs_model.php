@@ -101,7 +101,7 @@ abstract class fs_model {
             self::$core_log = new fs_core_log();
 
             self::$checked_tables = $this->cache->get_array('fs_checked_tables');
-            if (self::$checked_tables) {
+            if (!empty(self::$checked_tables)) {
                 /// nos aseguramos de que existan todas las tablas que se suponen comprobadas
                 foreach (self::$checked_tables as $ct) {
                     if (!$this->db->table_exists($ct)) {
@@ -282,15 +282,15 @@ abstract class fs_model {
     /**
      * Devuelve el valor entero de la variable $s,
      * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
-     * @param string $str
+     * @param mixed $str
      * @return integer
      */
     public function intval($str) {
-        if (is_null($str)) {
+        if ($str === NULL) {
             return NULL;
         }
 
-        return intval($str);
+        return (int) $str;
     }
 
     /**

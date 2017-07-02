@@ -161,43 +161,43 @@ class empresa extends \fs_model {
         parent::__construct('empresa');
 
         /// leemos los datos de la empresa de memcache o de la base de datos
-        $e = $this->cache->get_array('empresa');
-        if (!$e) {
-            $e = $this->db->select("SELECT * FROM " . $this->table_name . ";");
-            $this->cache->set('empresa', $e);
+        $data = $this->cache->get_array('empresa');
+        if (empty($data)) {
+            $data = $this->db->select("SELECT * FROM " . $this->table_name . ";");
+            $this->cache->set('empresa', $data);
         }
 
-        if ($e) {
-            $this->id = $this->intval($e[0]['id']);
-            $this->xid = $e[0]['xid'];
-            $this->stockpedidos = $this->str2bool($e[0]['stockpedidos']);
-            $this->contintegrada = $this->str2bool($e[0]['contintegrada']);
-            $this->recequivalencia = $this->str2bool($e[0]['recequivalencia']);
-            $this->codserie = $e[0]['codserie'];
-            $this->codalmacen = $e[0]['codalmacen'];
-            $this->codpago = $e[0]['codpago'];
-            $this->coddivisa = $e[0]['coddivisa'];
-            $this->codejercicio = $e[0]['codejercicio'];
-            $this->web = $e[0]['web'];
-            $this->email = $e[0]['email'];
-            $this->fax = $e[0]['fax'];
-            $this->telefono = $e[0]['telefono'];
-            $this->codpais = $e[0]['codpais'];
-            $this->apartado = $e[0]['apartado'];
-            $this->provincia = $e[0]['provincia'];
-            $this->ciudad = $e[0]['ciudad'];
-            $this->codpostal = $e[0]['codpostal'];
-            $this->direccion = $e[0]['direccion'];
-            $this->administrador = $e[0]['administrador'];
-            $this->codedi = $e[0]['codedi'];
-            $this->cifnif = $e[0]['cifnif'];
-            $this->nombre = $e[0]['nombre'];
-            $this->nombrecorto = $e[0]['nombrecorto'];
-            $this->lema = $e[0]['lema'];
-            $this->horario = $e[0]['horario'];
-            $this->pie_factura = $e[0]['pie_factura'];
-            $this->inicio_actividad = date('d-m-Y', strtotime($e[0]['inicioact']));
-            $this->regimeniva = $e[0]['regimeniva'];
+        if (!empty($data)) {
+            $this->id = $this->intval($data[0]['id']);
+            $this->xid = $data[0]['xid'];
+            $this->stockpedidos = $this->str2bool($data[0]['stockpedidos']);
+            $this->contintegrada = $this->str2bool($data[0]['contintegrada']);
+            $this->recequivalencia = $this->str2bool($data[0]['recequivalencia']);
+            $this->codserie = $data[0]['codserie'];
+            $this->codalmacen = $data[0]['codalmacen'];
+            $this->codpago = $data[0]['codpago'];
+            $this->coddivisa = $data[0]['coddivisa'];
+            $this->codejercicio = $data[0]['codejercicio'];
+            $this->web = $data[0]['web'];
+            $this->email = $data[0]['email'];
+            $this->fax = $data[0]['fax'];
+            $this->telefono = $data[0]['telefono'];
+            $this->codpais = $data[0]['codpais'];
+            $this->apartado = $data[0]['apartado'];
+            $this->provincia = $data[0]['provincia'];
+            $this->ciudad = $data[0]['ciudad'];
+            $this->codpostal = $data[0]['codpostal'];
+            $this->direccion = $data[0]['direccion'];
+            $this->administrador = $data[0]['administrador'];
+            $this->codedi = $data[0]['codedi'];
+            $this->cifnif = $data[0]['cifnif'];
+            $this->nombre = $data[0]['nombre'];
+            $this->nombrecorto = $data[0]['nombrecorto'];
+            $this->lema = $data[0]['lema'];
+            $this->horario = $data[0]['horario'];
+            $this->pie_factura = $data[0]['pie_factura'];
+            $this->inicio_actividad = date('d-m-Y', strtotime($data[0]['inicioact']));
+            $this->regimeniva = $data[0]['regimeniva'];
 
             /// cargamos las opciones de email por defecto
             $this->email_config = array(
@@ -213,11 +213,11 @@ class empresa extends \fs_model {
             );
 
             /// añadimos compatibilidad hacia atrás
-            if (isset($e[0]['email_password'])) {
-                $this->email_password = $this->email_config['mail_password'] = $e[0]['email_password'];
+            if (isset($data[0]['email_password'])) {
+                $this->email_password = $this->email_config['mail_password'] = $data[0]['email_password'];
             }
-            if (isset($e[0]['email_firma'])) {
-                $this->email_firma = $this->email_config['mail_firma'] = $e[0]['email_firma'];
+            if (isset($data[0]['email_firma'])) {
+                $this->email_firma = $this->email_config['mail_firma'] = $data[0]['email_firma'];
             }
 
             $fsvar = new \fs_var();

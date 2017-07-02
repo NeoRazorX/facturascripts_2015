@@ -200,17 +200,18 @@ class fs_user extends \fs_model {
         if ($this->db->select("SELECT * FROM agentes WHERE codagente = '1';")) {
             return "INSERT INTO " . $this->table_name . " (nick,password,log_key,codagente,admin,enabled)
             VALUES ('admin','" . sha1('admin') . "',NULL,'1',TRUE,TRUE);";
-        } else {
-            return "INSERT INTO " . $this->table_name . " (nick,password,log_key,codagente,admin,enabled)
-            VALUES ('admin','" . sha1('admin') . "',NULL,NULL,TRUE,TRUE);";
         }
+
+        return "INSERT INTO " . $this->table_name . " (nick,password,log_key,codagente,admin,enabled)
+            VALUES ('admin','" . sha1('admin') . "',NULL,NULL,TRUE,TRUE);";
     }
 
     public function url() {
         if (is_null($this->nick)) {
             return 'index.php?page=admin_users';
-        } else
-            return 'index.php?page=admin_user&snick=' . $this->nick;
+        }
+        
+        return 'index.php?page=admin_user&snick=' . $this->nick;
     }
 
     /**
@@ -240,16 +241,18 @@ class fs_user extends \fs_model {
         $agente = $this->get_agente();
         if ($agente) {
             return $agente->get_fullname();
-        } else
-            return $this->nick;
+        }
+        
+        return $this->nick;
     }
 
     public function get_agente_url() {
         $agente = $this->get_agente();
         if ($agente) {
             return $agente->url();
-        } else
-            return '#';
+        }
+        
+        return '#';
     }
 
     /**
@@ -330,9 +333,9 @@ class fs_user extends \fs_model {
     public function show_last_login() {
         if (is_null($this->last_login)) {
             return '-';
-        } else {
-            return Date('d-m-Y', strtotime($this->last_login)) . ' ' . $this->last_login_time;
         }
+        
+        return Date('d-m-Y', strtotime($this->last_login)) . ' ' . $this->last_login_time;
     }
 
     public function set_password($p = '') {
@@ -340,10 +343,10 @@ class fs_user extends \fs_model {
         if (mb_strlen($p) > 1 AND mb_strlen($p) <= 32) {
             $this->password = sha1($p);
             return TRUE;
-        } else {
-            $this->new_error_msg('La contraseña debe contener entre 1 y 32 caracteres.');
-            return FALSE;
         }
+        
+        $this->new_error_msg('La contraseña debe contener entre 1 y 32 caracteres.');
+        return FALSE;
     }
 
     /*
@@ -394,15 +397,17 @@ class fs_user extends \fs_model {
         $u = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE nick = " . $this->var2str($n) . ";");
         if ($u) {
             return new \fs_user($u[0]);
-        } else
-            return FALSE;
+        }
+        
+        return FALSE;
     }
 
     public function exists() {
         if (is_null($this->nick)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE nick = " . $this->var2str($this->nick) . ";");
+        }
+        
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE nick = " . $this->var2str($this->nick) . ";");
     }
 
     public function test() {
@@ -413,8 +418,9 @@ class fs_user extends \fs_model {
             $this->new_error_msg("Nick no válido. Debe tener entre 3 y 12 caracteres,
             valen números o letras, pero no la Ñ ni acentos.");
             return FALSE;
-        } else
-            return TRUE;
+        }
+        
+        return TRUE;
     }
 
     public function save() {
@@ -454,8 +460,9 @@ class fs_user extends \fs_model {
             }
 
             return $this->db->exec($sql);
-        } else
-            return FALSE;
+        }
+        
+        return FALSE;
     }
 
     public function delete() {
@@ -479,7 +486,7 @@ class fs_user extends \fs_model {
         /// consultamos primero en la cache
         $userlist = $this->cache->get_array('m_fs_user_all');
 
-        if (!$userlist) {
+        if (empty($userlist)) {
             /// si no está en la cache, consultamos la base de datos
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY lower(nick) ASC;");
             if ($data) {

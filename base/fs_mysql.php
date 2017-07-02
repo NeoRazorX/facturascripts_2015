@@ -507,7 +507,7 @@ class fs_mysql {
 
         foreach ($xml_cols as $xml_col) {
             $encontrada = FALSE;
-            if ($db_cols) {
+            if (!empty($db_cols)) {
                 if (strtolower($xml_col['tipo']) == 'integer') {
                     /**
                      * Desde la pestaña avanzado el panel de control se puede cambiar
@@ -655,7 +655,7 @@ class fs_mysql {
     public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE) {
         $sql = '';
 
-        if ($db_cons) {
+        if (!empty($db_cons)) {
             /**
              * comprobamos una a una las restricciones de la base de datos, si hay que eliminar una,
              * tendremos que eliminar todas para evitar problemas.
@@ -663,7 +663,7 @@ class fs_mysql {
             $delete = FALSE;
             foreach ($db_cons as $db_con) {
                 $found = FALSE;
-                if ($xml_cons) {
+                if (!empty($xml_cons)) {
                     foreach ($xml_cons as $xml_con) {
                         if ($db_con['name'] == 'PRIMARY' OR $db_con['name'] == $xml_con['nombre']) {
                             $found = TRUE;
@@ -697,11 +697,11 @@ class fs_mysql {
             }
         }
 
-        if ($xml_cons AND ! $delete_only AND FS_FOREIGN_KEYS) {
+        if (!empty($xml_cons) AND ! $delete_only AND FS_FOREIGN_KEYS) {
             /// comprobamos una a una las nuevas
             foreach ($xml_cons as $xml_con) {
                 $found = FALSE;
-                if ($db_cons) {
+                if (!empty($db_cons)) {
                     foreach ($db_cons as $db_con) {
                         if ($xml_con['nombre'] == $db_con['name']) {
                             $found = TRUE;
@@ -781,7 +781,7 @@ class fs_mysql {
     private function generate_table_constraints($xml_cons) {
         $sql = '';
 
-        if ($xml_cons) {
+        if (!empty($xml_cons)) {
             foreach ($xml_cons as $res) {
                 if (strstr(strtolower($res['consulta']), 'primary key')) {
                     $sql .= ', ' . $res['consulta'];

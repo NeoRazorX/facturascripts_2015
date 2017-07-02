@@ -797,33 +797,6 @@ class fs_controller {
     }
 
     /**
-     * Establece un código de país como predeterminado para este usuario.
-     * @deprecated since version 2015.039
-     * @param string $cod el código del país
-     */
-    protected function save_codpais($cod) {
-        $this->new_error_msg('fs_controller::save_codpais() es una función obsoleta.');
-    }
-
-    /**
-     * Establece un proveedor como predeterminado para este usuario.
-     * @deprecated since version 2015.039
-     * @param string $cod el código del proveedor
-     */
-    protected function save_codproveedor($cod) {
-        $this->new_error_msg('fs_controller::save_codproveedor() es una función obsoleta.');
-    }
-
-    /**
-     * Establece una serie como predeterminada para este usuario.
-     * @deprecated since version 2015.039
-     * @param string $cod el código de la serie
-     */
-    protected function save_codserie($cod) {
-        $this->new_error_msg('fs_controller::save_codserie() es una función obsoleta.');
-    }
-
-    /**
      * Devuelve la fecha actual
      * @return string la fecha en formato día-mes-año
      */

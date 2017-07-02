@@ -55,9 +55,9 @@ class fs_var extends fs_model {
     public function exists() {
         if (is_null($this->name)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
         }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
     }
 
     public function save() {
@@ -109,8 +109,9 @@ class fs_var extends fs_model {
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
         if ($data) {
             return $data[0]['varchar'];
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**

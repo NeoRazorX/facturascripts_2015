@@ -120,9 +120,9 @@ class forma_pago extends \fs_model {
         $pago = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($cod) . ";");
         if ($pago) {
             return new \forma_pago($pago[0]);
-        } else {
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**
@@ -132,9 +132,9 @@ class forma_pago extends \fs_model {
     public function exists() {
         if (is_null($this->codpago)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
         }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
     }
 
     /**
@@ -207,7 +207,7 @@ class forma_pago extends \fs_model {
     public function all() {
         /// Leemos la lista de la caché
         $listaformas = $this->cache->get_array('m_forma_pago_all');
-        if (!$listaformas) {
+        if (empty($listaformas)) {
             /// si no está en caché, buscamos en la base de datos
             $formas = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;");
             if ($formas) {
@@ -241,7 +241,7 @@ class forma_pago extends \fs_model {
             }
         }
 
-        if ($array_dias) {
+        if (!empty($array_dias)) {
             foreach ($array_dias as $i => $dia_de_pago) {
                 if ($i == 0) {
                     $fecha = $this->calcular_vencimiento2($fecha_inicio, $dia_de_pago);
@@ -264,25 +264,25 @@ class forma_pago extends \fs_model {
     private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0) {
         if ($dia_de_pago == 0) {
             return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
-        } else {
-            $fecha = date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
-            $tmp_dia = date('d', strtotime($fecha));
+        }
+
+        $fecha = date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
+        $tmp_dia = date('d', strtotime($fecha));
+        $tmp_mes = date('m', strtotime($fecha));
+        $tmp_anyo = date('Y', strtotime($fecha));
+
+        if ($tmp_dia > $dia_de_pago) {
+            /// calculamos el dia de cobro para el mes siguiente
+            $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
             $tmp_mes = date('m', strtotime($fecha));
             $tmp_anyo = date('Y', strtotime($fecha));
-
-            if ($tmp_dia > $dia_de_pago) {
-                /// calculamos el dia de cobro para el mes siguiente
-                $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
-                $tmp_mes = date('m', strtotime($fecha));
-                $tmp_anyo = date('Y', strtotime($fecha));
-            }
-
-            /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-            $tmp_dia = min(array($dia_de_pago, intval(date('t', strtotime($fecha)))));
-
-            /// y por último generamos la fecha
-            return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
         }
+
+        /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
+        $tmp_dia = min(array($dia_de_pago, intval(date('t', strtotime($fecha)))));
+
+        /// y por último generamos la fecha
+        return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
     }
 
 }

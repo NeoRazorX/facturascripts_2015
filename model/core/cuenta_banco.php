@@ -76,9 +76,9 @@ class cuenta_banco extends \fs_model {
                 $txt .= substr($iban, $i, 4) . ' ';
             }
             return $txt;
-        } else {
-            return str_replace(' ', '', $this->iban);
         }
+        
+        return str_replace(' ', '', $this->iban);
     }
 
     /**
@@ -98,9 +98,9 @@ class cuenta_banco extends \fs_model {
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($cod) . ";");
         if ($data) {
             return new \cuenta_banco($data[0]);
-        } else {
-            return FALSE;
         }
+        
+        return FALSE;
     }
 
     /**
@@ -111,10 +111,10 @@ class cuenta_banco extends \fs_model {
         $sql = "SELECT MAX(" . $this->db->sql_to_int('codcuenta') . ") as cod FROM " . $this->table_name . ";";
         $cod = $this->db->select($sql);
         if ($cod) {
-            return 1 + intval($cod[0]['cod']);
-        } else {
-            return 1;
+            return (string) 1 + intval($cod[0]['cod']);
         }
+        
+        return '1';
     }
 
     /**
@@ -124,9 +124,9 @@ class cuenta_banco extends \fs_model {
     public function exists() {
         if (is_null($this->codcuenta)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
         }
+        
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
     }
 
     /**

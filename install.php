@@ -618,7 +618,7 @@ $system_info = str_replace('"', "'", $system_info);
                                 <div class="panel-body">
                                     <ul>
                                         <?php
-                                        if ($errors2) {
+                                        if (!empty($errors2)) {
                                             foreach ($errors2 as $err2) {
                                                 echo "<li>" . $err2 . "</li>";
                                             }

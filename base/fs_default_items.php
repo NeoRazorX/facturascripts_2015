@@ -37,20 +37,6 @@ class fs_default_items {
     private static $codpais;
     private static $codserie;
 
-    public function __construct() {
-        if (self::$default_page === NULL) {
-            self::$default_page = NULL;
-            self::$showing_page = NULL;
-            self::$codejercicio = NULL;
-            self::$codalmacen = NULL;
-            self::$coddivisa = NULL;
-            self::$codpago = NULL;
-            self::$codimpuesto = NULL;
-            self::$codpais = NULL;
-            self::$codserie = NULL;
-        }
-    }
-
     public function codejercicio() {
         return self::$codejercicio;
     }
