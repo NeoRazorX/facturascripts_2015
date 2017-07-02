@@ -51,17 +51,18 @@ class fs_rol extends fs_model {
     public function url() {
         if (is_null($this->codrol)) {
             return 'index.php?page=admin_rol';
-        } else
-            return 'index.php?page=admin_rol&codrol=' . $this->codrol;
+        }
+        
+        return 'index.php?page=admin_rol&codrol=' . urlencode($this->codrol);
     }
 
     public function get($codrol) {
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($codrol) . ";");
         if ($data) {
             return new fs_rol($data[0]);
-        } else {
-            return FALSE;
         }
+        
+        return FALSE;
     }
 
     /**
@@ -85,9 +86,9 @@ class fs_rol extends fs_model {
     public function exists() {
         if (is_null($this->codrol)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($this->codrol) . ";");
         }
+        
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($this->codrol) . ";");
     }
 
     public function save() {
