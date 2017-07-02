@@ -210,7 +210,7 @@ class fs_user extends \fs_model {
         if (is_null($this->nick)) {
             return 'index.php?page=admin_users';
         }
-        
+
         return 'index.php?page=admin_user&snick=' . $this->nick;
     }
 
@@ -242,7 +242,7 @@ class fs_user extends \fs_model {
         if ($agente) {
             return $agente->get_fullname();
         }
-        
+
         return $this->nick;
     }
 
@@ -251,7 +251,7 @@ class fs_user extends \fs_model {
         if ($agente) {
             return $agente->url();
         }
-        
+
         return '#';
     }
 
@@ -303,21 +303,20 @@ class fs_user extends \fs_model {
     /**
      * Devuelve TRUE si el usuario tiene permiso para eliminar elementos en la página solicitada.
      * @param string $page_name
-     * @return type
+     * @return boolean
      */
     public function allow_delete_on($page_name) {
         if ($this->admin OR FS_DEMO) {
-            $status = TRUE;
-        } else {
-            $status = FALSE;
-            foreach ($this->get_accesses() as $a) {
-                if ($a->fs_page == $page_name) {
-                    $status = $a->allow_delete;
-                    break;
-                }
-            }
+            return TRUE;
         }
 
+        $status = FALSE;
+        foreach ($this->get_accesses() as $a) {
+            if ($a->fs_page == $page_name) {
+                $status = $a->allow_delete;
+                break;
+            }
+        }
         return $status;
     }
 
@@ -334,7 +333,7 @@ class fs_user extends \fs_model {
         if (is_null($this->last_login)) {
             return '-';
         }
-        
+
         return Date('d-m-Y', strtotime($this->last_login)) . ' ' . $this->last_login_time;
     }
 
@@ -344,7 +343,7 @@ class fs_user extends \fs_model {
             $this->password = sha1($p);
             return TRUE;
         }
-        
+
         $this->new_error_msg('La contraseña debe contener entre 1 y 32 caracteres.');
         return FALSE;
     }
@@ -398,7 +397,7 @@ class fs_user extends \fs_model {
         if ($u) {
             return new \fs_user($u[0]);
         }
-        
+
         return FALSE;
     }
 
@@ -406,7 +405,7 @@ class fs_user extends \fs_model {
         if (is_null($this->nick)) {
             return FALSE;
         }
-        
+
         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE nick = " . $this->var2str($this->nick) . ";");
     }
 
@@ -419,7 +418,7 @@ class fs_user extends \fs_model {
             valen números o letras, pero no la Ñ ni acentos.");
             return FALSE;
         }
-        
+
         return TRUE;
     }
 
@@ -461,7 +460,7 @@ class fs_user extends \fs_model {
 
             return $this->db->exec($sql);
         }
-        
+
         return FALSE;
     }
 

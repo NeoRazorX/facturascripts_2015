@@ -64,11 +64,11 @@ class fs_access extends fs_model {
     public function exists() {
         if (is_null($this->fs_page)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name
-                            . " WHERE fs_user = " . $this->var2str($this->fs_user)
-                            . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
         }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name
+                        . " WHERE fs_user = " . $this->var2str($this->fs_user)
+                        . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
     }
 
     public function save() {
