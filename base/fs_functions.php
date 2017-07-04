@@ -114,12 +114,11 @@ function fs_file_get_contents($url, $timeout = 10) {
         }
         
         /**
-         * En algunas configuraciones de php es necesario desactivar estos flags.
-         * Pero no encuentro la documentación de este hecho. Así que por ahora lo
-         * desactivo.
+         * En algunas configuraciones de php es necesario desactivar estos flags,
+         * en otras es necesario activarlos. habrá que buscar una solución mejor.
          */
-        ///curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        ///curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         
         if (defined('FS_PROXY_TYPE')) {
             curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
@@ -205,9 +204,9 @@ function fs_file_download($url, $filename, $timeout = 30) {
  * @return string
  */
 function fs_fix_html($txt) {
-    $a = array('&lt;', '&gt;', '&quot;', '&#39;');
-    $b = array('<', '>', "'", "'");
-    return trim(str_replace($a, $b, $txt));
+    $original = array('&lt;', '&gt;', '&quot;', '&#39;');
+    $final = array('<', '>', "'", "'");
+    return trim(str_replace($original, $final, $txt));
 }
 
 /**

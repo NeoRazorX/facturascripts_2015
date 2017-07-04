@@ -35,8 +35,6 @@ function fatal_handler() {
     }
 }
 
-register_shutdown_function("fatal_handler");
-
 if ((float) substr(phpversion(), 0, 3) < 5.3) {
     /// comprobamos la versión de PHP
     die('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP ' . phpversion());
@@ -49,6 +47,15 @@ if ((float) substr(phpversion(), 0, 3) < 5.3) {
     require_once 'base/config2.php';
     require_once 'base/fs_controller.php';
     require_once 'raintpl/rain.tpl.class.php';
+
+    if (FS_DB_HISTORY) {
+        /**
+         * Si está activado el historial SQL, registramos además la función para
+         * capturar los fatal error. Información importante a la hora de depurar
+         * errores.
+         */
+        register_shutdown_function("fatal_handler");
+    }
 
     /// ¿Qué controlador usar?
     $pagename = '';
