@@ -78,8 +78,8 @@ class divisa extends \fs_model {
         else {
             $this->coddivisa = NULL;
             $this->descripcion = '';
-            $this->tasaconv = 1;
-            $this->tasaconv_compra = 1;
+            $this->tasaconv = 1.00;
+            $this->tasaconv_compra = 1.00;
             $this->codiso = NULL;
             $this->simbolo = '?';
         }
@@ -127,8 +127,9 @@ class divisa extends \fs_model {
         $divisa = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($cod) . ";");
         if ($divisa) {
             return new \divisa($divisa[0]);
-        } else
-            return FALSE;
+        }
+        
+        return FALSE;
     }
 
     /**
@@ -138,8 +139,9 @@ class divisa extends \fs_model {
     public function exists() {
         if (is_null($this->coddivisa)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
+        }
+        
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($this->coddivisa) . ";");
     }
 
     /**
@@ -159,8 +161,9 @@ class divisa extends \fs_model {
             $this->new_error_msg('La tasa de conversión no puede ser 0.');
         } else if ($this->tasaconv_compra == 0) {
             $this->new_error_msg('La tasa de conversión para compras no puede ser 0.');
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -191,8 +194,9 @@ class divisa extends \fs_model {
             }
 
             return $this->db->exec($sql);
-        } else
-            return FALSE;
+        }
+        
+        return FALSE;
     }
 
     /**
@@ -218,7 +222,7 @@ class divisa extends \fs_model {
     public function all() {
         /// leemos la lista de la caché
         $listad = $this->cache->get_array('m_divisa_all');
-        if (!$listad) {
+        if (empty($listad)) {
             /// si no está en caché, leemos de la base de datos
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY coddivisa ASC;");
             if ($data) {

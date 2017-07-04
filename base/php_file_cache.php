@@ -110,7 +110,7 @@ class php_file_cache {
         if (file_exists($ruta)) {
             $done = unlink($ruta);
         }
-        
+
         return $done;
     }
 
@@ -141,7 +141,7 @@ class php_file_cache {
         if (file_exists($file)) {
             $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
         }
-        
+
         return $done;
     }
 

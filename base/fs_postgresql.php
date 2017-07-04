@@ -99,9 +99,9 @@ class fs_postgresql {
             $return = pg_close(self::$link);
             self::$link = NULL;
             return $return;
-        } else {
-            return TRUE;
         }
+
+        return TRUE;
     }
 
     /**
@@ -112,14 +112,14 @@ class fs_postgresql {
         if (self::$link) {
             $aux = pg_version(self::$link);
             return 'POSTGRESQL ' . $aux['server'];
-        } else {
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**
      * Devuelve la lista de errores.
-     * @return type
+     * @return array
      */
     public function get_errors() {
         return self::$core_log->get_errors();
@@ -150,7 +150,7 @@ class fs_postgresql {
 
     /**
      * Devuelve el historial SQL.
-     * @return type
+     * @return array
      */
     public function get_history() {
         return self::$core_log->get_sql_history();
@@ -159,7 +159,7 @@ class fs_postgresql {
     /**
      * Devuelve un array con las columnas de una tabla dada.
      * @param string $table_name
-     * @return type
+     * @return array
      */
     public function get_columns($table_name) {
         $columns = array();
@@ -189,7 +189,7 @@ class fs_postgresql {
      * Devuelve una array con las restricciones de una tabla dada:
      * clave primaria, claves ajenas, etc.
      * @param string $table_name
-     * @return type
+     * @return array
      */
     public function get_constraints($table_name) {
         $constraints = array();
@@ -211,7 +211,7 @@ class fs_postgresql {
     /**
      * Devuelve una array con las restricciones de una tabla dada, pero aportando muchos más detalles.
      * @param string $table_name
-     * @return type
+     * @return array
      */
     public function get_constraints_extended($table_name) {
         $constraints = array();
@@ -252,7 +252,7 @@ class fs_postgresql {
     /**
      * Devuelve una array con los indices de una tabla dada.
      * @param string $table_name
-     * @return type
+     * @return array
      */
     public function get_indexes($table_name) {
         $indexes = array();
@@ -269,7 +269,7 @@ class fs_postgresql {
 
     /**
      * Devuelve un array con los datos de bloqueos en la base de datos.
-     * @return type
+     * @return array
      */
     public function get_locks() {
         $llist = array();
@@ -287,7 +287,7 @@ class fs_postgresql {
 
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
-     * @return type
+     * @return array
      */
     public function list_tables() {
         $tables = array();
@@ -308,7 +308,7 @@ class fs_postgresql {
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
      * @param string $sql
-     * @return type
+     * @return array
      */
     public function select($sql) {
         $result = FALSE;
@@ -341,7 +341,7 @@ class fs_postgresql {
      * @param string $sql
      * @param integer $limit
      * @param integer $offset
-     * @return type
+     * @return array
      */
     public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
         $result = FALSE;
@@ -417,10 +417,10 @@ class fs_postgresql {
      */
     public function begin_transaction() {
         if (self::$link) {
-            pg_query(self::$link, 'BEGIN TRANSACTION;');
-        } else {
-            return FALSE;
+            return (bool) pg_query(self::$link, 'BEGIN TRANSACTION;');
         }
+
+        return FALSE;
     }
 
     /**
@@ -432,10 +432,10 @@ class fs_postgresql {
             /// aumentamos el contador de selects realizados
             self::$t_transactions++;
 
-            return pg_query(self::$link, 'COMMIT;');
-        } else {
-            return FALSE;
+            return (bool) pg_query(self::$link, 'COMMIT;');
         }
+
+        return FALSE;
     }
 
     /**
@@ -444,10 +444,10 @@ class fs_postgresql {
      */
     public function rollback() {
         if (self::$link) {
-            pg_query(self::$link, 'ROLLBACK;');
-        } else {
-            return FALSE;
+            return (bool) pg_query(self::$link, 'ROLLBACK;');
         }
+
+        return FALSE;
     }
 
     /**
@@ -467,22 +467,22 @@ class fs_postgresql {
         $aux = $this->select('SELECT lastval() as num;');
         if ($aux) {
             return $aux[0]['num'];
-        } else {
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**
      * Escapa las comillas de la cadena de texto.
-     * @param string $s
+     * @param string $str
      * @return string
      */
-    public function escape_string($s) {
+    public function escape_string($str) {
         if (self::$link) {
-            return pg_escape_string(self::$link, $s);
-        } else {
-            return $s;
+            return pg_escape_string(self::$link, $str);
         }
+
+        return $str;
     }
 
     /**
@@ -514,7 +514,7 @@ class fs_postgresql {
 
         foreach ($xml_cols as $xml_col) {
             $encontrada = FALSE;
-            if ($db_cols) {
+            if (!empty($db_cols)) {
                 foreach ($db_cols as $db_col) {
                     if ($db_col['name'] == $xml_col['nombre']) {
                         if (!$this->compare_data_types($db_col['type'], $xml_col['tipo'])) {
@@ -577,9 +577,9 @@ class fs_postgresql {
             return TRUE;
         } else if (substr($db_type, 0, 4) == 'time' AND substr($xml_type, 0, 4) == 'time') {
             return TRUE;
-        } else {
-            return FALSE;
         }
+
+        return FALSE;
     }
 
     /**
@@ -622,11 +622,11 @@ class fs_postgresql {
     public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE) {
         $sql = '';
 
-        if ($db_cons) {
+        if (!empty($db_cons)) {
             /// comprobamos una a una las viejas
             foreach ($db_cons as $db_con) {
                 $found = FALSE;
-                if ($xml_cons) {
+                if (!empty($xml_cons)) {
                     foreach ($xml_cons as $xml_con) {
                         if ($db_con['name'] == $xml_con['nombre']) {
                             $found = TRUE;
@@ -642,11 +642,11 @@ class fs_postgresql {
             }
         }
 
-        if ($xml_cons AND ! $delete_only) {
+        if (!empty($xml_cons) AND ! $delete_only) {
             /// comprobamos una a una las nuevas
             foreach ($xml_cons as $xml_con) {
                 $found = FALSE;
-                if ($db_cons) {
+                if (!empty($db_cons)) {
                     foreach ($db_cons as $db_con) {
                         if ($xml_con['nombre'] == $db_con['name']) {
                             $found = TRUE;

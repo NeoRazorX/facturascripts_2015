@@ -111,7 +111,7 @@ class fs_core_log {
     
     /**
      * Devuelve el historial de consultas SQL.
-     * @return type
+     * @return array
      */
     public function get_sql_history() {
         return self::$sql_history;

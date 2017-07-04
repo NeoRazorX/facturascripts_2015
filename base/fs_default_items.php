@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,44 +36,6 @@ class fs_default_items {
     private static $codimpuesto;
     private static $codpais;
     private static $codserie;
-
-    public function __construct() {
-        if (!isset(self::$default_page)) {
-            self::$default_page = NULL;
-        }
-
-        if (!isset(self::$showing_page)) {
-            self::$showing_page = NULL;
-        }
-
-        if (!isset(self::$codejercicio)) {
-            self::$codejercicio = NULL;
-        }
-
-        if (!isset(self::$codalmacen)) {
-            self::$codalmacen = NULL;
-        }
-
-        if (!isset(self::$coddivisa)) {
-            self::$coddivisa = NULL;
-        }
-
-        if (!isset(self::$codpago)) {
-            self::$codpago = NULL;
-        }
-
-        if (!isset(self::$codimpuesto)) {
-            self::$codimpuesto = NULL;
-        }
-
-        if (!isset(self::$codpais)) {
-            self::$codpais = NULL;
-        }
-
-        if (!isset(self::$codserie)) {
-            self::$codserie = NULL;
-        }
-    }
 
     public function codejercicio() {
         return self::$codejercicio;

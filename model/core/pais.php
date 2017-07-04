@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -333,8 +333,9 @@ class pais extends \fs_model {
     public function url() {
         if (is_null($this->codpais)) {
             return 'index.php?page=admin_paises';
-        } else
-            return 'index.php?page=admin_paises#' . $this->codpais;
+        }
+
+        return 'index.php?page=admin_paises#' . $this->codpais;
     }
 
     /**
@@ -354,8 +355,9 @@ class pais extends \fs_model {
         $pais = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($cod) . ";");
         if ($pais) {
             return new \pais($pais[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -367,8 +369,9 @@ class pais extends \fs_model {
         $pais = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codiso = " . $this->var2str($cod) . ";");
         if ($pais) {
             return new \pais($pais[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -378,8 +381,9 @@ class pais extends \fs_model {
     public function exists() {
         if (is_null($this->codpais)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
+        }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($this->codpais) . ";");
     }
 
     /**
@@ -422,8 +426,9 @@ class pais extends \fs_model {
             }
 
             return $this->db->exec($sql);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -449,7 +454,7 @@ class pais extends \fs_model {
     public function all() {
         /// Leemos la lista de la caché
         $listap = $this->cache->get_array('m_pais_all');
-        if (!$listap) {
+        if (empty($listap)) {
             /// si no encontramos los datos en caché, leemos de la base de datos
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC;");
             if ($data) {

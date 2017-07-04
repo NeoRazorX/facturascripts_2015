@@ -308,7 +308,7 @@ class fs_updater {
     private function actualizar_plugin() {
         /// leemos el ini del plugin
         $plugin_ini = parse_ini_file('plugins/' . filter_input(INPUT_GET, 'plugin') . '/facturascripts.ini');
-        if ($plugin_ini) {
+        if (!empty($plugin_ini)) {
             /// descargamos el zip
             if (@fs_file_download($plugin_ini['update_url'], 'update.zip')) {
                 $zip = new ZipArchive();
@@ -570,9 +570,9 @@ class fs_updater {
 
     private function xid() {
         $this->xid = '';
-        $e = $this->cache->get_array('empresa');
-        if ($e) {
-            $this->xid = $e[0]['xid'];
+        $data = $this->cache->get_array('empresa');
+        if (!empty($data)) {
+            $this->xid = $data[0]['xid'];
             if (!filter_input(INPUT_COOKIE, 'uxid')) {
                 setcookie('uxid', $this->xid, 10800);
             }

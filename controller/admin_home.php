@@ -161,7 +161,7 @@ class admin_home extends fs_controller {
     private function save_avanzado() {
         $guardar = FALSE;
         foreach ($GLOBALS['config2'] as $i => $value) {
-            if (filter_input(INPUT_POST, $i)) {
+            if (filter_input(INPUT_POST, $i) !== NULL) {
                 $GLOBALS['config2'][$i] = filter_input(INPUT_POST, $i);
                 $guardar = TRUE;
             }
@@ -652,7 +652,7 @@ class admin_home extends fs_controller {
                     }
                 }
             }
-            if ($eliminadas) {
+            if (!empty($eliminadas)) {
                 $this->new_message('Se han eliminado automáticamente las siguientes páginas: ' . join(', ', $eliminadas));
             }
 

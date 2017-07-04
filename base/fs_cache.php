@@ -83,9 +83,9 @@ class fs_cache {
     public function get($key) {
         if (self::$connected) {
             return self::$memcache->get(FS_CACHE_PREFIX . $key);
-        } else {
-            return self::$php_file_cache->get($key);
         }
+        
+        return self::$php_file_cache->get($key);
     }
 
     /**
@@ -142,9 +142,9 @@ class fs_cache {
     public function delete($key) {
         if (self::$connected) {
             return self::$memcache->delete(FS_CACHE_PREFIX . $key);
-        } else {
-            return self::$php_file_cache->delete($key);
         }
+        
+        return self::$php_file_cache->delete($key);
     }
 
     public function delete_multi($keys) {
@@ -166,17 +166,17 @@ class fs_cache {
     public function clean() {
         if (self::$connected) {
             return self::$memcache->flush();
-        } else {
-            return self::$php_file_cache->flush();
         }
+        
+        return self::$php_file_cache->flush();
     }
 
     public function version() {
         if (self::$connected) {
             return 'Memcache ' . self::$memcache->getVersion();
-        } else {
-            return 'Files';
         }
+        
+        return 'Files';
     }
 
     public function connected() {

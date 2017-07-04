@@ -72,7 +72,7 @@ class serie extends \fs_model {
             $this->codserie = '';
             $this->descripcion = '';
             $this->siniva = FALSE;
-            $this->irpf = 0;
+            $this->irpf = 0.00;
             $this->codejercicio = NULL;
             $this->numfactura = 1;
         }
@@ -91,8 +91,9 @@ class serie extends \fs_model {
     public function url() {
         if (is_null($this->codserie)) {
             return 'index.php?page=contabilidad_series';
-        } else
-            return 'index.php?page=contabilidad_series#' . $this->codserie;
+        }
+
+        return 'index.php?page=contabilidad_series#' . $this->codserie;
     }
 
     /**
@@ -112,8 +113,9 @@ class serie extends \fs_model {
         $serie = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($cod) . ";");
         if ($serie) {
             return new \serie($serie[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -123,8 +125,9 @@ class serie extends \fs_model {
     public function exists() {
         if (is_null($this->codserie)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
+        }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
 
     /**
@@ -177,8 +180,9 @@ class serie extends \fs_model {
             }
 
             return $this->db->exec($sql);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -204,7 +208,7 @@ class serie extends \fs_model {
     public function all() {
         /// leemos la lista de la caché
         $serielist = $this->cache->get_array('m_serie_all');
-        if (!$serielist) {
+        if (empty($serielist)) {
             /// si no encontramos los datos en la caché, leemos de la base de datos
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY codserie ASC;");
             if ($data) {

@@ -2,7 +2,7 @@
 
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -213,7 +213,7 @@ class almacen extends \fs_model {
     public function all() {
         /// leemos esta lista de la caché
         $listaa = $this->cache->get_array('m_almacen_all');
-        if (!$listaa) {
+        if (empty($listaa)) {
             /// si no está en caché, leemos de la base de datos
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY codalmacen ASC;");
             if ($data) {

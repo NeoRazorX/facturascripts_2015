@@ -43,18 +43,16 @@ function require_model($name) {
             }
         }
 
-        if (!$found) {
-            if (file_exists('model/' . $name)) {
-                require_once 'model/' . $name;
-                $GLOBALS['models'][] = $name;
-            }
+        if (!$found && file_exists('model/' . $name)) {
+            require_once 'model/' . $name;
+            $GLOBALS['models'][] = $name;
         }
     }
 }
 
 /**
  * Devuelve el nombre de la clase del objeto, pero sin el namespace.
- * @param type $object
+ * @param mixed $object
  * @return string
  */
 function get_class_name($object = NULL) {
@@ -111,11 +109,18 @@ function fs_file_get_contents($url, $timeout = 10) {
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        if (is_null(ini_get('open_basedir'))) {
+        if (ini_get('open_basedir') === NULL) {
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         }
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        
+        /**
+         * En algunas configuraciones de php es necesario desactivar estos flags.
+         * Pero no encuentro la documentación de este hecho. Así que por ahora lo
+         * desactivo.
+         */
+        ///curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        ///curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        
         if (defined('FS_PROXY_TYPE')) {
             curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
             curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
@@ -127,12 +132,13 @@ function fs_file_get_contents($url, $timeout = 10) {
         if ($info['http_code'] == 301 OR $info['http_code'] == 302) {
             $redirs = 0;
             return fs_curl_redirect_exec($ch, $redirs);
-        } else {
-            curl_close($ch);
-            return $data;
         }
-    } else
-        return file_get_contents($url);
+
+        curl_close($ch);
+        return $data;
+    }
+
+    return file_get_contents($url);
 }
 
 /**
@@ -164,11 +170,11 @@ function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false) {
     if ($curlopt_header) {
         curl_close($ch);
         return $data;
-    } else {
-        list(, $body) = explode("\r\n\r\n", $data, 2);
-        curl_close($ch);
-        return $body;
     }
+
+    list(, $body) = explode("\r\n\r\n", $data, 2);
+    curl_close($ch);
+    return $body;
 }
 
 /**
@@ -183,10 +189,8 @@ function fs_file_download($url, $filename, $timeout = 30) {
 
     try {
         $data = fs_file_get_contents($url, $timeout);
-        if ($data) {
-            if (file_put_contents($filename, $data) !== FALSE) {
-                $ok = TRUE;
-            }
+        if ($data && file_put_contents($filename, $data) !== FALSE) {
+            $ok = TRUE;
         }
     } catch (Exception $e) {
         /// nada
@@ -214,7 +218,17 @@ function fs_fix_html($txt) {
 function fs_filter_input_req($name) {
     if (isset($_REQUEST[$name])) {
         return $_REQUEST[$name];
-    } else {
-        return FALSE;
     }
+
+    return FALSE;
+}
+
+function fs_get_max_file_upload() {
+    $max = intval(ini_get('post_max_size'));
+
+    if (intval(ini_get('upload_max_filesize')) < $max) {
+        $max = intval(ini_get('upload_max_filesize'));
+    }
+
+    return $max;
 }

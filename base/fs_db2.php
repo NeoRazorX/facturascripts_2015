@@ -31,8 +31,22 @@ if (strtolower(FS_DB_TYPE) == 'mysql') {
  */
 class fs_db2 {
 
+    /**
+     * Transacttiones automáticas activadas si o no.
+     * @var boolean
+     */
     private static $auto_transactions;
+    
+    /**
+     * Motor utilizado, MySQL o PostgreSQL
+     * @var fs_mysql|fs_postgresql
+     */
     private static $engine;
+    
+    /**
+     * Última lista de tablas de la base de datos.
+     * @var array|false 
+     */
     private static $table_list;
 
     public function __construct() {
@@ -99,7 +113,7 @@ class fs_db2 {
 
     /**
      * Devuelve la lista de errores.
-     * @return type
+     * @return array
      */
     public function get_errors() {
         return self::$engine->get_errors();
@@ -130,7 +144,7 @@ class fs_db2 {
 
     /**
      * Devuelve el historial SQL.
-     * @return type
+     * @return array
      */
     public function get_history() {
         return self::$engine->get_history();
@@ -139,7 +153,7 @@ class fs_db2 {
     /**
      * Devuelve un array con las columnas de una tabla dada.
      * @param string $table_name
-     * @return type
+     * @return array
      */
     public function get_columns($table_name) {
         return self::$engine->get_columns($table_name);
@@ -149,20 +163,20 @@ class fs_db2 {
      * Devuelve una array con las restricciones de una tabla dada.
      * @param string $table_name
      * @param boolean $extended
-     * @return type
+     * @return array
      */
     public function get_constraints($table_name, $extended = FALSE) {
         if ($extended) {
             return self::$engine->get_constraints_extended($table_name);
-        } else {
-            return self::$engine->get_constraints($table_name);
         }
+        
+        return self::$engine->get_constraints($table_name);
     }
 
     /**
      * Devuelve una array con los indices de una tabla dada.
      * @param string $table_name
-     * @return type
+     * @return array
      */
     public function get_indexes($table_name) {
         return self::$engine->get_indexes($table_name);
@@ -170,7 +184,7 @@ class fs_db2 {
 
     /**
      * Devuelve un array con los bloqueos de la base de datos.
-     * @return type
+     * @return array
      */
     public function get_locks() {
         return self::$engine->get_locks();
@@ -178,7 +192,7 @@ class fs_db2 {
 
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
-     * @return type
+     * @return array
      */
     public function list_tables() {
         if (self::$table_list === FALSE) {
@@ -191,7 +205,7 @@ class fs_db2 {
     /**
      * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
      * @param string $name
-     * @param type $list
+     * @param array $list
      * @return boolean
      */
     public function table_exists($name, $list = FALSE) {
@@ -215,7 +229,7 @@ class fs_db2 {
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
      * @param string $sql
-     * @return type
+     * @return array|false
      */
     public function select($sql) {
         return self::$engine->select($sql);
@@ -229,7 +243,7 @@ class fs_db2 {
      * @param string $sql
      * @param integer $limit
      * @param integer $offset
-     * @return type
+     * @return array|false
      */
     public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
         return self::$engine->select_limit($sql, $limit, $offset);
