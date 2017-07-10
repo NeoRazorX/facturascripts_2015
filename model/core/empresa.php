@@ -232,13 +232,13 @@ class empresa extends \fs_model {
 
     protected function install() {
         $this->clean_cache();
-        $e = mt_rand(1, 9999);
+        $num = mt_rand(1, 9999);
         return "INSERT INTO " . $this->table_name . " (stockpedidos,contintegrada,recequivalencia,codserie,"
                 . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,"
                 . "ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)"
                 . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
-                . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa " . $e . " S.L.',"
-                . "'E-" . $e . "','','');";
+                . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa " . $num . " S.L.',"
+                . "'E-" . $num . "','','');";
     }
 
     /**
@@ -256,8 +256,9 @@ class empresa extends \fs_model {
     public function can_send_mail() {
         if ($this->email AND $this->email_config['mail_password']) {
             return TRUE;
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -293,9 +294,9 @@ class empresa extends \fs_model {
     public function mail_connect(&$mail) {
         if ($this->email_config['mail_mailer'] == 'smtp') {
             return $mail->smtpConnect($this->smtp_options());
-        } else {
-            return TRUE;
         }
+
+        return TRUE;
     }
 
     /**
@@ -334,8 +335,9 @@ class empresa extends \fs_model {
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
     }
 
     /**
@@ -418,50 +420,48 @@ class empresa extends \fs_model {
                         . "  WHERE id = " . $this->var2str($this->id) . ";";
 
                 return $this->db->exec($sql);
-            } else {
-                $sql = "INSERT INTO " . $this->table_name . " (stockpedidos,contintegrada,recequivalencia,codserie,
+            }
+
+            $sql = "INSERT INTO " . $this->table_name . " (stockpedidos,contintegrada,recequivalencia,codserie,
                codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,
                codpais,apartado,provincia,ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,
                nombrecorto,lema,horario,pie_factura,inicioact,regimeniva) VALUES 
                       (" . $this->var2str($this->stockpedidos)
-                        . "," . $this->var2str($this->contintegrada)
-                        . "," . $this->var2str($this->recequivalencia)
-                        . "," . $this->var2str($this->codserie)
-                        . "," . $this->var2str($this->codalmacen)
-                        . "," . $this->var2str($this->codpago)
-                        . "," . $this->var2str($this->coddivisa)
-                        . "," . $this->var2str($this->codejercicio)
-                        . "," . $this->var2str($this->web)
-                        . "," . $this->var2str($this->email)
-                        . "," . $this->var2str($this->fax)
-                        . "," . $this->var2str($this->telefono)
-                        . "," . $this->var2str($this->codpais)
-                        . "," . $this->var2str($this->apartado)
-                        . "," . $this->var2str($this->provincia)
-                        . "," . $this->var2str($this->ciudad)
-                        . "," . $this->var2str($this->codpostal)
-                        . "," . $this->var2str($this->direccion)
-                        . "," . $this->var2str($this->administrador)
-                        . "," . $this->var2str($this->codedi)
-                        . "," . $this->var2str($this->cifnif)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->nombrecorto)
-                        . "," . $this->var2str($this->lema)
-                        . "," . $this->var2str($this->horario)
-                        . "," . $this->var2str($this->pie_factura)
-                        . "," . $this->var2str($this->inicio_actividad)
-                        . "," . $this->var2str($this->regimeniva) . ");";
+                    . "," . $this->var2str($this->contintegrada)
+                    . "," . $this->var2str($this->recequivalencia)
+                    . "," . $this->var2str($this->codserie)
+                    . "," . $this->var2str($this->codalmacen)
+                    . "," . $this->var2str($this->codpago)
+                    . "," . $this->var2str($this->coddivisa)
+                    . "," . $this->var2str($this->codejercicio)
+                    . "," . $this->var2str($this->web)
+                    . "," . $this->var2str($this->email)
+                    . "," . $this->var2str($this->fax)
+                    . "," . $this->var2str($this->telefono)
+                    . "," . $this->var2str($this->codpais)
+                    . "," . $this->var2str($this->apartado)
+                    . "," . $this->var2str($this->provincia)
+                    . "," . $this->var2str($this->ciudad)
+                    . "," . $this->var2str($this->codpostal)
+                    . "," . $this->var2str($this->direccion)
+                    . "," . $this->var2str($this->administrador)
+                    . "," . $this->var2str($this->codedi)
+                    . "," . $this->var2str($this->cifnif)
+                    . "," . $this->var2str($this->nombre)
+                    . "," . $this->var2str($this->nombrecorto)
+                    . "," . $this->var2str($this->lema)
+                    . "," . $this->var2str($this->horario)
+                    . "," . $this->var2str($this->pie_factura)
+                    . "," . $this->var2str($this->inicio_actividad)
+                    . "," . $this->var2str($this->regimeniva) . ");";
 
-                if ($this->db->exec($sql)) {
-                    $this->id = $this->db->lastval();
-                    return TRUE;
-                } else
-                    return FALSE;
+            if ($this->db->exec($sql)) {
+                $this->id = $this->db->lastval();
+                return TRUE;
             }
         }
-        else {
-            return FALSE;
-        }
+
+        return FALSE;
     }
 
     public function delete() {

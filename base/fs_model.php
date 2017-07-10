@@ -188,7 +188,9 @@ abstract class fs_model {
      * Esta función es llamada al crear una tabla.
      * Permite insertar valores en la tabla.
      */
-    abstract protected function install();
+    protected function install() {
+        return '';
+    }
 
     /**
      * Esta función devuelve TRUE si los datos del objeto se encuentran
