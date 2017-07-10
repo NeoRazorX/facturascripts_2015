@@ -612,7 +612,11 @@
                         Algoritmo de nuevo código:
                         <select name="new_codigo" class="form-control">
                            <option value="eneboo"{if="$GLOBALS['config2']['new_codigo']=='eneboo'"} selected=''{/if}>Compatible con Eneboo</option>
-                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + {#FS_SERIE#} + NÚMERO</option>
+                           <option value="new"{if="$GLOBALS['config2']['new_codigo']=='new'"} selected=''{/if}>TIPO + EJERCICIO + {function="strtoupper(FS_SERIE)"} + NÚMERO</option>
+                           <option value="0-NUM"{if="$GLOBALS['config2']['new_codigo']=='0-NUM'"} selected=''{/if}>Número continuo (con 0s)</option>
+                           <option value="NUM"{if="$GLOBALS['config2']['new_codigo']=='NUM'"} selected=''{/if}>Número continuo</option>
+                           <option value="SERIE-YY-0-NUM"{if="$GLOBALS['config2']['new_codigo']=='SERIE-YY-0-NUM'"} selected=''{/if}>{function="strtoupper(FS_SERIE)"} + AÑO (2 díg.) + NÚMERO (con 0s)</option>
+                           <option value="SERIE-YY-0-NUM-CORTO"{if="$GLOBALS['config2']['new_codigo']=='SERIE-YY-0-NUM-CORTO'"} selected=''{/if}>{function="strtoupper(FS_SERIE)"} + AÑO (2 díg.) + NÚMERO (mín. 4 car.)</option>
                         </select>
                      </div>
                   </div>
