@@ -110,6 +110,12 @@ class fs_controller {
      * @var array
      */
     protected $menu;
+    
+    /**
+     * Indica si el usuario tiene submenus
+     * @var int  (-1 pendiente calcular, 0 no hay, 1 si hay) 
+     */
+    public $has_submenu;
 
     /**
      * Indica que archivo HTML hay que cargar
@@ -143,6 +149,12 @@ class fs_controller {
     public $extensions;
 
     /**
+    * Guarda el último item del menú procesado
+    * @var string
+    */
+    private $last_folder;
+    
+    /**
      * @param string $name sustituir por __CLASS__
      * @param string $title es el título de la página, y el texto que aparecerá en el menú
      * @param string $folder es el menú dónde quieres colocar el acceso directo
@@ -155,6 +167,8 @@ class fs_controller {
         $this->uptime = $tiempo[1] + $tiempo[0];
         $this->simbolo_divisas = array();
         $this->extensions = array();
+        $this->last_folder = '';
+        $this->has_submenu = -1;
 
         $this->class_name = $name;
         $this->core_log = new fs_core_log($name);
@@ -609,6 +623,15 @@ class fs_controller {
      */
     protected function load_menu($reload = FALSE) {
         $this->menu = $this->user->get_menu($reload);
+        
+        if ($this->has_submenu == -1) {
+            foreach ($this->menu as $page) {
+               if ($page->subfolder != '') {
+                  $this->has_submenu = 1;
+                  break;
+               }   
+            }
+        }
     }
 
     /**
@@ -1114,4 +1137,33 @@ class fs_controller {
         return fs_get_max_file_upload();
     }
 
+    /**
+     * Devuelve código html a insertar en caso de que estemos entrando
+     * o saliendo de un submenú
+     * @param string $folder
+     * @param boolean $is_finish
+     * @return string
+     */
+    public function subfolder($folder, $is_finish) {
+      if ($is_finish) {
+         if (!empty($this->last_folder))
+           return '</ul></li>';
+      }
+
+      $result = '';
+      if ($folder != $this->last_folder) {
+         if (!empty($this->last_folder))
+            $result = '</ul></li>';
+         
+         $this->last_folder = $folder;
+         if ($folder != '')
+            $result .= '<li>'
+                     .   '<a href="#" role="button" aria-expanded="false">' ."\n"
+                     .     '<span class="text-capitalize">'.$folder .'</span>' ."\n"
+                     .   '</a>' ."\n"
+                     .   '<ul class="dropdown-menu">' ."\n";
+      }
+
+      return $result;
+    }
 }
