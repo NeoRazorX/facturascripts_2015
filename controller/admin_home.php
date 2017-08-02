@@ -549,6 +549,7 @@ class admin_home extends fs_controller {
 
         if ($install AND ! in_array($name, $GLOBALS['plugins'])) {
             array_unshift($GLOBALS['plugins'], $name);
+            require_all_models();
 
             if (file_put_contents('tmp/' . FS_TMP_NAME . 'enabled_plugins.list', join(',', $GLOBALS['plugins'])) !== FALSE) {
                 if ($wizard) {
