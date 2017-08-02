@@ -391,15 +391,15 @@ class admin_home extends fs_controller {
             }
         }
 
-        foreach (scandir(getcwd() . '/plugins') as $f) {
-            if ($f != '.' AND $f != '..' AND is_dir('plugins/' . $f) AND ! in_array($f, $disabled)) {
+        foreach (scandir(getcwd() . '/plugins') as $file_name) {
+            if ($file_name != '.' AND $file_name != '..' AND is_dir('plugins/' . $file_name) AND ! in_array($file_name, $disabled)) {
                 $plugin = array(
                     'compatible' => FALSE,
                     'description' => 'Sin descripción.',
                     'download2_url' => '',
                     'enabled' => FALSE,
                     'idplugin' => NULL,
-                    'name' => $f,
+                    'name' => $file_name,
                     'prioridad' => '-',
                     'require' => array(),
                     'update_url' => '',
@@ -408,15 +408,15 @@ class admin_home extends fs_controller {
                     'wizard' => FALSE,
                 );
 
-                if (file_exists('plugins/' . $f . '/facturascripts.ini')) {
+                if (file_exists('plugins/' . $file_name . '/facturascripts.ini')) {
                     $plugin['compatible'] = TRUE;
-                    $plugin['enabled'] = in_array($f, $this->plugins());
+                    $plugin['enabled'] = in_array($file_name, $this->plugins());
 
-                    if (file_exists('plugins/' . $f . '/description')) {
-                        $plugin['description'] = file_get_contents('plugins/' . $f . '/description');
+                    if (file_exists('plugins/' . $file_name . '/description')) {
+                        $plugin['description'] = file_get_contents('plugins/' . $file_name . '/description');
                     }
 
-                    $ini_file = parse_ini_file('plugins/' . $f . '/facturascripts.ini');
+                    $ini_file = parse_ini_file('plugins/' . $file_name . '/facturascripts.ini');
                     if (isset($ini_file['version'])) {
                         $plugin['version'] = intval($ini_file['version']);
                     }
@@ -443,7 +443,7 @@ class admin_home extends fs_controller {
                         foreach ($this->download_list2 as $ditem) {
                             if ($ditem->id == $plugin['idplugin']) {
                                 if (intval($ditem->version) > $plugin['version']) {
-                                    $plugin['download2_url'] = 'updater.php?idplugin=' . $plugin['idplugin'] . '&name=' . $f;
+                                    $plugin['download2_url'] = 'updater.php?idplugin=' . $plugin['idplugin'] . '&name=' . $file_name;
                                 }
                                 break;
                             }
@@ -456,7 +456,7 @@ class admin_home extends fs_controller {
 
                     if ($plugin['enabled']) {
                         foreach (array_reverse($this->plugins()) as $i => $value) {
-                            if ($value == $f) {
+                            if ($value == $file_name) {
                                 $plugin['prioridad'] = $i;
                                 break;
                             }

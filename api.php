@@ -26,7 +26,7 @@ require_once 'base/fs_db2.php';
 $db = new fs_db2();
 
 require_once 'base/fs_model.php';
-require_model('fs_extension.php');
+require_all_models();
 
 if (!$db->connect()) {
     echo 'ERROR al conectar a la base de datos';

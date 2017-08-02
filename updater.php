@@ -574,7 +574,7 @@ class fs_updater {
         if (!empty($data)) {
             $this->xid = $data[0]['xid'];
             if (!filter_input(INPUT_COOKIE, 'uxid')) {
-                setcookie('uxid', $this->xid, 10800);
+                setcookie('uxid', $this->xid, time() + FS_COOKIES_EXPIRE);
             }
         } else if (filter_input(INPUT_COOKIE, 'uxid')) {
             $this->xid = filter_input(INPUT_COOKIE, 'uxid');

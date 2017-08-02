@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('fs_rol.php');
-
 /**
  * Controlador de admin -> users.
  * @author Carlos García Gómez <neorazorx@gmail.com>

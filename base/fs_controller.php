@@ -25,15 +25,7 @@ require_once 'base/fs_default_items.php';
 require_once 'base/fs_ip_filter.php';
 require_once 'base/fs_model.php';
 
-require_model('agente.php');
-require_model('divisa.php');
-require_model('empresa.php');
-require_model('fs_access.php');
-require_model('fs_page.php');
-require_model('fs_user.php');
-require_model('fs_extension.php');
-require_model('fs_log.php');
-require_model('fs_var.php');
+require_all_models();
 
 /**
  * La clase principal de la que deben heredar todos los controladores
@@ -341,7 +333,7 @@ class fs_controller {
      * Muestra al usuario un mensaje de error
      * @param string $msg el mensaje a mostrar
      */
-    public function new_error_msg($msg = '', $tipo = 'error', $alerta = FALSE, $guardar = TRUE) {
+    public function new_error_msg($msg, $tipo = 'error', $alerta = FALSE, $guardar = TRUE) {
         if ($msg && $this->class_name == $this->core_log->controller_name()) {
             /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
             $this->core_log->new_error($msg);
@@ -367,7 +359,7 @@ class fs_controller {
      * @param string $tipo
      * @param boolean $alerta
      */
-    public function new_message($msg = '', $save = FALSE, $tipo = 'msg', $alerta = FALSE) {
+    public function new_message($msg, $save = FALSE, $tipo = 'msg', $alerta = FALSE) {
         if ($msg && $this->class_name == $this->core_log->controller_name()) {
             /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
             $this->core_log->new_message($msg);
@@ -390,7 +382,7 @@ class fs_controller {
      * Muestra un consejo al usuario
      * @param string $msg el consejo a mostrar
      */
-    public function new_advice($msg = '') {
+    public function new_advice($msg) {
         if ($msg AND $this->class_name == $this->core_log->controller_name()) {
             /// solamente nos interesa mostrar los mensajes del controlador que inicia todo
             $this->core_log->new_advice($msg);
@@ -627,14 +619,14 @@ class fs_controller {
 
     /**
      * Devuelve la lista de elementos de un menú seleccionado
-     * @param string $f el menú seleccionado
+     * @param string $folder el menú seleccionado
      * @return array lista de elementos del menú
      */
-    public function pages($f = '') {
+    public function pages($folder = '') {
         $pages = array();
-        foreach ($this->menu as $p) {
-            if ($f == $p->folder AND $p->show_on_menu AND ! in_array($p, $pages)) {
-                $pages[] = $p;
+        foreach ($this->menu as $page) {
+            if ($folder == $page->folder AND $page->show_on_menu AND ! in_array($page, $pages)) {
+                $pages[] = $page;
             }
         }
         return $pages;
@@ -1023,10 +1015,12 @@ class fs_controller {
         if (count($this->last_changes) > 0) {
             if ($this->last_changes[0]['url'] == $url) {
                 $this->last_changes[0]['nuevo'] = $nuevo;
-            } else
+            } else {
                 array_unshift($this->last_changes, array('texto' => ucfirst($txt), 'url' => $url, 'nuevo' => $nuevo, 'cambio' => date('d-m-Y H:i:s')));
-        } else
+            }
+        } else {
             array_unshift($this->last_changes, array('texto' => ucfirst($txt), 'url' => $url, 'nuevo' => $nuevo, 'cambio' => date('d-m-Y H:i:s')));
+        }
 
         /// sólo queremos 10 elementos
         $num = 10;

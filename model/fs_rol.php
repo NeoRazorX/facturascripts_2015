@@ -19,9 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('fs_rol_access.php');
-require_model('fs_rol_user.php');
-
 /**
  * Define un paquete de permisos para asignar rápidamente a usuarios.
  *

@@ -20,11 +20,6 @@
 
 namespace FacturaScripts\model;
 
-require_model('agente.php');
-require_model('ejercicio.php');
-require_model('fs_access.php');
-require_model('fs_page.php');
-
 /**
  * Usuario de FacturaScripts. Puede estar asociado a un agente.
  *

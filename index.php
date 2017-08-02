@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -20,21 +19,6 @@
 
 /// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
 
-function fatal_handler() {
-    $error = error_get_last();
-    if ($error !== NULL) {
-        if (substr($error["message"], 0, 19) != 'Memcache::connect()' && strpos($error["file"], '/tcpdf/') === FALSE) {
-            echo "<h1>Error fatal</h1>"
-            . "<ul>"
-            . "<li><b>Tipo:</b> " . $error["type"] . "</li>"
-            . "<li><b>Archivo:</b> " . $error["file"] . "</li>"
-            . "<li><b>Línea:</b> " . $error["line"] . "</li>"
-            . "<li><b>Mensaje:</b> " . $error["message"] . "</li>"
-            . "</ul>";
-        }
-    }
-}
-
 if ((float) substr(phpversion(), 0, 3) < 5.3) {
     /// comprobamos la versión de PHP
     die('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP ' . phpversion());
@@ -45,6 +29,7 @@ if ((float) substr(phpversion(), 0, 3) < 5.3) {
     /// cargamos las constantes de configuración
     require_once 'config.php';
     require_once 'base/config2.php';
+    require_once 'base/fs_functions.php';
     require_once 'base/fs_controller.php';
     require_once 'raintpl/rain.tpl.class.php';
 
@@ -120,7 +105,9 @@ if ((float) substr(phpversion(), 0, 3) < 5.3) {
 
     if ($fsc_error) {
         die();
-    } elseif ($fsc->template) {
+    }
+
+    if ($fsc->template) {
         /// configuramos rain.tpl
         raintpl::configure('base_url', NULL);
         raintpl::configure('tpl_dir', 'view/');

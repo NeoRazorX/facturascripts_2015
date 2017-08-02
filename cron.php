@@ -37,9 +37,7 @@ $db = new fs_db2();
 require_once 'base/fs_default_items.php';
 
 require_once 'base/fs_model.php';
-require_model('empresa.php');
-require_model('fs_var.php');
-require_model('fs_log.php');
+require_all_models();
 
 if ($db->connect()) {
     $fsvar = new fs_var();

@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('fs_rol.php');
-
 /**
  * Controlador para modificar el rol de usuarios.
  * @author Carlos García Gómez <neorazorx@gmail.com>
