@@ -30,12 +30,12 @@ class fs_rol extends fs_model
     public $codrol;
     public $descripcion;
 
-    public function __construct($t = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_roles');
-        if ($t) {
-            $this->codrol = $t['codrol'];
-            $this->descripcion = $t['descripcion'];
+        if ($data) {
+            $this->codrol = $data['codrol'];
+            $this->descripcion = $data['descripcion'];
         } else {
             $this->codrol = NULL;
             $this->descripcion = NULL;

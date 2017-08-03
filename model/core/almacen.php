@@ -47,21 +47,21 @@ class almacen extends \fs_model
      */
     public $observaciones;
 
-    public function __construct($a = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('almacenes');
-        if ($a) {
-            $this->codalmacen = $a['codalmacen'];
-            $this->nombre = $a['nombre'];
-            $this->codpais = $a['codpais'];
-            $this->provincia = $a['provincia'];
-            $this->poblacion = $a['poblacion'];
-            $this->codpostal = $a['codpostal'];
-            $this->direccion = $a['direccion'];
-            $this->contacto = $a['contacto'];
-            $this->fax = $a['fax'];
-            $this->telefono = $a['telefono'];
-            $this->observaciones = $a['observaciones'];
+        if ($data) {
+            $this->codalmacen = $data['codalmacen'];
+            $this->nombre = $data['nombre'];
+            $this->codpais = $data['codpais'];
+            $this->provincia = $data['provincia'];
+            $this->poblacion = $data['poblacion'];
+            $this->codpostal = $data['codpostal'];
+            $this->direccion = $data['direccion'];
+            $this->contacto = $data['contacto'];
+            $this->fax = $data['fax'];
+            $this->telefono = $data['telefono'];
+            $this->observaciones = $data['observaciones'];
         } else {
             $this->codalmacen = NULL;
             $this->nombre = '';
@@ -80,8 +80,9 @@ class almacen extends \fs_model
     public function install()
     {
         $this->clean_cache();
-        return "INSERT INTO " . $this->table_name . " (codalmacen,nombre,poblacion,direccion,codpostal,telefono,fax,contacto)
-         VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
+        return "INSERT INTO " . $this->table_name . " (codalmacen,nombre,poblacion,"
+            . "direccion,codpostal,telefono,fax,contacto) VALUES "
+            . "('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
     /**
@@ -92,8 +93,9 @@ class almacen extends \fs_model
     {
         if (is_null($this->codalmacen)) {
             return 'index.php?page=admin_almacenes';
-        } else
-            return 'index.php?page=admin_almacenes#' . $this->codalmacen;
+        }
+
+        return 'index.php?page=admin_almacenes#' . $this->codalmacen;
     }
 
     /**
@@ -112,11 +114,12 @@ class almacen extends \fs_model
      */
     public function get($cod)
     {
-        $almacen = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($cod) . ";");
-        if ($almacen) {
-            return new \almacen($almacen[0]);
-        } else
-            return FALSE;
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new \almacen($data[0]);
+        }
+
+        return FALSE;
     }
 
     /**
@@ -127,8 +130,9 @@ class almacen extends \fs_model
     {
         if (is_null($this->codalmacen)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
+        }
+        
+        return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
     }
 
     /**
@@ -153,8 +157,9 @@ class almacen extends \fs_model
             $this->new_error_msg("Código de almacén no válido.");
         } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
             $this->new_error_msg("Nombre de almacén no válido.");
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -193,8 +198,9 @@ class almacen extends \fs_model
                     . "," . $this->var2str($this->contacto) . ");";
             }
             return $this->db->exec($sql);
-        } else
-            return FALSE;
+        }
+        
+        return FALSE;
     }
 
     /**

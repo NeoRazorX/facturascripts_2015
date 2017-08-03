@@ -44,13 +44,13 @@ class fs_access extends fs_model
      */
     public $allow_delete;
 
-    public function __construct($a = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_access');
-        if ($a) {
-            $this->fs_user = $a['fs_user'];
-            $this->fs_page = $a['fs_page'];
-            $this->allow_delete = $this->str2bool($a['allow_delete']);
+        if ($data) {
+            $this->fs_user = $data['fs_user'];
+            $this->fs_page = $data['fs_page'];
+            $this->allow_delete = $this->str2bool($data['allow_delete']);
         } else {
             $this->fs_user = NULL;
             $this->fs_page = NULL;

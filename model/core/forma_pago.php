@@ -64,17 +64,17 @@ class forma_pago extends \fs_model
      */
     public $vencimiento;
 
-    public function __construct($f = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('formaspago');
-        if ($f) {
-            $this->codpago = $f['codpago'];
-            $this->descripcion = $f['descripcion'];
-            $this->genrecibos = $f['genrecibos'];
-            $this->codcuenta = $f['codcuenta'];
-            $this->domiciliado = $this->str2bool($f['domiciliado']);
-            $this->imprimir = $this->str2bool($f['imprimir']);
-            $this->vencimiento = $f['vencimiento'];
+        if ($data) {
+            $this->codpago = $data['codpago'];
+            $this->descripcion = $data['descripcion'];
+            $this->genrecibos = $data['genrecibos'];
+            $this->codcuenta = $data['codcuenta'];
+            $this->domiciliado = $this->str2bool($data['domiciliado']);
+            $this->imprimir = $this->str2bool($data['imprimir']);
+            $this->vencimiento = $data['vencimiento'];
         } else {
             $this->codpago = NULL;
             $this->descripcion = '';

@@ -32,16 +32,16 @@ class fs_relation extends fs_model
     public $id2;
     public $return_url;
 
-    public function __construct($r = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_relations');
-        if ($r) {
-            $this->id = $this->intval($r['id']);
-            $this->table1 = $r['table1'];
-            $this->id1 = $r['id1'];
-            $this->table2 = $r['table2'];
-            $this->id2 = $r['id2'];
-            $this->return_url = $r['return_url'];
+        if ($data) {
+            $this->id = $this->intval($data['id']);
+            $this->table1 = $data['table1'];
+            $this->id1 = $data['id1'];
+            $this->table2 = $data['table2'];
+            $this->id2 = $data['id2'];
+            $this->return_url = $data['return_url'];
         } else {
             $this->id = NULL;
             $this->table1 = NULL;
@@ -62,16 +62,18 @@ class fs_relation extends fs_model
         $data = $this->db->select("SELECT * FROM fs_relations WHERE id = " . $this->var2str($id) . ";");
         if ($data) {
             return new fs_relation($data[0]);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     public function exists()
     {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return $this->db->select("SELECT * FROM fs_relations WHERE id = " . $this->var2str($this->id) . ";");
+        }
+
+        return $this->db->select("SELECT * FROM fs_relations WHERE id = " . $this->var2str($this->id) . ";");
     }
 
     public function save()
@@ -85,20 +87,21 @@ class fs_relation extends fs_model
                 . "  WHERE id = " . $this->var2str($this->id) . ";";
 
             return $this->db->exec($sql);
-        } else {
-            $sql = "INSERT INTO fs_relations (table1,id1,table2,id2,return_url) VALUES "
-                . "(" . $this->var2str($this->table1)
-                . "," . $this->var2str($this->id1)
-                . "," . $this->var2str($this->table2)
-                . "," . $this->var2str($this->id2)
-                . "," . $this->var2str($this->return_url) . ");";
-
-            if ($this->db->exec($sql)) {
-                $this->id = $this->db->lastval();
-                return TRUE;
-            } else
-                return FALSE;
         }
+
+        $sql = "INSERT INTO fs_relations (table1,id1,table2,id2,return_url) VALUES "
+            . "(" . $this->var2str($this->table1)
+            . "," . $this->var2str($this->id1)
+            . "," . $this->var2str($this->table2)
+            . "," . $this->var2str($this->id2)
+            . "," . $this->var2str($this->return_url) . ");";
+
+        if ($this->db->exec($sql)) {
+            $this->id = $this->db->lastval();
+            return TRUE;
+        }
+
+        return FALSE;
     }
 
     public function delete()

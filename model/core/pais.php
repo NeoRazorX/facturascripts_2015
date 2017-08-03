@@ -46,33 +46,13 @@ class pais extends \fs_model
      */
     public $nombre;
 
-    public function __construct($p = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('paises');
-        if ($p) {
-            $this->codpais = $p['codpais'];
-
-            $this->codiso = $p['codiso'];
-            if ($p['codiso'] == '') {
-                /// si no se ha rellenado codiso, intentamos usar esta lista
-                $codigos = array(
-                    'ESP' => 'ES',
-                    'ARG' => 'AR',
-                    'CHL' => 'CL',
-                    'COL' => 'CO',
-                    'ECU' => 'EC',
-                    'MEX' => 'MX',
-                    'PAN' => 'PA',
-                    'PER' => 'PE',
-                    'VEN' => 'VE',
-                );
-
-                if (isset($codigos[$this->codpais])) {
-                    $this->codiso = $codigos[$this->codpais];
-                }
-            }
-
-            $this->nombre = $p['nombre'];
+        if ($data) {
+            $this->codpais = $data['codpais'];
+            $this->codiso = $data['codiso'];
+            $this->nombre = $data['nombre'];
         } else {
             $this->codpais = '';
             $this->codiso = NULL;
@@ -356,9 +336,9 @@ class pais extends \fs_model
      */
     public function get($cod)
     {
-        $pais = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($cod) . ";");
-        if ($pais) {
-            return new \pais($pais[0]);
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpais = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new \pais($data[0]);
         }
 
         return FALSE;
@@ -371,9 +351,9 @@ class pais extends \fs_model
      */
     public function get_by_iso($cod)
     {
-        $pais = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codiso = " . $this->var2str($cod) . ";");
-        if ($pais) {
-            return new \pais($pais[0]);
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codiso = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new \pais($data[0]);
         }
 
         return FALSE;

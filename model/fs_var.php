@@ -37,12 +37,12 @@ class fs_var extends fs_model
      */
     public $varchar;
 
-    public function __construct($f = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_vars');
-        if ($f) {
-            $this->name = $f['name'];
-            $this->varchar = $f['varchar'];
+        if ($data) {
+            $this->name = $data['name'];
+            $this->varchar = $data['varchar'];
         } else {
             $this->name = NULL;
             $this->varchar = NULL;
@@ -96,9 +96,9 @@ class fs_var extends fs_model
     {
         $vlist = array();
 
-        $vars = $this->db->select("SELECT * FROM " . $this->table_name . ";");
-        if ($vars) {
-            foreach ($vars as $v) {
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . ";");
+        if ($data) {
+            foreach ($data as $v) {
                 $vlist[] = new fs_var($v);
             }
         }

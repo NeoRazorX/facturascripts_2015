@@ -31,13 +31,13 @@ class fs_rol_access extends fs_model
     public $fs_page;
     public $allow_delete;
 
-    public function __construct($t = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_roles_access');
-        if ($t) {
-            $this->codrol = $t['codrol'];
-            $this->fs_page = $t['fs_page'];
-            $this->allow_delete = $this->str2bool($t['allow_delete']);
+        if ($data) {
+            $this->codrol = $data['codrol'];
+            $this->fs_page = $data['fs_page'];
+            $this->allow_delete = $this->str2bool($data['allow_delete']);
         } else {
             $this->codrol = NULL;
             $this->fs_page = NULL;
@@ -54,11 +54,11 @@ class fs_rol_access extends fs_model
     {
         if (is_null($this->codrol)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name
+        }
+        
+        return $this->db->select("SELECT * FROM " . $this->table_name
                     . " WHERE codrol = " . $this->var2str($this->codrol)
                     . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
-        }
     }
 
     public function save()
@@ -88,9 +88,9 @@ class fs_rol_access extends fs_model
     {
         $accesslist = array();
 
-        $access = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($codrol) . ";");
-        if ($access) {
-            foreach ($access as $a) {
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($codrol) . ";");
+        if ($data) {
+            foreach ($data as $a) {
                 $accesslist[] = new fs_rol_access($a);
             }
         }

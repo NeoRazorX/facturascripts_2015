@@ -121,44 +121,44 @@ class fs_user extends \fs_model
     public $css;
     private $menu;
 
-    public function __construct($a = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_users');
-        if ($a) {
-            $this->nick = $a['nick'];
-            $this->password = $a['password'];
-            $this->email = $a['email'];
-            $this->log_key = $a['log_key'];
+        if ($data) {
+            $this->nick = $data['nick'];
+            $this->password = $data['password'];
+            $this->email = $data['email'];
+            $this->log_key = $data['log_key'];
 
             $this->codagente = NULL;
-            if (isset($a['codagente'])) {
-                $this->codagente = $a['codagente'];
+            if (isset($data['codagente'])) {
+                $this->codagente = $data['codagente'];
             }
 
-            $this->admin = $this->str2bool($a['admin']);
+            $this->admin = $this->str2bool($data['admin']);
 
             $this->last_login = NULL;
-            if ($a['last_login']) {
-                $this->last_login = Date('d-m-Y', strtotime($a['last_login']));
+            if ($data['last_login']) {
+                $this->last_login = Date('d-m-Y', strtotime($data['last_login']));
             }
 
             $this->last_login_time = NULL;
-            if ($a['last_login_time']) {
-                $this->last_login_time = $a['last_login_time'];
+            if ($data['last_login_time']) {
+                $this->last_login_time = $data['last_login_time'];
             }
 
-            $this->last_ip = $a['last_ip'];
-            $this->last_browser = $a['last_browser'];
-            $this->fs_page = $a['fs_page'];
+            $this->last_ip = $data['last_ip'];
+            $this->last_browser = $data['last_browser'];
+            $this->fs_page = $data['fs_page'];
 
             $this->css = 'view/css/bootstrap-yeti.min.css';
-            if (isset($a['css'])) {
-                $this->css = $a['css'];
+            if (isset($data['css'])) {
+                $this->css = $data['css'];
             }
 
             $this->enabled = TRUE;
-            if (isset($a['enabled'])) {
-                $this->enabled = $this->str2bool($a['enabled']);
+            if (isset($data['enabled'])) {
+                $this->enabled = $this->str2bool($data['enabled']);
             }
         } else {
             $this->nick = NULL;
@@ -221,18 +221,18 @@ class fs_user extends \fs_model
             return $this->agente;
         } else if (is_null($this->codagente)) {
             return FALSE;
-        } else {
-            $agente = new \agente();
-            $agente0 = $agente->get($this->codagente);
-            if ($agente0) {
-                $this->agente = $agente0;
-                return $this->agente;
-            } else {
-                $this->codagente = NULL;
-                $this->save();
-                return FALSE;
-            }
         }
+
+        $agente_model = new \agente();
+        $agente = $agente_model->get($this->codagente);
+        if ($agente) {
+            $this->agente = $agente;
+            return $this->agente;
+        }
+
+        $this->codagente = NULL;
+        $this->save();
+        return FALSE;
     }
 
     public function get_agente_fullname()
@@ -342,11 +342,11 @@ class fs_user extends \fs_model
         return Date('d-m-Y', strtotime($this->last_login)) . ' ' . $this->last_login_time;
     }
 
-    public function set_password($p = '')
+    public function set_password($pass = '')
     {
-        $p = trim($p);
-        if (mb_strlen($p) > 1 AND mb_strlen($p) <= 32) {
-            $this->password = sha1($p);
+        $pass = trim($pass);
+        if (mb_strlen($pass) > 1 AND mb_strlen($pass) <= 32) {
+            $this->password = sha1($pass);
             return TRUE;
         }
 
@@ -399,11 +399,11 @@ class fs_user extends \fs_model
         $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
     }
 
-    public function get($n = '')
+    public function get($nick = '')
     {
-        $u = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE nick = " . $this->var2str($n) . ";");
-        if ($u) {
-            return new \fs_user($u[0]);
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE nick = " . $this->var2str($nick) . ";");
+        if ($data) {
+            return new \fs_user($data[0]);
         }
 
         return FALSE;

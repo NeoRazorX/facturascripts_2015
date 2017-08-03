@@ -30,12 +30,12 @@ class fs_rol_user extends fs_model
     public $codrol;
     public $fs_user;
 
-    public function __construct($t = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_roles_users');
-        if ($t) {
-            $this->codrol = $t['codrol'];
-            $this->fs_user = $t['fs_user'];
+        if ($data) {
+            $this->codrol = $data['codrol'];
+            $this->fs_user = $data['fs_user'];
         } else {
             $this->codrol = NULL;
             $this->fs_user = NULL;
@@ -51,24 +51,24 @@ class fs_rol_user extends fs_model
     {
         if (is_null($this->codrol)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name
-                    . " WHERE codrol = " . $this->var2str($this->codrol)
-                    . " AND fs_user = " . $this->var2str($this->fs_user) . ";");
         }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name
+                . " WHERE codrol = " . $this->var2str($this->codrol)
+                . " AND fs_user = " . $this->var2str($this->fs_user) . ";");
     }
 
     public function save()
     {
         if ($this->exists()) {
             return TRUE;
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (codrol,fs_user) VALUES "
-                . "(" . $this->var2str($this->codrol)
-                . "," . $this->var2str($this->fs_user) . ");";
-
-            return $this->db->exec($sql);
         }
+
+        $sql = "INSERT INTO " . $this->table_name . " (codrol,fs_user) VALUES "
+            . "(" . $this->var2str($this->codrol)
+            . "," . $this->var2str($this->fs_user) . ");";
+
+        return $this->db->exec($sql);
     }
 
     public function delete()
@@ -82,9 +82,9 @@ class fs_rol_user extends fs_model
     {
         $accesslist = array();
 
-        $access = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($codrol) . ";");
-        if ($access) {
-            foreach ($access as $a) {
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($codrol) . ";");
+        if ($data) {
+            foreach ($data as $a) {
                 $accesslist[] = new fs_rol_user($a);
             }
         }

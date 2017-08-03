@@ -56,25 +56,25 @@ class fs_page extends fs_model
     public $important;
     public $orden;
 
-    public function __construct($p = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('fs_pages');
-        if ($p) {
-            $this->name = $p['name'];
-            $this->title = $p['title'];
-            $this->folder = $p['folder'];
+        if ($data) {
+            $this->name = $data['name'];
+            $this->title = $data['title'];
+            $this->folder = $data['folder'];
 
             $this->version = NULL;
-            if (isset($p['version'])) {
-                $this->version = $p['version'];
+            if (isset($data['version'])) {
+                $this->version = $data['version'];
             }
 
-            $this->show_on_menu = $this->str2bool($p['show_on_menu']);
-            $this->important = $this->str2bool($p['important']);
+            $this->show_on_menu = $this->str2bool($data['show_on_menu']);
+            $this->important = $this->str2bool($data['important']);
 
             $this->orden = 100;
-            if (isset($p['orden'])) {
-                $this->orden = $this->intval($p['orden']);
+            if (isset($data['orden'])) {
+                $this->orden = $this->intval($data['orden']);
             }
         } else {
             $this->name = NULL;
@@ -140,9 +140,9 @@ class fs_page extends fs_model
 
     public function get($name)
     {
-        $p = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
-        if ($p) {
-            return new fs_page($p[0]);
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
+        if ($data) {
+            return new fs_page($data[0]);
         }
 
         return FALSE;

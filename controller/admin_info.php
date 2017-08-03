@@ -33,6 +33,7 @@ class admin_info extends fs_controller
     public $b_tipo;
     public $b_usuario;
     public $db_tables;
+    private $fsvar;
     public $modulos_eneboo;
     public $resultados;
 
@@ -49,8 +50,8 @@ class admin_info extends fs_controller
         /**
          * Cargamos las variables del cron
          */
-        $fsvar = new fs_var();
-        $cron_vars = $fsvar->array_get(
+        $this->fsvar = new fs_var();
+        $cron_vars = $this->fsvar->array_get(
             array(
                 'cron_exists' => FALSE,
                 'cron_lock' => FALSE,
@@ -60,7 +61,7 @@ class admin_info extends fs_controller
         if (isset($_GET['fix'])) {
             $cron_vars['cron_error'] = FALSE;
             $cron_vars['cron_lock'] = FALSE;
-            $fsvar->array_save($cron_vars);
+            $this->fsvar->array_save($cron_vars);
         } else if (isset($_GET['clean_cache'])) {
             /// borramos los archivos php del directorio tmp
             foreach (scandir(getcwd() . '/tmp/' . FS_TMP_NAME) as $f) {
@@ -110,6 +111,9 @@ class admin_info extends fs_controller
         if (fs_filter_input_req('b_ip')) {
             $this->b_ip = (string) fs_filter_input_req('b_ip');
         }
+        
+        /// forzamos la creación de la tabla, si todavía no existe
+        new fs_log();
     }
 
     public function php_version()

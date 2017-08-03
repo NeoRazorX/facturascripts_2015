@@ -52,28 +52,28 @@ class divisa extends \fs_model
     public $codiso;
     public $simbolo;
 
-    public function __construct($d = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('divisas');
-        if ($d) {
-            $this->coddivisa = $d['coddivisa'];
-            $this->descripcion = $d['descripcion'];
-            $this->tasaconv = floatval($d['tasaconv']);
-            $this->codiso = $d['codiso'];
-            $this->simbolo = $d['simbolo'];
+        if ($data) {
+            $this->coddivisa = $data['coddivisa'];
+            $this->descripcion = $data['descripcion'];
+            $this->tasaconv = floatval($data['tasaconv']);
+            $this->codiso = $data['codiso'];
+            $this->simbolo = $data['simbolo'];
 
             if ($this->simbolo == '' AND $this->coddivisa == 'EUR') {
                 $this->simbolo = '€';
                 $this->save();
             }
 
-            if (is_null($d['tasaconv_compra'])) {
-                $this->tasaconv_compra = floatval($d['tasaconv']);
+            if (is_null($data['tasaconv_compra'])) {
+                $this->tasaconv_compra = floatval($data['tasaconv']);
 
                 /// forzamos guardar para asegurarnos que siempre hay una tasa para compras
                 $this->save();
             } else
-                $this->tasaconv_compra = floatval($d['tasaconv_compra']);
+                $this->tasaconv_compra = floatval($data['tasaconv_compra']);
         }
         else {
             $this->coddivisa = NULL;
@@ -128,9 +128,9 @@ class divisa extends \fs_model
      */
     public function get($cod)
     {
-        $divisa = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($cod) . ";");
-        if ($divisa) {
-            return new \divisa($divisa[0]);
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE coddivisa = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new \divisa($data[0]);
         }
 
         return FALSE;

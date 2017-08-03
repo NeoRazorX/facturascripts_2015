@@ -58,16 +58,16 @@ class serie extends \fs_model
      */
     public $numfactura;
 
-    public function __construct($s = FALSE)
+    public function __construct($data = FALSE)
     {
         parent::__construct('series');
-        if ($s) {
-            $this->codserie = $s['codserie'];
-            $this->descripcion = $s['descripcion'];
-            $this->siniva = $this->str2bool($s['siniva']);
-            $this->irpf = floatval($s['irpf']);
-            $this->codejercicio = $s['codejercicio'];
-            $this->numfactura = max(array(1, intval($s['numfactura'])));
+        if ($data) {
+            $this->codserie = $data['codserie'];
+            $this->descripcion = $data['descripcion'];
+            $this->siniva = $this->str2bool($data['siniva']);
+            $this->irpf = floatval($data['irpf']);
+            $this->codejercicio = $data['codejercicio'];
+            $this->numfactura = max(array(1, intval($data['numfactura'])));
         } else {
             $this->codserie = '';
             $this->descripcion = '';
@@ -114,9 +114,9 @@ class serie extends \fs_model
      */
     public function get($cod)
     {
-        $serie = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($cod) . ";");
-        if ($serie) {
-            return new \serie($serie[0]);
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new \serie($data[0]);
         }
 
         return FALSE;
@@ -154,8 +154,9 @@ class serie extends \fs_model
             $this->new_error_msg("Código de serie no válido.");
         } else if (strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100) {
             $this->new_error_msg("Descripción de serie no válida.");
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
