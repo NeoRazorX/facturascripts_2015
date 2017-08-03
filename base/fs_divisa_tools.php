@@ -118,7 +118,7 @@ class fs_divisa_tools
             return $precio;
         }
 
-        if ($coddivisa && $tasaconv) {
+        if ($coddivisa !== NULL && $tasaconv !== NULL) {
             if ($this->empresa->coddivisa == $coddivisa) {
                 return $precio * $tasaconv;
             }

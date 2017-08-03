@@ -314,12 +314,12 @@ class fs_db2
 
     /**
      * Escapa las comillas de la cadena de texto.
-     * @param string $s
+     * @param string $str
      * @return string
      */
-    public function escape_string($s)
+    public function escape_string($str)
     {
-        return self::$engine->escape_string($s);
+        return self::$engine->escape_string($str);
     }
 
     /**

@@ -87,12 +87,6 @@ class fs_controller
     private $login_tools;
 
     /**
-     * Almecena el simbolo de la divisa predeterminada de la empresa.
-     * @var array
-     */
-    private $simbolo_divisas;
-
-    /**
      * Indica si FacturaScripts está actualizado o no.
      * @var boolean 
      */
@@ -159,7 +153,6 @@ class fs_controller
     {
         $tiempo = explode(' ', microtime());
         $this->uptime = $tiempo[1] + $tiempo[0];
-        $this->simbolo_divisas = array();
         $this->extensions = array();
 
         $this->class_name = $name;
@@ -218,12 +211,7 @@ class fs_controller
 
     private function pre_private_core()
     {
-        $this->query = '';
-        if (filter_input(INPUT_POST, 'query')) {
-            $this->query = filter_input(INPUT_POST, 'query');
-        } else if (filter_input(INPUT_GET, 'query')) {
-            $this->query = filter_input(INPUT_GET, 'query');
-        }
+        $this->query = fs_filter_input_req('query');
 
         /// quitamos extensiones de páginas a las que el usuario no tenga acceso
         foreach ($this->extensions as $i => $value) {
@@ -647,17 +635,17 @@ class fs_controller
      * de texto aleatoria. Al llamar a esta función se comprueba si esa cadena
      * ya ha sido almacenada, de ser así devuelve TRUE, así no hay que gabar los datos,
      * si no, se almacena el ID y se devuelve FALSE.
-     * @param string $id el identificador de la petición
+     * @param string $pid el identificador de la petición
      * @return boolean TRUE si la petición está duplicada
      */
-    protected function duplicated_petition($id)
+    protected function duplicated_petition($pid)
     {
         $ids = $this->cache->get_array('petition_ids');
-        if (in_array($id, $ids)) {
+        if (in_array($pid, $ids)) {
             return TRUE;
         }
 
-        $ids[] = $id;
+        $ids[] = $pid;
         $this->cache->set('petition_ids', $ids, 300);
         return FALSE;
     }

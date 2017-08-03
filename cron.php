@@ -28,6 +28,7 @@ require_once 'base/config2.php';
 
 $tiempo = explode(' ', microtime());
 $uptime = $tiempo[1] + $tiempo[0];
+$core_log = new fs_core_log();
 
 require_once 'base/fs_core_log.php';
 require_once 'base/fs_db2.php';
@@ -106,7 +107,6 @@ if ($db->connect()) {
     $fsvar->array_save($cron_vars);
 
     /// mostramos el errores que se hayan podido producir
-    $core_log = new fs_core_log();
     foreach ($core_log->get_errors() as $err) {
         echo "\nERROR: " . $err . "\n";
     }
@@ -118,7 +118,7 @@ if ($db->connect()) {
     $db->close();
 } else {
     echo "¡Imposible conectar a la base de datos!\n";
-    foreach ($db->get_errors() as $err) {
+    foreach ($core_log->get_errors() as $err) {
         echo $err . "\n";
     }
 }
