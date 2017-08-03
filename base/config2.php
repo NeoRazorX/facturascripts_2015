@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -84,7 +83,7 @@ $GLOBALS['config2'] = array(
 
 if (file_exists('tmp/' . FS_TMP_NAME . 'config2.ini')) {
     $ini_data = parse_ini_file('tmp/' . FS_TMP_NAME . 'config2.ini');
-    foreach($ini_data as $i => $value) {
+    foreach ($ini_data as $i => $value) {
         $GLOBALS['config2'][$i] = $value;
     }
 }

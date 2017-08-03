@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\model;
 
 /**
@@ -25,7 +23,8 @@ namespace FacturaScripts\model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class forma_pago extends \fs_model {
+class forma_pago extends \fs_model
+{
 
     /**
      * Clave primaria. Varchar (10).
@@ -65,7 +64,8 @@ class forma_pago extends \fs_model {
      */
     public $vencimiento;
 
-    public function __construct($f = FALSE) {
+    public function __construct($f = FALSE)
+    {
         parent::__construct('formaspago');
         if ($f) {
             $this->codpago = $f['codpago'];
@@ -86,20 +86,22 @@ class forma_pago extends \fs_model {
         }
     }
 
-    public function install() {
+    public function install()
+    {
         $this->clean_cache();
         return "INSERT INTO " . $this->table_name . " (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)"
-                . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
-                . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
-                . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
-                . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
+            . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
+            . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
+            . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
+            . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
     }
 
     /**
      * Devuelve la URL donde ver/modificar los datos
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=contabilidad_formas_pago';
     }
 
@@ -107,7 +109,8 @@ class forma_pago extends \fs_model {
      * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
      * @return boolean
      */
-    public function is_default() {
+    public function is_default()
+    {
         return ( $this->codpago == $this->default_items->codpago() );
     }
 
@@ -116,7 +119,8 @@ class forma_pago extends \fs_model {
      * @param string $cod
      * @return \FacturaScripts\model\forma_pago|boolean
      */
-    public function get($cod) {
+    public function get($cod)
+    {
         $pago = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($cod) . ";");
         if ($pago) {
             return new \forma_pago($pago[0]);
@@ -129,7 +133,8 @@ class forma_pago extends \fs_model {
      * Devuelve TRUE si la forma de pago existe
      * @return boolean
      */
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->codpago)) {
             return FALSE;
         }
@@ -140,7 +145,8 @@ class forma_pago extends \fs_model {
     /**
      * Comprueba la validez de los datos de la forma de pago.
      */
-    public function test() {
+    public function test()
+    {
         $this->descripcion = $this->no_html($this->descripcion);
 
         /// comprobamos la validez del vencimiento
@@ -157,28 +163,29 @@ class forma_pago extends \fs_model {
      * Guarda los datos en la base de datos
      * @return boolean
      */
-    public function save() {
+    public function save()
+    {
         $this->clean_cache();
         $this->test();
 
         if ($this->exists()) {
             $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion) .
-                    ", genrecibos = " . $this->var2str($this->genrecibos) .
-                    ", codcuenta = " . $this->var2str($this->codcuenta) .
-                    ", domiciliado = " . $this->var2str($this->domiciliado) .
-                    ", imprimir = " . $this->var2str($this->imprimir) .
-                    ", vencimiento = " . $this->var2str($this->vencimiento) .
-                    "  WHERE codpago = " . $this->var2str($this->codpago) . ";";
+                ", genrecibos = " . $this->var2str($this->genrecibos) .
+                ", codcuenta = " . $this->var2str($this->codcuenta) .
+                ", domiciliado = " . $this->var2str($this->domiciliado) .
+                ", imprimir = " . $this->var2str($this->imprimir) .
+                ", vencimiento = " . $this->var2str($this->vencimiento) .
+                "  WHERE codpago = " . $this->var2str($this->codpago) . ";";
         } else {
             $sql = "INSERT INTO " . $this->table_name . " (codpago,descripcion,genrecibos,codcuenta
             ,domiciliado,imprimir,vencimiento) VALUES 
                   (" . $this->var2str($this->codpago) .
-                    "," . $this->var2str($this->descripcion) .
-                    "," . $this->var2str($this->genrecibos) .
-                    "," . $this->var2str($this->codcuenta) .
-                    "," . $this->var2str($this->domiciliado) .
-                    "," . $this->var2str($this->imprimir) .
-                    "," . $this->var2str($this->vencimiento) . ");";
+                "," . $this->var2str($this->descripcion) .
+                "," . $this->var2str($this->genrecibos) .
+                "," . $this->var2str($this->codcuenta) .
+                "," . $this->var2str($this->domiciliado) .
+                "," . $this->var2str($this->imprimir) .
+                "," . $this->var2str($this->vencimiento) . ");";
         }
 
         return $this->db->exec($sql);
@@ -188,7 +195,8 @@ class forma_pago extends \fs_model {
      * Elimina la forma de pago
      * @return boolean
      */
-    public function delete() {
+    public function delete()
+    {
         $this->clean_cache();
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codpago = " . $this->var2str($this->codpago) . ";");
     }
@@ -196,7 +204,8 @@ class forma_pago extends \fs_model {
     /**
      * Limpia la caché
      */
-    private function clean_cache() {
+    private function clean_cache()
+    {
         $this->cache->delete('m_forma_pago_all');
     }
 
@@ -204,7 +213,8 @@ class forma_pago extends \fs_model {
      * Devuelve un array con todas las formas de pago
      * @return \forma_pago
      */
-    public function all() {
+    public function all()
+    {
         /// Leemos la lista de la caché
         $listaformas = $this->cache->get_array('m_forma_pago_all');
         if (empty($listaformas)) {
@@ -230,7 +240,8 @@ class forma_pago extends \fs_model {
      * @param string $dias_de_pago dias de pago específicos para el cliente (separados por comas).
      * @return string
      */
-    public function calcular_vencimiento($fecha_inicio, $dias_de_pago = '') {
+    public function calcular_vencimiento($fecha_inicio, $dias_de_pago = '')
+    {
         $fecha = $this->calcular_vencimiento2($fecha_inicio);
 
         /// validamos los días de pago
@@ -261,7 +272,8 @@ class forma_pago extends \fs_model {
     /**
      * @param string $fecha_inicio
      */
-    private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0) {
+    private function calcular_vencimiento2($fecha_inicio, $dia_de_pago = 0)
+    {
         if ($dia_de_pago == 0) {
             return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
         }
@@ -284,5 +296,4 @@ class forma_pago extends \fs_model {
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
     }
-
 }

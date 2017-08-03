@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -24,7 +23,8 @@ require_once __DIR__ . '/php_file_cache.php';
  * Clase para concectar e interactuar con memcache.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_cache {
+class fs_cache
+{
 
     private static $memcache;
     private static $php_file_cache;
@@ -32,7 +32,8 @@ class fs_cache {
     private static $error;
     private static $error_msg;
 
-    public function __construct() {
+    public function __construct()
+    {
         if (!isset(self::$memcache)) {
             if (class_exists('Memcache')) {
                 self::$memcache = new Memcache();
@@ -58,21 +59,25 @@ class fs_cache {
         self::$php_file_cache = new php_file_cache();
     }
 
-    public function error() {
+    public function error()
+    {
         return self::$error;
     }
 
-    public function error_msg() {
+    public function error_msg()
+    {
         return self::$error_msg;
     }
 
-    public function close() {
+    public function close()
+    {
         if (isset(self::$memcache) AND self::$connected) {
             self::$memcache->close();
         }
     }
 
-    public function set($key, $object, $expire = 5400) {
+    public function set($key, $object, $expire = 5400)
+    {
         if (self::$connected) {
             self::$memcache->set(FS_CACHE_PREFIX . $key, $object, FALSE, $expire);
         } else {
@@ -80,11 +85,12 @@ class fs_cache {
         }
     }
 
-    public function get($key) {
+    public function get($key)
+    {
         if (self::$connected) {
             return self::$memcache->get(FS_CACHE_PREFIX . $key);
         }
-        
+
         return self::$php_file_cache->get($key);
     }
 
@@ -93,7 +99,8 @@ class fs_cache {
      * @param string $key
      * @return array
      */
-    public function get_array($key) {
+    public function get_array($key)
+    {
         $aa = array();
 
         if (self::$connected) {
@@ -118,7 +125,8 @@ class fs_cache {
      * @param boolean $error
      * @return array
      */
-    public function get_array2($key, &$error) {
+    public function get_array2($key, &$error)
+    {
         $aa = array();
         $error = TRUE;
 
@@ -139,15 +147,17 @@ class fs_cache {
         return $aa;
     }
 
-    public function delete($key) {
+    public function delete($key)
+    {
         if (self::$connected) {
             return self::$memcache->delete(FS_CACHE_PREFIX . $key);
         }
-        
+
         return self::$php_file_cache->delete($key);
     }
 
-    public function delete_multi($keys) {
+    public function delete_multi($keys)
+    {
         $done = FALSE;
 
         if (self::$connected) {
@@ -163,24 +173,26 @@ class fs_cache {
         return $done;
     }
 
-    public function clean() {
+    public function clean()
+    {
         if (self::$connected) {
             return self::$memcache->flush();
         }
-        
+
         return self::$php_file_cache->flush();
     }
 
-    public function version() {
+    public function version()
+    {
         if (self::$connected) {
             return 'Memcache ' . self::$memcache->getVersion();
         }
-        
+
         return 'Files';
     }
 
-    public function connected() {
+    public function connected()
+    {
         return self::$connected;
     }
-
 }

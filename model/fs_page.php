@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +22,8 @@
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_page extends fs_model {
+class fs_page extends fs_model
+{
 
     /**
      * Clave primaria. Varchar (30).
@@ -56,7 +56,8 @@ class fs_page extends fs_model {
     public $important;
     public $orden;
 
-    public function __construct($p = FALSE) {
+    public function __construct($p = FALSE)
+    {
         parent::__construct('fs_pages');
         if ($p) {
             $this->name = $p['name'];
@@ -90,7 +91,8 @@ class fs_page extends fs_model {
         $this->extra_url = '';
     }
 
-    public function __clone() {
+    public function __clone()
+    {
         $page = new fs_page();
         $page->name = $this->name;
         $page->title = $this->title;
@@ -101,13 +103,15 @@ class fs_page extends fs_model {
         $page->orden = $this->orden;
     }
 
-    protected function install() {
+    protected function install()
+    {
         $this->clean_cache();
         return "INSERT INTO " . $this->table_name . " (name,title,folder,version,show_on_menu)
          VALUES ('admin_home','panel de control','admin',NULL,TRUE);";
     }
 
-    public function url() {
+    public function url()
+    {
         if (is_null($this->name)) {
             return 'index.php?page=admin_home';
         }
@@ -115,15 +119,18 @@ class fs_page extends fs_model {
         return 'index.php?page=' . $this->name . $this->extra_url;
     }
 
-    public function is_default() {
+    public function is_default()
+    {
         return ( $this->name == $this->default_items->default_page() );
     }
 
-    public function showing() {
+    public function showing()
+    {
         return ( $this->name == $this->default_items->showing_page() );
     }
 
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->name)) {
             return FALSE;
         }
@@ -131,7 +138,8 @@ class fs_page extends fs_model {
         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
     }
 
-    public function get($name) {
+    public function get($name)
+    {
         $p = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
         if ($p) {
             return new fs_page($p[0]);
@@ -140,37 +148,40 @@ class fs_page extends fs_model {
         return FALSE;
     }
 
-    public function save() {
+    public function save()
+    {
         $this->clean_cache();
 
         if ($this->exists()) {
             $sql = "UPDATE " . $this->table_name . " SET title = " . $this->var2str($this->title)
-                    . ", folder = " . $this->var2str($this->folder)
-                    . ", version = " . $this->var2str($this->version)
-                    . ", show_on_menu = " . $this->var2str($this->show_on_menu)
-                    . ", important = " . $this->var2str($this->important)
-                    . ", orden = " . $this->var2str($this->orden)
-                    . "  WHERE name = " . $this->var2str($this->name) . ";";
+                . ", folder = " . $this->var2str($this->folder)
+                . ", version = " . $this->var2str($this->version)
+                . ", show_on_menu = " . $this->var2str($this->show_on_menu)
+                . ", important = " . $this->var2str($this->important)
+                . ", orden = " . $this->var2str($this->orden)
+                . "  WHERE name = " . $this->var2str($this->name) . ";";
         } else {
             $sql = "INSERT INTO " . $this->table_name . " (name,title,folder,version,show_on_menu,important,orden) VALUES "
-                    . "(" . $this->var2str($this->name)
-                    . "," . $this->var2str($this->title)
-                    . "," . $this->var2str($this->folder)
-                    . "," . $this->var2str($this->version)
-                    . "," . $this->var2str($this->show_on_menu)
-                    . "," . $this->var2str($this->important)
-                    . "," . $this->var2str($this->orden) . ");";
+                . "(" . $this->var2str($this->name)
+                . "," . $this->var2str($this->title)
+                . "," . $this->var2str($this->folder)
+                . "," . $this->var2str($this->version)
+                . "," . $this->var2str($this->show_on_menu)
+                . "," . $this->var2str($this->important)
+                . "," . $this->var2str($this->orden) . ");";
         }
 
         return $this->db->exec($sql);
     }
 
-    public function delete() {
+    public function delete()
+    {
         $this->clean_cache();
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
     }
 
-    private function clean_cache() {
+    private function clean_cache()
+    {
         $this->cache->delete('m_fs_page_all');
     }
 
@@ -178,7 +189,8 @@ class fs_page extends fs_model {
      * Devuelve todas las páginas o entradas del menú
      * @return \fs_page
      */
-    public function all() {
+    public function all()
+    {
         /// comprobamos en la caché
         $pagelist = $this->cache->get_array('m_fs_page_all');
 
@@ -197,5 +209,4 @@ class fs_page extends fs_model {
 
         return $pagelist;
     }
-
 }

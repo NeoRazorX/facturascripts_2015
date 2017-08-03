@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -22,16 +21,19 @@
  * Controlador para modificar el rol de usuarios.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_rol extends fs_controller {
+class admin_rol extends fs_controller
+{
 
     public $allow_delete;
     public $rol;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Editar rol', 'admin', FALSE, FALSE);
     }
 
-    protected function private_core() {
+    protected function private_core()
+    {
         /// ¿El usuario tiene permiso para eliminar en esta página?
         $this->allow_delete = $this->user->admin;
 
@@ -51,7 +53,8 @@ class admin_rol extends fs_controller {
         }
     }
 
-    public function all_pages() {
+    public function all_pages()
+    {
         $returnlist = array();
 
         /// Obtenemos la lista de páginas. Todas
@@ -81,7 +84,8 @@ class admin_rol extends fs_controller {
         return $returnlist;
     }
 
-    public function all_users() {
+    public function all_users()
+    {
         $returnlist = array();
 
         /// Obtenemos la lista de páginas. Todas
@@ -104,13 +108,14 @@ class admin_rol extends fs_controller {
         return $returnlist;
     }
 
-    private function modify() {
+    private function modify()
+    {
         $this->rol->descripcion = filter_input(INPUT_POST, 'descripcion');
 
         if ($this->rol->save()) {
             $allow_delete = filter_input(INPUT_POST, 'allow_delete', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
             $enabled = filter_input(INPUT_POST, 'enabled', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            
+
             /// para cada página, comprobamos si hay que darle acceso o no
             foreach ($this->all_pages() as $p) {
                 /**
@@ -162,14 +167,15 @@ class admin_rol extends fs_controller {
                     $a->delete();
                 }
             }
-            
+
             $this->new_message('Datos guardados.');
         } else {
             $this->new_error_msg('Error al guardar los datos.');
         }
     }
 
-    private function aplicar_permisos() {
+    private function aplicar_permisos()
+    {
         $usuarios = array();
         foreach ($this->all_users() as $usu) {
             if ($usu->included) {
@@ -218,5 +224,4 @@ class admin_rol extends fs_controller {
 
         $this->new_message($nump . ' permisos aplicados correctamente.');
     }
-
 }

@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +22,8 @@
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_var extends fs_model {
+class fs_var extends fs_model
+{
 
     /**
      * Clave primaria. Varchar(35).
@@ -37,7 +37,8 @@ class fs_var extends fs_model {
      */
     public $varchar;
 
-    public function __construct($f = FALSE) {
+    public function __construct($f = FALSE)
+    {
         parent::__construct('fs_vars');
         if ($f) {
             $this->name = $f['name'];
@@ -48,11 +49,13 @@ class fs_var extends fs_model {
         }
     }
 
-    protected function install() {
+    protected function install()
+    {
         return '';
     }
 
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->name)) {
             return FALSE;
         }
@@ -60,7 +63,8 @@ class fs_var extends fs_model {
         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
     }
 
-    public function save() {
+    public function save()
+    {
         $comillas = '';
         if (strtolower(FS_DB_TYPE) == 'mysql') {
             $comillas = '`';
@@ -68,18 +72,19 @@ class fs_var extends fs_model {
 
         if ($this->exists()) {
             $sql = "UPDATE " . $this->table_name . " SET "
-                    . $comillas . "varchar" . $comillas . " = " . $this->var2str($this->varchar)
-                    . " WHERE name = " . $this->var2str($this->name) . ";";
+                . $comillas . "varchar" . $comillas . " = " . $this->var2str($this->varchar)
+                . " WHERE name = " . $this->var2str($this->name) . ";";
         } else {
             $sql = "INSERT INTO " . $this->table_name . " (name," . $comillas . "varchar" . $comillas . ")
             VALUES (" . $this->var2str($this->name)
-                    . "," . $this->var2str($this->varchar) . ");";
+                . "," . $this->var2str($this->varchar) . ");";
         }
 
         return $this->db->exec($sql);
     }
 
-    public function delete() {
+    public function delete()
+    {
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE name = " . $this->var2str($this->name) . ";");
     }
 
@@ -87,7 +92,8 @@ class fs_var extends fs_model {
      * Devuelve un array con todos los elementos de la tabla.
      * @return \fs_var
      */
-    public function all() {
+    public function all()
+    {
         $vlist = array();
 
         $vars = $this->db->select("SELECT * FROM " . $this->table_name . ";");
@@ -105,7 +111,8 @@ class fs_var extends fs_model {
      * @param string $name
      * @return boolean
      */
-    public function simple_get($name) {
+    public function simple_get($name)
+    {
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
         if ($data) {
             return $data[0]['varchar'];
@@ -120,7 +127,8 @@ class fs_var extends fs_model {
      * @param string $value
      * @return boolean
      */
-    public function simple_save($name, $value) {
+    public function simple_save($name, $value)
+    {
         $comillas = '';
         if (strtolower(FS_DB_TYPE) == 'mysql') {
             $comillas = '`';
@@ -128,7 +136,7 @@ class fs_var extends fs_model {
 
         if ($this->db->select("SELECT * FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";")) {
             $sql = "UPDATE " . $this->table_name . " SET " . $comillas . "varchar" . $comillas . " = " . $this->var2str($value) .
-                    " WHERE name = " . $this->var2str($name) . ";";
+                " WHERE name = " . $this->var2str($name) . ";";
         } else {
             $sql = "INSERT INTO " . $this->table_name . " (name," . $comillas . "varchar" . $comillas . ") VALUES
             (" . $this->var2str($name) . "," . $this->var2str($value) . ");";
@@ -142,7 +150,8 @@ class fs_var extends fs_model {
      * @param string $name
      * @return boolean
      */
-    public function simple_delete($name) {
+    public function simple_delete($name)
+    {
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE name = " . $this->var2str($name) . ";");
     }
 
@@ -157,7 +166,8 @@ class fs_var extends fs_model {
      * 
      * @param array $array
      */
-    public function array_get($array, $replace = TRUE) {
+    public function array_get($array, $replace = TRUE)
+    {
         /// obtenemos todos los resultados y seleccionamos los que necesitamos
         $data = $this->db->select("SELECT * FROM " . $this->table_name . ";");
         if ($data) {
@@ -186,7 +196,8 @@ class fs_var extends fs_model {
      * 
      * @param array $array
      */
-    public function array_save($array) {
+    public function array_save($array)
+    {
         $done = TRUE;
 
         foreach ($array as $i => $value) {
@@ -203,5 +214,4 @@ class fs_var extends fs_model {
 
         return $done;
     }
-
 }

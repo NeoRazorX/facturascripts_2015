@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -30,7 +29,8 @@ require_once 'base/fs_default_items.php';
  * 
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-abstract class fs_model {
+abstract class fs_model
+{
 
     /**
      * Proporciona acceso directo a la base de datos.
@@ -81,7 +81,8 @@ abstract class fs_model {
      * Constructor.
      * @param string $name nombre de la tabla de la base de datos.
      */
-    public function __construct($name = '') {
+    public function __construct($name = '')
+    {
         $this->cache = new fs_cache();
         $this->db = new fs_db2();
         $this->table_name = $name;
@@ -122,14 +123,16 @@ abstract class fs_model {
         }
     }
 
-    public function table_name() {
+    public function table_name()
+    {
         return $this->table_name;
     }
 
     /**
      * Limpia la lista de tablas comprobadas.
      */
-    protected function clean_checked_tables() {
+    protected function clean_checked_tables()
+    {
         self::$checked_tables = array();
         $this->cache->delete('fs_checked_tables');
     }
@@ -138,24 +141,26 @@ abstract class fs_model {
      * Muestra al usuario un mensaje de error
      * @param string $msg mensaje de error
      */
-    protected function new_error_msg($msg = '') {
-        if ($msg) {
-            self::$core_log->new_error($msg);
-        }
+    protected function new_error_msg($msg)
+    {
+        self::$core_log->new_error($msg);
+        self::$core_log->save($msg);
     }
 
     /**
      * Devuelve la lista de mensajes de error de los modelos.
      * @return array lista de errores.
      */
-    public function get_errors() {
+    public function get_errors()
+    {
         return self::$core_log->get_errors();
     }
 
     /**
      * Vacía la lista de errores de los modelos.
      */
-    public function clean_errors() {
+    public function clean_errors()
+    {
         self::$core_log->clean_errors();
     }
 
@@ -163,24 +168,25 @@ abstract class fs_model {
      * Muestra al usuario un mensaje.
      * @param string $msg
      */
-    protected function new_message($msg = '') {
-        if ($msg) {
-            self::$core_log->new_message($msg);
-        }
+    protected function new_message($msg)
+    {
+        self::$core_log->new_message($msg);
     }
 
     /**
      * Devuelve la lista de mensajes de los modelos.
      * @return array
      */
-    public function get_messages() {
+    public function get_messages()
+    {
         return self::$core_log->get_messages();
     }
 
     /**
      * Vacía la lista de mensajes de los modelos.
      */
-    public function clean_messages() {
+    public function clean_messages()
+    {
         self::$core_log->clean_messages();
     }
 
@@ -188,7 +194,8 @@ abstract class fs_model {
      * Esta función es llamada al crear una tabla.
      * Permite insertar valores en la tabla.
      */
-    protected function install() {
+    protected function install()
+    {
         return '';
     }
 
@@ -214,7 +221,8 @@ abstract class fs_model {
      * @param string $str cadena de texto a escapar
      * @return string cadena de texto resultante
      */
-    protected function escape_string($str = '') {
+    protected function escape_string($str = '')
+    {
         return $this->db->escape_string($str);
     }
 
@@ -224,7 +232,8 @@ abstract class fs_model {
      * @param mixed $val
      * @return string
      */
-    public function var2str($val) {
+    public function var2str($val)
+    {
         if (is_null($val)) {
             return 'NULL';
         } else if (is_bool($val)) {
@@ -248,7 +257,8 @@ abstract class fs_model {
      * @param mixed $val
      * @return string
      */
-    protected function bin2str($val) {
+    protected function bin2str($val)
+    {
         if (is_null($val)) {
             return 'NULL';
         }
@@ -262,7 +272,8 @@ abstract class fs_model {
      * @param string $val
      * @return null|string
      */
-    protected function str2bin($val) {
+    protected function str2bin($val)
+    {
         if (is_null($val)) {
             return NULL;
         }
@@ -277,7 +288,8 @@ abstract class fs_model {
      * @param string $val
      * @return boolean
      */
-    public function str2bool($val) {
+    public function str2bool($val)
+    {
         return ($val == 't' OR $val == '1');
     }
 
@@ -287,7 +299,8 @@ abstract class fs_model {
      * @param mixed $str
      * @return integer
      */
-    public function intval($str) {
+    public function intval($str)
+    {
         if ($str === NULL) {
             return NULL;
         }
@@ -304,7 +317,8 @@ abstract class fs_model {
      * @param boolean $round
      * @return boolean
      */
-    public function floatcmp($f1, $f2, $precision = 10, $round = FALSE) {
+    public function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
+    {
         if ($round OR ! function_exists('bccomp')) {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
         }
@@ -320,7 +334,8 @@ abstract class fs_model {
      * @param string $format
      * @return array
      */
-    protected function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y') {
+    protected function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y')
+    {
         $dates = array();
         $current = strtotime($first);
         $last = strtotime($last);
@@ -345,9 +360,10 @@ abstract class fs_model {
      * @param string $txt
      * @return string
      */
-    public function no_html($txt) {
+    public function no_html($txt)
+    {
         $newt = str_replace(
-                array('<', '>', '"', "'"), array('&lt;', '&gt;', '&quot;', '&#39;'), $txt
+            array('<', '>', '"', "'"), array('&lt;', '&gt;', '&quot;', '&#39;'), $txt
         );
 
         return trim($newt);
@@ -358,7 +374,8 @@ abstract class fs_model {
      * @param integer $length
      * @return string
      */
-    protected function random_string($length = 10) {
+    protected function random_string($length = 10)
+    {
         return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 
@@ -367,7 +384,8 @@ abstract class fs_model {
      * @param string $table_name
      * @return boolean
      */
-    protected function check_table($table_name) {
+    protected function check_table($table_name)
+    {
         $done = TRUE;
         $sql = '';
         $xml_cols = array();
@@ -427,7 +445,8 @@ abstract class fs_model {
      * @param array $constraints
      * @return boolean
      */
-    protected function get_xml_table($table_name, &$columns, &$constraints) {
+    protected function get_xml_table($table_name, &$columns, &$constraints)
+    {
         $return = FALSE;
         $filename = $this->base_dir . 'model/table/' . $table_name . '.xml';
 
@@ -477,5 +496,4 @@ abstract class fs_model {
 
         return $return;
     }
-
 }

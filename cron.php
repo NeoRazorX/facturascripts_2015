@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -37,6 +36,7 @@ $db = new fs_db2();
 require_once 'base/fs_default_items.php';
 
 require_once 'base/fs_model.php';
+require_once 'base/fs_log_manager.php';
 require_all_models();
 
 if ($db->connect()) {
@@ -110,6 +110,10 @@ if ($db->connect()) {
     foreach ($core_log->get_errors() as $err) {
         echo "\nERROR: " . $err . "\n";
     }
+
+    /// guardamos los errores en el log
+    $log_manager = new fs_log_manager();
+    $log_manager->save();
 
     $db->close();
 } else {

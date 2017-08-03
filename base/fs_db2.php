@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -29,27 +28,29 @@ if (strtolower(FS_DB_TYPE) == 'mysql') {
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_db2 {
+class fs_db2
+{
 
     /**
      * Transacttiones automáticas activadas si o no.
      * @var boolean
      */
     private static $auto_transactions;
-    
+
     /**
      * Motor utilizado, MySQL o PostgreSQL
      * @var fs_mysql|fs_postgresql
      */
     private static $engine;
-    
+
     /**
      * Última lista de tablas de la base de datos.
      * @var array|false 
      */
     private static $table_list;
 
-    public function __construct() {
+    public function __construct()
+    {
         if (!isset(self::$engine)) {
             if (strtolower(FS_DB_TYPE) == 'mysql') {
                 self::$engine = new fs_mysql();
@@ -67,7 +68,8 @@ class fs_db2 {
      * automáticas están activadas o no.
      * @return boolean
      */
-    public function get_auto_transactions() {
+    public function get_auto_transactions()
+    {
         return self::$auto_transactions;
     }
 
@@ -75,7 +77,8 @@ class fs_db2 {
      * Activa/desactiva las transacciones automáticas en la función exec()
      * @param boolean $value
      */
-    public function set_auto_transactions($value) {
+    public function set_auto_transactions($value)
+    {
         self::$auto_transactions = $value;
     }
 
@@ -83,7 +86,8 @@ class fs_db2 {
      * Conecta a la base de datos.
      * @return boolean
      */
-    public function connect() {
+    public function connect()
+    {
         return self::$engine->connect();
     }
 
@@ -91,7 +95,8 @@ class fs_db2 {
      * Devuelve TRUE si se está conestado a la base de datos.
      * @return boolean
      */
-    public function connected() {
+    public function connected()
+    {
         return self::$engine->connected();
     }
 
@@ -99,7 +104,8 @@ class fs_db2 {
      * Desconecta de la base de datos.
      * @return boolean
      */
-    public function close() {
+    public function close()
+    {
         return self::$engine->close();
     }
 
@@ -107,30 +113,17 @@ class fs_db2 {
      * Devuelve el motor de base de datos usado y la versión.
      * @return string
      */
-    public function version() {
+    public function version()
+    {
         return self::$engine->version();
-    }
-
-    /**
-     * Devuelve la lista de errores.
-     * @return array
-     */
-    public function get_errors() {
-        return self::$engine->get_errors();
-    }
-
-    /**
-     * Vacía la lista de errores.
-     */
-    public function clean_errors() {
-        self::$engine->clean_errors();
     }
 
     /**
      * Devuelve el nº de selects a la base de datos.
      * @return integer
      */
-    public function get_selects() {
+    public function get_selects()
+    {
         return self::$engine->get_selects();
     }
 
@@ -138,7 +131,8 @@ class fs_db2 {
      * Devuelve el nº de transacciones con la base de datos.
      * @return integer
      */
-    public function get_transactions() {
+    public function get_transactions()
+    {
         return self::$engine->get_transactions();
     }
 
@@ -146,7 +140,8 @@ class fs_db2 {
      * Devuelve el historial SQL.
      * @return array
      */
-    public function get_history() {
+    public function get_history()
+    {
         return self::$engine->get_history();
     }
 
@@ -155,7 +150,8 @@ class fs_db2 {
      * @param string $table_name
      * @return array
      */
-    public function get_columns($table_name) {
+    public function get_columns($table_name)
+    {
         return self::$engine->get_columns($table_name);
     }
 
@@ -165,11 +161,12 @@ class fs_db2 {
      * @param boolean $extended
      * @return array
      */
-    public function get_constraints($table_name, $extended = FALSE) {
+    public function get_constraints($table_name, $extended = FALSE)
+    {
         if ($extended) {
             return self::$engine->get_constraints_extended($table_name);
         }
-        
+
         return self::$engine->get_constraints($table_name);
     }
 
@@ -178,7 +175,8 @@ class fs_db2 {
      * @param string $table_name
      * @return array
      */
-    public function get_indexes($table_name) {
+    public function get_indexes($table_name)
+    {
         return self::$engine->get_indexes($table_name);
     }
 
@@ -186,7 +184,8 @@ class fs_db2 {
      * Devuelve un array con los bloqueos de la base de datos.
      * @return array
      */
-    public function get_locks() {
+    public function get_locks()
+    {
         return self::$engine->get_locks();
     }
 
@@ -194,7 +193,8 @@ class fs_db2 {
      * Devuelve un array con los nombres de las tablas de la base de datos.
      * @return array
      */
-    public function list_tables() {
+    public function list_tables()
+    {
         if (self::$table_list === FALSE) {
             self::$table_list = self::$engine->list_tables();
         }
@@ -208,7 +208,8 @@ class fs_db2 {
      * @param array $list
      * @return boolean
      */
-    public function table_exists($name, $list = FALSE) {
+    public function table_exists($name, $list = FALSE)
+    {
         $result = FALSE;
 
         if ($list === FALSE) {
@@ -231,7 +232,8 @@ class fs_db2 {
      * @param string $sql
      * @return array|false
      */
-    public function select($sql) {
+    public function select($sql)
+    {
         return self::$engine->select($sql);
     }
 
@@ -245,7 +247,8 @@ class fs_db2 {
      * @param integer $offset
      * @return array|false
      */
-    public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
+    public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
+    {
         return self::$engine->select_limit($sql, $limit, $offset);
     }
 
@@ -260,7 +263,8 @@ class fs_db2 {
      * @param boolean $transaction
      * @return boolean
      */
-    public function exec($sql, $transaction = NULL) {
+    public function exec($sql, $transaction = NULL)
+    {
         /// usamos self::$auto_transactions como valor por defecto para la función
         if (is_null($transaction)) {
             $transaction = self::$auto_transactions;
@@ -276,7 +280,8 @@ class fs_db2 {
      * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
      * @return integer
      */
-    public function lastval() {
+    public function lastval()
+    {
         return self::$engine->lastval();
     }
 
@@ -284,7 +289,8 @@ class fs_db2 {
      * Inicia una transacción SQL.
      * @return boolean
      */
-    public function begin_transaction() {
+    public function begin_transaction()
+    {
         return self::$engine->begin_transaction();
     }
 
@@ -292,7 +298,8 @@ class fs_db2 {
      * Guarda los cambios de una transacción SQL.
      * @return boolean
      */
-    public function commit() {
+    public function commit()
+    {
         return self::$engine->commit();
     }
 
@@ -300,7 +307,8 @@ class fs_db2 {
      * Deshace los cambios de una transacción SQL.
      * @return boolean
      */
-    public function rollback() {
+    public function rollback()
+    {
         return self::$engine->rollback();
     }
 
@@ -309,7 +317,8 @@ class fs_db2 {
      * @param string $s
      * @return string
      */
-    public function escape_string($s) {
+    public function escape_string($s)
+    {
         return self::$engine->escape_string($s);
     }
 
@@ -317,7 +326,8 @@ class fs_db2 {
      * Devuelve el estilo de fecha del motor de base de datos.
      * @return string
      */
-    public function date_style() {
+    public function date_style()
+    {
         return self::$engine->date_style();
     }
 
@@ -326,7 +336,8 @@ class fs_db2 {
      * @param string $col_name
      * @return string
      */
-    public function sql_to_int($col_name) {
+    public function sql_to_int($col_name)
+    {
         return self::$engine->sql_to_int($col_name);
     }
 
@@ -337,7 +348,8 @@ class fs_db2 {
      * @param array $db_cols
      * @return string
      */
-    public function compare_columns($table_name, $xml_cols, $db_cols) {
+    public function compare_columns($table_name, $xml_cols, $db_cols)
+    {
         return self::$engine->compare_columns($table_name, $xml_cols, $db_cols);
     }
 
@@ -349,7 +361,8 @@ class fs_db2 {
      * @param boolean $delete_only
      * @return string
      */
-    public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE) {
+    public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE)
+    {
         return self::$engine->compare_constraints($table_name, $xml_cons, $db_cons, $delete_only);
     }
 
@@ -360,7 +373,8 @@ class fs_db2 {
      * @param array $xml_cons
      * @return string
      */
-    public function generate_table($table_name, $xml_cols, $xml_cons) {
+    public function generate_table($table_name, $xml_cols, $xml_cons)
+    {
         return self::$engine->generate_table($table_name, $xml_cols, $xml_cons);
     }
 
@@ -369,8 +383,8 @@ class fs_db2 {
      * @param string $table_name
      * @return boolean
      */
-    public function check_table_aux($table_name) {
+    public function check_table_aux($table_name)
+    {
         return self::$engine->check_table_aux($table_name);
     }
-
 }

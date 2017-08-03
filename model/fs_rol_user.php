@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
@@ -25,12 +24,14 @@
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class fs_rol_user extends fs_model {
+class fs_rol_user extends fs_model
+{
 
     public $codrol;
     public $fs_user;
 
-    public function __construct($t = FALSE) {
+    public function __construct($t = FALSE)
+    {
         parent::__construct('fs_roles_users');
         if ($t) {
             $this->codrol = $t['codrol'];
@@ -41,39 +42,44 @@ class fs_rol_user extends fs_model {
         }
     }
 
-    protected function install() {
+    protected function install()
+    {
         return '';
     }
 
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->codrol)) {
             return FALSE;
         } else {
             return $this->db->select("SELECT * FROM " . $this->table_name
-                            . " WHERE codrol = " . $this->var2str($this->codrol)
-                            . " AND fs_user = " . $this->var2str($this->fs_user) . ";");
+                    . " WHERE codrol = " . $this->var2str($this->codrol)
+                    . " AND fs_user = " . $this->var2str($this->fs_user) . ";");
         }
     }
 
-    public function save() {
+    public function save()
+    {
         if ($this->exists()) {
             return TRUE;
         } else {
             $sql = "INSERT INTO " . $this->table_name . " (codrol,fs_user) VALUES "
-                    . "(" . $this->var2str($this->codrol)
-                    . "," . $this->var2str($this->fs_user) . ");";
+                . "(" . $this->var2str($this->codrol)
+                . "," . $this->var2str($this->fs_user) . ");";
 
             return $this->db->exec($sql);
         }
     }
 
-    public function delete() {
+    public function delete()
+    {
         return $this->db->exec("DELETE FROM " . $this->table_name .
-                        " WHERE codrol = " . $this->var2str($this->codrol) .
-                        " AND fs_user = " . $this->var2str($this->fs_user) . ";");
+                " WHERE codrol = " . $this->var2str($this->codrol) .
+                " AND fs_user = " . $this->var2str($this->fs_user) . ";");
     }
 
-    public function all_from_rol($codrol) {
+    public function all_from_rol($codrol)
+    {
         $accesslist = array();
 
         $access = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($codrol) . ";");
@@ -85,5 +91,4 @@ class fs_rol_user extends fs_model {
 
         return $accesslist;
     }
-
 }
