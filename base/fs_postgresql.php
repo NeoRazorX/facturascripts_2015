@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -18,57 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_db_engine.php';
+
 /**
  * Clase para conectar a PostgreSQL.
  * 
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_postgresql {
-
-    /**
-     * El enlace con la base de datos.
-     * @var resource
-     */
-    private static $link;
-
-    /**
-     * Nº de selects ejecutados.
-     * @var integer 
-     */
-    private static $t_selects;
-
-    /**
-     * Nº de transacciones ejecutadas.
-     * @var integer 
-     */
-    private static $t_transactions;
-
-    /**
-     * Gestiona el log de todos los controladores, modelos y base de datos.
-     * @var fs_core_log 
-     */
-    private static $core_log;
-
-    public function __construct() {
-        if (!isset(self::$link)) {
-            self::$t_selects = 0;
-            self::$t_transactions = 0;
-            self::$core_log = new fs_core_log();
-        }
-    }
+class fs_postgresql extends fs_db_engine
+{
 
     /**
      * Conecta a la base de datos.
      * @return boolean
      */
-    public function connect() {
+    public function connect()
+    {
         $connected = FALSE;
 
         if (self::$link) {
             $connected = TRUE;
         } else if (function_exists('pg_connect')) {
             self::$link = pg_connect('host=' . FS_DB_HOST . ' dbname=' . FS_DB_NAME .
-                    ' port=' . FS_DB_PORT . ' user=' . FS_DB_USER . ' password=' . FS_DB_PASS);
+                ' port=' . FS_DB_PORT . ' user=' . FS_DB_USER . ' password=' . FS_DB_PASS);
             if (self::$link) {
                 $connected = TRUE;
 
@@ -83,18 +54,11 @@ class fs_postgresql {
     }
 
     /**
-     * Devuelve TRUE si se está conectado a la base de datos.
-     * @return boolean
-     */
-    public function connected() {
-        return (bool) self::$link;
-    }
-
-    /**
      * Desconecta de la base de datos.
      * @return boolean
      */
-    public function close() {
+    public function close()
+    {
         if (self::$link) {
             $return = pg_close(self::$link);
             self::$link = NULL;
@@ -108,7 +72,8 @@ class fs_postgresql {
      * Devuelve el motor de base de datos y la versión.
      * @return boolean
      */
-    public function version() {
+    public function version()
+    {
         if (self::$link) {
             $aux = pg_version(self::$link);
             return 'POSTGRESQL ' . $aux['server'];
@@ -118,54 +83,16 @@ class fs_postgresql {
     }
 
     /**
-     * Devuelve la lista de errores.
-     * @return array
-     */
-    public function get_errors() {
-        return self::$core_log->get_errors();
-    }
-
-    /**
-     * Vacía la lista de errores.
-     */
-    public function clean_errors() {
-        self::$core_log->clean_errors();
-    }
-
-    /**
-     * Devuelve el número de selects ejecutados
-     * @return integer
-     */
-    public function get_selects() {
-        return self::$t_selects;
-    }
-
-    /**
-     * Devuele le número de transacciones realizadas
-     * @return integer
-     */
-    public function get_transactions() {
-        return self::$t_transactions;
-    }
-
-    /**
-     * Devuelve el historial SQL.
-     * @return array
-     */
-    public function get_history() {
-        return self::$core_log->get_sql_history();
-    }
-
-    /**
      * Devuelve un array con las columnas de una tabla dada.
      * @param string $table_name
      * @return array
      */
-    public function get_columns($table_name) {
+    public function get_columns($table_name)
+    {
         $columns = array();
         $sql = "SELECT column_name as name, data_type as type, character_maximum_length, column_default as default, is_nullable"
-                . " FROM information_schema.columns WHERE table_catalog = '" . FS_DB_NAME
-                . "' AND table_name = '" . $table_name . "' ORDER BY name ASC;";
+            . " FROM information_schema.columns WHERE table_catalog = '" . FS_DB_NAME
+            . "' AND table_name = '" . $table_name . "' ORDER BY name ASC;";
 
         $aux = $this->select($sql);
         if ($aux) {
@@ -191,12 +118,13 @@ class fs_postgresql {
      * @param string $table_name
      * @return array
      */
-    public function get_constraints($table_name) {
+    public function get_constraints($table_name)
+    {
         $constraints = array();
         $sql = "SELECT tc.constraint_name as name, tc.constraint_type as type"
-                . " FROM information_schema.table_constraints AS tc"
-                . " WHERE tc.table_name = '" . $table_name . "' AND tc.constraint_type IN"
-                . " ('PRIMARY KEY','FOREIGN KEY','UNIQUE') ORDER BY type DESC, name ASC;";
+            . " FROM information_schema.table_constraints AS tc"
+            . " WHERE tc.table_name = '" . $table_name . "' AND tc.constraint_type IN"
+            . " ('PRIMARY KEY','FOREIGN KEY','UNIQUE') ORDER BY type DESC, name ASC;";
 
         $aux = $this->select($sql);
         if ($aux) {
@@ -213,7 +141,8 @@ class fs_postgresql {
      * @param string $table_name
      * @return array
      */
-    public function get_constraints_extended($table_name) {
+    public function get_constraints_extended($table_name)
+    {
         $constraints = array();
         $sql = "SELECT tc.constraint_name as name,
             tc.constraint_type as type,
@@ -254,7 +183,8 @@ class fs_postgresql {
      * @param string $table_name
      * @return array
      */
-    public function get_indexes($table_name) {
+    public function get_indexes($table_name)
+    {
         $indexes = array();
 
         $aux = $this->select("SELECT indexname FROM pg_indexes WHERE tablename = '" . $table_name . "';");
@@ -271,7 +201,8 @@ class fs_postgresql {
      * Devuelve un array con los datos de bloqueos en la base de datos.
      * @return array
      */
-    public function get_locks() {
+    public function get_locks()
+    {
         $llist = array();
         $sql = "SELECT relname,pg_locks.* FROM pg_class,pg_locks WHERE relfilenode=relation AND NOT granted;";
 
@@ -289,10 +220,11 @@ class fs_postgresql {
      * Devuelve un array con los nombres de las tablas de la base de datos.
      * @return array
      */
-    public function list_tables() {
+    public function list_tables()
+    {
         $tables = array();
         $sql = "SELECT * FROM pg_catalog.pg_tables WHERE schemaname NOT IN "
-                . "('pg_catalog','information_schema') ORDER BY tablename ASC;";
+            . "('pg_catalog','information_schema') ORDER BY tablename ASC;";
 
         $aux = $this->select($sql);
         if ($aux) {
@@ -310,7 +242,8 @@ class fs_postgresql {
      * @param string $sql
      * @return array
      */
-    public function select($sql) {
+    public function select($sql)
+    {
         $result = FALSE;
 
         if (self::$link) {
@@ -343,7 +276,8 @@ class fs_postgresql {
      * @param integer $offset
      * @return array
      */
-    public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0) {
+    public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
+    {
         $result = FALSE;
 
         if (self::$link) {
@@ -380,7 +314,8 @@ class fs_postgresql {
      * @param boolean $transaction
      * @return boolean
      */
-    public function exec($sql, $transaction = TRUE) {
+    public function exec($sql, $transaction = TRUE)
+    {
         $result = FALSE;
 
         if (self::$link) {
@@ -415,7 +350,8 @@ class fs_postgresql {
      * Inicia una transacción SQL.
      * @return boolean
      */
-    public function begin_transaction() {
+    public function begin_transaction()
+    {
         if (self::$link) {
             return (bool) pg_query(self::$link, 'BEGIN TRANSACTION;');
         }
@@ -427,7 +363,8 @@ class fs_postgresql {
      * Guarda los cambios de una transacción SQL.
      * @return boolean
      */
-    public function commit() {
+    public function commit()
+    {
         if (self::$link) {
             /// aumentamos el contador de selects realizados
             self::$t_transactions++;
@@ -442,7 +379,8 @@ class fs_postgresql {
      * Deshace los cambios de una transacción SQL.
      * @return boolean
      */
-    public function rollback() {
+    public function rollback()
+    {
         if (self::$link) {
             return (bool) pg_query(self::$link, 'ROLLBACK;');
         }
@@ -455,7 +393,8 @@ class fs_postgresql {
      * @param string $seq_name
      * @return boolean
      */
-    private function sequence_exists($seq_name) {
+    private function sequence_exists($seq_name)
+    {
         return (bool) $this->select("SELECT * FROM pg_class where relname = '" . $seq_name . "';");
     }
 
@@ -463,7 +402,8 @@ class fs_postgresql {
      * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
      * @return integer|false
      */
-    public function lastval() {
+    public function lastval()
+    {
         $aux = $this->select('SELECT lastval() as num;');
         if ($aux) {
             return $aux[0]['num'];
@@ -477,7 +417,8 @@ class fs_postgresql {
      * @param string $str
      * @return string
      */
-    public function escape_string($str) {
+    public function escape_string($str)
+    {
         if (self::$link) {
             return pg_escape_string(self::$link, $str);
         }
@@ -489,7 +430,8 @@ class fs_postgresql {
      * Devuelve el estilo de fecha del motor de base de datos.
      * @return string
      */
-    public function date_style() {
+    public function date_style()
+    {
         return 'd-m-Y';
     }
 
@@ -498,7 +440,8 @@ class fs_postgresql {
      * @param string $col_name
      * @return string
      */
-    public function sql_to_int($col_name) {
+    public function sql_to_int($col_name)
+    {
         return $col_name . '::integer';
     }
 
@@ -509,7 +452,8 @@ class fs_postgresql {
      * @param array $db_cols
      * @return string
      */
-    public function compare_columns($table_name, $xml_cols, $db_cols) {
+    public function compare_columns($table_name, $xml_cols, $db_cols)
+    {
         $sql = '';
 
         foreach ($xml_cols as $xml_col) {
@@ -567,7 +511,8 @@ class fs_postgresql {
      * @param string $xml_type
      * @return boolean
      */
-    private function compare_data_types($db_type, $xml_type) {
+    private function compare_data_types($db_type, $xml_type)
+    {
         if (FS_CHECK_DB_TYPES != 1) {
             /// si está desactivada la comprobación de tipos, devolvemos que son iguales.
             return TRUE;
@@ -591,7 +536,8 @@ class fs_postgresql {
      * @param string $default
      * @param string $colname
      */
-    private function default2check_sequence($table_name, $default, $colname) {
+    private function default2check_sequence($table_name, $default, $colname)
+    {
         /// ¿Se refiere a una secuencia?
         if (strtolower(substr($default, 0, 9)) == "nextval('") {
             $aux = explode("'", $default);
@@ -619,7 +565,8 @@ class fs_postgresql {
      * @param boolean $delete_only
      * @return string
      */
-    public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE) {
+    public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE)
+    {
         $sql = '';
 
         if (!empty($db_cons)) {
@@ -672,7 +619,8 @@ class fs_postgresql {
      * @param array $xml_cons
      * @return string
      */
-    public function generate_table($table_name, $xml_cols, $xml_cons) {
+    public function generate_table($table_name, $xml_cols, $xml_cons)
+    {
         $sql = 'CREATE TABLE ' . $table_name . ' (';
 
         $i = FALSE;
@@ -703,8 +651,8 @@ class fs_postgresql {
      * @param string $table_name
      * @return boolean
      */
-    public function check_table_aux($table_name) {
+    public function check_table_aux($table_name)
+    {
         return TRUE;
     }
-
 }

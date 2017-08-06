@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -18,6 +17,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+function fatal_handler()
+{
+    $error = error_get_last();
+    if ($error !== NULL && substr($error["message"], 0, 19) != 'Memcache::connect()' && strpos($error["file"], '/tcpdf/') === FALSE) {
+        echo "<h1>Error fatal</h1>"
+        . "<ul>"
+        . "<li><b>Tipo:</b> " . $error["type"] . "</li>"
+        . "<li><b>Archivo:</b> " . $error["file"] . "</li>"
+        . "<li><b>Línea:</b> " . $error["line"] . "</li>"
+        . "<li><b>Mensaje:</b> " . $error["message"] . "</li>"
+        . "</ul>";
+    }
+}
+
+function require_all_models()
+{
+    if (!isset($GLOBALS['models'])) {
+        $GLOBALS['models'] = array();
+    }
+
+    foreach ($GLOBALS['plugins'] as $plugin) {
+        if (file_exists('plugins/' . $plugin . '/model')) {
+            foreach (scandir('plugins/' . $plugin . '/model') as $file_name) {
+                if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
+                    require_once 'plugins/' . $plugin . '/model/' . $file_name;
+                    $GLOBALS['models'][] = $file_name;
+                }
+            }
+        }
+    }
+
+    /// ahora cargamos los del núcleo
+    foreach (scandir('model') as $file_name) {
+        if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
+            require_once 'model/' . $file_name;
+            $GLOBALS['models'][] = $file_name;
+        }
+    }
+}
+
 /**
  * Esta función sirve para cargar modelos, y sobre todo, para cargarlos
  * desde la carpeta plugins, así se puede personalizar aún más el comportamiento
@@ -26,7 +65,8 @@
  * No se producirá ningún error en caso de que el archivo no se encuentre.
  * @param string $name nombre del archivo que se desea cargar.
  */
-function require_model($name) {
+function require_model($name)
+{
     if (!isset($GLOBALS['models'])) {
         $GLOBALS['models'] = array();
     }
@@ -55,7 +95,8 @@ function require_model($name) {
  * @param mixed $object
  * @return string
  */
-function get_class_name($object = NULL) {
+function get_class_name($object = NULL)
+{
     $name = get_class($object);
 
     $pos = strrpos($name, '\\');
@@ -73,7 +114,8 @@ function get_class_name($object = NULL) {
  * @param integer $iDec
  * @return float
  */
-function bround($dVal, $iDec = 2) {
+function bround($dVal, $iDec = 2)
+{
     // banker's style rounding or round-half-even
     // (round down when even number is left of 5, otherwise round up)
     // $dVal is value to round
@@ -102,7 +144,8 @@ function bround($dVal, $iDec = 2) {
  * @param integer $timeout
  * @return string
  */
-function fs_file_get_contents($url, $timeout = 10) {
+function fs_file_get_contents($url, $timeout = 10)
+{
     if (function_exists('curl_init')) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -112,14 +155,14 @@ function fs_file_get_contents($url, $timeout = 10) {
         if (ini_get('open_basedir') === NULL) {
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         }
-        
+
         /**
          * En algunas configuraciones de php es necesario desactivar estos flags,
          * en otras es necesario activarlos. habrá que buscar una solución mejor.
          */
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        
+
         if (defined('FS_PROXY_TYPE')) {
             curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
             curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
@@ -147,7 +190,8 @@ function fs_file_get_contents($url, $timeout = 10) {
  * @param boolean $curlopt_header
  * @return string
  */
-function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false) {
+function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false)
+{
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $data = curl_exec($ch);
@@ -183,7 +227,8 @@ function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false) {
  * @param integer $timeout
  * @return boolean
  */
-function fs_file_download($url, $filename, $timeout = 30) {
+function fs_file_download($url, $filename, $timeout = 30)
+{
     $ok = FALSE;
 
     try {
@@ -203,7 +248,8 @@ function fs_file_download($url, $filename, $timeout = 30) {
  * @param string $txt
  * @return string
  */
-function fs_fix_html($txt) {
+function fs_fix_html($txt)
+{
     $original = array('&lt;', '&gt;', '&quot;', '&#39;');
     $final = array('<', '>', "'", "'");
     return trim(str_replace($original, $final, $txt));
@@ -214,7 +260,8 @@ function fs_fix_html($txt) {
  * @param string $name
  * @return string|boolean
  */
-function fs_filter_input_req($name) {
+function fs_filter_input_req($name)
+{
     if (isset($_REQUEST[$name])) {
         return $_REQUEST[$name];
     }
@@ -222,7 +269,8 @@ function fs_filter_input_req($name) {
     return FALSE;
 }
 
-function fs_get_max_file_upload() {
+function fs_get_max_file_upload()
+{
     $max = intval(ini_get('post_max_size'));
 
     if (intval(ini_get('upload_max_filesize')) < $max) {

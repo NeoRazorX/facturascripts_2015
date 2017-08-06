@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -18,23 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('fs_rol.php');
-
 /**
  * Controlador de admin -> users.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_users extends fs_controller {
+class admin_users extends fs_controller
+{
 
     public $agente;
     public $historial;
     public $rol;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Usuarios', 'admin', TRUE, TRUE);
     }
 
-    protected function private_core() {
+    protected function private_core()
+    {
         $this->agente = new agente();
         $this->rol = new fs_rol();
 
@@ -53,7 +53,8 @@ class admin_users extends fs_controller {
         $this->historial = $fslog->all_by('login');
     }
 
-    private function add_user() {
+    private function add_user()
+    {
         $nu = $this->user->get(filter_input(INPUT_POST, 'nnick'));
         if ($nu) {
             $this->new_error_msg('El usuario <a href="' . $nu->url() . '">ya existe</a>.');
@@ -105,7 +106,8 @@ class admin_users extends fs_controller {
         }
     }
 
-    private function delete_user() {
+    private function delete_user()
+    {
         $nu = $this->user->get(filter_input(INPUT_GET, 'delete'));
         if ($nu) {
             if (FS_DEMO) {
@@ -123,7 +125,8 @@ class admin_users extends fs_controller {
         }
     }
 
-    private function add_rol() {
+    private function add_rol()
+    {
         $this->rol->codrol = filter_input(INPUT_POST, 'nrol');
         $this->rol->descripcion = filter_input(INPUT_POST, 'descripcion');
 
@@ -135,7 +138,8 @@ class admin_users extends fs_controller {
         }
     }
 
-    private function delete_rol() {
+    private function delete_rol()
+    {
         $rol = $this->rol->get(filter_input(INPUT_GET, 'delete_rol'));
         if ($rol) {
             if ($rol->delete()) {
@@ -148,7 +152,8 @@ class admin_users extends fs_controller {
         }
     }
 
-    public function all_pages() {
+    public function all_pages()
+    {
         $returnlist = array();
 
         /// Obtenemos la lista de páginas. Todas
@@ -207,5 +212,4 @@ class admin_users extends fs_controller {
 
         return $returnlist;
     }
-
 }

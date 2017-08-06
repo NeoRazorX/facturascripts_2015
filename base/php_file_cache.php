@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -29,7 +28,8 @@
  * @link http://emiliocobos.net/php-cache/
  *
  */
-class php_file_cache {
+class php_file_cache
+{
 
     /**
      * Configuration
@@ -38,7 +38,8 @@ class php_file_cache {
      */
     private static $config;
 
-    public function __construct() {
+    public function __construct()
+    {
         self::$config = array(
             'cache_path' => 'tmp/' . FS_TMP_NAME . 'cache',
             'expires' => 180,
@@ -56,7 +57,8 @@ class php_file_cache {
      * @param string $key
      * @return string the filename of the php file
      */
-    public function get_route($key) {
+    public function get_route($key)
+    {
         return self::$config['cache_path'] . '/' . md5($key) . '.php';
     }
 
@@ -67,7 +69,8 @@ class php_file_cache {
      * @param string $key
      * @return mixed the content you put in, or null if expired or not found
      */
-    public function get($key, $raw = false, $custom_time = NULL) {
+    public function get($key, $raw = false, $custom_time = NULL)
+    {
         if (!$this->file_expired($file = $this->get_route($key), $custom_time)) {
             $content = file_get_contents($file);
             return $raw ? $content : unserialize($content);
@@ -85,7 +88,8 @@ class php_file_cache {
      * @param bool $raw whether if you want to store raw data or not. If it is true, $content *must* be a string
      * @return bool whether if the operation was successful or not
      */
-    public function put($key, $content, $raw = FALSE) {
+    public function put($key, $content, $raw = FALSE)
+    {
         $dest_file_name = $this->get_route($key);
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $temp_file_name = str_replace(".php", uniqid("-", true) . ".php", $dest_file_name);
@@ -104,7 +108,8 @@ class php_file_cache {
      * @param string $key
      * @return bool true if the data was removed successfully
      */
-    public function delete($key) {
+    public function delete($key)
+    {
         $done = TRUE;
         $ruta = $this->get_route($key);
         if (file_exists($ruta)) {
@@ -120,7 +125,8 @@ class php_file_cache {
      * @access public
      * @return bool always true
      */
-    public function flush() {
+    public function flush()
+    {
         $cache_files = glob(self::$config['cache_path'] . '/*.php', GLOB_NOSORT);
         foreach ($cache_files as $file) {
             unlink($file);
@@ -136,7 +142,8 @@ class php_file_cache {
      * @param int $time the number of minutes it was set to expire
      * @return bool if the file has expired or not
      */
-    public function file_expired($file, $time = NULL) {
+    public function file_expired($file, $time = NULL)
+    {
         $done = TRUE;
         if (file_exists($file)) {
             $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
@@ -144,5 +151,4 @@ class php_file_cache {
 
         return $done;
     }
-
 }

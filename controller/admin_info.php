@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -22,7 +21,8 @@
  * Controlador de admin -> información del sistema.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_info extends fs_controller {
+class admin_info extends fs_controller
+{
 
     public $allow_delete;
     public $b_alerta;
@@ -33,32 +33,35 @@ class admin_info extends fs_controller {
     public $b_tipo;
     public $b_usuario;
     public $db_tables;
+    private $fsvar;
     public $modulos_eneboo;
     public $resultados;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
     }
 
-    protected function private_core() {
+    protected function private_core()
+    {
         /// ¿El usuario tiene permiso para eliminar en esta página?
         $this->allow_delete = $this->user->admin;
 
         /**
          * Cargamos las variables del cron
          */
-        $fsvar = new fs_var();
-        $cron_vars = $fsvar->array_get(
-                array(
-                    'cron_exists' => FALSE,
-                    'cron_lock' => FALSE,
-                    'cron_error' => FALSE)
+        $this->fsvar = new fs_var();
+        $cron_vars = $this->fsvar->array_get(
+            array(
+                'cron_exists' => FALSE,
+                'cron_lock' => FALSE,
+                'cron_error' => FALSE)
         );
 
         if (isset($_GET['fix'])) {
             $cron_vars['cron_error'] = FALSE;
             $cron_vars['cron_lock'] = FALSE;
-            $fsvar->array_save($cron_vars);
+            $this->fsvar->array_save($cron_vars);
         } else if (isset($_GET['clean_cache'])) {
             /// borramos los archivos php del directorio tmp
             foreach (scandir(getcwd() . '/tmp/' . FS_TMP_NAME) as $f) {
@@ -72,11 +75,11 @@ class admin_info extends fs_controller {
             }
         } else if (!$cron_vars['cron_exists']) {
             $this->new_advice('Nunca se ha ejecutado el'
-                    . ' <a href="https://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
-                    . ' te perderás algunas características interesantes de FacturaScripts.');
+                . ' <a href="https://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron" target="_blank">cron</a>,'
+                . ' te perderás algunas características interesantes de FacturaScripts.');
         } else if ($cron_vars['cron_error']) {
             $this->new_error_msg('Parece que ha habido un error con el cron. Haz clic <a href="' . $this->url()
-                    . '&fix=TRUE">aquí</a> para corregirlo.');
+                . '&fix=TRUE">aquí</a> para corregirlo.');
         } else if ($cron_vars['cron_lock']) {
             $this->new_advice('Se está ejecutando el cron.');
         }
@@ -86,8 +89,9 @@ class admin_info extends fs_controller {
         $this->get_db_tables();
         $this->modulos_eneboo();
     }
-    
-    private function ini_filters() {
+
+    private function ini_filters()
+    {
         $this->b_alerta = fs_filter_input_req('b_alerta');
         $this->b_desde = '';
         $this->b_detalle = '';
@@ -107,33 +111,43 @@ class admin_info extends fs_controller {
         if (fs_filter_input_req('b_ip')) {
             $this->b_ip = (string) fs_filter_input_req('b_ip');
         }
+        
+        /// forzamos la creación de la tabla, si todavía no existe
+        new fs_log();
     }
 
-    public function php_version() {
+    public function php_version()
+    {
         return phpversion();
     }
 
-    public function cache_version() {
+    public function cache_version()
+    {
         return $this->cache->version();
     }
 
-    public function fs_db_name() {
+    public function fs_db_name()
+    {
         return FS_DB_NAME;
     }
 
-    public function fs_db_version() {
+    public function fs_db_version()
+    {
         return $this->db->version();
     }
 
-    public function get_locks() {
+    public function get_locks()
+    {
         return $this->db->get_locks();
     }
 
-    public function get_db_tables() {
+    public function get_db_tables()
+    {
         $this->db_tables = $this->db->list_tables();
     }
 
-    private function buscar_en_log() {
+    private function buscar_en_log()
+    {
         $this->resultados = array();
         $sql = "SELECT * FROM fs_logs WHERE 1=1";
 
@@ -175,7 +189,8 @@ class admin_info extends fs_controller {
         }
     }
 
-    private function modulos_eneboo() {
+    private function modulos_eneboo()
+    {
         $this->modulos_eneboo = array();
 
         if ($this->db->table_exists('flmodules')) {
@@ -187,5 +202,4 @@ class admin_info extends fs_controller {
             }
         }
     }
-
 }

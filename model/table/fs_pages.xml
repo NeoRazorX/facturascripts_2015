@@ -7,46 +7,46 @@
         Estructura de la tabla fs_pages.
 -->
 <tabla>
-   <columna>
-      <nombre>name</nombre>
-      <tipo>character varying(30)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>title</nombre>
-      <tipo>character varying(40)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>folder</nombre>
-      <tipo>character varying(15)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>version</nombre>
-      <tipo>character varying(10)</tipo>
-      <nulo>YES</nulo>
-   </columna>
-   <columna>
-      <nombre>show_on_menu</nombre>
-      <tipo>boolean</tipo>
-      <nulo>NO</nulo>
-      <defecto>true</defecto>
-   </columna>
-   <columna>
-      <nombre>important</nombre>
-      <tipo>boolean</tipo>
-      <nulo>NO</nulo>
-      <defecto>false</defecto>
-   </columna>
+    <columna>
+        <nombre>name</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>title</nombre>
+        <tipo>character varying(40)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>folder</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>version</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>show_on_menu</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>true</defecto>
+    </columna>
+    <columna>
+        <nombre>important</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
     <columna>
         <nombre>orden</nombre>
         <tipo>integer</tipo>
         <nulo>NO</nulo>
         <defecto>100</defecto>
     </columna>   
-   <restriccion>
-      <nombre>fs_pages_pkey</nombre>
-      <consulta>PRIMARY KEY (name)</consulta>
-   </restriccion>
+    <restriccion>
+        <nombre>fs_pages_pkey</nombre>
+        <consulta>PRIMARY KEY (name)</consulta>
+    </restriccion>
 </tabla>

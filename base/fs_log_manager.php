@@ -17,14 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'model/core/empresa.php';
-
 /**
- * Esta clase almacena los principales datos de la empresa.
+ * Description of fs_log_manager
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author carlos
  */
-class empresa extends FacturaScripts\model\empresa
+class fs_log_manager
 {
-    
+
+    private $core_log;
+
+    public function __construct()
+    {
+        $this->core_log = new fs_core_log();
+    }
+
+    public function save()
+    {
+        foreach ($this->core_log->get_to_save() as $err) {
+            $new_log = new fs_log();
+            $new_log->tipo = $err['type'];
+            $new_log->detalle = $err['message'];
+            $new_log->alerta = $err['alert'];
+            $new_log->save();
+        }
+    }
 }

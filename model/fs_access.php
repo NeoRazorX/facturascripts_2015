@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -24,7 +23,8 @@
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_access extends fs_model {
+class fs_access extends fs_model
+{
 
     /**
      * Nick del usuario.
@@ -44,12 +44,13 @@ class fs_access extends fs_model {
      */
     public $allow_delete;
 
-    public function __construct($a = FALSE) {
+    public function __construct($data = FALSE)
+    {
         parent::__construct('fs_access');
-        if ($a) {
-            $this->fs_user = $a['fs_user'];
-            $this->fs_page = $a['fs_page'];
-            $this->allow_delete = $this->str2bool($a['allow_delete']);
+        if ($data) {
+            $this->fs_user = $data['fs_user'];
+            $this->fs_page = $data['fs_page'];
+            $this->allow_delete = $this->str2bool($data['allow_delete']);
         } else {
             $this->fs_user = NULL;
             $this->fs_page = NULL;
@@ -57,39 +58,43 @@ class fs_access extends fs_model {
         }
     }
 
-    protected function install() {
+    protected function install()
+    {
         return '';
     }
 
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->fs_page)) {
             return FALSE;
         }
 
         return $this->db->select("SELECT * FROM " . $this->table_name
-                        . " WHERE fs_user = " . $this->var2str($this->fs_user)
-                        . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
+                . " WHERE fs_user = " . $this->var2str($this->fs_user)
+                . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
     }
 
-    public function save() {
+    public function save()
+    {
         if ($this->exists()) {
             $sql = "UPDATE " . $this->table_name . " SET allow_delete = " . $this->var2str($this->allow_delete)
-                    . " WHERE fs_user = " . $this->var2str($this->fs_user)
-                    . " AND fs_page = " . $this->var2str($this->fs_page) . ";";
+                . " WHERE fs_user = " . $this->var2str($this->fs_user)
+                . " AND fs_page = " . $this->var2str($this->fs_page) . ";";
         } else {
             $sql = "INSERT INTO " . $this->table_name . " (fs_user,fs_page,allow_delete) VALUES "
-                    . "(" . $this->var2str($this->fs_user)
-                    . "," . $this->var2str($this->fs_page)
-                    . "," . $this->var2str($this->allow_delete) . ");";
+                . "(" . $this->var2str($this->fs_user)
+                . "," . $this->var2str($this->fs_page)
+                . "," . $this->var2str($this->allow_delete) . ");";
         }
 
         return $this->db->exec($sql);
     }
 
-    public function delete() {
+    public function delete()
+    {
         return $this->db->exec("DELETE FROM " . $this->table_name
-                        . " WHERE fs_user = " . $this->var2str($this->fs_user)
-                        . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
+                . " WHERE fs_user = " . $this->var2str($this->fs_user)
+                . " AND fs_page = " . $this->var2str($this->fs_page) . ";");
     }
 
     /**
@@ -97,7 +102,8 @@ class fs_access extends fs_model {
      * @param string $nick
      * @return \fs_access
      */
-    public function all_from_nick($nick) {
+    public function all_from_nick($nick)
+    {
         $accesslist = array();
 
         $access = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE fs_user = " . $this->var2str($nick) . ";");
@@ -109,5 +115,4 @@ class fs_access extends fs_model {
 
         return $accesslist;
     }
-
 }

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -22,7 +21,8 @@
  * Controlador para modificar el perfil del usuario.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_user extends fs_controller {
+class admin_user extends fs_controller
+{
 
     public $agente;
     public $allow_delete;
@@ -30,11 +30,13 @@ class admin_user extends fs_controller {
     public $user_log;
     public $suser;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Usuario', 'admin', TRUE, FALSE);
     }
 
-    public function private_core() {
+    public function private_core()
+    {
         $this->share_extensions();
         $this->agente = new agente();
 
@@ -82,8 +84,8 @@ class admin_user extends fs_controller {
                 }
                 if ($sin_paginas) {
                     $this->new_advice('No has autorizado a este usuario a acceder a ninguna'
-                            . ' página y por tanto no podrá hacer nada. Puedes darle acceso a alguna página'
-                            . ' desde la pestaña autorizar.');
+                        . ' página y por tanto no podrá hacer nada. Puedes darle acceso a alguna página'
+                        . ' desde la pestaña autorizar.');
                 }
             }
 
@@ -94,17 +96,19 @@ class admin_user extends fs_controller {
         }
     }
 
-    public function url() {
+    public function url()
+    {
         if (!isset($this->suser)) {
             return parent::url();
         } else if ($this->suser) {
             return $this->suser->url();
         }
-        
+
         return $this->page->url();
     }
 
-    public function all_pages() {
+    public function all_pages()
+    {
         $returnlist = array();
 
         /// Obtenemos la lista de páginas. Todas
@@ -134,7 +138,8 @@ class admin_user extends fs_controller {
         return $returnlist;
     }
 
-    private function share_extensions() {
+    private function share_extensions()
+    {
         foreach ($this->extensions as $ext) {
             if ($ext->type == 'css') {
                 if (!file_exists($ext->text)) {
@@ -231,7 +236,8 @@ class admin_user extends fs_controller {
         }
     }
 
-    private function nuevo_empleado() {
+    private function nuevo_empleado()
+    {
         $age0 = new agente();
         $age0->codagente = $age0->get_new_codigo();
         $age0->nombre = filter_input(INPUT_POST, 'nnombre');
@@ -256,7 +262,8 @@ class admin_user extends fs_controller {
         }
     }
 
-    private function modificar_user() {
+    private function modificar_user()
+    {
         if (FS_DEMO AND $this->user->nick != $this->suser->nick) {
             $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
             Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
@@ -369,7 +376,8 @@ class admin_user extends fs_controller {
         }
     }
 
-    private function desactivar_usuario() {
+    private function desactivar_usuario()
+    {
         if (!$this->user->admin) {
             $this->new_error_msg('Solamente un administrador puede activar o desactivar a un Usuario.');
         } else if ($this->user->nick == $this->suser->nick) {
@@ -389,5 +397,4 @@ class admin_user extends fs_controller {
             }
         }
     }
-
 }

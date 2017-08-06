@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -23,7 +22,8 @@
  *
  * @author Carlos García Gómez
  */
-class fs_ip_filter {
+class fs_ip_filter
+{
 
     const BAN_SECONDS = 600;
     const MAX_ATTEMPTS = 5;
@@ -31,7 +31,8 @@ class fs_ip_filter {
     private $filePath;
     private $ipList;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->filePath = 'tmp/' . FS_TMP_NAME . 'ip.log';
         $this->ipList = array();
 
@@ -51,7 +52,8 @@ class fs_ip_filter {
         }
     }
 
-    public function isBanned($ip) {
+    public function isBanned($ip)
+    {
         $banned = FALSE;
 
         foreach ($this->ipList as $line) {
@@ -63,17 +65,19 @@ class fs_ip_filter {
 
         return $banned;
     }
-    
-    public function inWhiteList($ip) {
+
+    public function inWhiteList($ip)
+    {
         if (FS_IP_WHITELIST === '*' || FS_IP_WHITELIST === '') {
             return TRUE;
         }
-        
+
         $aux = explode(',', FS_IP_WHITELIST);
         return in_array($ip, $aux);
     }
 
-    public function setAttempt($ip) {
+    public function setAttempt($ip)
+    {
         $found = FALSE;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] == $ip) {
@@ -91,15 +95,15 @@ class fs_ip_filter {
         $this->save();
     }
 
-    private function save() {
+    private function save()
+    {
         $file = fopen($this->filePath, 'w');
         if ($file) {
             foreach ($this->ipList as $line) {
-                fwrite($file, $line['ip'] . ';' . $line['count'] . ';' . $line['expire']."\n");
+                fwrite($file, $line['ip'] . ';' . $line['count'] . ';' . $line['expire'] . "\n");
             }
 
             fclose($file);
         }
     }
-
 }

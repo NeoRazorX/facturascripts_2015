@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -29,6 +28,7 @@ require_once 'base/config2.php';
 
 $tiempo = explode(' ', microtime());
 $uptime = $tiempo[1] + $tiempo[0];
+$core_log = new fs_core_log();
 
 require_once 'base/fs_core_log.php';
 require_once 'base/fs_db2.php';
@@ -37,9 +37,8 @@ $db = new fs_db2();
 require_once 'base/fs_default_items.php';
 
 require_once 'base/fs_model.php';
-require_model('empresa.php');
-require_model('fs_var.php');
-require_model('fs_log.php');
+require_once 'base/fs_log_manager.php';
+require_all_models();
 
 if ($db->connect()) {
     $fsvar = new fs_var();
@@ -108,15 +107,18 @@ if ($db->connect()) {
     $fsvar->array_save($cron_vars);
 
     /// mostramos el errores que se hayan podido producir
-    $core_log = new fs_core_log();
     foreach ($core_log->get_errors() as $err) {
         echo "\nERROR: " . $err . "\n";
     }
 
+    /// guardamos los errores en el log
+    $log_manager = new fs_log_manager();
+    $log_manager->save();
+
     $db->close();
 } else {
     echo "¡Imposible conectar a la base de datos!\n";
-    foreach ($db->get_errors() as $err) {
+    foreach ($core_log->get_errors() as $err) {
         echo $err . "\n";
     }
 }

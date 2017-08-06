@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\model;
 
 /**
@@ -25,7 +23,8 @@ namespace FacturaScripts\model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class cuenta_banco extends \fs_model {
+class cuenta_banco extends \fs_model
+{
 
     /**
      * Clave primaria. Varchar (6).
@@ -42,14 +41,15 @@ class cuenta_banco extends \fs_model {
      */
     public $codsubcuenta;
 
-    public function __construct($c = FALSE) {
+    public function __construct($data = FALSE)
+    {
         parent::__construct('cuentasbanco');
-        if ($c) {
-            $this->codcuenta = $c['codcuenta'];
-            $this->descripcion = $c['descripcion'];
-            $this->iban = $c['iban'];
-            $this->swift = $c['swift'];
-            $this->codsubcuenta = $c['codsubcuenta'];
+        if ($data) {
+            $this->codcuenta = $data['codcuenta'];
+            $this->descripcion = $data['descripcion'];
+            $this->iban = $data['iban'];
+            $this->swift = $data['swift'];
+            $this->codsubcuenta = $data['codsubcuenta'];
         } else {
             $this->codcuenta = NULL;
             $this->descripcion = NULL;
@@ -59,7 +59,8 @@ class cuenta_banco extends \fs_model {
         }
     }
 
-    protected function install() {
+    protected function install()
+    {
         return '';
     }
 
@@ -68,7 +69,8 @@ class cuenta_banco extends \fs_model {
      * @param boolean $espacios
      * @return string
      */
-    public function iban($espacios = FALSE) {
+    public function iban($espacios = FALSE)
+    {
         if ($espacios) {
             $txt = '';
             $iban = str_replace(' ', '', $this->iban);
@@ -77,7 +79,7 @@ class cuenta_banco extends \fs_model {
             }
             return $txt;
         }
-        
+
         return str_replace(' ', '', $this->iban);
     }
 
@@ -85,7 +87,8 @@ class cuenta_banco extends \fs_model {
      * Devuelve la URL donde ver/modificar los datos de esta cuenta bancaria
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         return 'index.php?page=admin_empresa#cuentasb';
     }
 
@@ -94,12 +97,13 @@ class cuenta_banco extends \fs_model {
      * @param string $cod
      * @return boolean|\cuenta_banco
      */
-    public function get($cod) {
+    public function get($cod)
+    {
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($cod) . ";");
         if ($data) {
             return new \cuenta_banco($data[0]);
         }
-        
+
         return FALSE;
     }
 
@@ -107,13 +111,14 @@ class cuenta_banco extends \fs_model {
      * Devuelve un nuevo código para una cuenta bancaria
      * @return int
      */
-    private function get_new_codigo() {
+    private function get_new_codigo()
+    {
         $sql = "SELECT MAX(" . $this->db->sql_to_int('codcuenta') . ") as cod FROM " . $this->table_name . ";";
         $data = $this->db->select($sql);
         if ($data) {
             return (string) (1 + (int) $data[0]['cod']);
         }
-        
+
         return '1';
     }
 
@@ -121,11 +126,12 @@ class cuenta_banco extends \fs_model {
      * Devuelve TRUE si la cuenta bancaria existe
      * @return boolean
      */
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->codcuenta)) {
             return FALSE;
         }
-        
+
         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
     }
 
@@ -133,23 +139,24 @@ class cuenta_banco extends \fs_model {
      * Guarda los datos en la base de datos.
      * @return boolean
      */
-    public function save() {
+    public function save()
+    {
         $this->descripcion = $this->no_html($this->descripcion);
 
         if ($this->exists()) {
             $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion) .
-                    ", iban = " . $this->var2str($this->iban) .
-                    ", swift = " . $this->var2str($this->swift) .
-                    ", codsubcuenta = " . $this->var2str($this->codsubcuenta) .
-                    "  WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";";
+                ", iban = " . $this->var2str($this->iban) .
+                ", swift = " . $this->var2str($this->swift) .
+                ", codsubcuenta = " . $this->var2str($this->codsubcuenta) .
+                "  WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";";
         } else {
             $this->codcuenta = $this->get_new_codigo();
             $sql = "INSERT INTO " . $this->table_name . " (codcuenta,descripcion,iban,swift,codsubcuenta)
                  VALUES (" . $this->var2str($this->codcuenta) .
-                    "," . $this->var2str($this->descripcion) .
-                    "," . $this->var2str($this->iban) .
-                    "," . $this->var2str($this->swift) .
-                    "," . $this->var2str($this->codsubcuenta) . ");";
+                "," . $this->var2str($this->descripcion) .
+                "," . $this->var2str($this->iban) .
+                "," . $this->var2str($this->swift) .
+                "," . $this->var2str($this->codsubcuenta) . ");";
         }
 
         return $this->db->exec($sql);
@@ -159,11 +166,13 @@ class cuenta_banco extends \fs_model {
      * Elimina esta cuenta bancaria
      * @return boolean
      */
-    public function delete() {
+    public function delete()
+    {
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($this->codcuenta) . ";");
     }
 
-    public function all() {
+    public function all()
+    {
         return $this->all_from_empresa();
     }
 
@@ -171,7 +180,8 @@ class cuenta_banco extends \fs_model {
      * Devuelve un array con todas las cuentas bancarias de la empresa
      * @return \cuenta_banco
      */
-    public function all_from_empresa() {
+    public function all_from_empresa()
+    {
         $clist = array();
 
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;");
@@ -189,7 +199,8 @@ class cuenta_banco extends \fs_model {
      * @param string $ccc
      * @return string
      */
-    public function calcular_iban($ccc) {
+    public function calcular_iban($ccc)
+    {
         $codpais = substr($this->default_items->codpais(), 0, 2);
 
         $pesos = array('A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
@@ -207,5 +218,4 @@ class cuenta_banco extends \fs_model {
 
         return $codpais . $digitoControl . $ccc;
     }
-
 }

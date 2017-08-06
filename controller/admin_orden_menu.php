@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -23,19 +22,23 @@
  *
  * @author alagoro
  */
-class admin_orden_menu extends fs_controller {
+class admin_orden_menu extends fs_controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Ordenar menú', 'admin', FALSE, TRUE);
     }
 
-    protected function private_core() {
+    protected function private_core()
+    {
         if (filter_input(INPUT_POST, 'guardar')) {
             $this->guardar_orden();
         }
     }
 
-    private function guardar_orden() {
+    private function guardar_orden()
+    {
         foreach ($this->folders() as $folder) {
             $orden = 0;
             foreach (filter_input_array(INPUT_POST) as $key => $value) {
@@ -54,5 +57,4 @@ class admin_orden_menu extends fs_controller {
         $this->new_message('Datos guardados.');
         $this->menu = $this->user->get_menu(TRUE);
     }
-
 }

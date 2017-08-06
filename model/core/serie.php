@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\model;
 
 /**
@@ -26,7 +24,8 @@ namespace FacturaScripts\model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class serie extends \fs_model {
+class serie extends \fs_model
+{
 
     /**
      * Clave primaria. Varchar (2).
@@ -59,15 +58,16 @@ class serie extends \fs_model {
      */
     public $numfactura;
 
-    public function __construct($s = FALSE) {
+    public function __construct($data = FALSE)
+    {
         parent::__construct('series');
-        if ($s) {
-            $this->codserie = $s['codserie'];
-            $this->descripcion = $s['descripcion'];
-            $this->siniva = $this->str2bool($s['siniva']);
-            $this->irpf = floatval($s['irpf']);
-            $this->codejercicio = $s['codejercicio'];
-            $this->numfactura = max(array(1, intval($s['numfactura'])));
+        if ($data) {
+            $this->codserie = $data['codserie'];
+            $this->descripcion = $data['descripcion'];
+            $this->siniva = $this->str2bool($data['siniva']);
+            $this->irpf = floatval($data['irpf']);
+            $this->codejercicio = $data['codejercicio'];
+            $this->numfactura = max(array(1, intval($data['numfactura'])));
         } else {
             $this->codserie = '';
             $this->descripcion = '';
@@ -78,17 +78,19 @@ class serie extends \fs_model {
         }
     }
 
-    public function install() {
+    public function install()
+    {
         $this->clean_cache();
         return "INSERT INTO " . $this->table_name . " (codserie,descripcion,siniva,irpf) VALUES "
-                . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
+            . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 
     /**
      * Devuelve la url donde ver/modificar la serie
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         if (is_null($this->codserie)) {
             return 'index.php?page=contabilidad_series';
         }
@@ -100,7 +102,8 @@ class serie extends \fs_model {
      * Devuelve TRUE si la serie es la predeterminada de la empresa
      * @return type
      */
-    public function is_default() {
+    public function is_default()
+    {
         return ( $this->codserie == $this->default_items->codserie() );
     }
 
@@ -109,10 +112,11 @@ class serie extends \fs_model {
      * @param string $cod
      * @return \serie|boolean
      */
-    public function get($cod) {
-        $serie = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($cod) . ";");
-        if ($serie) {
-            return new \serie($serie[0]);
+    public function get($cod)
+    {
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new \serie($data[0]);
         }
 
         return FALSE;
@@ -122,7 +126,8 @@ class serie extends \fs_model {
      * Devuelve TRUE si la serie existe
      * @return boolean
      */
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->codserie)) {
             return FALSE;
         }
@@ -134,7 +139,8 @@ class serie extends \fs_model {
      * Comprueba los datos de la serie, devuelve TRUE si son correctos
      * @return boolean
      */
-    public function test() {
+    public function test()
+    {
         $status = FALSE;
 
         $this->codserie = trim($this->codserie);
@@ -148,8 +154,9 @@ class serie extends \fs_model {
             $this->new_error_msg("Código de serie no válido.");
         } else if (strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100) {
             $this->new_error_msg("Descripción de serie no válida.");
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -158,25 +165,26 @@ class serie extends \fs_model {
      * Guarda los datos en la base de datos
      * @return boolean
      */
-    public function save() {
+    public function save()
+    {
         if ($this->test()) {
             $this->clean_cache();
 
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion)
-                        . ", siniva = " . $this->var2str($this->siniva)
-                        . ", irpf = " . $this->var2str($this->irpf)
-                        . ", codejercicio = " . $this->var2str($this->codejercicio)
-                        . ", numfactura = " . $this->var2str($this->numfactura)
-                        . "  WHERE codserie = " . $this->var2str($this->codserie) . ";";
+                    . ", siniva = " . $this->var2str($this->siniva)
+                    . ", irpf = " . $this->var2str($this->irpf)
+                    . ", codejercicio = " . $this->var2str($this->codejercicio)
+                    . ", numfactura = " . $this->var2str($this->numfactura)
+                    . "  WHERE codserie = " . $this->var2str($this->codserie) . ";";
             } else {
                 $sql = "INSERT INTO " . $this->table_name . " (codserie,descripcion,siniva,irpf,codejercicio,numfactura) VALUES "
-                        . "(" . $this->var2str($this->codserie)
-                        . "," . $this->var2str($this->descripcion)
-                        . "," . $this->var2str($this->siniva)
-                        . "," . $this->var2str($this->irpf)
-                        . "," . $this->var2str($this->codejercicio)
-                        . "," . $this->var2str($this->numfactura) . ");";
+                    . "(" . $this->var2str($this->codserie)
+                    . "," . $this->var2str($this->descripcion)
+                    . "," . $this->var2str($this->siniva)
+                    . "," . $this->var2str($this->irpf)
+                    . "," . $this->var2str($this->codejercicio)
+                    . "," . $this->var2str($this->numfactura) . ");";
             }
 
             return $this->db->exec($sql);
@@ -189,7 +197,8 @@ class serie extends \fs_model {
      * Elimina la serie
      * @return type
      */
-    public function delete() {
+    public function delete()
+    {
         $this->clean_cache();
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codserie = " . $this->var2str($this->codserie) . ";");
     }
@@ -197,7 +206,8 @@ class serie extends \fs_model {
     /**
      * Limpia la caché
      */
-    private function clean_cache() {
+    private function clean_cache()
+    {
         $this->cache->delete('m_serie_all');
     }
 
@@ -205,7 +215,8 @@ class serie extends \fs_model {
      * Devuelve un array con todas las series
      * @return \serie
      */
-    public function all() {
+    public function all()
+    {
         /// leemos la lista de la caché
         $serielist = $this->cache->get_array('m_serie_all');
         if (empty($serielist)) {
@@ -223,5 +234,4 @@ class serie extends \fs_model {
 
         return $serielist;
     }
-
 }
