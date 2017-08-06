@@ -119,7 +119,7 @@ class fs_controller
     /**
      * Esta variable contiene el texto enviado como parámetro query por cualquier formulario,
      * es decir, se corresponde con $_REQUEST['query']
-     * @var string
+     * @var string|boolean
      */
     public $query;
 
