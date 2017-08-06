@@ -28,10 +28,10 @@ require_once 'base/config2.php';
 
 $tiempo = explode(' ', microtime());
 $uptime = $tiempo[1] + $tiempo[0];
-$core_log = new fs_core_log();
 
 require_once 'base/fs_core_log.php';
 require_once 'base/fs_db2.php';
+$core_log = new fs_core_log();
 $db = new fs_db2();
 
 require_once 'base/fs_default_items.php';
