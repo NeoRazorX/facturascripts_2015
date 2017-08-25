@@ -580,7 +580,7 @@ class fs_updater
              */
             $this->download_list2 = $cache->get('download_list2');
             if (!$this->download_list2) {
-                $json = @fs_file_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json2=TRUE', 5);
+                $json = @fs_file_get_contents('https://www.facturascripts.com/plugins?json2=TRUE', 10);
                 if ($json && $json != 'ERROR') {
                     $this->download_list2 = json_decode($json);
                     $cache->set('download_list2', $this->download_list2);

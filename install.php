@@ -293,7 +293,7 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
         </nav>
 
-        <form name="f_feedback" action="https://www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
+        <form name="f_feedback" action="https://www.facturascripts.com/feedback" method="post" target="_blank" class="form" role="form">
             <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
             <input type="hidden" name="feedback_type" value="error"/>
             <div class="modal" id="modal_feedback">
