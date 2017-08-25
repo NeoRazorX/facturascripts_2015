@@ -245,7 +245,7 @@ class fs_controller
         );
 
         /// ahora debemos comprobar si guardar o no
-        if ($name) {
+        if ($name !== 'fs_controller') {
             $page = $this->page->get($name);
             if ($page) {
                 /// la página ya existe ¿Actualizamos?

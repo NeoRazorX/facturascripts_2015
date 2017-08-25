@@ -1001,4 +1001,16 @@ class admin_home extends fs_controller
             fclose($file);
         }
     }
+
+    public function new_codigo_options()
+    {
+        return array(
+            'eneboo' => 'Compatible con Eneboo',
+            'new' => 'TIPO + EJERCICIO + ' . strtoupper(FS_SERIE) . ' + NÚMERO',
+            '0-NUM' => 'Número continuo (con 0s)',
+            'NUM' => 'Número continuo',
+            'SERIE-YY-0-NUM' => strtoupper(FS_SERIE) . ' + AÑO (2 díg.) + NÚMERO (con 0s)',
+            'SERIE-YY-0-NUM-CORTO' => strtoupper(FS_SERIE) . ' + AÑO (2 díg.) + NÚMERO (mín. 4 car.)'
+        );
+    }
 }

@@ -37,14 +37,11 @@ require_once 'base/fs_controller.php';
 require_once 'base/fs_log_manager.php';
 require_once 'raintpl/rain.tpl.class.php';
 
-if (FS_DB_HISTORY) {
-    /**
-     * Si está activado el historial SQL, registramos además la función para
-     * capturar los fatal error. Información importante a la hora de depurar
-     * errores.
-     */
-    register_shutdown_function("fatal_handler");
-}
+/**
+ * Registramos la función para capturar los fatal error.
+ * Información importante a la hora de depurar errores.
+ */
+register_shutdown_function("fatal_handler");
 
 /// ¿Qué controlador usar?
 $pagename = '';

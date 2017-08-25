@@ -85,17 +85,6 @@ class empresa extends \fs_model
     public $web;
     public $email;
 
-    /**
-     * @deprecated since version 2015.053
-     * @var string
-     */
-    public $email_firma;
-
-    /**
-     * @deprecated since version 2015.053
-     * @var string
-     */
-    public $email_password;
     public $fax;
     public $telefono;
     public $codpais;
@@ -211,14 +200,6 @@ class empresa extends \fs_model
                 'mail_user' => '',
                 'mail_low_security' => FALSE,
             );
-
-            /// añadimos compatibilidad hacia atrás
-            if (isset($data[0]['email_password'])) {
-                $this->email_password = $this->email_config['mail_password'] = $data[0]['email_password'];
-            }
-            if (isset($data[0]['email_firma'])) {
-                $this->email_firma = $this->email_config['mail_firma'] = $data[0]['email_firma'];
-            }
 
             $fsvar = new \fs_var();
             $this->email_config = $fsvar->array_get($this->email_config, FALSE);
