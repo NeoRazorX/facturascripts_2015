@@ -181,9 +181,14 @@ function fs_file_get_contents($url, $timeout = 10)
 
         /// guardamos en el log
         if (class_exists('fs_core_log')) {
+            $error = curl_error($ch);
+            if($error == '') {
+                $error = 'ERROR '.$info['http_code'];
+            }
+            
             $core_log = new fs_core_log();
-            $core_log->new_error(curl_error($ch));
-            $core_log->save(curl_error($ch));
+            $core_log->new_error($error);
+            $core_log->save($error);
         }
 
         curl_close($ch);
