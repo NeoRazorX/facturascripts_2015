@@ -27,6 +27,11 @@ class fs_cache
 {
 
     private static $memcache;
+    
+    /**
+     *
+     * @var php_file_cache
+     */
     private static $php_file_cache;
     private static $connected;
     private static $error;

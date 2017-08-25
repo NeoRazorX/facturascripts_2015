@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once 'base/fs_cache.php';
+require_once 'base/fs_functions.php';
+require_once 'base/fs_core_log.php';
+
 /**
  * Controlador del actualizador de FacturaScripts.
  * @author Carlos García Gómez <neorazorx@gmail.com>
@@ -24,17 +28,76 @@
 class fs_updater
 {
 
+    /**
+     *
+     * @var boolean
+     */
     public $btn_fin;
+
+    /**
+     *
+     * @var fs_core_log
+     */
+    public $core_log;
+
+    /**
+     *
+     * @var boolean
+     */
     public $errores;
-    public $mensajes;
+
+    /**
+     *
+     * @var array
+     */
     public $plugins;
+
+    /**
+     *
+     * @var string
+     */
     public $tr_options;
+
+    /**
+     *
+     * @var string
+     */
     public $tr_updates;
+
+    /**
+     *
+     * @var array
+     */
     public $updates;
+
+    /**
+     *
+     * @var string
+     */
     public $version;
+
+    /**
+     *
+     * @var string
+     */
     public $xid;
+
+    /**
+     *
+     * @var fs_cache
+     */
     private $cache;
+
+    /**
+     *
+     * @var array
+     */
     private $download_list2;
+
+    /**
+     *
+     * @var array
+     */
     private $plugin_updates;
     private $uptime;
 
@@ -45,53 +108,48 @@ class fs_updater
 
         $this->btn_fin = FALSE;
         $this->cache = new fs_cache();
-        $this->errores = '';
-        $this->mensajes = '';
+        $this->core_log = new fs_core_log();
         $this->plugins = array();
         $this->tr_options = '';
         $this->tr_updates = '';
         $this->version = '';
         $this->xid();
 
-        if (filter_input(INPUT_COOKIE, 'user') AND filter_input(INPUT_COOKIE, 'logkey')) {
+        if (filter_input(INPUT_COOKIE, 'user') && filter_input(INPUT_COOKIE, 'logkey')) {
             /// solamente comprobamos si no hay que hacer nada
-            if (!filter_input(INPUT_GET, 'update') AND ! filter_input(INPUT_GET, 'reinstall') AND ! filter_input(INPUT_GET, 'plugin') AND ! filter_input(INPUT_GET, 'idplugin')) {
+            if (!filter_input(INPUT_GET, 'update') && !filter_input(INPUT_GET, 'reinstall') && !filter_input(INPUT_GET, 'plugin') && !filter_input(INPUT_GET, 'idplugin')) {
                 /// ¿Están todos los permisos correctos?
                 foreach ($this->__are_writable($this->__get_all_sub_directories('.')) as $dir) {
-                    $this->errores .= 'No se puede escribir sobre el directorio ' . $dir . '<br/>';
+                    $this->core_log->new_error('No se puede escribir sobre el directorio ' . $dir);
                 }
 
                 /// ¿Sigue estando disponible ziparchive?
                 if (!extension_loaded('zip')) {
-                    $this->errores .= 'No se encuentra la clase ZipArchive, debes instalar php-zip.<br/>';
+                    $this->core_log->new_error('No se encuentra la clase ZipArchive, debes instalar php-zip.');
                 }
             }
 
-            if ($this->errores != '') {
-                $this->errores .= 'Tienes que corregir estos errores antes de continuar.';
-            } else if (filter_input(INPUT_GET, 'update') OR filter_input(INPUT_GET, 'reinstall')) {
+            if (count($this->core_log->get_errors()) > 0) {
+                $this->core_log->new_error('Tienes que corregir estos errores antes de continuar.');
+            } else if (filter_input(INPUT_GET, 'update') || filter_input(INPUT_GET, 'reinstall')) {
                 $this->actualizar_nucleo();
             } else if (filter_input(INPUT_GET, 'plugin')) {
-                $this->actualizar_plugin();
-            } else if (filter_input(INPUT_GET, 'idplugin') AND filter_input(INPUT_GET, 'name') AND filter_input(INPUT_GET, 'key')) {
-                $this->actualizar_plugin_pago();
-            } else if (filter_input(INPUT_GET, 'idplugin') AND filter_input(INPUT_GET, 'name') AND filter_input(INPUT_POST, 'key')) {
-                $private_key = filter_input(INPUT_POST, 'key');
-                if (file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . filter_input(INPUT_GET, 'idplugin'), $private_key)) {
-                    $this->mensajes = 'Clave añadida correctamente.';
-                    $this->cache->clean();
-                } else
-                    $this->errores = 'Error al guardar la clave.';
+                $this->actualizar_plugin(filter_input(INPUT_GET, 'plugin'));
+            } else if (filter_input(INPUT_GET, 'idplugin') && filter_input(INPUT_GET, 'name') && filter_input(INPUT_GET, 'key')) {
+                $this->actualizar_plugin_pago(filter_input(INPUT_GET, 'idplugin'), filter_input(INPUT_GET, 'name'), filter_input(INPUT_GET, 'key'));
+            } else if (filter_input(INPUT_GET, 'idplugin') && filter_input(INPUT_GET, 'name') && filter_input(INPUT_POST, 'key')) {
+                $this->guardar_key();
             }
 
-            if ($this->errores == '') {
+            if (count($this->core_log->get_errors()) == 0) {
                 $this->comprobar_actualizaciones();
             } else {
                 $this->tr_updates = '<tr class="warning"><td colspan="5">Aplazada la comprobación'
                     . ' de plugins hasta que resuelvas los problemas.</td></tr>';
             }
-        } else
-            $this->errores = '<a href="index.php">Debes iniciar sesi&oacute;n</a>';
+        } else {
+            $this->core_log->new_error('<a href="index.php">Debes iniciar sesi&oacute;n</a>');
+        }
     }
 
     private function comprobar_actualizaciones()
@@ -122,7 +180,9 @@ class fs_updater
                 }
 
                 /// guardamos la lista de actualizaciones en cache
-                $this->cache->set('updater_lista', $this->updates);
+                if (count($this->updates['plugins']) > 0) {
+                    $this->cache->set('updater_lista', $this->updates);
+                }
             }
         }
 
@@ -238,7 +298,9 @@ class fs_updater
             }
 
             /// guardamos la lista de actualizaciones en cache
-            $this->cache->set('updater_lista', $this->updates);
+            if (count($this->updates['plugins']) > 0) {
+                $this->cache->set('updater_lista', $this->updates);
+            }
         }
     }
 
@@ -250,19 +312,16 @@ class fs_updater
         );
 
         foreach ($urls as $url) {
-            if (@fs_file_download($url, 'update.zip')) {
+            if (@fs_file_download($url, 'update-core.zip')) {
                 $zip = new ZipArchive();
-                $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
+                $zip_status = $zip->open('update-core.zip', ZipArchive::CHECKCONS);
 
                 if ($zip_status !== TRUE) {
-                    $this->errores = 'Ha habido un error con el archivo update.zip. Código: ' . $zip_status
-                        . '. Intente de nuevo en unos minutos.';
-                } else if (!$this->test_zip_nucleo($zip)) {
-                    $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
+                    $this->core_log->new_error('Ha habido un error con el archivo update-core.zip. Código: ' . $zip_status
+                        . '. Intente de nuevo en unos minutos.');
                 } else {
                     $zip->extractTo('.');
                     $zip->close();
-                    unlink('update.zip');
 
                     /// eliminamos archivos antiguos
                     $this->del_tree('base/');
@@ -276,37 +335,20 @@ class fs_updater
                     $this->recurse_copy('facturascripts_2015-master/', '.');
                     $this->del_tree('facturascripts_2015-master/');
 
-                    $this->mensajes = 'Actualizado correctamente.';
+                    $this->core_log->new_message('Actualizado correctamente.');
                     $this->actualizacion_correcta();
                     break;
                 }
-            } else
-                $this->errores = 'Error al descargar el archivo zip. Intente de nuevo en unos minutos.';
-        }
-    }
-
-    /**
-     * Comprueba la integridad del zip del núcleo.
-     * @param ZipArchive $zip
-     */
-    private function test_zip_nucleo(&$zip)
-    {
-        $ok = FALSE;
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $data = $zip->statIndex($i);
-            if (basename($data['name']) == 'updater.php') {
-                $ok = TRUE;
-                break;
+            } else {
+                $this->core_log->new_error('Error al descargar el archivo update-core.zip. Intente de nuevo en unos minutos.');
             }
         }
-
-        return $ok;
     }
 
-    private function actualizar_plugin()
+    private function actualizar_plugin($plugin_name)
     {
         /// leemos el ini del plugin
-        $plugin_ini = parse_ini_file('plugins/' . filter_input(INPUT_GET, 'plugin') . '/facturascripts.ini');
+        $plugin_ini = parse_ini_file('plugins/' . $plugin_name . '/facturascripts.ini');
         if (!empty($plugin_ini)) {
             /// descargamos el zip
             if (@fs_file_download($plugin_ini['update_url'], 'update.zip')) {
@@ -314,16 +356,14 @@ class fs_updater
                 $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
 
                 if ($zip_status !== TRUE) {
-                    $this->errores = 'Ha habido un error con el archivo update.zip. Código: ' . $zip_status
-                        . '. Intente de nuevo en unos minutos.';
-                } else if (!$this->test_zip_plugin($zip)) {
-                    $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
+                    $this->core_log->new_error('Ha habido un error con el archivo update.zip. Código: ' . $zip_status
+                        . '. Intente de nuevo en unos minutos.');
                 } else {
                     /// nos guardamos la lista previa de plugins
                     $plugins_list = scandir(getcwd() . '/plugins');
 
                     /// eliminamos los archivos antiguos
-                    $this->del_tree('plugins/' . filter_input(INPUT_GET, 'plugin'));
+                    $this->del_tree('plugins/' . $plugin_name);
 
                     /// descomprimimos
                     $zip->extractTo('plugins/');
@@ -332,7 +372,7 @@ class fs_updater
 
                     /// renombramos si es necesario
                     foreach (scandir(getcwd() . '/plugins') as $f) {
-                        if ($f != '.' AND $f != '..' AND is_dir('plugins/' . $f)) {
+                        if ($f != '.' && $f != '..' && is_dir('plugins/' . $f)) {
                             $encontrado2 = FALSE;
                             foreach ($plugins_list as $f2) {
                                 if ($f == $f2) {
@@ -342,75 +382,57 @@ class fs_updater
                             }
 
                             if (!$encontrado2) {
-                                rename('plugins/' . $f, 'plugins/' . filter_input(INPUT_GET, 'plugin'));
+                                rename('plugins/' . $f, 'plugins/' . $plugin_name);
                                 break;
                             }
                         }
                     }
 
-                    $this->mensajes = 'Plugin actualizado correctamente.';
-                    $this->actualizacion_correcta(filter_input(INPUT_GET, 'plugin'));
+                    $this->core_log->new_message('Plugin actualizado correctamente.');
+                    $this->actualizacion_correcta($plugin_name);
                 }
-            } else
-                $this->errores = 'Error al descargar el archivo zip. Intente de nuevo en unos minutos.';
-        } else
-            $this->errores = 'Error al leer el archivo plugins/' . filter_input(INPUT_GET, 'plugin') . '/facturascripts.ini';
-    }
-
-    /**
-     * Comprueba la integridad del zip de un plugin.
-     * @param ZipArchive $zip
-     * @return boolean
-     */
-    private function test_zip_plugin(&$zip)
-    {
-        $ok = FALSE;
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $data = $zip->statIndex($i);
-            if (basename($data['name']) == 'facturascripts.ini') {
-                $ok = TRUE;
-                break;
+            } else {
+                $this->core_log->new_error('Error al descargar el archivo update.zip. Intente de nuevo en unos minutos.');
             }
+        } else {
+            $this->core_log->new_error('Error al leer el archivo plugins/' . $plugin_name . '/facturascripts.ini');
         }
-
-        return $ok;
     }
 
-    private function actualizar_plugin_pago()
+    private function actualizar_plugin_pago($idplugin, $name, $key)
     {
         $url = 'https://www.facturascripts.com/comm3/index.php?page=community_edit_plugin&id=' .
-            filter_input(INPUT_GET, 'idplugin') . '&xid=' . $this->xid . '&key=' . filter_input(INPUT_GET, 'key');
+            $idplugin . '&xid=' . $this->xid . '&key=' . $key;
 
         /// descargamos el zip
-        if (@fs_file_download($url, 'update.zip')) {
+        if (@fs_file_download($url, 'update-pay.zip')) {
             $zip = new ZipArchive();
-            $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
+            $zip_status = $zip->open('update-pay.zip', ZipArchive::CHECKCONS);
 
             if ($zip_status !== TRUE) {
-                $this->errores = 'Ha habido un error con el archivo update.zip. Código: ' . $zip_status
-                    . '. Intente de nuevo en unos minutos.';
-            } else if (!$this->test_zip_plugin($zip)) {
-                $this->errores = 'Ha habido un error con el archivo update.zip<br/>Intente de nuevo en unos minutos.';
+                $this->core_log->new_error('Ha habido un error con el archivo update-pay.zip. Código: ' . $zip_status
+                    . '. Intente de nuevo en unos minutos.');
             } else {
                 /// eliminamos los archivos antiguos
-                $this->del_tree('plugins/' . filter_input(INPUT_GET, 'name'));
+                $this->del_tree('plugins/' . $name);
 
                 /// descomprimimos
                 $zip->extractTo('plugins/');
                 $zip->close();
-                unlink('update.zip');
+                unlink('update-pay.zip');
 
-                if (file_exists('plugins/' . filter_input(INPUT_GET, 'name') . '-master')) {
+                if (file_exists('plugins/' . $name . '-master')) {
                     /// renombramos el directorio
-                    rename('plugins/' . filter_input(INPUT_GET, 'name') . '-master', 'plugins/' . filter_input(INPUT_GET, 'name'));
+                    rename('plugins/' . $name . '-master', 'plugins/' . $name);
                 }
 
-                $this->mensajes = 'Plugin actualizado correctamente.';
-                $this->actualizacion_correcta(filter_input(INPUT_GET, 'name'));
+                $this->core_log->new_message('Plugin actualizado correctamente.');
+                $this->actualizacion_correcta($name);
             }
-        } else
-            $this->errores = 'Error al descargar el archivo zip. <a href="updater.php?idplugin=' .
-                filter_input(INPUT_GET, 'idplugin') . '&name=' . filter_input(INPUT_GET, 'name') . '">¿Clave incorrecta?</a>';
+        } else {
+            $this->core_log->new_error('Error al descargar el archivo update-pay.zip. <a href="updater.php?idplugin=' .
+                $idplugin . '&name=' . $name . '">¿Clave incorrecta?</a>');
+        }
     }
 
     private function recurse_copy($src, $dst)
@@ -475,7 +497,7 @@ class fs_updater
         if (!isset($this->plugin_updates)) {
             $this->plugin_updates = array();
             foreach (scandir(getcwd() . '/plugins') as $f) {
-                if ($f != '.' AND $f != '..' AND is_dir('plugins/' . $f)) {
+                if ($f != '.' && $f != '..' && is_dir('plugins/' . $f)) {
                     $plugin = array(
                         'name' => $f,
                         'description' => 'Sin descripción.',
@@ -512,14 +534,12 @@ class fs_updater
                             $plugin['idplugin'] = $ini_file['idplugin'];
                         }
 
-                        if ($plugin['version_url'] != '' AND $plugin['update_url'] != '') {
+                        if ($plugin['version_url'] != '' && $plugin['update_url'] != '') {
                             /// plugin con descarga gratuita
                             $internet_ini = @parse_ini_string(@fs_file_get_contents($plugin['version_url']));
-                            if ($internet_ini) {
-                                if ($plugin['version'] < intval($internet_ini['version'])) {
-                                    $plugin['new_version'] = intval($internet_ini['version']);
-                                    $this->plugin_updates[] = $plugin;
-                                }
+                            if ($internet_ini && $plugin['version'] < intval($internet_ini['version'])) {
+                                $plugin['new_version'] = intval($internet_ini['version']);
+                                $this->plugin_updates[] = $plugin;
                             }
                         } else if ($plugin['idplugin']) {
                             /// plugin de pago/oculto
@@ -532,10 +552,8 @@ class fs_updater
 
                                         if (file_exists('tmp/' . FS_TMP_NAME . 'private_keys/' . $plugin['idplugin'])) {
                                             $plugin['private_key'] = trim(@file_get_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . $plugin['idplugin']));
-                                        } else if (!file_exists('tmp/' . FS_TMP_NAME . 'private_keys/')) {
-                                            if (mkdir('tmp/' . FS_TMP_NAME . 'private_keys/')) {
-                                                file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/.htaccess', 'Deny from all');
-                                            }
+                                        } else if (!file_exists('tmp/' . FS_TMP_NAME . 'private_keys/') && mkdir('tmp/' . FS_TMP_NAME . 'private_keys/')) {
+                                            file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/.htaccess', 'Deny from all');
                                         }
 
                                         $this->plugin_updates[] = $plugin;
@@ -563,7 +581,7 @@ class fs_updater
             $this->download_list2 = $cache->get('download_list2');
             if (!$this->download_list2) {
                 $json = @fs_file_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json2=TRUE', 5);
-                if ($json) {
+                if ($json && $json != 'ERROR') {
                     $this->download_list2 = json_decode($json);
                     $cache->set('download_list2', $this->download_list2);
                 } else {
@@ -586,6 +604,17 @@ class fs_updater
             }
         } else if (filter_input(INPUT_COOKIE, 'uxid')) {
             $this->xid = filter_input(INPUT_COOKIE, 'uxid');
+        }
+    }
+
+    private function guardar_key()
+    {
+        $private_key = filter_input(INPUT_POST, 'key');
+        if (file_put_contents('tmp/' . FS_TMP_NAME . 'private_keys/' . filter_input(INPUT_GET, 'idplugin'), $private_key)) {
+            $this->core_log->new_message('Clave añadida correctamente.');
+            $this->cache->clean();
+        } else {
+            $this->core_log->new_error('Error al guardar la clave.');
         }
     }
 

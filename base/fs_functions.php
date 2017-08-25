@@ -171,13 +171,23 @@ function fs_file_get_contents($url, $timeout = 10)
         $data = curl_exec($ch);
         $info = curl_getinfo($ch);
 
-        if ($info['http_code'] == 301 OR $info['http_code'] == 302) {
+        if ($info['http_code'] == 200) {
+            curl_close($ch);
+            return $data;
+        } else if ($info['http_code'] == 301 OR $info['http_code'] == 302) {
             $redirs = 0;
             return fs_curl_redirect_exec($ch, $redirs);
         }
 
+        /// guardamos en el log
+        if (class_exists('fs_core_log')) {
+            $core_log = new fs_core_log();
+            $core_log->new_error(curl_error($ch));
+            $core_log->save(curl_error($ch));
+        }
+
         curl_close($ch);
-        return $data;
+        return 'ERROR';
     }
 
     return file_get_contents($url);
@@ -233,7 +243,7 @@ function fs_file_download($url, $filename, $timeout = 30)
 
     try {
         $data = fs_file_get_contents($url, $timeout);
-        if ($data && file_put_contents($filename, $data) !== FALSE) {
+        if ($data && $data != 'ERROR' && file_put_contents($filename, $data) !== FALSE) {
             $ok = TRUE;
         }
     } catch (Exception $e) {

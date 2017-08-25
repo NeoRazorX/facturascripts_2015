@@ -19,9 +19,9 @@
 
 /// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
 
-if ((float) substr(phpversion(), 0, 3) < 5.3) {
+if ((float) substr(phpversion(), 0, 3) < 5.4) {
     /// comprobamos la versión de PHP
-    die('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP ' . phpversion());
+    die('FacturaScripts necesita PHP 5.4 o superior, y usted tiene PHP ' . phpversion());
 }
 
 if (!file_exists('config.php')) {
