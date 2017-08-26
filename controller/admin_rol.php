@@ -168,7 +168,7 @@ class admin_rol extends fs_controller
                 }
             }
 
-            $this->new_message('Datos guardados.');
+            $this->new_message('Datos guardados. Recuerda pulsar el botón aplicar.');
         } else {
             $this->new_error_msg('Error al guardar los datos.');
         }

@@ -235,7 +235,7 @@ class agente extends \fs_model
         $this->seg_social = $this->no_html($this->seg_social);
         $this->telefono = $this->no_html($this->telefono);
 
-        if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 50) {
+        if (strlen($this->nombre) < 1 || strlen($this->nombre) > 50) {
             $this->new_error_msg("El nombre del empleado debe tener entre 1 y 50 caracteres.");
             return FALSE;
         }

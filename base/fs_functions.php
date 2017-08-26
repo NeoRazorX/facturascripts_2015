@@ -174,7 +174,7 @@ function fs_file_get_contents($url, $timeout = 10)
         if ($info['http_code'] == 200) {
             curl_close($ch);
             return $data;
-        } else if ($info['http_code'] == 301 OR $info['http_code'] == 302) {
+        } else if ($info['http_code'] == 301 || $info['http_code'] == 302) {
             $redirs = 0;
             return fs_curl_redirect_exec($ch, $redirs);
         }

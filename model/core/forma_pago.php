@@ -247,7 +247,7 @@ class forma_pago extends \fs_model
         /// validamos los días de pago
         $array_dias = array();
         foreach (str_getcsv($dias_de_pago) as $d) {
-            if (intval($d) >= 1 AND intval($d) <= 31) {
+            if (intval($d) >= 1 && intval($d) <= 31) {
                 $array_dias[] = intval($d);
             }
         }

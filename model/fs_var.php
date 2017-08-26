@@ -181,7 +181,7 @@ class fs_var extends fs_model
                     }
                 }
 
-                if ($replace AND ! $encontrado) {
+                if ($replace && ! $encontrado) {
                     $array[$i] = FALSE;
                 }
             }

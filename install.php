@@ -54,7 +54,7 @@ function guarda_config(&$errors, $nombre_archivo)
         fwrite($archivo, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
         fwrite($archivo, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
 
-        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' AND filter_input(INPUT_POST, 'mysql_socket') != '') {
+        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') != '') {
             fwrite($archivo, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
 
@@ -663,7 +663,7 @@ $system_info = str_replace('"', "'", $system_info);
                         Y recuerda que tienes una sección especialmente dedicada a la <b>instalación</b> en nuestra
                         documentación oficial:
                     </p>
-                    <a href="https://www.facturascripts.com/documentacion#instalacion" target="_blank" class="btn btn-sm btn-info">
+                    <a href="https://www.facturascripts.com/documentacion/instalacion" target="_blank" class="btn btn-sm btn-info">
                         <i class="fa fa-book"></i>&nbsp; Documentación
                     </a>
                     <br/>

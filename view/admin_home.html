@@ -253,7 +253,7 @@
                         <td>{$value['name']}</td>
                         <td>
                             <p>{$value['description']}</p>
-                            {if="$value['wizard']!='' AND $value['enabled']"}
+                            {if="$value['wizard']!='' && $value['enabled']"}
                             <a href="index.php?page={$value['wizard']}" class="btn btn-xs btn-default">
                                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp; Configurar
                             </a>

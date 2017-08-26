@@ -67,18 +67,16 @@ class admin_users extends fs_controller
 
             if ($nu->set_password(filter_input(INPUT_POST, 'npassword'))) {
                 $nu->admin = (bool) filter_input(INPUT_POST, 'nadmin');
-                if (filter_input(INPUT_POST, 'ncodagente')) {
-                    if (filter_input(INPUT_POST, 'ncodagente') != '') {
-                        $nu->codagente = filter_input(INPUT_POST, 'ncodagente');
-                    }
+                if (filter_input(INPUT_POST, 'ncodagente') && filter_input(INPUT_POST, 'ncodagente') != '') {
+                    $nu->codagente = filter_input(INPUT_POST, 'ncodagente');
                 }
 
                 if ($nu->save()) {
                     $this->new_message('Usuario ' . $nu->nick . ' creado correctamente.', TRUE, 'login', TRUE);
 
                     /// algún rol marcado
-                    if (!$nu->admin AND filter_input(INPUT_POST, 'roles')) {
-                        foreach (filter_input(INPUT_POST, 'roles') as $codrol) {
+                    if (!$nu->admin && filter_input(INPUT_POST, 'roles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY)) {
+                        foreach (filter_input(INPUT_POST, 'roles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $codrol) {
                             $rol = $this->rol->get($codrol);
                             if ($rol) {
                                 $fru = new fs_rol_user();
@@ -171,9 +169,9 @@ class admin_users extends fs_controller
                 return -1;
             } else if ($b->admin) {
                 return 1;
-            } else {
-                return 0;
             }
+
+            return 0;
         });
 
         /// completamos con los permisos de los usuarios

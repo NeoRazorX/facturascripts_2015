@@ -62,7 +62,7 @@ class admin_user extends fs_controller
 
             if (isset($_POST['nnombre'])) {
                 $this->nuevo_empleado();
-            } else if (isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin'])) {
+            } else if (isset($_POST['spassword']) || isset($_POST['scodagente']) || isset($_POST['sadmin'])) {
                 $this->modificar_user();
             } else if (fs_filter_input_req('senabled')) {
                 $this->desactivar_usuario();
@@ -264,7 +264,7 @@ class admin_user extends fs_controller
 
     private function modificar_user()
     {
-        if (FS_DEMO AND $this->user->nick != $this->suser->nick) {
+        if (FS_DEMO && $this->user->nick != $this->suser->nick) {
             $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
             Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
         } else if (!$this->allow_modify) {
@@ -307,7 +307,7 @@ class admin_user extends fs_controller
                      * Si un usuario es administrador y deja de serlo, hay que darle acceso
                      * a algunas páginas, en caso contrario no podrá continuar
                      */
-                    if ($this->suser->admin AND ! isset($_POST['sadmin'])) {
+                    if ($this->suser->admin && ! isset($_POST['sadmin'])) {
                         $user_no_more_admin = TRUE;
                     }
                     $this->suser->admin = isset($_POST['sadmin']);
@@ -358,7 +358,7 @@ class admin_user extends fs_controller
                             $a->save();
 
                             /// si no hay una página de inicio para el usuario, usamos esta
-                            if (is_null($this->suser->fs_page) AND $p->show_on_menu) {
+                            if (is_null($this->suser->fs_page) && $p->show_on_menu) {
                                 $this->suser->fs_page = $p->name;
                                 $this->suser->save();
                             }

@@ -76,7 +76,7 @@ class fs_cache
 
     public function close()
     {
-        if (isset(self::$memcache) AND self::$connected) {
+        if (isset(self::$memcache) && self::$connected) {
             self::$memcache->close();
         }
     }

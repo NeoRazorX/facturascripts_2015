@@ -238,7 +238,7 @@ class empresa extends \fs_model
      */
     public function can_send_mail()
     {
-        if ($this->email AND $this->email_config['mail_password']) {
+        if ($this->email && $this->email_config['mail_password']) {
             return TRUE;
         }
 
@@ -354,7 +354,7 @@ class empresa extends \fs_model
         $this->telefono = $this->no_html($this->telefono);
         $this->web = $this->no_html($this->web);
 
-        if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
+        if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->new_error_msg("Nombre de empresa no válido.");
         } else if (strlen($this->nombre) < strlen($this->nombrecorto)) {
             $this->new_error_msg("El Nombre Corto debe ser más corto que el Nombre.");

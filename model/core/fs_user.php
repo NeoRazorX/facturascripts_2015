@@ -262,11 +262,11 @@ class fs_user extends \fs_model
      */
     public function get_menu($reload = FALSE)
     {
-        if (!isset($this->menu) OR $reload) {
+        if (!isset($this->menu) || $reload) {
             $this->menu = array();
             $page = new \fs_page();
 
-            if ($this->admin OR FS_DEMO) {
+            if ($this->admin || FS_DEMO) {
                 $this->menu = $page->all();
             } else {
                 $access = new \fs_access();
@@ -309,7 +309,7 @@ class fs_user extends \fs_model
      */
     public function allow_delete_on($page_name)
     {
-        if ($this->admin OR FS_DEMO) {
+        if ($this->admin || FS_DEMO) {
             return TRUE;
         }
 
@@ -345,7 +345,7 @@ class fs_user extends \fs_model
     public function set_password($pass = '')
     {
         $pass = trim($pass);
-        if (mb_strlen($pass) > 1 AND mb_strlen($pass) <= 32) {
+        if (mb_strlen($pass) > 1 && mb_strlen($pass) <= 32) {
             $this->password = sha1($pass);
             return TRUE;
         }
@@ -382,7 +382,7 @@ class fs_user extends \fs_model
      */
     public function new_logkey()
     {
-        if (is_null($this->log_key) OR ! FS_DEMO) {
+        if (is_null($this->log_key) || ! FS_DEMO) {
             $this->log_key = sha1(strval(rand()));
         }
 
