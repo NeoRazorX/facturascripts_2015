@@ -152,9 +152,9 @@ class admin_home extends fs_controller
                 }
             } else if (!$enabled) { /// ninguna página marcada
                 $this->disable_page($p);
-            } else if (!$p->enabled AND in_array($p->name, $enabled)) { /// página no activa marcada para activar
+            } else if (!$p->enabled && in_array($p->name, $enabled)) { /// página no activa marcada para activar
                 $this->enable_page($p);
-            } else if ($p->enabled AND ! in_array($p->name, $enabled)) { /// págine activa no marcada (desactivar)
+            } else if ($p->enabled && ! in_array($p->name, $enabled)) { /// págine activa no marcada (desactivar)
                 $this->disable_page($p);
             }
         }
@@ -406,7 +406,7 @@ class admin_home extends fs_controller
         }
 
         foreach (scandir(getcwd() . '/plugins') as $file_name) {
-            if ($file_name != '.' AND $file_name != '..' AND is_dir('plugins/' . $file_name) AND ! in_array($file_name, $disabled)) {
+            if ($file_name != '.' && $file_name != '..' && is_dir('plugins/' . $file_name) && ! in_array($file_name, $disabled)) {
                 $plugin = array(
                     'compatible' => FALSE,
                     'description' => 'Sin descripción.',
@@ -564,7 +564,7 @@ class admin_home extends fs_controller
             }
         }
 
-        if ($install AND ! in_array($name, $GLOBALS['plugins'])) {
+        if ($install && ! in_array($name, $GLOBALS['plugins'])) {
             array_unshift($GLOBALS['plugins'], $name);
             require_all_models();
 
@@ -582,7 +582,7 @@ class admin_home extends fs_controller
                         /// activamos las páginas del plugin
                         $page_list = array();
                         foreach (scandir(getcwd() . '/plugins/' . $name . '/controller') as $f) {
-                            if ($f != '.' AND $f != '..' AND is_string($f) AND strlen($f) > 4 AND ! is_dir($f)) {
+                            if ($f != '.' && $f != '..' && is_string($f) && strlen($f) > 4 && ! is_dir($f)) {
                                 if (substr($f, -4) == '.php') {
                                     $page_name = substr($f, 0, -4);
                                     $page_list[] = $page_name;
@@ -626,7 +626,7 @@ class admin_home extends fs_controller
     {
         if (file_exists('tmp/' . FS_TMP_NAME . 'enabled_plugins.list')) {
             if (in_array($name, $this->plugins())) {
-                if (count($GLOBALS['plugins']) == 1 AND $GLOBALS['plugins'][0] == $name) {
+                if (count($GLOBALS['plugins']) == 1 && $GLOBALS['plugins'][0] == $name) {
                     $GLOBALS['plugins'] = array();
                     unlink('tmp/' . FS_TMP_NAME . 'enabled_plugins.list');
 
@@ -658,7 +658,7 @@ class admin_home extends fs_controller
                     $encontrada = TRUE;
                 } else {
                     foreach ($GLOBALS['plugins'] as $plugin) {
-                        if (file_exists(getcwd() . '/plugins/' . $plugin . '/controller/' . $p->name . '.php') AND $name != $plugin) {
+                        if (file_exists(getcwd() . '/plugins/' . $plugin . '/controller/' . $p->name . '.php') && $name != $plugin) {
                             $encontrada = TRUE;
                             break;
                         }
@@ -731,7 +731,7 @@ class admin_home extends fs_controller
             /// comprobamos actualizaciones en los plugins
             $updates = FALSE;
             foreach ($this->plugin_advanced_list() as $plugin) {
-                if ($plugin['version_url'] != '' AND $plugin['update_url'] != '') {
+                if ($plugin['version_url'] != '' && $plugin['update_url'] != '') {
                     /// plugin con descarga gratuita
                     $internet_ini = @parse_ini_string(@fs_file_get_contents($plugin['version_url']));
                     if ($internet_ini) {
@@ -790,7 +790,7 @@ class admin_home extends fs_controller
 
                     /// renombramos si es necesario
                     foreach (scandir(getcwd() . '/plugins') as $f) {
-                        if ($f != '.' AND $f != '..' AND is_dir('plugins/' . $f)) {
+                        if ($f != '.' && $f != '..' && is_dir('plugins/' . $f)) {
                             $encontrado2 = FALSE;
                             foreach ($plugins_list as $f2) {
                                 if ($f == $f2) {
@@ -848,7 +848,7 @@ class admin_home extends fs_controller
 
                         /// renombramos si es necesario
                         foreach (scandir(getcwd() . '/plugins') as $f) {
-                            if ($f != '.' AND $f != '..' AND is_dir('plugins/' . $f)) {
+                            if ($f != '.' && $f != '..' && is_dir('plugins/' . $f)) {
                                 $encontrado2 = FALSE;
                                 foreach ($plugins_list as $f2) {
                                     if ($f == $f2) {
@@ -941,8 +941,8 @@ class admin_home extends fs_controller
          */
         $this->download_list2 = $this->cache->get('download_list');
         if (!$this->download_list2) {
-            $json = @fs_file_get_contents('https://www.facturascripts.com/comm3/index.php?page=community_plugins&json=TRUE', 5);
-            if ($json) {
+            $json = @fs_file_get_contents('https://www.facturascripts.com/plugins?json=TRUE', 10);
+            if ($json && $json != 'ERROR') {
                 $this->download_list2 = json_decode($json);
                 $this->cache->set('download_list', $this->download_list2);
             } else {
@@ -1000,5 +1000,17 @@ class admin_home extends fs_controller
 
             fclose($file);
         }
+    }
+
+    public function new_codigo_options()
+    {
+        return array(
+            'eneboo' => 'Compatible con Eneboo',
+            'new' => 'TIPO + EJERCICIO + ' . strtoupper(FS_SERIE) . ' + NÚMERO',
+            '0-NUM' => 'Número continuo (con 0s)',
+            'NUM' => 'Número continuo',
+            'SERIE-YY-0-NUM' => strtoupper(FS_SERIE) . ' + AÑO (2 díg.) + NÚMERO (con 0s)',
+            'SERIE-YY-0-NUM-CORTO' => strtoupper(FS_SERIE) . ' + AÑO (2 díg.) + NÚMERO (mín. 4 car.)'
+        );
     }
 }

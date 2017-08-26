@@ -20,7 +20,7 @@
 function fatal_handler()
 {
     $error = error_get_last();
-    if ($error !== NULL && substr($error["message"], 0, 19) != 'Memcache::connect()' && strpos($error["file"], '/tcpdf/') === FALSE) {
+    if ($error !== NULL && $error["type"] == 1) {
         echo "<h1>Error fatal</h1>"
         . "<ul>"
         . "<li><b>Tipo:</b> " . $error["type"] . "</li>"
@@ -171,13 +171,28 @@ function fs_file_get_contents($url, $timeout = 10)
         $data = curl_exec($ch);
         $info = curl_getinfo($ch);
 
-        if ($info['http_code'] == 301 OR $info['http_code'] == 302) {
+        if ($info['http_code'] == 200) {
+            curl_close($ch);
+            return $data;
+        } else if ($info['http_code'] == 301 || $info['http_code'] == 302) {
             $redirs = 0;
             return fs_curl_redirect_exec($ch, $redirs);
         }
 
+        /// guardamos en el log
+        if (class_exists('fs_core_log')) {
+            $error = curl_error($ch);
+            if($error == '') {
+                $error = 'ERROR '.$info['http_code'];
+            }
+            
+            $core_log = new fs_core_log();
+            $core_log->new_error($error);
+            $core_log->save($error);
+        }
+
         curl_close($ch);
-        return $data;
+        return 'ERROR';
     }
 
     return file_get_contents($url);
@@ -233,7 +248,7 @@ function fs_file_download($url, $filename, $timeout = 30)
 
     try {
         $data = fs_file_get_contents($url, $timeout);
-        if ($data && file_put_contents($filename, $data) !== FALSE) {
+        if ($data && $data != 'ERROR' && file_put_contents($filename, $data) !== FALSE) {
             $ok = TRUE;
         }
     } catch (Exception $e) {

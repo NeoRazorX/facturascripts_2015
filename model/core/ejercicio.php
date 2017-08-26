@@ -222,7 +222,7 @@ class ejercicio extends \fs_model
         $data = $this->db->select($sql);
         if ($data) {
             $eje = new \ejercicio($data[0]);
-            if ($eje->abierto() OR ! $solo_abierto) {
+            if ($eje->abierto() || ! $solo_abierto) {
                 return $eje;
             }
 
@@ -271,7 +271,7 @@ class ejercicio extends \fs_model
 
         if (!preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio)) {
             $this->new_error_msg("Código de ejercicio no válido.");
-        } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
+        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->new_error_msg("Nombre del ejercicio no válido.");
         } else if (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $this->new_error_msg("La fecha de inicio (" . $this->fechainicio . ") es "

@@ -19,9 +19,9 @@
 
 /// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
 
-if ((float) substr(phpversion(), 0, 3) < 5.3) {
+if ((float) substr(phpversion(), 0, 3) < 5.4) {
     /// comprobamos la versión de PHP
-    die('FacturaScripts necesita PHP 5.3 o superior, y tú tienes PHP ' . phpversion());
+    die('FacturaScripts necesita PHP 5.4 o superior, y usted tiene PHP ' . phpversion());
 }
 
 if (!file_exists('config.php')) {
@@ -37,14 +37,11 @@ require_once 'base/fs_controller.php';
 require_once 'base/fs_log_manager.php';
 require_once 'raintpl/rain.tpl.class.php';
 
-if (FS_DB_HISTORY) {
-    /**
-     * Si está activado el historial SQL, registramos además la función para
-     * capturar los fatal error. Información importante a la hora de depurar
-     * errores.
-     */
-    register_shutdown_function("fatal_handler");
-}
+/**
+ * Registramos la función para capturar los fatal error.
+ * Información importante a la hora de depurar errores.
+ */
+register_shutdown_function("fatal_handler");
 
 /// ¿Qué controlador usar?
 $pagename = '';

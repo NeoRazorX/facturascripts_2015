@@ -22,8 +22,6 @@ if (!file_exists('config.php')) {
 }
 
 require_once 'config.php';
-require_once 'base/fs_cache.php';
-require_once 'base/fs_functions.php';
 require_once 'base/fs_updater.php';
 
 $updater = new fs_updater();
@@ -62,10 +60,20 @@ $updater = new fs_updater();
                         </h1>
                     </div>
                     <?php
-                    if ($updater->errores != '') {
-                        echo '<div class="alert alert-danger">' . $updater->errores . '</div>';
-                    } else if ($updater->mensajes != '') {
-                        echo '<div class="alert alert-info">' . $updater->mensajes . '</div>';
+                    if (count($updater->core_log->get_errors()) > 0) {
+                        echo '<div class="alert alert-danger"><ul>';
+                        foreach ($updater->core_log->get_errors() as $error) {
+                            echo '<li>' . $error . '</li>';
+                        }
+                        echo '</ul></div>';
+                    }
+
+                    if (count($updater->core_log->get_messages()) > 0) {
+                        echo '<div class="alert alert-info"><ul>';
+                        foreach ($updater->core_log->get_messages() as $msg) {
+                            echo '<li>' . $msg . '</li>';
+                        }
+                        echo '</ul></div>';
 
                         if ($updater->btn_fin) {
                             echo '<a href="index.php?page=admin_home&updated=TRUE" class="btn btn-sm btn-info">'
@@ -113,7 +121,7 @@ $updater = new fs_updater();
                                             <th></th>
                                         </tr>
                                     </thead>
-<?php echo $updater->tr_updates; ?>
+                                    <?php echo $updater->tr_updates; ?>
                                 </table>
                             </div>
                         </div>
@@ -126,7 +134,7 @@ $updater = new fs_updater();
                                             <th></th>
                                         </tr>
                                     </thead>
-<?php echo $updater->tr_options; ?>
+                                    <?php echo $updater->tr_options; ?>
                                 </table>
                             </div>
                         </div>
@@ -247,9 +255,9 @@ $updater = new fs_updater();
             <div style="display: none;">
                 <iframe src="<?php echo $url; ?>" height="0"></iframe>
             </div>
-    <?php
-}
+            <?php
+        }
 
-?>
+        ?>
     </body>
 </html>

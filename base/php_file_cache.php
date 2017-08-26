@@ -127,10 +127,12 @@ class php_file_cache
      */
     public function flush()
     {
-        $cache_files = glob(self::$config['cache_path'] . '/*.php', GLOB_NOSORT);
-        foreach ($cache_files as $file) {
-            unlink($file);
+        foreach (scandir(getcwd() . '/' . self::$config['cache_path']) as $file_name) {
+            if (substr($file_name, -4) == '.php') {
+                unlink(self::$config['cache_path'] . '/' . $file_name);
+            }
         }
+
         return TRUE;
     }
 
@@ -144,11 +146,10 @@ class php_file_cache
      */
     public function file_expired($file, $time = NULL)
     {
-        $done = TRUE;
         if (file_exists($file)) {
-            $done = (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
+            return (time() > (filemtime($file) + 60 * ($time ? $time : self::$config['expires'])));
         }
 
-        return $done;
+        return TRUE;
     }
 }

@@ -322,7 +322,7 @@ class fs_mysql extends fs_db_engine
             if (self::$link->multi_query($sql)) {
                 do {
                     $i++;
-                } while (self::$link->more_results() AND self::$link->next_result());
+                } while (self::$link->more_results() && self::$link->next_result());
             }
 
             if (self::$link->errno) {
@@ -541,18 +541,18 @@ class fs_mysql extends fs_db_engine
             return TRUE;
         } else if (strtolower($xml_type) == 'serial') {
             return TRUE;
-        } else if ($db_type == 'tinyint(1)' AND $xml_type == 'boolean') {
+        } else if ($db_type == 'tinyint(1)' && $xml_type == 'boolean') {
             return TRUE;
-        } else if (substr($db_type, 0, 4) == 'int(' AND $xml_type == 'INTEGER') {
+        } else if (substr($db_type, 0, 4) == 'int(' && $xml_type == 'INTEGER') {
             return TRUE;
-        } else if (substr($db_type, 0, 6) == 'double' AND $xml_type == 'double precision') {
+        } else if (substr($db_type, 0, 6) == 'double' && $xml_type == 'double precision') {
             return TRUE;
-        } else if (substr($db_type, 0, 4) == 'time' AND substr($xml_type, 0, 4) == 'time') {
+        } else if (substr($db_type, 0, 4) == 'time' && substr($xml_type, 0, 4) == 'time') {
             return TRUE;
-        } else if (substr($db_type, 0, 8) == 'varchar(' AND substr($xml_type, 0, 18) == 'character varying(') {
+        } else if (substr($db_type, 0, 8) == 'varchar(' && substr($xml_type, 0, 18) == 'character varying(') {
             /// comprobamos las longitudes
             return (substr($db_type, 8, -1) == substr($xml_type, 18, -1));
-        } else if (substr($db_type, 0, 5) == 'char(' AND substr($xml_type, 0, 18) == 'character varying(') {
+        } else if (substr($db_type, 0, 5) == 'char(' && substr($xml_type, 0, 18) == 'character varying(') {
             /// comprobamos las longitudes
             return (substr($db_type, 5, -1) == substr($xml_type, 18, -1));
         } else {
@@ -574,11 +574,11 @@ class fs_mysql extends fs_db_engine
             return in_array($xml_default, array('0', 'false', 'FALSE'));
         } else if (in_array($db_default, array('1', 'true', 'TRUE'))) {
             return in_array($xml_default, array('1', 'true', 'TRUE'));
-        } else if ($db_default == '00:00:00' AND $xml_default == 'now()') {
+        } else if ($db_default == '00:00:00' && $xml_default == 'now()') {
             return TRUE;
-        } else if ($db_default == date('Y-m-d') . ' 00:00:00' AND $xml_default == 'CURRENT_TIMESTAMP') {
+        } else if ($db_default == date('Y-m-d') . ' 00:00:00' && $xml_default == 'CURRENT_TIMESTAMP') {
             return TRUE;
-        } else if ($db_default == 'CURRENT_DATE' AND $xml_default == date("'Y-m-d'")) {
+        } else if ($db_default == 'CURRENT_DATE' && $xml_default == date("'Y-m-d'")) {
             return TRUE;
         } else if (substr($xml_default, 0, 8) == 'nextval(') {
             return TRUE;
@@ -611,7 +611,7 @@ class fs_mysql extends fs_db_engine
                 $found = FALSE;
                 if (!empty($xml_cons)) {
                     foreach ($xml_cons as $xml_con) {
-                        if ($db_con['name'] == 'PRIMARY' OR $db_con['name'] == $xml_con['nombre']) {
+                        if ($db_con['name'] == 'PRIMARY' || $db_con['name'] == $xml_con['nombre']) {
                             $found = TRUE;
                             break;
                         }
@@ -643,7 +643,7 @@ class fs_mysql extends fs_db_engine
             }
         }
 
-        if (!empty($xml_cons) AND ! $delete_only AND FS_FOREIGN_KEYS) {
+        if (!empty($xml_cons) && ! $delete_only && FS_FOREIGN_KEYS) {
             /// comprobamos una a una las nuevas
             foreach ($xml_cons as $xml_con) {
                 $found = FALSE;
@@ -733,7 +733,7 @@ class fs_mysql extends fs_db_engine
             foreach ($xml_cons as $res) {
                 if (strstr(strtolower($res['consulta']), 'primary key')) {
                     $sql .= ', ' . $res['consulta'];
-                } else if (FS_FOREIGN_KEYS OR substr($res['consulta'], 0, 11) != 'FOREIGN KEY') {
+                } else if (FS_FOREIGN_KEYS || substr($res['consulta'], 0, 11) != 'FOREIGN KEY') {
                     $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
                 }
             }

@@ -29,11 +29,9 @@ if (!defined('FS_MYDOCS')) {
     define('FS_MYDOCS', '');
 }
 
-if (FS_TMP_NAME != '' AND ! file_exists('tmp/' . FS_TMP_NAME)) {
-    if (!file_exists('tmp')) {
-        if (mkdir('tmp')) {
-            file_put_contents('tmp/index.php', "<?php\necho 'No me toques los cojones!!!';");
-        }
+if (FS_TMP_NAME != '' && ! file_exists('tmp/' . FS_TMP_NAME)) {
+    if (!file_exists('tmp') && mkdir('tmp')) {
+        file_put_contents('tmp/index.php', "<?php\necho 'ACCESO DENEGADO';");
     }
 
     mkdir('tmp/' . FS_TMP_NAME);

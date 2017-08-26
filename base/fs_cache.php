@@ -27,6 +27,11 @@ class fs_cache
 {
 
     private static $memcache;
+    
+    /**
+     *
+     * @var php_file_cache
+     */
     private static $php_file_cache;
     private static $connected;
     private static $error;
@@ -71,7 +76,7 @@ class fs_cache
 
     public function close()
     {
-        if (isset(self::$memcache) AND self::$connected) {
+        if (isset(self::$memcache) && self::$connected) {
             self::$memcache->close();
         }
     }

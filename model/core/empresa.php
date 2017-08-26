@@ -85,17 +85,6 @@ class empresa extends \fs_model
     public $web;
     public $email;
 
-    /**
-     * @deprecated since version 2015.053
-     * @var string
-     */
-    public $email_firma;
-
-    /**
-     * @deprecated since version 2015.053
-     * @var string
-     */
-    public $email_password;
     public $fax;
     public $telefono;
     public $codpais;
@@ -212,14 +201,6 @@ class empresa extends \fs_model
                 'mail_low_security' => FALSE,
             );
 
-            /// añadimos compatibilidad hacia atrás
-            if (isset($data[0]['email_password'])) {
-                $this->email_password = $this->email_config['mail_password'] = $data[0]['email_password'];
-            }
-            if (isset($data[0]['email_firma'])) {
-                $this->email_firma = $this->email_config['mail_firma'] = $data[0]['email_firma'];
-            }
-
             $fsvar = new \fs_var();
             $this->email_config = $fsvar->array_get($this->email_config, FALSE);
 
@@ -257,7 +238,7 @@ class empresa extends \fs_model
      */
     public function can_send_mail()
     {
-        if ($this->email AND $this->email_config['mail_password']) {
+        if ($this->email && $this->email_config['mail_password']) {
             return TRUE;
         }
 
@@ -373,7 +354,7 @@ class empresa extends \fs_model
         $this->telefono = $this->no_html($this->telefono);
         $this->web = $this->no_html($this->web);
 
-        if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
+        if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->new_error_msg("Nombre de empresa no válido.");
         } else if (strlen($this->nombre) < strlen($this->nombrecorto)) {
             $this->new_error_msg("El Nombre Corto debe ser más corto que el Nombre.");

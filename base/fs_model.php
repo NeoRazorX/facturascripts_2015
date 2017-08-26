@@ -290,7 +290,7 @@ abstract class fs_model
      */
     public function str2bool($val)
     {
-        return ($val == 't' OR $val == '1');
+        return ($val == 't' || $val == '1');
     }
 
     /**
@@ -319,7 +319,7 @@ abstract class fs_model
      */
     public function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
     {
-        if ($round OR ! function_exists('bccomp')) {
+        if ($round || ! function_exists('bccomp')) {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
         }
 

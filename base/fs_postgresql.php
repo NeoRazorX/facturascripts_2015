@@ -520,7 +520,7 @@ class fs_postgresql extends fs_db_engine
             return TRUE;
         } else if (strtolower($xml_type) == 'serial') {
             return TRUE;
-        } else if (substr($db_type, 0, 4) == 'time' AND substr($xml_type, 0, 4) == 'time') {
+        } else if (substr($db_type, 0, 4) == 'time' && substr($xml_type, 0, 4) == 'time') {
             return TRUE;
         }
 
@@ -589,7 +589,7 @@ class fs_postgresql extends fs_db_engine
             }
         }
 
-        if (!empty($xml_cons) AND ! $delete_only) {
+        if (!empty($xml_cons) && ! $delete_only) {
             /// comprobamos una a una las nuevas
             foreach ($xml_cons as $xml_con) {
                 $found = FALSE;
@@ -638,7 +638,7 @@ class fs_postgresql extends fs_db_engine
                 $sql .= ' NOT NULL';
             }
 
-            if ($col['defecto'] !== NULL AND ! in_array($col['tipo'], array('serial', 'bigserial'))) {
+            if ($col['defecto'] !== NULL && ! in_array($col['tipo'], array('serial', 'bigserial'))) {
                 $sql .= ' DEFAULT ' . $col['defecto'];
             }
         }
