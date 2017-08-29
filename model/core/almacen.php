@@ -155,7 +155,7 @@ class almacen extends \fs_model
 
         if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codalmacen)) {
             $this->new_error_msg("Código de almacén no válido.");
-        } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
+        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->new_error_msg("Nombre de almacén no válido.");
         } else {
             $status = TRUE;

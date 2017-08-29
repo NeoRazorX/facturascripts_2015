@@ -238,7 +238,7 @@
                         <th class="text-center">Permiso de eliminación</th>
                      </tr>
                   </thead>
-                  {if="$fsc->user->admin AND !$fsc->suser->admin"}
+                  {if="$fsc->user->admin && !$fsc->suser->admin"}
                   <tr class="warning">
                      <td colspan="2"></td>
                      <td class="text-center" title="Marcar/desmarcar todos">

@@ -152,7 +152,7 @@ class serie extends \fs_model
 
         if (!preg_match("/^[A-Z0-9]{1,2}$/i", $this->codserie)) {
             $this->new_error_msg("Código de serie no válido.");
-        } else if (strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100) {
+        } else if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
             $this->new_error_msg("Descripción de serie no válida.");
         } else {
             $status = TRUE;

@@ -54,7 +54,7 @@ function guarda_config(&$errors, $nombre_archivo)
         fwrite($archivo, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
         fwrite($archivo, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
 
-        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' AND filter_input(INPUT_POST, 'mysql_socket') != '') {
+        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') != '') {
             fwrite($archivo, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
 
@@ -120,7 +120,7 @@ function guarda_config(&$errors, $nombre_archivo)
 }
 if (file_exists('config.php')) {
     header('Location: index.php');
-} else if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
+} else if (floatval(substr(phpversion(), 0, 3)) < 5.4) {
     $errors[] = 'php';
 } else if (floatval('3,1') >= floatval('3.1')) {
     $errors[] = "floatval";
@@ -293,7 +293,7 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
         </nav>
 
-        <form name="f_feedback" action="https://www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
+        <form name="f_feedback" action="https://www.facturascripts.com/feedback" method="post" target="_blank" class="form" role="form">
             <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
             <input type="hidden" name="feedback_type" value="error"/>
             <div class="modal" id="modal_feedback">
@@ -456,7 +456,7 @@ $system_info = str_replace('"', "'", $system_info);
                                 </div>
                                 <div class="panel-body">
                                     <p>
-                                        FacturaScripts necesita PHP <b>5.3</b> o superior.
+                                        FacturaScripts necesita PHP <b>5.4</b> o superior.
                                         Tú estás usando la versión <b><?php echo phpversion() ?></b>.
                                     </p>
                                     <h3>Soluciones:</h3>
@@ -663,7 +663,7 @@ $system_info = str_replace('"', "'", $system_info);
                         Y recuerda que tienes una sección especialmente dedicada a la <b>instalación</b> en nuestra
                         documentación oficial:
                     </p>
-                    <a href="https://www.facturascripts.com/documentacion#instalacion" target="_blank" class="btn btn-sm btn-info">
+                    <a href="https://www.facturascripts.com/documentacion/instalacion" target="_blank" class="btn btn-sm btn-info">
                         <i class="fa fa-book"></i>&nbsp; Documentación
                     </a>
                     <br/>

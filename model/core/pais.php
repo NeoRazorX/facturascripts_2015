@@ -385,7 +385,7 @@ class pais extends \fs_model
 
         if (!preg_match("/^[A-Z0-9]{1,20}$/i", $this->codpais)) {
             $this->new_error_msg("Código del país no válido: " . $this->codpais);
-        } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
+        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->new_error_msg("Nombre del país no válido.");
         } else
             $status = TRUE;

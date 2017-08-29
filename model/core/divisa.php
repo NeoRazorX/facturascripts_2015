@@ -62,7 +62,7 @@ class divisa extends \fs_model
             $this->codiso = $data['codiso'];
             $this->simbolo = $data['simbolo'];
 
-            if ($this->simbolo == '' AND $this->coddivisa == 'EUR') {
+            if ($this->simbolo == '' && $this->coddivisa == 'EUR') {
                 $this->simbolo = '€';
                 $this->save();
             }
@@ -161,7 +161,7 @@ class divisa extends \fs_model
 
         if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
             $this->new_error_msg("Código de divisa no válido.");
-        } else if (isset($this->codiso) AND ! preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
+        } else if (isset($this->codiso) && ! preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
             $this->new_error_msg("Código ISO no válido.");
         } else if ($this->tasaconv == 0) {
             $this->new_error_msg('La tasa de conversión no puede ser 0.');
