@@ -50,7 +50,7 @@ abstract class fs_model
      * el XML con la estructura de la tabla.
      * @var string 
      */
-    protected $base_dir;
+    private static $base_dir;
 
     /**
      * Permite conectar e interactuar con memcache.
@@ -79,33 +79,24 @@ abstract class fs_model
 
     /**
      * Constructor.
-     * @param string $name nombre de la tabla de la base de datos.
+     * @param string $table_name nombre de la tabla de la base de datos.
      */
-    public function __construct($name = '')
+    public function __construct($table_name)
     {
         $this->cache = new fs_cache();
         $this->db = new fs_db2();
-        $this->table_name = $name;
-
-        /// buscamos el xml de la tabla en los plugins
-        $this->base_dir = '';
-        foreach ($GLOBALS['plugins'] as $plugin) {
-            if (file_exists('plugins/' . $plugin . '/model/table/' . $name . '.xml')) {
-                $this->base_dir = 'plugins/' . $plugin . '/';
-                break;
-            }
-        }
-
+        $this->table_name = $table_name;
         $this->default_items = new fs_default_items();
 
         if (!isset(self::$checked_tables)) {
+            self::$base_dir = array();
             self::$core_log = new fs_core_log();
 
             self::$checked_tables = $this->cache->get_array('fs_checked_tables');
             if (!empty(self::$checked_tables)) {
                 /// nos aseguramos de que existan todas las tablas que se suponen comprobadas
-                foreach (self::$checked_tables as $ct) {
-                    if (!$this->db->table_exists($ct)) {
+                foreach (self::$checked_tables as $ckt) {
+                    if (!$this->db->table_exists($ckt)) {
                         $this->clean_checked_tables();
                         break;
                     }
@@ -113,12 +104,27 @@ abstract class fs_model
             }
         }
 
-        if ($name != '') {
-            if (!in_array($name, self::$checked_tables)) {
-                if ($this->check_table($name)) {
-                    self::$checked_tables[] = $name;
-                    $this->cache->set('fs_checked_tables', self::$checked_tables, 5400);
-                }
+        if (!isset(self::$base_dir[$table_name])) {
+            $this->get_base_dir($table_name);
+        }
+
+        if ($table_name != '' && !in_array($table_name, self::$checked_tables) && $this->check_table($table_name)) {
+            self::$checked_tables[] = $table_name;
+            $this->cache->set('fs_checked_tables', self::$checked_tables, 5400);
+        }
+    }
+
+    /**
+     * buscamos el xml de la tabla en los plugins
+     * @param string $table_name
+     */
+    private function get_base_dir($table_name)
+    {
+        self::$base_dir[$table_name] = '';
+        foreach ($GLOBALS['plugins'] as $plugin) {
+            if (file_exists('plugins/' . $plugin . '/model/table/' . $table_name . '.xml')) {
+                self::$base_dir[$table_name] = 'plugins/' . $plugin . '/';
+                break;
             }
         }
     }
@@ -319,7 +325,7 @@ abstract class fs_model
      */
     public function floatcmp($f1, $f2, $precision = 10, $round = FALSE)
     {
-        if ($round || ! function_exists('bccomp')) {
+        if ($round || !function_exists('bccomp')) {
             return( abs($f1 - $f2) < 6 / pow(10, $precision + 1) );
         }
 
@@ -386,7 +392,6 @@ abstract class fs_model
      */
     protected function check_table($table_name)
     {
-        $done = TRUE;
         $sql = '';
         $xml_cols = array();
         $xml_cons = array();
@@ -424,18 +429,16 @@ abstract class fs_model
                 $sql .= $this->install();
             }
 
-            if ($sql != '') {
-                if (!$this->db->exec($sql)) {
-                    $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
-                    $done = FALSE;
-                }
+            if ($sql != '' && !$this->db->exec($sql)) {
+                $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
+                return FALSE;
             }
         } else {
             $this->new_error_msg('Error con el xml.');
-            $done = FALSE;
+            return FALSE;
         }
 
-        return $done;
+        return TRUE;
     }
 
     /**
@@ -448,7 +451,7 @@ abstract class fs_model
     protected function get_xml_table($table_name, &$columns, &$constraints)
     {
         $return = FALSE;
-        $filename = $this->base_dir . 'model/table/' . $table_name . '.xml';
+        $filename = self::$base_dir[$table_name] . 'model/table/' . $table_name . '.xml';
 
         if (file_exists($filename)) {
             $xml = simplexml_load_string(file_get_contents('./' . $filename, FILE_USE_INCLUDE_PATH));
