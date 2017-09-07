@@ -48,7 +48,7 @@ abstract class fs_model
     /**
      * Directorio donde se encuentra el directorio table con
      * el XML con la estructura de la tabla.
-     * @var string 
+     * @var string[] 
      */
     private static $base_dir;
 
