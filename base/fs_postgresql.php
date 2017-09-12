@@ -326,7 +326,7 @@ class fs_postgresql extends fs_db_engine
                 $this->begin_transaction();
             }
 
-            $aux = pg_query(self::$link, $sql);
+            $aux = @pg_query(self::$link, $sql);
             if ($aux) {
                 pg_free_result($aux);
                 $result = TRUE;
