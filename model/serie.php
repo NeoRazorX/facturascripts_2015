@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,6 +25,7 @@ require_once 'model/core/serie.php';
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class serie extends FacturaScripts\model\serie {
+class serie extends FacturaScripts\model\serie
+{
     
 }

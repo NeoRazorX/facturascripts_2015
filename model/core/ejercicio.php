@@ -1,8 +1,7 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\model;
 
 /**
@@ -25,7 +23,8 @@ namespace FacturaScripts\model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class ejercicio extends \fs_model {
+class ejercicio extends \fs_model
+{
 
     /**
      * Clave primaria. Varchar(4).
@@ -74,19 +73,20 @@ class ejercicio extends \fs_model {
      */
     public $longsubcuenta;
 
-    public function __construct($e = FALSE) {
+    public function __construct($data = FALSE)
+    {
         parent::__construct('ejercicios');
-        if ($e) {
-            $this->codejercicio = $e['codejercicio'];
-            $this->nombre = $e['nombre'];
-            $this->fechainicio = Date('d-m-Y', strtotime($e['fechainicio']));
-            $this->fechafin = Date('d-m-Y', strtotime($e['fechafin']));
-            $this->estado = $e['estado'];
-            $this->idasientocierre = $this->intval($e['idasientocierre']);
-            $this->idasientopyg = $this->intval($e['idasientopyg']);
-            $this->idasientoapertura = $this->intval($e['idasientoapertura']);
-            $this->plancontable = $e['plancontable'];
-            $this->longsubcuenta = $this->intval($e['longsubcuenta']);
+        if ($data) {
+            $this->codejercicio = $data['codejercicio'];
+            $this->nombre = $data['nombre'];
+            $this->fechainicio = Date('d-m-Y', strtotime($data['fechainicio']));
+            $this->fechafin = Date('d-m-Y', strtotime($data['fechafin']));
+            $this->estado = $data['estado'];
+            $this->idasientocierre = $this->intval($data['idasientocierre']);
+            $this->idasientopyg = $this->intval($data['idasientopyg']);
+            $this->idasientoapertura = $this->intval($data['idasientoapertura']);
+            $this->plancontable = $data['plancontable'];
+            $this->longsubcuenta = $this->intval($data['longsubcuenta']);
         } else {
             $this->codejercicio = NULL;
             $this->nombre = '';
@@ -101,7 +101,8 @@ class ejercicio extends \fs_model {
         }
     }
 
-    protected function install() {
+    protected function install()
+    {
         $this->clean_cache();
 
         return "INSERT INTO " . $this->table_name . " (codejercicio,nombre,fechainicio,fechafin,
@@ -110,11 +111,13 @@ class ejercicio extends \fs_model {
          " . $this->var2str(Date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
     }
 
-    public function abierto() {
+    public function abierto()
+    {
         return ($this->estado == 'ABIERTO');
     }
 
-    public function year() {
+    public function year()
+    {
         return Date('Y', strtotime($this->fechainicio));
     }
 
@@ -123,34 +126,39 @@ class ejercicio extends \fs_model {
      * @param string $cod
      * @return string
      */
-    public function get_new_codigo($cod = '0001') {
+    public function get_new_codigo($cod = '0001')
+    {
         if (!$this->db->select("SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($cod) . ";")) {
             return $cod;
-        } else {
-            $cod = $this->db->select("SELECT MAX(" . $this->db->sql_to_int('codejercicio') . ") as cod FROM " . $this->table_name . ";");
-            if ($cod) {
-                return sprintf('%04s', (1 + intval($cod[0]['cod'])));
-            } else
-                return '0001';
         }
+
+        $data = $this->db->select("SELECT MAX(" . $this->db->sql_to_int('codejercicio') . ") as cod FROM " . $this->table_name . ";");
+        if (!empty($data)) {
+            return sprintf('%04s', (1 + intval($data[0]['cod'])));
+        }
+
+        return '0001';
     }
 
     /**
      * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
-    public function url() {
+    public function url()
+    {
         if (is_null($this->codejercicio)) {
             return 'index.php?page=contabilidad_ejercicios';
-        } else
-            return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
+        }
+
+        return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
     }
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
      * @return type
      */
-    public function is_default() {
+    public function is_default()
+    {
         return ( $this->codejercicio == $this->default_items->codejercicio() );
     }
 
@@ -160,26 +168,27 @@ class ejercicio extends \fs_model {
      * @param boolean $show_error
      * @return string
      */
-    public function get_best_fecha($fecha, $show_error = FALSE) {
+    public function get_best_fecha($fecha, $show_error = FALSE)
+    {
         $fecha2 = strtotime($fecha);
 
         if ($fecha2 >= strtotime($this->fechainicio) AND $fecha2 <= strtotime($this->fechafin)) {
             return $fecha;
-        } else if ($fecha2 > strtotime($this->fechainicio)) {
-            if ($show_error) {
-                $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
-               Se ha seleccionado una mejor.');
-            }
-
-            return $this->fechafin;
-        } else {
-            if ($show_error) {
-                $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
-               Se ha seleccionado una mejor.');
-            }
-
-            return $this->fechainicio;
         }
+
+        if ($fecha2 > strtotime($this->fechainicio)) {
+            if ($show_error) {
+                $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
+               Se ha seleccionado una mejor.');
+            }
+            return $this->fechafin;
+        }
+
+        if ($show_error) {
+            $this->new_error_msg('La fecha seleccionada está fuera del rango del ejercicio.
+               Se ha seleccionado una mejor.');
+        }
+        return $this->fechainicio;
     }
 
     /**
@@ -187,12 +196,14 @@ class ejercicio extends \fs_model {
      * @param type $cod
      * @return boolean|\ejercicio
      */
-    public function get($cod) {
-        $ejercicio = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($cod) . ";");
-        if ($ejercicio) {
-            return new \ejercicio($ejercicio[0]);
-        } else
-            return FALSE;
+    public function get($cod)
+    {
+        $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($cod) . ";");
+        if ($data) {
+            return new \ejercicio($data[0]);
+        }
+
+        return FALSE;
     }
 
     /**
@@ -203,19 +214,20 @@ class ejercicio extends \fs_model {
      * @param boolean $crear
      * @return boolean|\ejercicio
      */
-    public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE) {
+    public function get_by_fecha($fecha, $solo_abierto = TRUE, $crear = TRUE)
+    {
         $sql = "SELECT * FROM " . $this->table_name . " WHERE fechainicio <= "
-                . $this->var2str($fecha) . " AND fechafin >= " . $this->var2str($fecha) . ";";
+            . $this->var2str($fecha) . " AND fechafin >= " . $this->var2str($fecha) . ";";
 
         $data = $this->db->select($sql);
         if ($data) {
             $eje = new \ejercicio($data[0]);
-            if ($eje->abierto() OR ! $solo_abierto) {
+            if ($eje->abierto() || ! $solo_abierto) {
                 return $eje;
-            } else
-                return FALSE;
-        }
-        else if ($crear) {
+            }
+
+            return FALSE;
+        } else if ($crear) {
             $eje = new \ejercicio();
             $eje->codejercicio = $eje->get_new_codigo(Date('Y', strtotime($fecha)));
             $eje->nombre = Date('Y', strtotime($fecha));
@@ -226,30 +238,32 @@ class ejercicio extends \fs_model {
                 $this->new_error_msg("Fecha no válida: " . $fecha);
             } else if ($eje->save()) {
                 return $eje;
-            } else
-                return FALSE;
-        } else
-            return FALSE;
+            }
+        }
+
+        return FALSE;
     }
 
     /**
      * Devuelve TRUE si el ejercico existe
      * @return boolean
      */
-    public function exists() {
+    public function exists()
+    {
         if (is_null($this->codejercicio)) {
             return FALSE;
-        } else {
-            return $this->db->select("SELECT * FROM " . $this->table_name
-                            . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
         }
+
+        return $this->db->select("SELECT * FROM " . $this->table_name
+                . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
 
     /**
      * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
      * @return boolean
      */
-    public function test() {
+    public function test()
+    {
         $status = FALSE;
 
         $this->codejercicio = trim($this->codejercicio);
@@ -257,15 +271,16 @@ class ejercicio extends \fs_model {
 
         if (!preg_match("/^[A-Z0-9_]{1,4}$/i", $this->codejercicio)) {
             $this->new_error_msg("Código de ejercicio no válido.");
-        } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
+        } else if (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->new_error_msg("Nombre del ejercicio no válido.");
         } else if (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $this->new_error_msg("La fecha de inicio (" . $this->fechainicio . ") es "
-                    . "posterior a la fecha fin (" . $this->fechafin . ").");
+                . "posterior a la fecha fin (" . $this->fechafin . ").");
         } else if (strtotime($this->fechainicio) < 1) {
             $this->new_error_msg("Fecha no válida.");
-        } else
+        } else {
             $status = TRUE;
+        }
 
         return $status;
     }
@@ -274,13 +289,14 @@ class ejercicio extends \fs_model {
      * Comprueba más datos del ejercicio, devuelve TRUE si está todo correcto
      * @return boolean
      */
-    public function full_test() {
+    public function full_test()
+    {
         $status = TRUE;
 
         /// comprobamos la suma de las subcuentas
         if ($this->db->table_exists('co_subcuentas')) {
             $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_subcuentas"
-                    . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
+                . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
 
             $data = $this->db->select($sql);
             if ($data) {
@@ -289,7 +305,7 @@ class ejercicio extends \fs_model {
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
                     $this->new_error_msg('El ejercicio está descuadrado a nivel de subcuentas.'
-                            . ' Debe: ' . $debe . ' | Haber: ' . $haber);
+                        . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                     $status = FALSE;
                 }
             }
@@ -298,8 +314,8 @@ class ejercicio extends \fs_model {
         /// comprobamos la suma de las partidas de los asientos
         if ($this->db->table_exists('co_partidas')) {
             $sql = "SELECT SUM(debe) as debe, SUM(haber) as haber FROM co_partidas"
-                    . " WHERE idasiento IN (SELECT idasiento FROM co_asientos"
-                    . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ");";
+                . " WHERE idasiento IN (SELECT idasiento FROM co_asientos"
+                . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ");";
 
             $data = $this->db->select($sql);
             if ($data) {
@@ -308,11 +324,11 @@ class ejercicio extends \fs_model {
 
                 if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
                     $this->new_error_msg('El ejercicio está descuadrado a nivel de asientos.'
-                            . ' Debe: ' . $debe . ' | Haber: ' . $haber);
+                        . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                     $status = FALSE;
                 } else if (!$status) {
                     $this->new_error_msg('Pero <b>NO</b> está descuadrado a nivel de asientos.'
-                            . ' Debe: ' . $debe . ' | Haber: ' . $haber);
+                        . ' Debe: ' . $debe . ' | Haber: ' . $haber);
                 }
             }
         }
@@ -324,46 +340,49 @@ class ejercicio extends \fs_model {
      * Guarda los datos en la base de datos
      * @return boolean
      */
-    public function save() {
+    public function save()
+    {
         if ($this->test()) {
             $this->clean_cache();
 
             if ($this->exists()) {
                 $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre)
-                        . ", fechainicio = " . $this->var2str($this->fechainicio)
-                        . ", fechafin = " . $this->var2str($this->fechafin)
-                        . ", estado = " . $this->var2str($this->estado)
-                        . ", longsubcuenta = " . $this->var2str($this->longsubcuenta)
-                        . ", plancontable = " . $this->var2str($this->plancontable)
-                        . ", idasientoapertura = " . $this->var2str($this->idasientoapertura)
-                        . ", idasientopyg = " . $this->var2str($this->idasientopyg)
-                        . ", idasientocierre = " . $this->var2str($this->idasientocierre)
-                        . "  WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
+                    . ", fechainicio = " . $this->var2str($this->fechainicio)
+                    . ", fechafin = " . $this->var2str($this->fechafin)
+                    . ", estado = " . $this->var2str($this->estado)
+                    . ", longsubcuenta = " . $this->var2str($this->longsubcuenta)
+                    . ", plancontable = " . $this->var2str($this->plancontable)
+                    . ", idasientoapertura = " . $this->var2str($this->idasientoapertura)
+                    . ", idasientopyg = " . $this->var2str($this->idasientopyg)
+                    . ", idasientocierre = " . $this->var2str($this->idasientocierre)
+                    . "  WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
             } else {
                 $sql = "INSERT INTO " . $this->table_name . " (codejercicio,nombre,fechainicio,fechafin,
                estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre)
                VALUES (" . $this->var2str($this->codejercicio)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->fechainicio)
-                        . "," . $this->var2str($this->fechafin)
-                        . "," . $this->var2str($this->estado)
-                        . "," . $this->var2str($this->longsubcuenta)
-                        . "," . $this->var2str($this->plancontable)
-                        . "," . $this->var2str($this->idasientoapertura)
-                        . "," . $this->var2str($this->idasientopyg)
-                        . "," . $this->var2str($this->idasientocierre) . ");";
+                    . "," . $this->var2str($this->nombre)
+                    . "," . $this->var2str($this->fechainicio)
+                    . "," . $this->var2str($this->fechafin)
+                    . "," . $this->var2str($this->estado)
+                    . "," . $this->var2str($this->longsubcuenta)
+                    . "," . $this->var2str($this->plancontable)
+                    . "," . $this->var2str($this->idasientoapertura)
+                    . "," . $this->var2str($this->idasientopyg)
+                    . "," . $this->var2str($this->idasientocierre) . ");";
             }
 
             return $this->db->exec($sql);
-        } else
-            return FALSE;
+        }
+
+        return FALSE;
     }
 
     /**
      * Elimina el ejercicio
      * @return type
      */
-    public function delete() {
+    public function delete()
+    {
         $this->clean_cache();
         return $this->db->exec("DELETE FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";");
     }
@@ -371,7 +390,8 @@ class ejercicio extends \fs_model {
     /**
      * Limpiamos la caché
      */
-    private function clean_cache() {
+    private function clean_cache()
+    {
         $this->cache->delete('m_ejercicio_all');
         $this->cache->delete('m_ejercicio_all_abiertos');
     }
@@ -380,10 +400,11 @@ class ejercicio extends \fs_model {
      * Devuelve un array con todos los ejercicios
      * @return \ejercicio
      */
-    public function all() {
+    public function all()
+    {
         /// leemos la lista de la caché
         $listae = $this->cache->get_array('m_ejercicio_all');
-        if (!$listae) {
+        if (empty($listae)) {
             /// si no está en caché, leemos de la base de datos
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY fechainicio DESC;");
             if ($data) {
@@ -403,10 +424,11 @@ class ejercicio extends \fs_model {
      * Devuelve un array con todos los ejercicio abiertos
      * @return \ejercicio
      */
-    public function all_abiertos() {
+    public function all_abiertos()
+    {
         /// leemos la lista de la caché
         $listae = $this->cache->get_array('m_ejercicio_all_abiertos');
-        if (!$listae) {
+        if (empty($listae)) {
             /// si no está en caché, leemos de la base de datos
             $sql = "SELECT * FROM " . $this->table_name . " WHERE estado = 'ABIERTO' ORDER BY codejercicio DESC;";
             $data = $this->db->select($sql);
@@ -422,5 +444,4 @@ class ejercicio extends \fs_model {
 
         return $listae;
     }
-
 }

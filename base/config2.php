@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -30,11 +29,9 @@ if (!defined('FS_MYDOCS')) {
     define('FS_MYDOCS', '');
 }
 
-if (FS_TMP_NAME != '' AND ! file_exists('tmp/' . FS_TMP_NAME)) {
-    if (!file_exists('tmp')) {
-        if (mkdir('tmp')) {
-            file_put_contents('tmp/index.php', "<?php\necho 'No me toques los cojones!!!';");
-        }
+if (FS_TMP_NAME != '' && ! file_exists('tmp/' . FS_TMP_NAME)) {
+    if (!file_exists('tmp') && mkdir('tmp')) {
+        file_put_contents('tmp/index.php', "<?php\necho 'ACCESO DENEGADO';");
     }
 
     mkdir('tmp/' . FS_TMP_NAME);
@@ -84,7 +81,7 @@ $GLOBALS['config2'] = array(
 
 if (file_exists('tmp/' . FS_TMP_NAME . 'config2.ini')) {
     $ini_data = parse_ini_file('tmp/' . FS_TMP_NAME . 'config2.ini');
-    foreach($ini_data as $i => $value) {
+    foreach ($ini_data as $i => $value) {
         $GLOBALS['config2'][$i] = $value;
     }
 }

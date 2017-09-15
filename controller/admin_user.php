@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -22,7 +21,8 @@
  * Controlador para modificar el perfil del usuario.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_user extends fs_controller {
+class admin_user extends fs_controller
+{
 
     public $agente;
     public $allow_delete;
@@ -30,11 +30,13 @@ class admin_user extends fs_controller {
     public $user_log;
     public $suser;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Usuario', 'admin', TRUE, FALSE);
     }
 
-    public function private_core() {
+    public function private_core()
+    {
         $this->share_extensions();
         $this->agente = new agente();
 
@@ -60,7 +62,7 @@ class admin_user extends fs_controller {
 
             if (isset($_POST['nnombre'])) {
                 $this->nuevo_empleado();
-            } else if (isset($_POST['spassword']) OR isset($_POST['scodagente']) OR isset($_POST['sadmin'])) {
+            } else if (isset($_POST['spassword']) || isset($_POST['scodagente']) || isset($_POST['sadmin'])) {
                 $this->modificar_user();
             } else if (fs_filter_input_req('senabled')) {
                 $this->desactivar_usuario();
@@ -82,8 +84,8 @@ class admin_user extends fs_controller {
                 }
                 if ($sin_paginas) {
                     $this->new_advice('No has autorizado a este usuario a acceder a ninguna'
-                            . ' página y por tanto no podrá hacer nada. Puedes darle acceso a alguna página'
-                            . ' desde la pestaña autorizar.');
+                        . ' página y por tanto no podrá hacer nada. Puedes darle acceso a alguna página'
+                        . ' desde la pestaña autorizar.');
                 }
             }
 
@@ -94,16 +96,19 @@ class admin_user extends fs_controller {
         }
     }
 
-    public function url() {
+    public function url()
+    {
         if (!isset($this->suser)) {
             return parent::url();
         } else if ($this->suser) {
             return $this->suser->url();
-        } else
-            return $this->page->url();
+        }
+
+        return $this->page->url();
     }
 
-    public function all_pages() {
+    public function all_pages()
+    {
         $returnlist = array();
 
         /// Obtenemos la lista de páginas. Todas
@@ -133,7 +138,8 @@ class admin_user extends fs_controller {
         return $returnlist;
     }
 
-    private function share_extensions() {
+    private function share_extensions()
+    {
         foreach ($this->extensions as $ext) {
             if ($ext->type == 'css') {
                 if (!file_exists($ext->text)) {
@@ -230,7 +236,8 @@ class admin_user extends fs_controller {
         }
     }
 
-    private function nuevo_empleado() {
+    private function nuevo_empleado()
+    {
         $age0 = new agente();
         $age0->codagente = $age0->get_new_codigo();
         $age0->nombre = filter_input(INPUT_POST, 'nnombre');
@@ -255,8 +262,9 @@ class admin_user extends fs_controller {
         }
     }
 
-    private function modificar_user() {
-        if (FS_DEMO AND $this->user->nick != $this->suser->nick) {
+    private function modificar_user()
+    {
+        if (FS_DEMO && $this->user->nick != $this->suser->nick) {
             $this->new_error_msg('En el modo <b>demo</b> sólo puedes modificar los datos de TU usuario.
             Esto es así para evitar malas prácticas entre usuarios que prueban la demo.');
         } else if (!$this->allow_modify) {
@@ -299,7 +307,7 @@ class admin_user extends fs_controller {
                      * Si un usuario es administrador y deja de serlo, hay que darle acceso
                      * a algunas páginas, en caso contrario no podrá continuar
                      */
-                    if ($this->suser->admin AND ! isset($_POST['sadmin'])) {
+                    if ($this->suser->admin && ! isset($_POST['sadmin'])) {
                         $user_no_more_admin = TRUE;
                     }
                     $this->suser->admin = isset($_POST['sadmin']);
@@ -350,7 +358,7 @@ class admin_user extends fs_controller {
                             $a->save();
 
                             /// si no hay una página de inicio para el usuario, usamos esta
-                            if (is_null($this->suser->fs_page) AND $p->show_on_menu) {
+                            if (is_null($this->suser->fs_page) && $p->show_on_menu) {
                                 $this->suser->fs_page = $p->name;
                                 $this->suser->save();
                             }
@@ -368,7 +376,8 @@ class admin_user extends fs_controller {
         }
     }
 
-    private function desactivar_usuario() {
+    private function desactivar_usuario()
+    {
         if (!$this->user->admin) {
             $this->new_error_msg('Solamente un administrador puede activar o desactivar a un Usuario.');
         } else if ($this->user->nick == $this->suser->nick) {
@@ -388,5 +397,4 @@ class admin_user extends fs_controller {
             }
         }
     }
-
 }

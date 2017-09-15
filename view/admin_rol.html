@@ -21,7 +21,7 @@
             title: '<b>Atención</b>',
             callback: function(result) {
                if (result) {
-                  window.location.href = 'index.php?page=admin_users&delete_rol={$fsc->rol->codrol}#roles';
+                  window.location.href = "index.php?page=admin_users&delete_rol="+encodeURIComponent("{$fsc->rol->codrol}")+"#roles";
                }
             }                
          });

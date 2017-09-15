@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -20,18 +19,13 @@
 
 require_once 'extras/phpmailer/class.phpmailer.php';
 require_once 'extras/phpmailer/class.smtp.php';
-require_model('almacen.php');
-require_model('cuenta_banco.php');
-require_model('ejercicio.php');
-require_model('forma_pago.php');
-require_model('pais.php');
-require_model('serie.php');
 
 /**
  * Controlador de admin -> empresa.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_empresa extends fs_controller {
+class admin_empresa extends fs_controller
+{
 
     public $almacen;
     public $cuenta_banco;
@@ -42,11 +36,13 @@ class admin_empresa extends fs_controller {
     public $serie;
     public $pais;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Empresa / web', 'admin', TRUE, TRUE);
     }
 
-    protected function private_core() {
+    protected function private_core()
+    {
         /// inicializamos para que se creen las tablas, aunque no vayamos a configurarlo aquí
         $this->almacen = new almacen();
         $this->cuenta_banco = new cuenta_banco();
@@ -82,7 +78,8 @@ class admin_empresa extends fs_controller {
         }
     }
 
-    private function mail_test() {
+    private function mail_test()
+    {
         if ($this->empresa->can_send_mail()) {
             /// Es imprescindible OpenSSL para enviar emails con los principales proveedores
             if (extension_loaded('openssl')) {
@@ -100,23 +97,24 @@ class admin_empresa extends fs_controller {
 
                     if ($mail->Host == 'smtp.gmail.com') {
                         $this->new_error_msg('Aunque la contraseña de gmail sea correcta, en ciertas '
-                                . 'situaciones los servidores de gmail bloquean la conexión. '
-                                . 'Para superar esta situación debes crear y usar una '
-                                . '<a href="https://support.google.com/accounts/answer/185833?hl=es" '
-                                . 'target="_blank">contraseña de aplicación</a>');
+                            . 'situaciones los servidores de gmail bloquean la conexión. '
+                            . 'Para superar esta situación debes crear y usar una '
+                            . '<a href="https://support.google.com/accounts/answer/185833?hl=es" '
+                            . 'target="_blank">contraseña de aplicación</a>');
                     } else {
                         $this->new_error_msg("¿<a href='https://www.facturascripts.com/comm3/index.php?page=community_item&id=74'"
-                                . " target='_blank'>Necesitas ayuda</a>?");
+                            . " target='_blank'>Necesitas ayuda</a>?");
                     }
                 }
             } else {
                 $this->new_error_msg('No se encuentra la extensión OpenSSL,'
-                        . ' imprescindible para enviar emails.');
+                    . ' imprescindible para enviar emails.');
             }
         }
     }
 
-    public function encriptaciones() {
+    public function encriptaciones()
+    {
         return array(
             'ssl' => 'SSL',
             'tls' => 'TLS',
@@ -124,12 +122,12 @@ class admin_empresa extends fs_controller {
         );
     }
 
-    public function mailers() {
+    public function mailers()
+    {
         return array(
             'mail' => 'Mail',
             'sendmail' => 'SendMail',
             'smtp' => 'SMTP'
         );
     }
-
 }

@@ -27,11 +27,13 @@ $db_port = '3306';
 $db_name = 'facturascripts';
 $db_user = '';
 
-function random_string($length = 20) {
+function random_string($length = 20)
+{
     return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
 }
 
-function guarda_config($nombre_archivo) {
+function guarda_config(&$errors, $nombre_archivo)
+{
     $archivo = fopen($nombre_archivo, "w");
     if ($archivo) {
         fwrite($archivo, "<?php\n");
@@ -52,7 +54,7 @@ function guarda_config($nombre_archivo) {
         fwrite($archivo, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "'); /// MYSQL -> root, POSTGRESQL -> postgres\n");
         fwrite($archivo, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
 
-        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' AND filter_input(INPUT_POST, 'mysql_socket') != '') {
+        if (filter_input(INPUT_POST, 'db_type') == 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') != '') {
             fwrite($archivo, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
 
@@ -116,21 +118,20 @@ function guarda_config($nombre_archivo) {
         $errors[] = "permisos";
     }
 }
-
 if (file_exists('config.php')) {
     header('Location: index.php');
-} else if (floatval(substr(phpversion(), 0, 3)) < 5.3) {
+} else if (floatval(substr(phpversion(), 0, 3)) < 5.4) {
     $errors[] = 'php';
 } else if (floatval('3,1') >= floatval('3.1')) {
     $errors[] = "floatval";
     $errors2[] = 'El separador de decimales de esta versión de PHP no es el punto,'
-            . ' como sucede en las instalaciones estándar. Debes corregirlo.';
+        . ' como sucede en las instalaciones estándar. Debes corregirlo.';
 } else if (!function_exists('mb_substr')) {
     $errors[] = "mb_substr";
 } else if (!extension_loaded('simplexml')) {
     $errors[] = "simplexml";
     $errors2[] = 'No se encuentra la extensión simplexml en tu instalación de PHP.'
-            . ' Debes instalarla o activarla.';
+        . ' Debes instalarla o activarla.';
     $errors2[] = 'Linux: instala el paquete <b>php-xml</b> y reinicia el Apache.';
 } else if (!extension_loaded('openssl')) {
     $errors[] = "openssl";
@@ -154,11 +155,11 @@ if (file_exists('config.php')) {
                 // Comprobamos que la BD exista, de lo contrario la creamos
                 $db_selected = mysqli_select_db($connection, filter_input(INPUT_POST, 'db_name'));
                 if ($db_selected) {
-                    guarda_config($nombre_archivo);
+                    guarda_config($errors, $nombre_archivo);
                 } else {
                     $sqlCrearBD = "CREATE DATABASE `" . filter_input(INPUT_POST, 'db_name') . "`;";
                     if (mysqli_query($connection, $sqlCrearBD)) {
-                        guarda_config($nombre_archivo);
+                        guarda_config($errors, $nombre_archivo);
                     } else {
                         $errors[] = "db_mysql";
                         $errors2[] = mysqli_error($connection);
@@ -171,18 +172,22 @@ if (file_exists('config.php')) {
         }
     } else if (filter_input(INPUT_POST, 'db_type') == 'POSTGRESQL') {
         if (function_exists('pg_connect')) {
-            $connection = @pg_connect('host=' . filter_input(INPUT_POST, 'db_host') . ' port=' . filter_input(INPUT_POST, 'db_port') . ' user=' . filter_input(INPUT_POST, 'db_user') . ' password=' . filter_input(INPUT_POST, 'db_pass'));
+            $connection = @pg_connect('host=' . filter_input(INPUT_POST, 'db_host')
+                    . ' port=' . filter_input(INPUT_POST, 'db_port')
+                    . ' user=' . filter_input(INPUT_POST, 'db_user')
+                    . ' password=' . filter_input(INPUT_POST, 'db_pass'));
+
             if ($connection) {
                 // Comprobamos que la BD exista, de lo contrario la creamos
                 $connection2 = @pg_connect('host=' . filter_input(INPUT_POST, 'db_host') . ' port=' . filter_input(INPUT_POST, 'db_port') . ' dbname=' . filter_input(INPUT_POST, 'db_name')
-                                . ' user=' . filter_input(INPUT_POST, 'db_user') . ' password=' . filter_input(INPUT_POST, 'db_pass'));
+                        . ' user=' . filter_input(INPUT_POST, 'db_user') . ' password=' . filter_input(INPUT_POST, 'db_pass'));
 
                 if ($connection2) {
-                    guarda_config($nombre_archivo);
+                    guarda_config($errors, $nombre_archivo);
                 } else {
                     $sqlCrearBD = 'CREATE DATABASE "' . filter_input(INPUT_POST, 'db_name') . '";';
                     if (pg_query($connection, $sqlCrearBD)) {
-                        guarda_config($nombre_archivo);
+                        guarda_config($errors, $nombre_archivo);
                     } else {
                         $errors[] = "db_postgresql";
                         $errors2[] = 'Error al crear la base de datos.';
@@ -217,6 +222,7 @@ foreach ($errors as $e) {
 }
 
 $system_info = str_replace('"', "'", $system_info);
+
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
@@ -287,7 +293,7 @@ $system_info = str_replace('"', "'", $system_info);
             </div>
         </nav>
 
-        <form name="f_feedback" action="https://www.facturascripts.com/comm3/index.php?page=community_feedback" method="post" target="_blank" class="form" role="form">
+        <form name="f_feedback" action="https://www.facturascripts.com/feedback" method="post" target="_blank" class="form" role="form">
             <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
             <input type="hidden" name="feedback_type" value="error"/>
             <div class="modal" id="modal_feedback">
@@ -329,16 +335,14 @@ $system_info = str_replace('"', "'", $system_info);
 
         <script type="text/javascript">
             function change_db_type() {
-                if (document.f_configuracion_inicial.db_type.value == 'POSTGRESQL')
-                {
+                if (document.f_configuracion_inicial.db_type.value == 'POSTGRESQL') {
                     document.f_configuracion_inicial.db_port.value = '5432';
                     if (document.f_configuracion_inicial.db_user.value == '')
                     {
                         document.f_configuracion_inicial.db_user.value = 'postgres';
                     }
                     $("#mysql_socket").hide();
-                } else
-                {
+                } else {
                     document.f_configuracion_inicial.db_port.value = '3306';
                     $("#mysql_socket").show();
                 }
@@ -404,6 +408,7 @@ $system_info = str_replace('"', "'", $system_info);
                     <?php
                     foreach ($errors as $err) {
                         if ($err == 'permisos') {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -443,6 +448,7 @@ $system_info = str_replace('"', "'", $system_info);
                             </div>
                             <?php
                         } else if ($err == 'php') {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -450,7 +456,7 @@ $system_info = str_replace('"', "'", $system_info);
                                 </div>
                                 <div class="panel-body">
                                     <p>
-                                        FacturaScripts necesita PHP <b>5.3</b> o superior.
+                                        FacturaScripts necesita PHP <b>5.4</b> o superior.
                                         Tú estás usando la versión <b><?php echo phpversion() ?></b>.
                                     </p>
                                     <h3>Soluciones:</h3>
@@ -472,6 +478,7 @@ $system_info = str_replace('"', "'", $system_info);
                             </div>
                             <?php
                         } else if ($err == 'mb_substr') {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -501,6 +508,7 @@ $system_info = str_replace('"', "'", $system_info);
                             </div>
                             <?php
                         } else if ($err == 'openssl') {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -551,6 +559,7 @@ $system_info = str_replace('"', "'", $system_info);
                             </div>
                             <?php
                         } else if ($err == 'ziparchive') {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -578,6 +587,7 @@ $system_info = str_replace('"', "'", $system_info);
                             </div>
                             <?php
                         } else if ($err == 'db_mysql') {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -588,12 +598,14 @@ $system_info = str_replace('"', "'", $system_info);
                                         <?php
                                         foreach ($errors2 as $err2)
                                             echo "<li>" . $err2 . "</li>";
+
                                         ?>
                                     </ul>
                                 </div>
                             </div>
                             <?php
                         } else if ($err == 'db_postgresql') {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -604,12 +616,14 @@ $system_info = str_replace('"', "'", $system_info);
                                         <?php
                                         foreach ($errors2 as $err2)
                                             echo "<li>" . $err2 . "</li>";
+
                                         ?>
                                     </ul>
                                 </div>
                             </div>
                             <?php
                         } else {
+
                             ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
@@ -618,13 +632,14 @@ $system_info = str_replace('"', "'", $system_info);
                                 <div class="panel-body">
                                     <ul>
                                         <?php
-                                        if ($errors2) {
+                                        if (!empty($errors2)) {
                                             foreach ($errors2 as $err2) {
                                                 echo "<li>" . $err2 . "</li>";
                                             }
                                         } else {
                                             echo "<li>Error desconocido.</li>";
                                         }
+
                                         ?>
                                     </ul>
                                 </div>
@@ -632,6 +647,7 @@ $system_info = str_replace('"', "'", $system_info);
                             <?php
                         }
                     }
+
                     ?>
                 </div>
             </div>
@@ -647,7 +663,7 @@ $system_info = str_replace('"', "'", $system_info);
                         Y recuerda que tienes una sección especialmente dedicada a la <b>instalación</b> en nuestra
                         documentación oficial:
                     </p>
-                    <a href="https://www.facturascripts.com/documentacion#instalacion" target="_blank" class="btn btn-sm btn-info">
+                    <a href="https://www.facturascripts.com/documentacion/instalacion" target="_blank" class="btn btn-sm btn-info">
                         <i class="fa fa-book"></i>&nbsp; Documentación
                     </a>
                     <br/>
@@ -692,11 +708,13 @@ $system_info = str_replace('"', "'", $system_info);
                                         if ($db_type == 'MYSQL') {
                                             echo ' selected=""';
                                         }
+
                                         ?>>MySQL</option>
                                         <option value="POSTGRESQL"<?php
                                         if ($db_type == 'POSTGRESQL') {
                                             echo ' selected=""';
                                         }
+
                                         ?>>PostgreSQL</option>
                                     </select>
                                 </div>

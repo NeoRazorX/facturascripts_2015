@@ -26,9 +26,12 @@ require_once 'base/fs_db2.php';
 $db = new fs_db2();
 
 require_once 'base/fs_model.php';
-require_model('fs_extension.php');
+require_once 'base/fs_log_manager.php';
+require_all_models();
 
-if (!$db->connect()) {
+$db->connect();
+
+if (!$db->connected()) {
     echo 'ERROR al conectar a la base de datos';
 } else if (!fs_filter_input_req('v')) {
     echo 'Version de la API de FacturaScripts ausente. Actualiza el cliente.';
@@ -56,3 +59,9 @@ if (!$db->connect()) {
 } else {
     echo 'Ninguna funcion ejecutada.';
 }
+
+/// guardamos los errores en el log
+$log_manager = new fs_log_manager();
+$log_manager->save();
+
+$db->close();

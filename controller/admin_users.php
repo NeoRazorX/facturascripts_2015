@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
@@ -18,23 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_model('fs_rol.php');
-
 /**
  * Controlador de admin -> users.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_users extends fs_controller {
+class admin_users extends fs_controller
+{
 
     public $agente;
     public $historial;
     public $rol;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(__CLASS__, 'Usuarios', 'admin', TRUE, TRUE);
     }
 
-    protected function private_core() {
+    protected function private_core()
+    {
         $this->agente = new agente();
         $this->rol = new fs_rol();
 
@@ -53,12 +53,13 @@ class admin_users extends fs_controller {
         $this->historial = $fslog->all_by('login');
     }
 
-    private function add_user() {
+    private function add_user()
+    {
         $nu = $this->user->get(filter_input(INPUT_POST, 'nnick'));
         if ($nu) {
             $this->new_error_msg('El usuario <a href="' . $nu->url() . '">ya existe</a>.');
         } else if (!$this->user->admin) {
-            $this->new_error_msg('Solamente un administrador puede crear usuarios.', TRUE, 'login', TRUE);
+            $this->new_error_msg('Solamente un administrador puede crear usuarios.', 'login', TRUE, TRUE);
         } else {
             $nu = new fs_user();
             $nu->nick = filter_input(INPUT_POST, 'nnick');
@@ -66,18 +67,16 @@ class admin_users extends fs_controller {
 
             if ($nu->set_password(filter_input(INPUT_POST, 'npassword'))) {
                 $nu->admin = (bool) filter_input(INPUT_POST, 'nadmin');
-                if (filter_input(INPUT_POST, 'ncodagente')) {
-                    if (filter_input(INPUT_POST, 'ncodagente') != '') {
-                        $nu->codagente = filter_input(INPUT_POST, 'ncodagente');
-                    }
+                if (filter_input(INPUT_POST, 'ncodagente') && filter_input(INPUT_POST, 'ncodagente') != '') {
+                    $nu->codagente = filter_input(INPUT_POST, 'ncodagente');
                 }
 
                 if ($nu->save()) {
                     $this->new_message('Usuario ' . $nu->nick . ' creado correctamente.', TRUE, 'login', TRUE);
 
                     /// algún rol marcado
-                    if (!$nu->admin AND filter_input(INPUT_POST, 'roles')) {
-                        foreach (filter_input(INPUT_POST, 'roles') as $codrol) {
+                    if (!$nu->admin && filter_input(INPUT_POST, 'roles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY)) {
+                        foreach (filter_input(INPUT_POST, 'roles', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $codrol) {
                             $rol = $this->rol->get($codrol);
                             if ($rol) {
                                 $fru = new fs_rol_user();
@@ -98,13 +97,15 @@ class admin_users extends fs_controller {
                     }
 
                     Header('location: index.php?page=admin_user&snick=' . $nu->nick);
-                } else
+                } else {
                     $this->new_error_msg("¡Imposible guardar el usuario!");
+                }
             }
         }
     }
 
-    private function delete_user() {
+    private function delete_user()
+    {
         $nu = $this->user->get(filter_input(INPUT_GET, 'delete'));
         if ($nu) {
             if (FS_DEMO) {
@@ -114,13 +115,16 @@ class admin_users extends fs_controller {
                 $this->new_error_msg("Solamente un administrador puede eliminar usuarios.", 'login', TRUE);
             } else if ($nu->delete()) {
                 $this->new_message("Usuario " . $nu->nick . " eliminado correctamente.", TRUE, 'login', TRUE);
-            } else
+            } else {
                 $this->new_error_msg("¡Imposible eliminar al usuario!");
-        } else
+            }
+        } else {
             $this->new_error_msg("¡Usuario no encontrado!");
+        }
     }
 
-    private function add_rol() {
+    private function add_rol()
+    {
         $this->rol->codrol = filter_input(INPUT_POST, 'nrol');
         $this->rol->descripcion = filter_input(INPUT_POST, 'descripcion');
 
@@ -132,7 +136,8 @@ class admin_users extends fs_controller {
         }
     }
 
-    private function delete_rol() {
+    private function delete_rol()
+    {
         $rol = $this->rol->get(filter_input(INPUT_GET, 'delete_rol'));
         if ($rol) {
             if ($rol->delete()) {
@@ -145,7 +150,8 @@ class admin_users extends fs_controller {
         }
     }
 
-    public function all_pages() {
+    public function all_pages()
+    {
         $returnlist = array();
 
         /// Obtenemos la lista de páginas. Todas
@@ -163,9 +169,9 @@ class admin_users extends fs_controller {
                 return -1;
             } else if ($b->admin) {
                 return 1;
-            } else {
-                return 0;
             }
+
+            return 0;
         });
 
         /// completamos con los permisos de los usuarios
@@ -204,5 +210,4 @@ class admin_users extends fs_controller {
 
         return $returnlist;
     }
-
 }
