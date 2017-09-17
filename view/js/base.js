@@ -17,42 +17,14 @@
  */
 
 var input_number = "number";
-if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1)
-{
+if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
     input_number = "text";
 }
 
-function fs_round(value, precision, mode)
+function fs_round(value, precision)
 {
-    var m, f, isHalf, sgn;
-    precision |= 0;
-    m = Math.pow(10, precision);
-    value *= m;
-    sgn = (value > 0) | -(value < 0);
-    isHalf = value % 1 === 0.5 * sgn;
-    f = Math.floor(value);
-
-    if (isHalf)
-    {
-        switch (mode) {
-            case "PHP_ROUND_HALF_DOWN":
-                value = f + (sgn < 0);
-                break;
-
-            case "PHP_ROUND_HALF_EVEN":
-                value = f + (f % 2 * sgn);
-                break;
-
-            case "PHP_ROUND_HALF_ODD":
-                value = f + !(f % 2);
-                break;
-
-            default:
-                value = f + (sgn > 0);
-        }
-    }
-
-    return (isHalf ? value : Math.round(value)) / m;
+    var mult = Math.pow(10, precision);
+    return Math.round(value * mult) / mult;
 }
 
 function number_format(number, decimals, dec_point, thousands_sep)
@@ -213,17 +185,13 @@ $(document).ready(function () {
         document.f_feedback.feedback_text.focus();
     });
     $(".clickableRow").mousedown(function (event) {
-        if (event.which === 1)
-        {
+        if (event.which === 1) {
             var href = $(this).attr("href");
             var target = $(this).attr("target");
-            if (typeof href !== typeof undefined && href !== false)
-            {
-                if (typeof target !== typeof undefined && target === "_blank")
-                {
+            if (typeof href !== typeof undefined && href !== false) {
+                if (typeof target !== typeof undefined && target === "_blank") {
                     window.open($(this).attr("href"));
-                } else
-                {
+                } else {
                     parent.document.location = $(this).attr("href");
                 }
             }

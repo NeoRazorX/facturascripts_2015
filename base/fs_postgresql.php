@@ -541,18 +541,17 @@ class fs_postgresql extends fs_db_engine
         /// ¿Se refiere a una secuencia?
         if (strtolower(substr($default, 0, 9)) == "nextval('") {
             $aux = explode("'", $default);
-            if (count($aux) == 3) {
-                /// ¿Existe esa secuencia?
-                if (!$this->sequence_exists($aux[1])) {
-                    /// ¿En qué número debería empezar esta secuencia?
-                    $num = 1;
-                    $aux_num = $this->select("SELECT MAX(" . $colname . "::integer) as num FROM " . $table_name . ";");
-                    if ($aux_num) {
-                        $num += intval($aux_num[0]['num']);
-                    }
 
-                    $this->exec("CREATE SEQUENCE " . $aux[1] . " START " . $num . ";");
+            /// ¿Existe esa secuencia?
+            if (count($aux) == 3 && !$this->sequence_exists($aux[1])) {
+                /// ¿En qué número debería empezar esta secuencia?
+                $num = 1;
+                $aux_num = $this->select("SELECT MAX(" . $colname . "::integer) as num FROM " . $table_name . ";");
+                if ($aux_num) {
+                    $num += intval($aux_num[0]['num']);
                 }
+
+                $this->exec("CREATE SEQUENCE " . $aux[1] . " START " . $num . ";");
             }
         }
     }
@@ -589,7 +588,7 @@ class fs_postgresql extends fs_db_engine
             }
         }
 
-        if (!empty($xml_cons) && ! $delete_only) {
+        if (!empty($xml_cons) && !$delete_only) {
             /// comprobamos una a una las nuevas
             foreach ($xml_cons as $xml_con) {
                 $found = FALSE;
@@ -638,7 +637,7 @@ class fs_postgresql extends fs_db_engine
                 $sql .= ' NOT NULL';
             }
 
-            if ($col['defecto'] !== NULL && ! in_array($col['tipo'], array('serial', 'bigserial'))) {
+            if ($col['defecto'] !== NULL && !in_array($col['tipo'], array('serial', 'bigserial'))) {
                 $sql .= ' DEFAULT ' . $col['defecto'];
             }
         }
