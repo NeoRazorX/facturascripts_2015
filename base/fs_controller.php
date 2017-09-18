@@ -859,14 +859,21 @@ class fs_controller
      */
     public function get_js_location($filename)
     {
+        /// necesitamos un id que se cambie al limpiar la caché
+        $idcache = $this->cache->get('fs_idcache');
+        if(!$idcache) {
+            $idcache = $this->random_string(10);
+            $this->cache->set('fs_idcache', $idcache, 86400);
+        }
+        
         foreach ($GLOBALS['plugins'] as $plugin) {
             if (file_exists('plugins/' . $plugin . '/view/js/' . $filename)) {
-                return FS_PATH . 'plugins/' . $plugin . '/view/js/' . $filename . '?updated=' . date('YmdH');
+                return FS_PATH . 'plugins/' . $plugin . '/view/js/' . $filename . '?idcache=' . $idcache;
             }
         }
 
         /// si no está en los plugins estará en el núcleo
-        return FS_PATH . 'view/js/' . $filename . '?updated=' . date('YmdH');
+        return FS_PATH . 'view/js/' . $filename . '?idcache=' . $idcache;
     }
 
     /**
