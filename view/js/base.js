@@ -23,8 +23,19 @@ if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
 
 function fs_round(value, precision)
 {
-    var mult = Math.pow(10, precision);
-    return Math.round(value * mult) / mult;
+    var m, f, isHalf, sgn;
+    precision |= 0;
+    m = Math.pow(10, precision);
+    value *= m;
+    sgn = (value > 0) | -(value < 0);
+    isHalf = value % 1 === 0.5 * sgn;
+    f = Math.floor(value);
+
+    if (isHalf) {
+        value = f + (sgn > 0);
+    }
+
+    return (isHalf ? value : Math.round(value)) / m;
 }
 
 function number_format(number, decimals, dec_point, thousands_sep)
