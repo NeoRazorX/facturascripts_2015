@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Muestra un mensaje de error en caso de error fatal, aunque php tenga
+ * desactivados los errores.
+ */
 function fatal_handler()
 {
     $error = error_get_last();
@@ -31,6 +35,9 @@ function fatal_handler()
     }
 }
 
+/**
+ * Carga todos los modelos disponibles en los pugins activados y el núcleo.
+ */
 function require_all_models()
 {
     if (!isset($GLOBALS['models'])) {
@@ -58,36 +65,13 @@ function require_all_models()
 }
 
 /**
- * Esta función sirve para cargar modelos, y sobre todo, para cargarlos
- * desde la carpeta plugins, así se puede personalizar aún más el comportamiento
- * de FacturaScripts.
- * 
- * No se producirá ningún error en caso de que el archivo no se encuentre.
- * @param string $name nombre del archivo que se desea cargar.
+ * Función obsoleta para cargar un modelo concreto.
+ * @deprecated since version 2017.025
+ * @param string $name
  */
 function require_model($name)
 {
-    if (!isset($GLOBALS['models'])) {
-        $GLOBALS['models'] = array();
-    }
-
-    if (!in_array($name, $GLOBALS['models'])) {
-        /// primero buscamos en los plugins
-        $found = FALSE;
-        foreach ($GLOBALS['plugins'] as $plugin) {
-            if (file_exists('plugins/' . $plugin . '/model/' . $name)) {
-                require_once 'plugins/' . $plugin . '/model/' . $name;
-                $GLOBALS['models'][] = $name;
-                $found = TRUE;
-                break;
-            }
-        }
-
-        if (!$found && file_exists('model/' . $name)) {
-            require_once 'model/' . $name;
-            $GLOBALS['models'][] = $name;
-        }
-    }
+    
 }
 
 /**
