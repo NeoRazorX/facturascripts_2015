@@ -61,7 +61,7 @@ class fs_controller
      * @var string 
      */
     protected $class_name;
-    
+
     /**
      *
      * @var fs_divisa_tools
@@ -682,6 +682,8 @@ class fs_controller
                     $txt .= "curl: NO\n";
                 }
 
+                $txt .= "max input vars: " . ini_get('max_input_vars') . "\n";
+
                 $txt .= 'plugins: ' . join(',', $GLOBALS['plugins']) . "\n";
 
                 if ($this->check_for_updates()) {
@@ -861,11 +863,11 @@ class fs_controller
     {
         /// necesitamos un id que se cambie al limpiar la caché
         $idcache = $this->cache->get('fs_idcache');
-        if(!$idcache) {
+        if (!$idcache) {
             $idcache = $this->random_string(10);
             $this->cache->set('fs_idcache', $idcache, 86400);
         }
-        
+
         foreach ($GLOBALS['plugins'] as $plugin) {
             if (file_exists('plugins/' . $plugin . '/view/js/' . $filename)) {
                 return FS_PATH . 'plugins/' . $plugin . '/view/js/' . $filename . '?idcache=' . $idcache;
