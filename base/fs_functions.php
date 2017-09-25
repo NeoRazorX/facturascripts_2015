@@ -255,17 +255,35 @@ function fs_fix_html($txt)
 }
 
 /**
- * Devuelve el equivalente a $_REQUEST[$name]
+ * Devuelve el equivalente a $_REQUEST[$name], pero pudiendo definicar un valor
+ * por defecto si no encuentra nada.
  * @param string $name
- * @return string|boolean
+ * @param mixed $default
+ * @return mixed
  */
-function fs_filter_input_req($name)
+function fs_filter_input_req($name, $default = false)
 {
     if (isset($_REQUEST[$name])) {
         return $_REQUEST[$name];
     }
 
-    return FALSE;
+    return $default;
+}
+
+/**
+ * Devuelve el equivalente a $_POST[$name], pero pudiendo definicar un valor
+ * por defecto si no encuentra nada.
+ * @param string $name
+ * @param mixed $default
+ * @return mixed
+ */
+function fs_filter_input_post($name, $default = false)
+{
+    if (isset($_POST[$name])) {
+        return $_POST[$name];
+    }
+
+    return $default;
 }
 
 function fs_get_max_file_upload()
