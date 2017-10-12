@@ -15,15 +15,5 @@
         "twbs/bootstrap": "dev-master",
         "thomaspark/bootswatch": "v4.x-dev",
         "makeusabrew/bootbox": "dev-master"
-    },
-    "scripts": {
-        "post-update-cmd": [
-            "php -r \"shell_exec('cp -R vendor/phpmailer/phpmailer extras/');\"",
-            "php -r \"shell_exec('rm -rf extras/phpmailer/docs extras/phpmailer/examples extras/phpmailer/test extras/phpmailer/.git*');\"",
-            "php -r \"shell_exec('cp -R vendor/mk-j/php_xlsxwriter/xlsxwriter.class.php extras/');\"",
-            "php -r \"shell_exec('cp -R vendor/components/jquery/jquery.min.js view/js/');\"",
-            "php -r \"shell_exec('cp -R vendor/twbs/bootstrap/dist/js/bootstrap.min.js view/js/');\"",
-            "php -r \"shell_exec('cp -R vendor/makeusabrew/bootbox/bootbox.js view/js/bootbox.min.js');\""
-        ]
     }
 }
