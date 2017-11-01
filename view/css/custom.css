@@ -57,3 +57,18 @@ ul.dropdown-menu li a:first-letter {
 iframe {
    border: 0px;
 }
+
+.vertical-align-bottom {
+    float:none;
+    vertical-align: bottom !important;
+}
+
+.vertical-align-top {
+    float:none;
+    vertical-align: top !important;
+}
+
+.vertical-align-middle {
+    float:none;
+    vertical-align: middle !important;
+}

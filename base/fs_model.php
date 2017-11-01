@@ -180,6 +180,15 @@ abstract class fs_model
     }
 
     /**
+     * Muestra al usuario un consejo.
+     * @param string $msg
+     */
+    protected function new_advice($msg)
+    {
+        self::$core_log->new_advice($msg);
+    }
+
+    /**
      * Devuelve la lista de mensajes de los modelos.
      * @return array
      */
