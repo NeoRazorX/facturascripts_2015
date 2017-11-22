@@ -76,11 +76,6 @@ class fs_log extends fs_model
         }
     }
 
-    protected function install()
-    {
-        return '';
-    }
-
     public function get($id)
     {
         $data = $this->db->select("SELECT * FROM fs_logs WHERE id =" . $this->var2str($id) . ";");
@@ -137,38 +132,28 @@ class fs_log extends fs_model
 
     public function all($offset = 0, $limit = FS_ITEM_LIMIT)
     {
-        $lista = array();
-
-        $data = $this->db->select_limit("SELECT * FROM fs_logs ORDER BY fecha DESC", $limit, $offset);
-        if ($data) {
-            foreach ($data as $d)
-                $lista[] = new fs_log($d);
-        }
-
-        return $lista;
+        return $this->all_by_sql("SELECT * FROM fs_logs ORDER BY fecha DESC", $offset, $limit);
     }
 
     public function all_from($usuario)
     {
-        $lista = array();
-
-        $data = $this->db->select_limit("SELECT * FROM fs_logs WHERE usuario = " . $this->var2str($usuario) . " ORDER BY fecha DESC", FS_ITEM_LIMIT, 0);
-        if ($data) {
-            foreach ($data as $d)
-                $lista[] = new fs_log($d);
-        }
-
-        return $lista;
+        return $this->all_by_sql("SELECT * FROM fs_logs WHERE usuario = " . $this->var2str($usuario) . " ORDER BY fecha DESC");
     }
 
     public function all_by($tipo)
     {
+        return $this->all_by_sql("SELECT * FROM fs_logs WHERE tipo = " . $this->var2str($tipo) . " ORDER BY fecha DESC");
+    }
+
+    private function all_by_sql($sql, $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
         $lista = array();
 
-        $data = $this->db->select_limit("SELECT * FROM fs_logs WHERE tipo = " . $this->var2str($tipo) . " ORDER BY fecha DESC", FS_ITEM_LIMIT, 0);
+        $data = $this->db->select_limit($sql, $limit, $offset);
         if ($data) {
-            foreach ($data as $d)
+            foreach ($data as $d) {
                 $lista[] = new fs_log($d);
+            }
         }
 
         return $lista;
