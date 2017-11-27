@@ -84,7 +84,6 @@ class empresa extends \fs_model
     public $codejercicio;
     public $web;
     public $email;
-
     public $fax;
     public $telefono;
     public $codpais;
@@ -144,6 +143,7 @@ class empresa extends \fs_model
      */
     public $regimeniva;
     public $email_config;
+    private static $email_cache;
 
     public function __construct()
     {
@@ -187,9 +187,20 @@ class empresa extends \fs_model
             $this->pie_factura = $data[0]['pie_factura'];
             $this->inicio_actividad = date('d-m-Y', strtotime($data[0]['inicioact']));
             $this->regimeniva = $data[0]['regimeniva'];
+            $this->get_email_config();
 
+            if (is_null($this->xid)) {
+                $this->xid = $this->random_string(30);
+                $this->save();
+            }
+        }
+    }
+
+    private function get_email_config()
+    {
+        if (self::$email_cache === null) {
             /// cargamos las opciones de email por defecto
-            $this->email_config = array(
+            self::$email_cache = array(
                 'mail_password' => '',
                 'mail_bcc' => '',
                 'mail_firma' => "\n---\nEnviado con FacturaScripts",
@@ -202,13 +213,10 @@ class empresa extends \fs_model
             );
 
             $fsvar = new \fs_var();
-            $this->email_config = $fsvar->array_get($this->email_config, FALSE);
-
-            if (is_null($this->xid)) {
-                $this->xid = $this->random_string(30);
-                $this->save();
-            }
+            self::$email_cache = $fsvar->array_get(self::$email_cache, FALSE);
         }
+
+        $this->email_config = self::$email_cache;
     }
 
     protected function install()
@@ -467,5 +475,6 @@ class empresa extends \fs_model
     public function clean_cache()
     {
         $this->cache->delete('empresa');
+        self::$email_cache = null;
     }
 }

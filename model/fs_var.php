@@ -66,7 +66,7 @@ class fs_var extends fs_model
     public function save()
     {
         $comillas = '';
-        if (strtolower(FS_DB_TYPE) == 'mysql') {
+        if (strtolower(FS_DB_TYPE) === 'mysql') {
             $comillas = '`';
         }
 
@@ -181,7 +181,7 @@ class fs_var extends fs_model
                     }
                 }
 
-                if ($replace && ! $encontrado) {
+                if ($replace && !$encontrado) {
                     $array[$i] = FALSE;
                 }
             }
@@ -205,10 +205,8 @@ class fs_var extends fs_model
                 if (!$this->simple_delete($i)) {
                     $done = FALSE;
                 }
-            } else {
-                if (!$this->simple_save($i, $value)) {
-                    $done = FALSE;
-                }
+            } else if (!$this->simple_save($i, $value)) {
+                $done = FALSE;
             }
         }
 
