@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -154,7 +154,7 @@ class admin_home extends fs_controller
                 $this->disable_page($p);
             } else if (!$p->enabled && in_array($p->name, $enabled)) { /// página no activa marcada para activar
                 $this->enable_page($p);
-            } else if ($p->enabled && ! in_array($p->name, $enabled)) { /// págine activa no marcada (desactivar)
+            } else if ($p->enabled && !in_array($p->name, $enabled)) { /// págine activa no marcada (desactivar)
                 $this->disable_page($p);
             }
         }
@@ -406,7 +406,7 @@ class admin_home extends fs_controller
         }
 
         foreach (scandir(getcwd() . '/plugins') as $file_name) {
-            if ($file_name != '.' && $file_name != '..' && is_dir('plugins/' . $file_name) && ! in_array($file_name, $disabled)) {
+            if ($file_name != '.' && $file_name != '..' && is_dir('plugins/' . $file_name) && !in_array($file_name, $disabled)) {
                 $plugin = array(
                     'compatible' => FALSE,
                     'description' => 'Sin descripción.',
@@ -502,15 +502,16 @@ class admin_home extends fs_controller
     private function install_plugin()
     {
         if ($this->disable_add_plugins) {
-            $this->new_error_msg('La subida de plugins está desactivada.');
+            $this->new_error_msg('La subida de plugins está desactivada. Contacta con tu proveedor de hosting.');
         } else if (is_uploaded_file($_FILES['fplugin']['tmp_name'])) {
             $zip = new ZipArchive();
             $res = $zip->open($_FILES['fplugin']['tmp_name'], ZipArchive::CHECKCONS);
             if ($res === TRUE) {
                 $zip->extractTo('plugins/');
                 $zip->close();
-                $this->new_message('Plugin ' . $_FILES['fplugin']['name'] . ' añadido correctamente. Ya puedes activarlo.');
 
+                $name = $this->rename_plugin(substr($_FILES['fplugin']['name'], 0, -4));
+                $this->new_message('Plugin <b>' . $name . '</b> añadido correctamente. Ya puede activarlo.');
                 $this->clean_cache();
             } else {
                 $this->new_error_msg('Error al abrir el archivo ZIP. Código: ' . $res);
@@ -522,21 +523,27 @@ class admin_home extends fs_controller
         }
     }
 
+    private function rename_plugin($name)
+    {
+        $new_name = $name;
+        if (strpos($name, '-master') !== FALSE) {
+            /// renombramos el directorio
+            $new_name = substr($name, 0, strpos($name, '-master'));
+            if (!rename('plugins/' . $name, 'plugins/' . $new_name)) {
+                $this->new_error_msg('Error al renombrar el plugin.');
+            }
+        }
+
+        return $new_name;
+    }
+
     /**
      * Activa un plugin
      * @param string $name
      */
     private function enable_plugin($name)
     {
-        if (strpos($name, '-master') !== FALSE) {
-            /// renombramos el directorio
-            $name2 = substr($name, 0, strpos($name, '-master'));
-            if (rename('plugins/' . $name, 'plugins/' . $name2)) {
-                $name = $name2;
-            } else {
-                $this->new_error_msg('Error al renombrar el plugin.');
-            }
-        }
+        $name = $this->rename_plugin($name);
 
         /// comprobamos las dependencias
         $install = TRUE;
@@ -564,7 +571,7 @@ class admin_home extends fs_controller
             }
         }
 
-        if ($install && ! in_array($name, $GLOBALS['plugins'])) {
+        if ($install && !in_array($name, $GLOBALS['plugins'])) {
             array_unshift($GLOBALS['plugins'], $name);
             require_all_models();
 
@@ -582,7 +589,7 @@ class admin_home extends fs_controller
                         /// activamos las páginas del plugin
                         $page_list = array();
                         foreach (scandir(getcwd() . '/plugins/' . $name . '/controller') as $f) {
-                            if ($f != '.' && $f != '..' && is_string($f) && strlen($f) > 4 && ! is_dir($f)) {
+                            if ($f != '.' && $f != '..' && is_string($f) && strlen($f) > 4 && !is_dir($f)) {
                                 if (substr($f, -4) == '.php') {
                                     $page_name = substr($f, 0, -4);
                                     $page_list[] = $page_name;
