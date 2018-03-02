@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -260,30 +260,30 @@ $system_info = str_replace('"', "'", $system_info);
                         <li>
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <span class="hidden-xs">
-                                    <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp; Ayuda
+                                    <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i> Ayuda
                                 </span>
                                 <span class="visible-xs">Ayuda</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
                                     <a href="https://www.facturascripts.com/documentacion" target="_blank">
-                                        <i class="fa fa-book" aria-hidden="true"></i>&nbsp; Documentación
+                                        <i class="fa fa-book fa-fw" aria-hidden="true"></i> Documentación
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.facturascripts.com/contacto" target="_blank">
-                                        <i class="fa fa-shield" aria-hidden="true"></i>&nbsp; Soporte oficial
+                                        <i class="fa fa-shield fa-fw" aria-hidden="true"></i> Soporte oficial
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.facturascripts.com/errores" target="_blank">
-                                        <i class="fa fa-bug" aria-hidden="true"></i>&nbsp; Errores
+                                        <i class="fa fa-bug fa-fw" aria-hidden="true"></i> Errores
                                     </a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
                                     <a href="#" id="b_feedback">
-                                        <i class="fa fa-edit" aria-hidden="true"></i>&nbsp; Informar de error...
+                                        <i class="fa fa-edit fa-fw" aria-hidden="true"></i> Informar de error...
                                     </a>
                                 </li>
                             </ul>
@@ -736,19 +736,34 @@ $system_info = str_replace('"', "'", $system_info);
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     Nombre base de datos:
-                                    <input class="form-control" type="text" name="db_name" value="<?php echo $db_name; ?>" autocomplete="off"/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-database fa-fw"></i>
+                                        </span>
+                                        <input class="form-control" type="text" name="db_name" value="<?php echo $db_name; ?>" autocomplete="off"/>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     Usuario:
-                                    <input class="form-control" type="text" name="db_user" value="<?php echo $db_user; ?>" autocomplete="off"/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-user fa-fw"></i>
+                                        </span>
+                                        <input class="form-control" type="text" name="db_user" value="<?php echo $db_user; ?>" autocomplete="off"/>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     Contraseña:
-                                    <input class="form-control" type="password" name="db_pass" value="" autocomplete="off"/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-key fa-fw"></i>
+                                        </span>
+                                        <input class="form-control" type="password" name="db_pass" value="" autocomplete="off"/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -872,7 +887,7 @@ $system_info = str_replace('"', "'", $system_info);
                 <div class="col-sm-12 text-center">
                     <hr/>
                     <small>
-                        &COPY; 2013-2017 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
+                        &COPY; 2013-2018 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
                     </small>
                 </div>
             </div>
