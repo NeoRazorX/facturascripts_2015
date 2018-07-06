@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,10 +72,10 @@ class divisa extends \fs_model
 
                 /// forzamos guardar para asegurarnos que siempre hay una tasa para compras
                 $this->save();
-            } else
+            } else {
                 $this->tasaconv_compra = floatval($data['tasaconv_compra']);
-        }
-        else {
+            }
+        } else {
             $this->coddivisa = NULL;
             $this->descripcion = '';
             $this->tasaconv = 1.00;
@@ -98,7 +98,7 @@ class divisa extends \fs_model
             . ",('HTG','GOURDES','72.0869','72.0869','322','G')"
             . ",('MXN','PESOS (MXN)','23.3678','23.3678','484','MX$')"
             . ",('PAB','BALBOAS','1.128','1.128','590','B')"
-            . ",('PEN','NUEVOS SOLES','3.736','3.736','604','S/.')"
+            . ",('PEN','SOLES','3.736','3.736','604','S/')"
             . ",('USD','DÓLARES EE.UU.','1.129','1.129','840','$')"
             . ",('VEF','BOLÍVARES','10.6492','10.6492','937','Bs')";
     }
@@ -161,7 +161,7 @@ class divisa extends \fs_model
 
         if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
             $this->new_error_msg("Código de divisa no válido.");
-        } else if (isset($this->codiso) && ! preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
+        } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
             $this->new_error_msg("Código ISO no válido.");
         } else if ($this->tasaconv == 0) {
             $this->new_error_msg('La tasa de conversión no puede ser 0.');
