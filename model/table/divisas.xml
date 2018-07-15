@@ -18,7 +18,7 @@
     </columna>
     <columna>
         <nombre>codiso</nombre>
-        <tipo>character varying(3)</tipo>
+        <tipo>character varying(5)</tipo>
         <nulo>YES</nulo>
     </columna>
     <columna>

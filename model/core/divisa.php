@@ -99,6 +99,7 @@ class divisa extends \fs_model
             . ",('MXN','PESOS (MXN)','23.3678','23.3678','484','MX$')"
             . ",('PAB','BALBOAS','1.128','1.128','590','B')"
             . ",('PEN','SOLES','3.736','3.736','604','S/')"
+            . ",('PYG','GUARANÍ','6750','6750','4217','Gs')"
             . ",('USD','DÓLARES EE.UU.','1.129','1.129','840','$')"
             . ",('VEF','BOLÍVARES','10.6492','10.6492','937','Bs')";
     }
@@ -161,7 +162,7 @@ class divisa extends \fs_model
 
         if (!preg_match("/^[A-Z0-9]{1,3}$/i", $this->coddivisa)) {
             $this->new_error_msg("Código de divisa no válido.");
-        } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,3}$/i", $this->codiso)) {
+        } else if (isset($this->codiso) && !preg_match("/^[A-Z0-9]{1,5}$/i", $this->codiso)) {
             $this->new_error_msg("Código ISO no válido.");
         } else if ($this->tasaconv == 0) {
             $this->new_error_msg('La tasa de conversión no puede ser 0.');
