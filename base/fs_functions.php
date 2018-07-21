@@ -71,8 +71,10 @@ function require_all_models()
  */
 function require_model($name)
 {
-    $core_log = new fs_core_log();
-    $core_log->new_error("require_model('" . $name . "') es innecesario desde FacturaScripts 2017.025.");
+    if (FS_DB_HISTORY) {
+        $core_log = new fs_core_log();
+        $core_log->new_error("require_model('" . $name . "') es innecesario desde FacturaScripts 2017.025.");
+    }
 }
 
 /**

@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,6 +36,9 @@ require_once 'base/config2.php';
 require_once 'base/fs_controller.php';
 require_once 'base/fs_log_manager.php';
 require_once 'raintpl/rain.tpl.class.php';
+
+/// desactivamos el límite de 30 segundos de PHP
+set_time_limit(0);
 
 /**
  * Registramos la función para capturar los fatal error.

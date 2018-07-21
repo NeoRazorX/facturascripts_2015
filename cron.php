@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,9 @@
  */
 
 echo 'Iniciando cron de FacturaScripts...';
+
+/// desactivamos el límite de 30 segundos de PHP
+set_time_limit(0);
 
 /// accedemos al directorio de FacturaScripts
 chdir(__DIR__);
