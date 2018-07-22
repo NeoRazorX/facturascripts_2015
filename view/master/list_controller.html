@@ -1,0 +1,131 @@
+{include="header"}
+
+<div class="container-fluid" style="margin-bottom: 10px;">
+    <div class="row">
+        <div class="col-sm-4">
+            <span class="btn-group">
+                <a class="btn btn-sm btn-default" href="{$fsc->url()}" title="Recargar la página">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+                {if="$fsc->page->is_default()"}
+                <a class="btn btn-sm btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="Marcada como página de inicio (pulsa de nuevo para desmarcar)">
+                    <i class="fa fa-bookmark" aria-hidden="true"></i>
+                </a>
+                {else}
+                <a class="btn btn-sm btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio">
+                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                </a>
+                {/if}
+            </span>
+            <span class="btn-group">
+                {loop="$fsc->extensions"}
+                {if="$value->type=='button'"}
+                <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
+                {/if}
+                {/loop}
+            </span>
+        </div>
+        <div class="col-sm-8 text-right">
+            <span class="h2 text-capitalize">{$fsc->page->folder} / {$fsc->page->title}</span>
+        </div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs">
+    {loop="$fsc->tabs"}
+    {if="$value.name == $fsc->active_tab"}
+    <li role="presentation" class="active">
+        <a href="{$fsc->url()}&tab={$value.name}">
+            <i class="fa {$value.icon} fa-fw" aria-hidden="true"></i>
+            <span class="hidden-xs">{$value.title}</span>
+            <span class="badge">{$fsc->show_numero($value.count, 0)}</span>
+        </a>
+    </li>
+    {else}
+    <li role="presentation">
+        <a href="{$fsc->url()}&tab={$value.name}">
+            <i class="fa {$value.icon} fa-fw" aria-hidden="true"></i>
+            <span class="hidden-xs hidden-sm">{$value.title}</span>
+            <span class="badge">{$fsc->show_numero($value.count, 0)}</span>
+        </a>
+    </li>
+    {/if}
+    {/loop}
+</ul>
+
+<form name="f_custom_search" action="{$fsc->url()}&tab={$fsc->active_tab}" method="post" class="form">
+    <input type="hidden" name="offset" value="{$fsc->offset}"/>
+    <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" autofocus="" placeholder="Buscar"/>
+                    <span class="input-group-btn hidden-sm">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+                    </div>
+                    <select name="sort" class="form-control" onchange="this.form.submit();">
+                        {loop="$fsc->get_current_tab('sort_options')"}
+                        {if="$key==$fsc->sort_option"}
+                        <option value="{$key}" selected="">{$value}</option>
+                        {else}
+                        <option value="{$key}">{$value}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {loop="$fsc->get_current_tab('columns')"}
+                {if="in_array($value, ['money', 'number'])"}
+                <th class="text-right">{$key}</th>
+                {else}
+                <th>{$key}</th>
+                {/if}
+                {/loop}
+            </tr>
+        </thead>
+        {loop="$fsc->get_current_tab('cursor')"}
+        <tr>
+            {loop="$fsc->get_current_tab('columns')"}
+            {$fsc->get_decoration($key2, $value2, $value1)}
+            {/loop}
+        </tr>
+        {else}
+        <tr class="warning">
+            <td colspan="20">Sin resultados</td>
+        </tr>
+        {/loop}
+    </table>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <ul class="pagination">
+                {loop="$fsc->get_pagination()"}
+                <li{if="$value['active']"} class="active"{/if}>
+                    <a href="#" onclick="document.f_custom_search.offset.value = '{$value['offset']}';document.f_custom_search.submit();">{$value['num']}</a>
+                </li>
+                {/loop}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{include="footer"}
