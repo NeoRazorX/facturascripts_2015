@@ -1,9 +1,11 @@
-/nbproject/
 /.idea/
-/plugins/
 /doc/
+/nbproject/
+/plugins/
 /tmp/
 /vendor/
 .DS_Store
 .htaccess
+.vscode
 config.php
+*.lock
