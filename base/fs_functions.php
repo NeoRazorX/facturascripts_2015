@@ -18,83 +18,6 @@
  */
 
 /**
- * Muestra un mensaje de error en caso de error fatal, aunque php tenga
- * desactivados los errores.
- */
-function fatal_handler()
-{
-    $error = error_get_last();
-    if ($error !== NULL && $error["type"] == 1) {
-        echo "<h1>Error fatal</h1>"
-        . "<ul>"
-        . "<li><b>Tipo:</b> " . $error["type"] . "</li>"
-        . "<li><b>Archivo:</b> " . $error["file"] . "</li>"
-        . "<li><b>Línea:</b> " . $error["line"] . "</li>"
-        . "<li><b>Mensaje:</b> " . $error["message"] . "</li>"
-        . "</ul>";
-    }
-}
-
-/**
- * Carga todos los modelos disponibles en los pugins activados y el núcleo.
- */
-function require_all_models()
-{
-    if (!isset($GLOBALS['models'])) {
-        $GLOBALS['models'] = array();
-    }
-
-    foreach ($GLOBALS['plugins'] as $plugin) {
-        if (file_exists('plugins/' . $plugin . '/model')) {
-            foreach (scandir('plugins/' . $plugin . '/model') as $file_name) {
-                if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
-                    require_once 'plugins/' . $plugin . '/model/' . $file_name;
-                    $GLOBALS['models'][] = $file_name;
-                }
-            }
-        }
-    }
-
-    /// ahora cargamos los del núcleo
-    foreach (scandir('model') as $file_name) {
-        if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
-            require_once 'model/' . $file_name;
-            $GLOBALS['models'][] = $file_name;
-        }
-    }
-}
-
-/**
- * Función obsoleta para cargar un modelo concreto.
- * @deprecated since version 2017.025
- * @param string $name
- */
-function require_model($name)
-{
-    if (FS_DB_HISTORY) {
-        $core_log = new fs_core_log();
-        $core_log->new_error("require_model('" . $name . "') es innecesario desde FacturaScripts 2017.025.");
-    }
-}
-
-/**
- * Devuelve el nombre de la clase del objeto, pero sin el namespace.
- * @param mixed $object
- * @return string
- */
-function get_class_name($object = NULL)
-{
-    $name = get_class($object);
-
-    $pos = strrpos($name, '\\');
-    if ($pos !== FALSE) {
-        $name = substr($name, $pos + 1);
-    }
-
-    return $name;
-}
-
-/**
  * Redondeo bancario
  * @staticvar real $dFuzz
  * @param float $dVal
@@ -126,63 +49,21 @@ function bround($dVal, $iDec = 2)
 }
 
 /**
- * Descarga el contenido con curl o file_get_contents.
- * @param string $url
- * @param integer $timeout
- * @return string
+ * Muestra un mensaje de error en caso de error fatal, aunque php tenga
+ * desactivados los errores.
  */
-function fs_file_get_contents($url, $timeout = 10)
+function fatal_handler()
 {
-    if (function_exists('curl_init')) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        if (ini_get('open_basedir') === NULL) {
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        }
-
-        /**
-         * En algunas configuraciones de php es necesario desactivar estos flags,
-         * en otras es necesario activarlos. habrá que buscar una solución mejor.
-         */
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
-        if (defined('FS_PROXY_TYPE')) {
-            curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
-            curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
-            curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
-        }
-        $data = curl_exec($ch);
-        $info = curl_getinfo($ch);
-
-        if ($info['http_code'] == 200) {
-            curl_close($ch);
-            return $data;
-        } else if ($info['http_code'] == 301 || $info['http_code'] == 302) {
-            $redirs = 0;
-            return fs_curl_redirect_exec($ch, $redirs);
-        }
-
-        /// guardamos en el log
-        if (class_exists('fs_core_log') && $info['http_code'] != 404) {
-            $error = curl_error($ch);
-            if ($error == '') {
-                $error = 'ERROR ' . $info['http_code'];
-            }
-
-            $core_log = new fs_core_log();
-            $core_log->new_error($error);
-            $core_log->save($error);
-        }
-
-        curl_close($ch);
-        return 'ERROR';
+    $error = error_get_last();
+    if (isset($error) && in_array($error["type"], [1, 64])) {
+        echo "<h1>Error fatal</h1>"
+        . "<ul>"
+        . "<li><b>Tipo:</b> " . $error["type"] . "</li>"
+        . "<li><b>Archivo:</b> " . $error["file"] . "</li>"
+        . "<li><b>Línea:</b> " . $error["line"] . "</li>"
+        . "<li><b>Mensaje:</b> " . $error["message"] . "</li>"
+        . "</ul>";
     }
-
-    return file_get_contents($url);
 }
 
 /**
@@ -246,6 +127,90 @@ function fs_file_download($url, $filename, $timeout = 30)
 }
 
 /**
+ * Descarga el contenido con curl o file_get_contents.
+ * @param string $url
+ * @param integer $timeout
+ * @return string
+ */
+function fs_file_get_contents($url, $timeout = 10)
+{
+    if (function_exists('curl_init')) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        if (ini_get('open_basedir') === NULL) {
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        }
+
+        /**
+         * En algunas configuraciones de php es necesario desactivar estos flags,
+         * en otras es necesario activarlos. habrá que buscar una solución mejor.
+         */
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
+        if (defined('FS_PROXY_TYPE')) {
+            curl_setopt($ch, CURLOPT_PROXYTYPE, FS_PROXY_TYPE);
+            curl_setopt($ch, CURLOPT_PROXY, FS_PROXY_HOST);
+            curl_setopt($ch, CURLOPT_PROXYPORT, FS_PROXY_PORT);
+        }
+        $data = curl_exec($ch);
+        $info = curl_getinfo($ch);
+
+        if ($info['http_code'] == 200) {
+            curl_close($ch);
+            return $data;
+        } else if ($info['http_code'] == 301 || $info['http_code'] == 302) {
+            $redirs = 0;
+            return fs_curl_redirect_exec($ch, $redirs);
+        }
+
+        /// guardamos en el log
+        if (class_exists('fs_core_log') && $info['http_code'] != 404) {
+            $error = curl_error($ch);
+            if ($error == '') {
+                $error = 'ERROR ' . $info['http_code'];
+            }
+
+            $core_log = new fs_core_log();
+            $core_log->new_error($error);
+            $core_log->save($error);
+        }
+
+        curl_close($ch);
+        return 'ERROR';
+    }
+
+    return file_get_contents($url);
+}
+
+/**
+ * Devuelve el equivalente a $_POST[$name], pero pudiendo definicar un valor
+ * por defecto si no encuentra nada.
+ * @param string $name
+ * @param mixed $default
+ * @return mixed
+ */
+function fs_filter_input_post($name, $default = false)
+{
+    return isset($_POST[$name]) ? $_POST[$name] : $default;
+}
+
+/**
+ * Devuelve el equivalente a $_REQUEST[$name], pero pudiendo definicar un valor
+ * por defecto si no encuentra nada.
+ * @param string $name
+ * @param mixed $default
+ * @return mixed
+ */
+function fs_filter_input_req($name, $default = false)
+{
+    return isset($_REQUEST[$name]) ? $_REQUEST[$name] : $default;
+}
+
+/**
  * Deshace las conversiones realizadas por fs_model::no_html()
  * @param string $txt
  * @return string
@@ -258,44 +223,85 @@ function fs_fix_html($txt)
 }
 
 /**
- * Devuelve el equivalente a $_REQUEST[$name], pero pudiendo definicar un valor
- * por defecto si no encuentra nada.
- * @param string $name
- * @param mixed $default
- * @return mixed
+ * Devuelve el tamaño máximo de archivo que soporta el servidor para las subidas por formulario.
+ * @return int
  */
-function fs_filter_input_req($name, $default = false)
-{
-    if (isset($_REQUEST[$name])) {
-        return $_REQUEST[$name];
-    }
-
-    return $default;
-}
-
-/**
- * Devuelve el equivalente a $_POST[$name], pero pudiendo definicar un valor
- * por defecto si no encuentra nada.
- * @param string $name
- * @param mixed $default
- * @return mixed
- */
-function fs_filter_input_post($name, $default = false)
-{
-    if (isset($_POST[$name])) {
-        return $_POST[$name];
-    }
-
-    return $default;
-}
-
 function fs_get_max_file_upload()
 {
     $max = intval(ini_get('post_max_size'));
-
     if (intval(ini_get('upload_max_filesize')) < $max) {
         $max = intval(ini_get('upload_max_filesize'));
     }
 
     return $max;
+}
+
+/**
+ * Establece el límite de tiempo de ejecución de PHP, si puede.
+ * @param int $limit
+ */
+function fs_set_time_limit($limit)
+{
+    $disabledFunctions = explode(',', ini_get('disable_functions'));
+    if (!in_array('set_time_limit', $disabledFunctions)) {
+        @set_time_limit($limit);
+    }
+}
+
+/**
+ * Devuelve el nombre de la clase del objeto, pero sin el namespace.
+ * @param mixed $object
+ * @return string
+ */
+function get_class_name($object = NULL)
+{
+    $name = get_class($object);
+    $pos = strrpos($name, '\\');
+    if ($pos !== FALSE) {
+        $name = substr($name, $pos + 1);
+    }
+
+    return $name;
+}
+
+/**
+ * Carga todos los modelos disponibles en los pugins activados y el núcleo.
+ */
+function require_all_models()
+{
+    if (!isset($GLOBALS['models'])) {
+        $GLOBALS['models'] = array();
+    }
+
+    foreach ($GLOBALS['plugins'] as $plugin) {
+        if (file_exists('plugins/' . $plugin . '/model')) {
+            foreach (scandir('plugins/' . $plugin . '/model') as $file_name) {
+                if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
+                    require_once 'plugins/' . $plugin . '/model/' . $file_name;
+                    $GLOBALS['models'][] = $file_name;
+                }
+            }
+        }
+    }
+
+    /// ahora cargamos los del núcleo
+    foreach (scandir('model') as $file_name) {
+        if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
+            require_once 'model/' . $file_name;
+            $GLOBALS['models'][] = $file_name;
+        }
+    }
+}
+
+/**
+ * Función obsoleta para cargar un modelo concreto.
+ * @deprecated since version 2017.025
+ * @param string $name
+ */
+function require_model($name)
+{
+    if (FS_DB_HISTORY) {
+        $core_log = new fs_core_log();
+        $core_log->new_error("require_model('" . $name . "') es innecesario desde FacturaScripts 2017.025.");
+    }
 }

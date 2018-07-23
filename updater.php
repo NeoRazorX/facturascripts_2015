@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,9 @@ if (!file_exists('config.php')) {
 require_once 'config.php';
 require_once 'base/fs_updater.php';
 
-set_time_limit(0);
+/// ampliamos el límite de ejecución de PHP a 300 segundos.
+fs_set_time_limit(300);
+
 $updater = new fs_updater();
 
 ?>
@@ -122,7 +124,7 @@ $updater = new fs_updater();
                                             <th></th>
                                         </tr>
                                     </thead>
-                                    <?php echo $updater->tr_updates; ?>
+<?php echo $updater->tr_updates; ?>
                                 </table>
                             </div>
                         </div>
@@ -135,7 +137,7 @@ $updater = new fs_updater();
                                             <th></th>
                                         </tr>
                                     </thead>
-                                    <?php echo $updater->tr_options; ?>
+<?php echo $updater->tr_options; ?>
                                 </table>
                             </div>
                         </div>

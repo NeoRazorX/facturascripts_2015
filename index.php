@@ -37,8 +37,8 @@ require_once 'base/fs_controller.php';
 require_once 'base/fs_log_manager.php';
 require_once 'raintpl/rain.tpl.class.php';
 
-/// desactivamos el límite de 30 segundos de PHP
-set_time_limit(0);
+/// ampliamos el límite de ejecución de PHP a 300 segundos.
+fs_set_time_limit(300);
 
 /**
  * Registramos la función para capturar los fatal error.

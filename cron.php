@@ -20,7 +20,7 @@
 echo 'Iniciando cron de FacturaScripts...';
 
 /// desactivamos el límite de 30 segundos de PHP
-set_time_limit(0);
+fs_set_time_limit(0);
 
 /// accedemos al directorio de FacturaScripts
 chdir(__DIR__);
