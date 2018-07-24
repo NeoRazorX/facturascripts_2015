@@ -24,8 +24,8 @@ if (!file_exists('config.php')) {
 require_once 'config.php';
 require_once 'base/fs_updater.php';
 
-/// ampliamos el límite de ejecución de PHP a 300 segundos.
-fs_set_time_limit(300);
+/// ampliamos el límite de ejecución de PHP a 5 minutos
+@set_time_limit(300);
 
 $updater = new fs_updater();
 

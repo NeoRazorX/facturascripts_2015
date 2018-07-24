@@ -237,18 +237,6 @@ function fs_get_max_file_upload()
 }
 
 /**
- * Establece el límite de tiempo de ejecución de PHP, si puede.
- * @param int $limit
- */
-function fs_set_time_limit($limit)
-{
-    $disabledFunctions = explode(',', ini_get('disable_functions'));
-    if (!in_array('set_time_limit', $disabledFunctions)) {
-        @set_time_limit($limit);
-    }
-}
-
-/**
  * Devuelve el nombre de la clase del objeto, pero sin el namespace.
  * @param mixed $object
  * @return string

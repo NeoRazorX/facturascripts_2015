@@ -19,8 +19,8 @@
 
 echo 'Iniciando cron de FacturaScripts...';
 
-/// desactivamos el límite de 30 segundos de PHP
-fs_set_time_limit(0);
+/// establecemos el límite de ejecución de PHP en 50 minutos
+@set_time_limit(3000);
 
 /// accedemos al directorio de FacturaScripts
 chdir(__DIR__);
