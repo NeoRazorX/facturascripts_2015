@@ -10,22 +10,24 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 if (!file_exists('config.php')) {
     die('Archivo config.php no encontrado. No puedes actualizar sin instalar.');
 }
 
-require_once 'config.php';
-require_once 'base/fs_updater.php';
+define('FS_FOLDER', __DIR__);
 
 /// ampliamos el límite de ejecución de PHP a 5 minutos
 @set_time_limit(300);
+
+require_once 'config.php';
+require_once 'base/fs_updater.php';
 
 $updater = new fs_updater();
 

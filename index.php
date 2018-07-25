@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
@@ -30,15 +30,17 @@ if (!file_exists('config.php')) {
     die('Redireccionando al instalador...');
 }
 
+define('FS_FOLDER', __DIR__);
+
+/// ampliamos el límite de ejecución de PHP a 5 minutos
+@set_time_limit(300);
+
 /// cargamos las constantes de configuración
 require_once 'config.php';
 require_once 'base/config2.php';
 require_once 'base/fs_controller.php';
 require_once 'base/fs_log_manager.php';
 require_once 'raintpl/rain.tpl.class.php';
-
-/// ampliamos el límite de ejecución de PHP a 5 minutos
-@set_time_limit(300);
 
 /**
  * Registramos la función para capturar los fatal error.
