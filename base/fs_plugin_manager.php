@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -330,7 +330,7 @@ class fs_plugin_manager
         }
 
         if (fs_file_manager::del_tree(FS_FOLDER . '/plugins/' . $plugin_name)) {
-            $this->core_log->new_message('Plugin ' . $plugin_name . ' eliminado correctamente.', TRUE);
+            $this->core_log->new_message('Plugin ' . $plugin_name . ' eliminado correctamente.');
             $this->clean_cache();
             return true;
         }
