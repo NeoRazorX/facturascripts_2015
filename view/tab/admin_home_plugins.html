@@ -12,36 +12,36 @@
         </thead>
         {loop="$fsc->plugin_manager->installed()"}
         <!--{$tr_class=''}-->
-        {if="!$value['compatible']"}<!--{$tr_class=' class="danger"'}-->{elseif="$value['enabled']"}<!--{$tr_class=' class="success"'}-->{/if}
+        {if="!$value.compatible"}<!--{$tr_class=' class="danger"'}-->{elseif="$value.enabled"}<!--{$tr_class=' class="success"'}-->{/if}
         <tr{$tr_class}>
-            <td>{$value['name']}</td>
+            <td>{$value.name}</td>
             <td>
-                <p>{$value['description']}</p>
-                {if="$value['wizard']!='' && $value['enabled']"}
-                <a href="index.php?page={$value['wizard']}" class="btn btn-xs btn-default">
+                <p>{$value.description}</p>
+                {if="$value.wizard !='' && $value.enabled"}
+                <a href="index.php?page={$value.wizard}" class="btn btn-xs btn-default">
                     <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp; Configurar
                 </a>
                 {/if}
-                <a href="https://www.facturascripts.com/plugin/{$value['name']}" target="_blank" class="btn btn-xs btn-default">
+                <a href="https://www.facturascripts.com/plugin/{$value.name}" target="_blank" class="btn btn-xs btn-default">
                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp; más información
                 </a>
-                {if="$value['enabled']"}
-                <a class="btn btn-xs btn-warning" href="{$fsc->url()}&disable={$value['name']}#plugins">
+                {if="$value.enabled"}
+                <a class="btn btn-xs btn-warning" href="{$fsc->url()}&disable={$value.name}#plugins">
                     <span class="glyphicon glyphicon-remove"></span> Desactivar
                 </a>
                 {else}
                 <div class="btn-group">
                     {if="!$fsc->plugin_manager->disable_rm_plugins"}
-                    <a class="btn btn-xs btn-danger" onclick="eliminar('{$value['name']}')" title="eliminar plugin">
+                    <a class="btn btn-xs btn-danger" onclick="eliminar('{$value.name}')" title="eliminar plugin">
                         <span class="glyphicon glyphicon-trash"></span>
                     </a>
                     {/if}
-                    {if="$value['compatible']"}
-                    <a class="btn btn-xs btn-primary" href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable={$value['name']}#plugins">
+                    {if="$value.compatible"}
+                    <a class="btn btn-xs btn-primary" href="{$fsc->url()}&caca={$fsc->random_string(4)}&enable={$value.name}#plugins">
                         <span class="glyphicon glyphicon-ok"></span>&nbsp; Activar
                     </a>
                     {else}
-                    <a class="btn btn-xs btn-default" href="#" onclick="bootbox.alert({message: 'Le falta el archivo facturascripts.ini', title: '<b>Atención</b>'});">
+                    <a class="btn btn-xs btn-warning" href="#" onclick="bootbox.alert({message: '{$value.error_msg}', title: '<b>Atención</b>'});">
                         <span class="glyphicon glyphicon-remove"></span>&nbsp; Incompatible
                     </a>
                     {/if}
@@ -49,11 +49,11 @@
                 {/if}
             </td>
             <td class="text-right">
-                <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&plugin={$value['name']}&version={$value['version']}" target="_blank">
-                    {$value['version']}
+                <a href="{#FS_COMMUNITY_URL#}/index.php?page=community_changelog&plugin={$value.name}&version={$value.version}" target="_blank">
+                    {$value.version}
                 </a>
             </td>
-            <td class="text-right">{$value['prioridad']}</td>
+            <td class="text-right">{$value.prioridad}</td>
         </tr>
         {else}
         <tr class="warning">

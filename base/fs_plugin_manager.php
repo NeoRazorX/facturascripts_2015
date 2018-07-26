@@ -334,7 +334,7 @@ class fs_plugin_manager
             $this->clean_cache();
             return true;
         }
-        
+
         $this->core_log->new_error('Imposible eliminar el plugin ' . $plugin_name);
         return false;
     }
@@ -407,6 +407,7 @@ class fs_plugin_manager
             'description' => 'Sin descripción.',
             'download2_url' => '',
             'enabled' => FALSE,
+            'error_msg' => 'Falta archivo facturascripts.ini',
             'idplugin' => NULL,
             'min_version' => 2017.000,
             'name' => $plugin_name,
@@ -423,16 +424,21 @@ class fs_plugin_manager
         }
 
         $ini_file = parse_ini_file(FS_FOLDER . '/plugins/' . $plugin_name . '/facturascripts.ini');
-        foreach (['idplugin', 'min_version', 'update_url', 'version', 'version_url', 'wizard'] as $field) {
+        foreach (['description', 'idplugin', 'min_version', 'update_url', 'version', 'version_url', 'wizard'] as $field) {
             if (isset($ini_file[$field])) {
                 $plugin[$field] = $ini_file[$field];
             }
         }
 
+        $plugin['enabled'] = in_array($plugin_name, $this->enabled());
         $plugin['version'] = (int) $plugin['version'];
         $plugin['min_version'] = (float) $plugin['min_version'];
-        $plugin['compatible'] = $this->version >= $plugin['min_version'];
-        $plugin['enabled'] = in_array($plugin_name, $this->enabled());
+
+        if ($this->version >= $plugin['min_version']) {
+            $plugin['compatible'] = true;
+        } else {
+            $plugin['error_msg'] = 'Requiere FacturaScripts ' . $plugin['min_version'];
+        }
 
         if (file_exists('plugins/' . $plugin_name . '/description')) {
             $plugin['description'] = file_get_contents('plugins/' . $plugin_name . '/description');
