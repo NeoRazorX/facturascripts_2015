@@ -33,14 +33,12 @@ class fs_plugin_manager
     public $disable_add_plugins = false;
     public $disable_rm_plugins = false;
     private $download_list;
-    private $page;
-    private $version = 2017.090;
+    public $version = 2017.090;
 
     public function __construct()
     {
         $this->cache = new fs_cache();
         $this->core_log = new fs_core_log();
-        $this->page = new fs_page();
 
         if (defined('FS_DISABLE_MOD_PLUGINS')) {
             $this->disable_mod_plugins = FS_DISABLE_MOD_PLUGINS;
@@ -350,7 +348,8 @@ class fs_plugin_manager
     private function disable_unnused_pages()
     {
         $eliminadas = [];
-        foreach ($this->page->all() as $page) {
+        $page_model = new fs_page();
+        foreach ($page_model->all() as $page) {
             if (file_exists(FS_FOLDER . '/controller/' . $page->name . '.php')) {
                 continue;
             }

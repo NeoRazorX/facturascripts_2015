@@ -79,7 +79,7 @@ class fs_file_manager
     {
         $notwritable = [];
         foreach (static::scan_folder(FS_FOLDER, true) as $folder) {
-            if (!is_writable($folder)) {
+            if (is_dir($folder) && !is_writable($folder)) {
                 $notwritable[] = $folder;
             }
         }
@@ -117,6 +117,13 @@ class fs_file_manager
         return true;
     }
 
+    /**
+     * 
+     * @param string $folder
+     * @param string $extension
+     *
+     * @return array
+     */
     public static function scan_files($folder, $extension)
     {
         $files = [];

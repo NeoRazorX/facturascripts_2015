@@ -29,6 +29,12 @@ define('FS_FOLDER', __DIR__);
 require_once 'config.php';
 require_once 'base/fs_updater.php';
 
+/**
+ * Registramos la función para capturar los fatal error.
+ * Información importante a la hora de depurar errores.
+ */
+register_shutdown_function("fatal_handler");
+
 $updater = new fs_updater();
 
 ?>
@@ -254,7 +260,7 @@ $updater = new fs_updater();
         <?php
         if (!FS_DEMO) {
             $url = 'https://www.facturascripts.com/comm3/index.php?page=community_stats'
-                . '&add=TRUE&version=' . $updater->version . '&plugins=' . join(',', $updater->plugins);
+                . '&add=TRUE&version=' . $updater->plugin_manager->version . '&plugins=' . implode(',', $updater->plugins);
 
             ?>
             <div style="display: none;">
