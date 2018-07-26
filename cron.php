@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 echo 'Iniciando cron de FacturaScripts...';
@@ -24,6 +24,7 @@ echo 'Iniciando cron de FacturaScripts...';
 
 /// accedemos al directorio de FacturaScripts
 chdir(__DIR__);
+define('FS_FOLDER', __DIR__);
 
 /// cargamos las constantes de configuración
 require_once 'config.php';

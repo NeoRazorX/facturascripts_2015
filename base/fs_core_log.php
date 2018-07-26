@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2017-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,38 +64,38 @@ class fs_core_log
     public function __construct($controller_name = NULL)
     {
         if (!isset(self::$advices)) {
-            self::$advices = array();
+            self::$advices = [];
             self::$controller_name = $controller_name;
-            self::$errors = array();
-            self::$messages = array();
-            self::$sql_history = array();
-            self::$to_save = array();
+            self::$errors = [];
+            self::$messages = [];
+            self::$sql_history = [];
+            self::$to_save = [];
         }
     }
 
     public function clean_advices()
     {
-        self::$advices = array();
+        self::$advices = [];
     }
 
     public function clean_errors()
     {
-        self::$errors = array();
+        self::$errors = [];
     }
 
     public function clean_messages()
     {
-        self::$messages = array();
+        self::$messages = [];
     }
 
     public function clean_sql_history()
     {
-        self::$sql_history = array();
+        self::$sql_history = [];
     }
 
     public function clean_to_save()
     {
-        self::$to_save = array();
+        self::$to_save = [];
     }
 
     public function controller_name()
@@ -190,6 +190,6 @@ class fs_core_log
      */
     public function save($msg, $type = 'error', $alert = FALSE)
     {
-        self::$to_save[] = array('message' => $msg, 'type' => $type, 'alert' => $alert);
+        self::$to_save[] = ['message' => $msg, 'type' => $type, 'alert' => $alert];
     }
 }

@@ -67,6 +67,26 @@ function fatal_handler()
 }
 
 /**
+ * Devuelve la ruta del controlador solicitado.
+ * @param string $name
+ * @return string
+ */
+function find_controller($name)
+{
+    foreach ($GLOBALS['plugins'] as $plugin) {
+        if (file_exists(FS_FOLDER . '/plugins/' . $plugin . '/controller/' . $name . '.php')) {
+            return 'plugins/' . $plugin . '/controller/' . $name . '.php';
+        }
+    }
+
+    if (file_exists(FS_FOLDER . '/controller/' . $name . '.php')) {
+        return 'controller/' . $name . '.php';
+    }
+
+    return 'base/fs_controller.php';
+}
+
+/**
  * Función alternativa para cuando el followlocation falla.
  * @param resource $ch
  * @param integer $redirects
