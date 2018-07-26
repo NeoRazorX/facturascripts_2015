@@ -25,6 +25,29 @@
 class fs_file_manager
 {
 
+    public static function check_htaccess()
+    {
+        if (!file_exists(FS_FOLDER . '/.htaccess')) {
+            $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
+            file_put_contents(FS_FOLDER . '/.htaccess', $txt);
+        }
+
+        /// ahora comprobamos el de tmp/XXXXX/private_keys
+        if (file_exists(FS_FOLDER . '/tmp/' . FS_TMP_NAME . 'private_keys') && !file_exists(FS_FOLDER . '/tmp/' . FS_TMP_NAME . 'private_keys/.htaccess')) {
+            file_put_contents(FS_FOLDER . '/tmp/' . FS_TMP_NAME . 'private_keys/.htaccess', 'Deny from all');
+        }
+    }
+
+    /**
+     * Clear all RainTPL cache files.
+     */
+    public static function clear_raintpl_cache()
+    {
+        foreach (self::scan_files(FS_FOLDER . '/tmp/' . FS_TMP_NAME, 'php') as $file_name) {
+            unlink(FS_FOLDER . '/tmp/' . FS_TMP_NAME . $file_name);
+        }
+    }
+
     /**
      * Recursive delete directory.
      *
@@ -92,6 +115,19 @@ class fs_file_manager
         closedir($folder);
 
         return true;
+    }
+
+    public static function scan_files($folder, $extension)
+    {
+        $files = [];
+        $len = 1 + strlen($extension);
+        foreach (self::scan_folder($folder) as $file_name) {
+            if (substr($file_name, 0 - $len) === '.' . $extension) {
+                $files[] = $file_name;
+            }
+        }
+
+        return $files;
     }
 
     /**

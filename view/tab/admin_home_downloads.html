@@ -1,0 +1,69 @@
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th class="text-left">Plugin</th>
+                <th class="text-left">Descripción</th>
+            </tr>
+        </thead>
+        {loop="$fsc->plugin_manager->downloads()"}
+        <!--{$tr_class=''}-->
+        {if="$value.instalado"}
+        <!--{$tr_class=' class="warning"'}-->
+        {elseif="!$value.estable"}
+        <!--{$tr_class=' class="danger"'}-->
+        {elseif="$value.tipo=='gratis'"}
+        <!--{$tr_class=' class="success"'}-->
+        {/if}
+        <tr{$tr_class}>
+            <td class="text-center">
+                {if="$value.imagen"}
+                <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="thumbnail">
+                    <img src="{$value.imagen}" alt="{$value.nombre}" width="80"/>
+                </a>
+                {else}
+                <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-block btn-default">
+                    <i class="fa fa-plug fa-3x" aria-hidden="true"></i>
+                </a>
+                {/if}
+            </td>
+            <td>
+                {$value.nombre} &nbsp; v{$value.version}
+                <br/><br/>
+                {if="$value.instalado"}
+                <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp; Instalado
+                </a>
+                {elseif="!$value.zip_link"}
+                <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-xs btn-info">
+                    <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp; Comprar
+                </a>
+                {elseif="$value.estable"}
+                <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$value.id}#plugins" class="btn btn-xs btn-primary">
+                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>&nbsp; Descargar
+                </a>
+                {else}
+                <a href="#" class="btn btn-xs btn-primary" onclick="descargar_plugin_inestable('{$value.id}')">
+                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>&nbsp; Descargar
+                </a>
+                {/if}
+            </td>
+            <td>
+                {function="nl2br($value.descripcion)"}<br/>
+                Última modificación: {$value.ultima_modificacion}
+                {if="!$value.estable"}
+                <span class="label label-danger" title="inestable: no lo instales a menos que sepas lo que haces">inestable</span>
+                {/if}
+            </td>
+        </tr>
+        {/loop}
+        <tr>
+            <td colspan="3">
+                <a href="https://www.facturascripts.com/plugins" target="_blank" class="btn btn-block btn-info">
+                    <i class="fa fa-plug"></i>&nbsp; Más plugins...
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>

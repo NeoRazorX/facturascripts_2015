@@ -1,0 +1,57 @@
+<form id="f_enable_pages" action="{$fsc->url()}" method="post" class="form">
+    <input type="hidden" name="modpages" value="TRUE"/>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center" width="40">
+                        <input id="marcar_todo_enabled" type="checkbox" name="c_enabled" value=""/>
+                    </th>
+                    <th class="text-left">Página</th>
+                    <th class="text-left">Menú</th>
+                    <th class="text-center">Existe</th>
+                </tr>
+            </thead>
+            {loop="$fsc->paginas"}
+            <tr{if="!$value->exists"} class="danger"{/if}>
+                <td class="text-center">
+                    {if="$value->enabled"}
+                    <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}" checked=""/>
+                    {else}
+                    <input class="checkbox-inline" type="checkbox" name="enabled[]" value="{$value->name}"/>
+                    {/if}
+                </td>
+                <td>
+                    <a target="_blank" href="{$value->url()}">{$value->name}</a>
+                </td>
+                <td>
+                    {if="$value->important"}
+                    <span class="glyphicon glyphicon-star"></span> » {$value->title}
+                    {elseif="$value->show_on_menu"}
+                    <span class="text-capitalize">{$value->folder}</span> » {$value->title}
+                    {else}
+                    -
+                    {/if}
+                </td>
+                <td class="text-center">
+                    {if="$value->exists"}
+                    <span class="glyphicon glyphicon-ok"></span>
+                    {else}
+                    <span class="glyphicon glyphicon-exclamation-sign" title="No se encuentra el controlador o pertenece a un plugin inactivo"></span>
+                    {/if}
+                </td>
+            </tr>
+            {/loop}
+        </table>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 text-right">
+                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true;this.form.submit();">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                    <span class="hidden-xs">&nbsp;Guardar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

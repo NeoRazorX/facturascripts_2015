@@ -58,47 +58,24 @@ if (filter_input(INPUT_GET, 'page')) {
 
 $fsc_error = FALSE;
 if ($pagename != '') {
-    /// primero buscamos en los plugins
-    $found = FALSE;
-    foreach ($GLOBALS['plugins'] as $plugin) {
-        if (file_exists('plugins/' . $plugin . '/controller/' . $pagename . '.php')) {
-            require_once 'plugins/' . $plugin . '/controller/' . $pagename . '.php';
+    $class_name = find_controller($pagename);
+    require_once $class_name;
 
-            try {
-                $fsc = new $pagename();
-            } catch (Exception $e) {
-                echo "<h1>Error fatal</h1>"
-                . "<ul>"
-                . "<li><b>Código:</b> " . $e->getCode() . "</li>"
-                . "<li><b>Mensage:</b> " . $e->getMessage() . "</li>"
-                . "</ul>";
-                $fsc_error = TRUE;
-            }
-
-            $found = TRUE;
-            break;
-        }
+    try {
+        $fsc = new $pagename();
+    } catch (Exception $exc) {
+        echo "<h1>Error fatal</h1>"
+        . "<ul>"
+        . "<li><b>Código:</b> " . $exc->getCode() . "</li>"
+        . "<li><b>Mensage:</b> " . $exc->getMessage() . "</li>"
+        . "</ul>";
+        $fsc_error = TRUE;
     }
 
-    /// si no está en los plugins, buscamos en controller/
-    if (!$found) {
-        if (file_exists('controller/' . $pagename . '.php')) {
-            require_once 'controller/' . $pagename . '.php';
-
-            try {
-                $fsc = new $pagename();
-            } catch (Exception $e) {
-                echo "<h1>Error fatal</h1>"
-                . "<ul>"
-                . "<li><b>Código:</b> " . $e->getCode() . "</li>"
-                . "<li><b>Mensage:</b> " . $e->getMessage() . "</li>"
-                . "</ul>";
-                $fsc_error = TRUE;
-            }
-        } else {
-            header("HTTP/1.0 404 Not Found");
-            $fsc = new fs_controller();
-        }
+    /// ¿No se ha encontrado el controlador?
+    if ('base/fs_controller.php' === $class_name) {
+        header("HTTP/1.0 404 Not Found");
+        $fsc = new fs_controller();
     }
 } else {
     $fsc = new fs_controller();
