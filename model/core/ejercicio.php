@@ -155,7 +155,7 @@ class ejercicio extends \fs_model
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
-     * @return type
+     * @return bool
      */
     public function is_default()
     {
@@ -379,7 +379,7 @@ class ejercicio extends \fs_model
 
     /**
      * Elimina el ejercicio
-     * @return type
+     * @return bool
      */
     public function delete()
     {

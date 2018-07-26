@@ -134,7 +134,7 @@ class fs_updater
 
     /**
      * Elimina la actualización de la lista de pendientes.
-     * @param type $plugin
+     * @param string|bool $plugin
      */
     private function actualizacion_correcta($plugin = FALSE)
     {

@@ -100,7 +100,7 @@ class serie extends \fs_model
 
     /**
      * Devuelve TRUE si la serie es la predeterminada de la empresa
-     * @return type
+     * @return bool
      */
     public function is_default()
     {
@@ -195,7 +195,7 @@ class serie extends \fs_model
 
     /**
      * Elimina la serie
-     * @return type
+     * @return bool
      */
     public function delete()
     {

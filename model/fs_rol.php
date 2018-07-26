@@ -68,7 +68,7 @@ class fs_rol extends fs_model
 
     /**
      * Devuelve la lista de accesos permitidos del rol.
-     * @return type
+     * @return array
      */
     public function get_accesses()
     {
@@ -78,7 +78,7 @@ class fs_rol extends fs_model
 
     /**
      * Devuelve la lista de usuarios con este rol.
-     * @return type
+     * @return array
      */
     public function get_users()
     {

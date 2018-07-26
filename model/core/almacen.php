@@ -100,7 +100,7 @@ class almacen extends \fs_model
 
     /**
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
-     * @return type
+     * @return bool
      */
     public function is_default()
     {
@@ -205,7 +205,7 @@ class almacen extends \fs_model
 
     /**
      * Elimina el almacén
-     * @return type
+     * @return bool
      */
     public function delete()
     {

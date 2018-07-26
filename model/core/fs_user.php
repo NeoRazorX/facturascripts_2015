@@ -325,7 +325,7 @@ class fs_user extends \fs_model
 
     /**
      * Devuelve la lista de accesos permitidos del usuario.
-     * @return type
+     * @return array
      */
     public function get_accesses()
     {

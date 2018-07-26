@@ -322,7 +322,7 @@ class pais extends \fs_model
 
     /**
      * Devuelve TRUE si el pais es el predeterminado de la empresa
-     * @return type
+     * @return bool
      */
     public function is_default()
     {
@@ -421,7 +421,7 @@ class pais extends \fs_model
 
     /**
      * Elimina el pais (de la base de datos ... por ahora)
-     * @return type
+     * @return bool
      */
     public function delete()
     {
