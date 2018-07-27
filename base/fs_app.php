@@ -49,13 +49,17 @@ class fs_app
      */
     private $uptime;
 
-    public function __construct()
+    /**
+     * 
+     * @param string $controller_name
+     */
+    public function __construct($controller_name = '')
     {
         $tiempo = explode(' ', microtime());
         $this->uptime = $tiempo[1] + $tiempo[0];
 
         $this->cache = new fs_cache();
-        $this->core_log = new fs_core_log();
+        $this->core_log = new fs_core_log($controller_name);
     }
 
     /**

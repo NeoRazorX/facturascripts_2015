@@ -89,7 +89,7 @@ class fs_updater extends fs_app
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(__CLASS__);
         $this->btn_fin = FALSE;
         $this->plugin_manager = new fs_plugin_manager();
         $this->plugins = [];
