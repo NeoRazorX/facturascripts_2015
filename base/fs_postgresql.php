@@ -497,29 +497,9 @@ class fs_postgresql extends fs_db_engine
      */
     public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
     {
-        $result = FALSE;
-
-        if (self::$link) {
-            /// añadimos limit y offset a la consulta sql
-            $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
-
-            /// añadimos la consulta sql al historial
-            self::$core_log->new_sql($sql);
-
-            $aux = pg_query(self::$link, $sql);
-            if ($aux) {
-                $result = pg_fetch_all($aux);
-                pg_free_result($aux);
-            } else {
-                /// añadimos el error a la lista de errores
-                self::$core_log->new_error(pg_last_error(self::$link));
-            }
-
-            /// aumentamos el contador de selects realizados
-            self::$t_selects++;
-        }
-
-        return $result;
+        /// añadimos limit y offset a la consulta sql
+        $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
+        return $this->select($sql);
     }
 
     /**

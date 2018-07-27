@@ -579,32 +579,9 @@ class fs_mysql extends fs_db_engine
      */
     public function select_limit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
     {
-        $result = FALSE;
-
-        if (self::$link) {
-            /// añadimos limit y offset a la consulta sql
-            $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
-
-            /// añadimos la consulta sql al historial
-            self::$core_log->new_sql($sql);
-
-            $aux = self::$link->query($sql);
-            if ($aux) {
-                $result = [];
-                while ($row = $aux->fetch_array(MYSQLI_ASSOC)) {
-                    $result[] = $row;
-                }
-                $aux->free();
-            } else {
-                /// añadimos el error a la lista de errores
-                self::$core_log->new_error(self::$link->error);
-            }
-
-            /// aumentamos el contador de selects realizados
-            self::$t_selects++;
-        }
-
-        return $result;
+        /// añadimos limit y offset a la consulta sql
+        $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
+        return $this->select($sql);
     }
 
     /**
