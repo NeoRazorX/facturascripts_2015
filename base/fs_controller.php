@@ -585,7 +585,7 @@ class fs_controller extends fs_app
         $fsext = new fs_extension();
         foreach ($fsext->all() as $ext) {
             /// Cargamos las extensiones para este controlador o para todos
-            if (in_array($ext->to, array(NULL, $name))) {
+            if (in_array($ext->to, [NULL, $this->class_name])) {
                 $this->extensions[] = $ext;
             }
         }
