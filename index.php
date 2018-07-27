@@ -57,12 +57,20 @@ if (filter_input(INPUT_GET, 'page')) {
 }
 
 $fsc_error = FALSE;
-if ($pagename != '') {
-    $class_name = find_controller($pagename);
-    require_once $class_name;
+if ($pagename == '') {
+    $fsc = new fs_controller();
+} else {
+    $class_path = find_controller($pagename);
+    require_once $class_path;
 
     try {
-        $fsc = new $pagename();
+        /// ¿No se ha encontrado el controlador?
+        if ('base/fs_controller.php' === $class_path) {
+            header("HTTP/1.0 404 Not Found");
+            $fsc = new fs_controller();
+        } else {
+            $fsc = new $pagename();
+        }
     } catch (Exception $exc) {
         echo "<h1>Error fatal</h1>"
         . "<ul>"
@@ -71,14 +79,6 @@ if ($pagename != '') {
         . "</ul>";
         $fsc_error = TRUE;
     }
-
-    /// ¿No se ha encontrado el controlador?
-    if ('base/fs_controller.php' === $class_name) {
-        header("HTTP/1.0 404 Not Found");
-        $fsc = new fs_controller();
-    }
-} else {
-    $fsc = new fs_controller();
 }
 
 if (is_null(filter_input(INPUT_GET, 'page'))) {

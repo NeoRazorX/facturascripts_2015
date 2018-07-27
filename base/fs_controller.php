@@ -495,28 +495,31 @@ class fs_controller
      */
     public function select_default_page()
     {
-        if ($this->db->connected() && $this->user->logged_on) {
-            if (is_null($this->user->fs_page)) {
-                $page = 'admin_home';
+        if (!$this->db->connected() || !$this->user->logged_on) {
+            return;
+        }
 
-                /*
-                 * Cuando un usuario no tiene asignada una página por defecto,
-                 * se selecciona la primera página del menú.
-                 */
-                foreach ($this->menu as $p) {
-                    if ($p->show_on_menu) {
-                        $page = $p->name;
-                        if ($p->important) {
-                            break;
-                        }
-                    }
-                }
-            } else {
-                $page = $this->user->fs_page;
+        if (!is_null($this->user->fs_page)) {
+            header('Location: index.php?page=' . $this->user->fs_page);
+            return;
+        }
+
+        /*
+         * Cuando un usuario no tiene asignada una página por defecto,
+         * se selecciona la primera página del menú.
+         */
+        $page = 'admin_home';
+        foreach ($this->menu as $p) {
+            if (!$p->show_on_menu) {
+                continue;
             }
 
-            header('Location: index.php?page=' . $page);
+            $page = $p->name;
+            if ($p->important) {
+                break;
+            }
         }
+        header('Location: index.php?page=' . $page);
     }
 
     /**
