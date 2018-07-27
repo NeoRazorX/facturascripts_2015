@@ -193,7 +193,7 @@ class ejercicio extends \fs_model
 
     /**
      * Devuelve el ejercicio con codejercicio = $cod
-     * @param type $cod
+     * @param string $cod
      * @return boolean|\ejercicio
      */
     public function get($cod)
