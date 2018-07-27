@@ -159,17 +159,15 @@ class fs_updater extends fs_app
             $zip->extractTo('.');
             $zip->close();
 
-            /// eliminamos archivos antiguos
-            fs_file_manager::del_tree('base/');
-            fs_file_manager::del_tree('controller/');
-            fs_file_manager::del_tree('extras/');
-            fs_file_manager::del_tree('model/');
-            fs_file_manager::del_tree('raintpl/');
-            fs_file_manager::del_tree('view/');
+            /// eliminamos archivos antiguos y hacemos backup de los actuales
+            foreach (['base', 'controller', 'extras', 'model', 'raintpl', 'view'] as $folder) {
+                fs_file_manager::del_tree(FS_FOLDER . '/' . $folder . '_old/');
+                rename(FS_FOLDER . '/' . $folder . '/', FS_FOLDER . '/' . $folder . '_old/');
+            }
 
             /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
-            fs_file_manager::recurse_copy('facturascripts_2015-master/', '.');
-            fs_file_manager::del_tree('facturascripts_2015-master/');
+            fs_file_manager::recurse_copy(FS_FOLDER . '/facturascripts_2015-master/', '.');
+            fs_file_manager::del_tree(FS_FOLDER . '/facturascripts_2015-master/');
 
             $this->core_log->new_message('Actualizado correctamente.');
             $this->actualizacion_correcta();
