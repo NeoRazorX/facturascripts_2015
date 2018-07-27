@@ -33,7 +33,7 @@ class fs_plugin_manager
     public $disable_add_plugins = false;
     public $disable_rm_plugins = false;
     private $download_list;
-    public $version = 2017.090;
+    public $version = 2017.900;
 
     public function __construct()
     {

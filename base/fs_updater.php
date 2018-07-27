@@ -17,16 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'base/fs_cache.php';
-require_once 'base/fs_functions.php';
-require_once 'base/fs_core_log.php';
+require_once 'base/fs_app.php';
 require_once 'base/fs_plugin_manager.php';
 
 /**
  * Controlador del actualizador de FacturaScripts.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_updater
+class fs_updater extends fs_app
 {
 
     /**
@@ -34,18 +32,6 @@ class fs_updater
      * @var boolean
      */
     public $btn_fin;
-
-    /**
-     *
-     * @var fs_cache
-     */
-    private $cache;
-
-    /**
-     *
-     * @var fs_core_log
-     */
-    public $core_log;
 
     /**
      *
@@ -94,7 +80,6 @@ class fs_updater
      * @var array
      */
     public $updates;
-    private $uptime;
 
     /**
      *
@@ -104,11 +89,8 @@ class fs_updater
 
     public function __construct()
     {
-        $tiempo = explode(' ', microtime());
-        $this->uptime = $tiempo[1] + $tiempo[0];
+        parent::__construct();
         $this->btn_fin = FALSE;
-        $this->cache = new fs_cache();
-        $this->core_log = new fs_core_log();
         $this->plugin_manager = new fs_plugin_manager();
         $this->plugins = [];
         $this->tr_options = '';
@@ -120,16 +102,6 @@ class fs_updater
         } else {
             $this->core_log->new_error('<a href="index.php">Debes iniciar sesi&oacute;n</a>');
         }
-    }
-
-    /**
-     * Devuelve la duración de la ejecución de la página
-     * @return string
-     */
-    public function duration()
-    {
-        $tiempo = explode(" ", microtime());
-        return (number_format($tiempo[1] + $tiempo[0] - $this->uptime, 3) . ' s');
     }
 
     /**

@@ -71,17 +71,17 @@ $updater = new fs_updater();
                         </h1>
                     </div>
                     <?php
-                    if (count($updater->core_log->get_errors()) > 0) {
+                    if (count($updater->get_errors()) > 0) {
                         echo '<div class="alert alert-danger"><ul>';
-                        foreach ($updater->core_log->get_errors() as $error) {
+                        foreach ($updater->get_errors() as $error) {
                             echo '<li>' . $error . '</li>';
                         }
                         echo '</ul></div>';
                     }
 
-                    if (count($updater->core_log->get_messages()) > 0) {
+                    if (count($updater->get_messages()) > 0) {
                         echo '<div class="alert alert-info"><ul>';
-                        foreach ($updater->core_log->get_messages() as $msg) {
+                        foreach ($updater->get_messages() as $msg) {
                             echo '<li>' . $msg . '</li>';
                         }
                         echo '</ul></div>';
