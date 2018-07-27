@@ -73,46 +73,36 @@ class fs_postgresql extends fs_db_engine
         $sql = '';
 
         foreach ($xml_cols as $xml_col) {
-            $encontrada = FALSE;
-            if (!empty($db_cols)) {
-                foreach ($db_cols as $db_col) {
-                    if ($db_col['name'] != $xml_col['nombre']) {
-                        continue;
-                    }
-
-                    if (!$this->compare_data_types($db_col['type'], $xml_col['tipo'])) {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" TYPE ' . $xml_col['tipo'] . ';';
-                    }
-
-                    if ($db_col['default'] == $xml_col['defecto']) {
-                        /// do nothing
-                    } elseif (is_null($xml_col['defecto'])) {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" DROP DEFAULT;';
-                    } else {
-                        $this->default2check_sequence($table_name, $xml_col['defecto'], $xml_col['nombre']);
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" SET DEFAULT ' . $xml_col['defecto'] . ';';
-                    }
-
-                    if ($db_col['is_nullable'] == $xml_col['nulo']) {
-                        /// do nothing
-                    } elseif ($xml_col['nulo'] == 'YES') {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" DROP NOT NULL;';
-                    } else {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" SET NOT NULL;';
-                    }
-
-                    $encontrada = TRUE;
-                    break;
-                }
-            }
-
-            if ($encontrada) {
+            $db_col = $this->search_in_array($db_cols, 'name', $xml_col['nombre']);
+            if (empty($db_col)) {
+                /// columna no encontrada en $db_cols. La creamos
+                $sql .= 'ALTER TABLE ' . $table_name . ' ADD COLUMN "' . $xml_col['nombre'] . '" ' . $xml_col['tipo'];
+                $sql .= ($xml_col['defecto'] !== NULL) ? ' DEFAULT ' . $xml_col['defecto'] : '';
+                $sql .= ($xml_col['nulo'] == 'NO') ? ' NOT NULL;' : ';';
                 continue;
             }
 
-            $sql .= 'ALTER TABLE ' . $table_name . ' ADD COLUMN "' . $xml_col['nombre'] . '" ' . $xml_col['tipo'];
-            $sql .= ($xml_col['defecto'] !== NULL) ? ' DEFAULT ' . $xml_col['defecto'] : '';
-            $sql .= ($xml_col['nulo'] == 'NO') ? ' NOT NULL;' : ';';
+            /// columna ya presente en db_cols. La modificamos
+            if (!$this->compare_data_types($db_col['type'], $xml_col['tipo'])) {
+                $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" TYPE ' . $xml_col['tipo'] . ';';
+            }
+
+            if ($db_col['default'] == $xml_col['defecto']) {
+                /// do nothing
+            } elseif (is_null($xml_col['defecto'])) {
+                $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" DROP DEFAULT;';
+            } else {
+                $this->default2check_sequence($table_name, $xml_col['defecto'], $xml_col['nombre']);
+                $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" SET DEFAULT ' . $xml_col['defecto'] . ';';
+            }
+
+            if ($db_col['is_nullable'] == $xml_col['nulo']) {
+                /// do nothing
+            } elseif ($xml_col['nulo'] == 'YES') {
+                $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" DROP NOT NULL;';
+            } else {
+                $sql .= 'ALTER TABLE ' . $table_name . ' ALTER COLUMN "' . $xml_col['nombre'] . '" SET NOT NULL;';
+            }
         }
 
         return $sql;
@@ -133,17 +123,8 @@ class fs_postgresql extends fs_db_engine
         if (!empty($db_cons)) {
             /// comprobamos una a una las viejas
             foreach ($db_cons as $db_con) {
-                $found = FALSE;
-                if (!empty($xml_cons)) {
-                    foreach ($xml_cons as $xml_con) {
-                        if ($db_con['name'] == $xml_con['nombre']) {
-                            $found = TRUE;
-                            break;
-                        }
-                    }
-                }
-
-                if (!$found) {
+                $xml_con = $this->search_in_array($xml_cons, 'nombre', $db_con['name']);
+                if (empty($xml_con)) {
                     /// eliminamos la restriccion
                     $sql .= "ALTER TABLE " . $table_name . " DROP CONSTRAINT " . $db_con['name'] . ";";
                 }
@@ -153,17 +134,8 @@ class fs_postgresql extends fs_db_engine
         if (!empty($xml_cons) && !$delete_only) {
             /// comprobamos una a una las nuevas
             foreach ($xml_cons as $xml_con) {
-                $found = FALSE;
-                if (!empty($db_cons)) {
-                    foreach ($db_cons as $db_con) {
-                        if ($xml_con['nombre'] == $db_con['name']) {
-                            $found = TRUE;
-                            break;
-                        }
-                    }
-                }
-
-                if (!$found) {
+                $db_con = $this->search_in_array($db_cons, 'name', $xml_con['nombre']);
+                if (empty($db_con)) {
                     /// añadimos la restriccion
                     $sql .= "ALTER TABLE " . $table_name . " ADD CONSTRAINT " . $xml_con['nombre'] . " " . $xml_con['consulta'] . ";";
                 }

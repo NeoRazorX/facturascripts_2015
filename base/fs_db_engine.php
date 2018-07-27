@@ -139,4 +139,24 @@ abstract class fs_db_engine
     {
         return self::$t_transactions;
     }
+
+    /**
+     * Look for a column with a value by his name in array.
+     *
+     * @param array  $items
+     * @param string $index
+     * @param string $value
+     *
+     * @return array
+     */
+    protected function search_in_array($items, $index, $value)
+    {
+        foreach ($items as $column) {
+            if ($column[$index] === $value) {
+                return $column;
+            }
+        }
+
+        return [];
+    }
 }

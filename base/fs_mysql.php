@@ -100,71 +100,60 @@ class fs_mysql extends fs_db_engine
         $sql = '';
 
         foreach ($xml_cols as $xml_col) {
-            $encontrada = FALSE;
-            if (!empty($db_cols)) {
-                if (strtolower($xml_col['tipo']) == 'integer') {
-                    /**
-                     * Desde la pestaña avanzado el panel de control se puede cambiar
-                     * el tipo de entero a usar en las columnas.
-                     */
-                    $xml_col['tipo'] = FS_DB_INTEGER;
-                }
-
-                foreach ($db_cols as $db_col) {
-                    if ($db_col['name'] != $xml_col['nombre']) {
-                        continue;
-                    }
-
-                    if (!$this->compare_data_types($db_col['type'], $xml_col['tipo'])) {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ';';
-                    }
-
-                    if ($db_col['is_nullable'] == $xml_col['nulo']) {
-                        /// do nothing
-                    } elseif ($xml_col['nulo'] == 'YES') {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ' NULL;';
-                    } else {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ' NOT NULL;';
-                    }
-
-                    if ($this->compare_defaults($db_col['default'], $xml_col['defecto'])) {
-                        /// do nothing
-                    } elseif (is_null($xml_col['defecto'])) {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ALTER `' . $xml_col['nombre'] . '` DROP DEFAULT;';
-                    } elseif (strtolower(substr($xml_col['defecto'], 0, 9)) == "nextval('") { /// nextval es para postgresql
-                        if ($db_col['extra'] != 'auto_increment') {
-                            $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'];
-                            $sql .= ($xml_col['nulo'] == 'YES') ? ' NULL AUTO_INCREMENT;' : ' NOT NULL AUTO_INCREMENT;';
-                        }
-                    } else {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ALTER `' . $xml_col['nombre'] . '` SET DEFAULT ' . $xml_col['defecto'] . ";";
-                    }
-
-                    $encontrada = TRUE;
-                    break;
-                }
+            if (strtolower($xml_col['tipo']) == 'integer') {
+                /**
+                 * Desde la pestaña avanzado el panel de control se puede cambiar
+                 * el tipo de entero a usar en las columnas.
+                 */
+                $xml_col['tipo'] = FS_DB_INTEGER;
             }
 
-            if ($encontrada) {
+            $db_col = $this->search_in_array($db_cols, 'name', $xml_col['nombre']);
+            if (empty($db_col)) {
+                /// columna no encontrada en $db_cols. La creamos
+                $sql .= 'ALTER TABLE ' . $table_name . ' ADD `' . $xml_col['nombre'] . '` ';
+                if ($xml_col['tipo'] == 'serial') {
+                    $sql .= '`' . $xml_col['nombre'] . '` ' . FS_DB_INTEGER . ' NOT NULL AUTO_INCREMENT;';
+                    continue;
+                }
+
+                $sql .= $xml_col['tipo'];
+                $sql .= ($xml_col['nulo'] == 'NO') ? " NOT NULL" : " NULL";
+
+                if ($xml_col['defecto'] !== NULL) {
+                    $sql .= " DEFAULT " . $xml_col['defecto'] . ";";
+                } else if ($xml_col['nulo'] == 'YES') {
+                    $sql .= " DEFAULT NULL;";
+                } else {
+                    $sql .= ';';
+                }
                 continue;
             }
 
-            $sql .= 'ALTER TABLE ' . $table_name . ' ADD `' . $xml_col['nombre'] . '` ';
-
-            if ($xml_col['tipo'] == 'serial') {
-                $sql .= '`' . $xml_col['nombre'] . '` ' . FS_DB_INTEGER . ' NOT NULL AUTO_INCREMENT;';
-                continue;
+            /// columna ya presente en db_cols. La modificamos
+            if (!$this->compare_data_types($db_col['type'], $xml_col['tipo'])) {
+                $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ';';
             }
 
-            $sql .= $xml_col['tipo'];
-            $sql .= ($xml_col['nulo'] == 'NO') ? " NOT NULL" : " NULL";
-
-            if ($xml_col['defecto'] !== NULL) {
-                $sql .= " DEFAULT " . $xml_col['defecto'] . ";";
-            } else if ($xml_col['nulo'] == 'YES') {
-                $sql .= " DEFAULT NULL;";
+            if ($db_col['is_nullable'] == $xml_col['nulo']) {
+                /// do nothing
+            } elseif ($xml_col['nulo'] == 'YES') {
+                $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ' NULL;';
             } else {
-                $sql .= ';';
+                $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'] . ' NOT NULL;';
+            }
+
+            if ($this->compare_defaults($db_col['default'], $xml_col['defecto'])) {
+                /// do nothing
+            } elseif (is_null($xml_col['defecto'])) {
+                $sql .= 'ALTER TABLE ' . $table_name . ' ALTER `' . $xml_col['nombre'] . '` DROP DEFAULT;';
+            } elseif (strtolower(substr($xml_col['defecto'], 0, 9)) == "nextval('") { /// nextval es para postgresql
+                if ($db_col['extra'] != 'auto_increment') {
+                    $sql .= 'ALTER TABLE ' . $table_name . ' MODIFY `' . $xml_col['nombre'] . '` ' . $xml_col['tipo'];
+                    $sql .= ($xml_col['nulo'] == 'YES') ? ' NULL AUTO_INCREMENT;' : ' NOT NULL AUTO_INCREMENT;';
+                }
+            } else {
+                $sql .= 'ALTER TABLE ' . $table_name . ' ALTER `' . $xml_col['nombre'] . '` SET DEFAULT ' . $xml_col['defecto'] . ";";
             }
         }
 
@@ -190,13 +179,16 @@ class fs_mysql extends fs_db_engine
              */
             $delete = FALSE;
             foreach ($db_cons as $db_con) {
+                if (empty($xml_cons)) {
+                    $delete = TRUE;
+                    break;
+                }
+
                 $found = FALSE;
-                if (!empty($xml_cons)) {
-                    foreach ($xml_cons as $xml_con) {
-                        if ($db_con['name'] == 'PRIMARY' || $db_con['name'] == $xml_con['nombre']) {
-                            $found = TRUE;
-                            break;
-                        }
+                foreach ($xml_cons as $xml_con) {
+                    if ($db_con['name'] == 'PRIMARY' || $db_con['name'] == $xml_con['nombre']) {
+                        $found = TRUE;
+                        break;
                     }
                 }
 
@@ -209,18 +201,17 @@ class fs_mysql extends fs_db_engine
             /// eliminamos todas las restricciones
             if ($delete) {
                 /// eliminamos antes las claves ajenas y luego los unique, evita problemas
+                $sql_unique = '';
                 foreach ($db_cons as $db_con) {
                     if ($db_con['type'] == 'FOREIGN KEY') {
                         $sql .= 'ALTER TABLE ' . $table_name . ' DROP FOREIGN KEY ' . $db_con['name'] . ';';
                     }
-                }
-
-                foreach ($db_cons as $db_con) {
                     if ($db_con['type'] == 'UNIQUE') {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' DROP INDEX ' . $db_con['name'] . ';';
+                        $sql_unique .= 'ALTER TABLE ' . $table_name . ' DROP INDEX ' . $db_con['name'] . ';';
                     }
                 }
 
+                $sql .= $sql_unique;
                 $db_cons = [];
             }
         }
@@ -228,23 +219,13 @@ class fs_mysql extends fs_db_engine
         if (!empty($xml_cons) && !$delete_only && FS_FOREIGN_KEYS) {
             /// comprobamos una a una las nuevas
             foreach ($xml_cons as $xml_con) {
-                $found = FALSE;
-                if (!empty($db_cons)) {
-                    foreach ($db_cons as $db_con) {
-                        if ($xml_con['nombre'] == $db_con['name']) {
-                            $found = TRUE;
-                            break;
-                        }
-                    }
-                }
-
-                if (!$found) {
-                    /// añadimos la restriccion
-                    if (substr($xml_con['consulta'], 0, 11) == 'FOREIGN KEY') {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ADD CONSTRAINT ' . $xml_con['nombre'] . ' ' . $xml_con['consulta'] . ';';
-                    } else if (substr($xml_con['consulta'], 0, 6) == 'UNIQUE') {
-                        $sql .= 'ALTER TABLE ' . $table_name . ' ADD CONSTRAINT ' . $xml_con['nombre'] . ' ' . $xml_con['consulta'] . ';';
-                    }
+                $db_con = $this->search_in_array($db_cons, 'name', $xml_con['nombre']);
+                if (!empty($db_con)) {
+                    continue;
+                } elseif (substr($xml_con['consulta'], 0, 11) == 'FOREIGN KEY') {
+                    $sql .= 'ALTER TABLE ' . $table_name . ' ADD CONSTRAINT ' . $xml_con['nombre'] . ' ' . $xml_con['consulta'] . ';';
+                } else if (substr($xml_con['consulta'], 0, 6) == 'UNIQUE') {
+                    $sql .= 'ALTER TABLE ' . $table_name . ' ADD CONSTRAINT ' . $xml_con['nombre'] . ' ' . $xml_con['consulta'] . ';';
                 }
             }
         }
