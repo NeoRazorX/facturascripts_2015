@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 error_reporting(E_ALL);
 
 $errors = [];
@@ -680,17 +679,17 @@ $system_info = str_replace('"', "'", $system_info);
                                     Tipo de servidor SQL:
                                     <select name="db_type" class="form-control" onchange="change_db_type()">
                                         <option value="MYSQL"<?php
-                                        if ($db_type == 'MYSQL') {
-                                            echo ' selected=""';
-                                        }
+                    if ($db_type == 'MYSQL') {
+                        echo ' selected=""';
+                    }
 
-                                        ?>>MySQL</option>
+                    ?>>MySQL</option>
                                         <option value="POSTGRESQL"<?php
                                         if ($db_type == 'POSTGRESQL') {
                                             echo ' selected=""';
                                         }
 
-                                        ?>>PostgreSQL</option>
+                    ?>>PostgreSQL</option>
                                     </select>
                                 </div>
                             </div>

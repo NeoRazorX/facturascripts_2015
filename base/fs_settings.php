@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -17,6 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Class to manage FacturaScripts settings.
+ */
 class fs_settings
 {
 

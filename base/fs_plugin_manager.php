@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once 'base/fs_file_manager.php';
 
 /**
@@ -27,12 +26,46 @@ require_once 'base/fs_file_manager.php';
 class fs_plugin_manager
 {
 
+    /**
+     *
+     * @var fs_cache
+     */
     private $cache;
+    
+    /**
+     *
+     * @var fs_core_log
+     */
     private $core_log;
+    
+    /**
+     *
+     * @var bool
+     */
     public $disable_mod_plugins = false;
+    
+    /**
+     *
+     * @var bool
+     */
     public $disable_add_plugins = false;
+    
+    /**
+     *
+     * @var bool
+     */
     public $disable_rm_plugins = false;
+    
+    /**
+     *
+     * @var array
+     */
     private $download_list;
+    
+    /**
+     *
+     * @var float
+     */
     public $version = 2017.900;
 
     public function __construct()

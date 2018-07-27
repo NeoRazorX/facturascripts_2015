@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -152,13 +152,13 @@ class admin_users extends fs_controller
 
     public function all_pages()
     {
-        $returnlist = array();
+        $returnlist = [];
 
         /// Obtenemos la lista de páginas. Todas
         foreach ($this->menu as $m) {
             $m->enabled = FALSE;
             $m->allow_delete = FALSE;
-            $m->users = array();
+            $m->users = [];
             $returnlist[] = $m;
         }
 

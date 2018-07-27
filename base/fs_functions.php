@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -102,7 +102,7 @@ function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false)
 
     if ($http_code == 301 || $http_code == 302) {
         list($header) = explode("\r\n\r\n", $data, 2);
-        $matches = array();
+        $matches = [];
         preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
         $url = trim(str_replace($matches[1], "", $matches[0]));
         $url_parsed = parse_url($url);
@@ -278,7 +278,7 @@ function get_class_name($object = NULL)
 function require_all_models()
 {
     if (!isset($GLOBALS['models'])) {
-        $GLOBALS['models'] = array();
+        $GLOBALS['models'] = [];
     }
 
     foreach ($GLOBALS['plugins'] as $plugin) {

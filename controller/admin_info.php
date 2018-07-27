@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -111,7 +111,7 @@ class admin_info extends fs_controller
         if (fs_filter_input_req('b_ip')) {
             $this->b_ip = (string) fs_filter_input_req('b_ip');
         }
-        
+
         /// forzamos la creación de la tabla, si todavía no existe
         new fs_log();
     }
@@ -148,7 +148,7 @@ class admin_info extends fs_controller
 
     private function buscar_en_log()
     {
-        $this->resultados = array();
+        $this->resultados = [];
         $sql = "SELECT * FROM fs_logs WHERE 1=1";
 
         if ($this->b_usuario != '') {
@@ -191,7 +191,7 @@ class admin_info extends fs_controller
 
     private function modulos_eneboo()
     {
-        $this->modulos_eneboo = array();
+        $this->modulos_eneboo = [];
 
         if ($this->db->table_exists('flmodules')) {
             $data = $this->db->select("SELECT * FROM flmodules ORDER BY idarea ASC, descripcion ASC;");

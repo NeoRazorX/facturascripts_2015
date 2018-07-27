@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -263,7 +263,7 @@ class fs_user extends \fs_model
     public function get_menu($reload = FALSE)
     {
         if (!isset($this->menu) || $reload) {
-            $this->menu = array();
+            $this->menu = [];
             $page = new \fs_page();
 
             if ($this->admin || FS_DEMO) {
@@ -382,7 +382,7 @@ class fs_user extends \fs_model
      */
     public function new_logkey()
     {
-        if (is_null($this->log_key) || ! FS_DEMO) {
+        if (is_null($this->log_key) || !FS_DEMO) {
             $this->log_key = sha1(strval(rand()));
         }
 
@@ -521,7 +521,7 @@ class fs_user extends \fs_model
      */
     public function all_enabled()
     {
-        $userlist = array();
+        $userlist = [];
 
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE enabled = TRUE ORDER BY lower(nick) ASC;");
         if ($data) {

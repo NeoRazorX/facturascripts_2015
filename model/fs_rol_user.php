@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017 Carlos García Gómez    <neorazorx at gmail.com>
+ * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
+ * Copyright (C) 2017-2018  Carlos García Gómez    <neorazorx at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -80,7 +80,7 @@ class fs_rol_user extends fs_model
 
     public function all_from_rol($codrol)
     {
-        $accesslist = array();
+        $accesslist = [];
 
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codrol = " . $this->var2str($codrol) . ";");
         if ($data) {

@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -222,7 +222,7 @@ class ejercicio extends \fs_model
         $data = $this->db->select($sql);
         if ($data) {
             $eje = new \ejercicio($data[0]);
-            if ($eje->abierto() || ! $solo_abierto) {
+            if ($eje->abierto() || !$solo_abierto) {
                 return $eje;
             }
 

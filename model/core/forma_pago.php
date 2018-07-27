@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -245,7 +245,7 @@ class forma_pago extends \fs_model
         $fecha = $this->calcular_vencimiento2($fecha_inicio);
 
         /// validamos los días de pago
-        $array_dias = array();
+        $array_dias = [];
         foreach (str_getcsv($dias_de_pago) as $d) {
             if (intval($d) >= 1 && intval($d) <= 31) {
                 $array_dias[] = intval($d);

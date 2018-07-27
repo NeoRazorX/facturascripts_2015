@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once 'base/fs_core_log.php';
 require_once 'base/fs_cache.php';
 require_once 'base/fs_db2.php';
@@ -89,7 +88,7 @@ abstract class fs_model
         $this->default_items = new fs_default_items();
 
         if (!isset(self::$checked_tables)) {
-            self::$base_dir = array();
+            self::$base_dir = [];
             self::$core_log = new fs_core_log();
 
             self::$checked_tables = $this->cache->get_array('fs_checked_tables');
@@ -139,7 +138,7 @@ abstract class fs_model
      */
     protected function clean_checked_tables()
     {
-        self::$checked_tables = array();
+        self::$checked_tables = [];
         $this->cache->delete('fs_checked_tables');
     }
 
@@ -351,7 +350,7 @@ abstract class fs_model
      */
     protected function date_range($first, $last, $step = '+1 day', $format = 'd-m-Y')
     {
-        $dates = array();
+        $dates = [];
         $current = strtotime($first);
         $last = strtotime($last);
 
@@ -402,8 +401,8 @@ abstract class fs_model
     protected function check_table($table_name)
     {
         $sql = '';
-        $xml_cols = array();
-        $xml_cons = array();
+        $xml_cols = [];
+        $xml_cons = [];
 
         if ($this->get_xml_table($table_name, $xml_cols, $xml_cons)) {
             if ($this->db->table_exists($table_name)) {

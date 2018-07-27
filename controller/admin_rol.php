@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -55,7 +55,7 @@ class admin_rol extends fs_controller
 
     public function all_pages()
     {
-        $returnlist = array();
+        $returnlist = [];
 
         /// Obtenemos la lista de páginas. Todas
         foreach ($this->menu as $m) {
@@ -86,7 +86,7 @@ class admin_rol extends fs_controller
 
     public function all_users()
     {
-        $returnlist = array();
+        $returnlist = [];
 
         /// Obtenemos la lista de páginas. Todas
         foreach ($this->user->all() as $u) {
@@ -176,7 +176,7 @@ class admin_rol extends fs_controller
 
     private function aplicar_permisos()
     {
-        $usuarios = array();
+        $usuarios = [];
         foreach ($this->all_users() as $usu) {
             if ($usu->included) {
                 $usuarios[] = $usu;

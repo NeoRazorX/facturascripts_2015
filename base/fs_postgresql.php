@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once 'base/fs_db_engine.php';
 
 /**
@@ -289,7 +288,7 @@ class fs_postgresql extends fs_db_engine
      */
     public function get_columns($table_name)
     {
-        $columns = array();
+        $columns = [];
         $sql = "SELECT column_name as name, data_type as type, character_maximum_length, column_default as default, is_nullable"
             . " FROM information_schema.columns WHERE table_catalog = '" . FS_DB_NAME
             . "' AND table_name = '" . $table_name . "' ORDER BY name ASC;";
@@ -320,7 +319,7 @@ class fs_postgresql extends fs_db_engine
      */
     public function get_constraints($table_name)
     {
-        $constraints = array();
+        $constraints = [];
         $sql = "SELECT tc.constraint_name as name, tc.constraint_type as type"
             . " FROM information_schema.table_constraints AS tc"
             . " WHERE tc.table_name = '" . $table_name . "' AND tc.constraint_type IN"
@@ -343,7 +342,7 @@ class fs_postgresql extends fs_db_engine
      */
     public function get_constraints_extended($table_name)
     {
-        $constraints = array();
+        $constraints = [];
         $sql = "SELECT tc.constraint_name as name,
             tc.constraint_type as type,
             kcu.column_name,
@@ -385,7 +384,7 @@ class fs_postgresql extends fs_db_engine
      */
     public function get_indexes($table_name)
     {
-        $indexes = array();
+        $indexes = [];
 
         $aux = $this->select("SELECT indexname FROM pg_indexes WHERE tablename = '" . $table_name . "';");
         if ($aux) {
@@ -403,7 +402,7 @@ class fs_postgresql extends fs_db_engine
      */
     public function get_locks()
     {
-        $llist = array();
+        $llist = [];
         $sql = "SELECT relname,pg_locks.* FROM pg_class,pg_locks WHERE relfilenode=relation AND NOT granted;";
 
         $aux = $this->select($sql);
@@ -432,7 +431,7 @@ class fs_postgresql extends fs_db_engine
      */
     public function list_tables()
     {
-        $tables = array();
+        $tables = [];
         $sql = "SELECT * FROM pg_catalog.pg_tables WHERE schemaname NOT IN "
             . "('pg_catalog','information_schema') ORDER BY tablename ASC;";
 

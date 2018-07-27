@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 if (!file_exists('config.php')) {
     die('Archivo config.php no encontrado. No puedes actualizar sin instalar.');
 }
@@ -132,7 +131,7 @@ $updater = new fs_updater();
                                             <th></th>
                                         </tr>
                                     </thead>
-<?php echo $updater->tr_updates; ?>
+                                    <?php echo $updater->tr_updates; ?>
                                 </table>
                             </div>
                         </div>
@@ -145,7 +144,7 @@ $updater = new fs_updater();
                                             <th></th>
                                         </tr>
                                     </thead>
-<?php echo $updater->tr_options; ?>
+                                    <?php echo $updater->tr_options; ?>
                                 </table>
                             </div>
                         </div>

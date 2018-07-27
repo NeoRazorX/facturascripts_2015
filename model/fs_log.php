@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013         Salvador Merino      salvaweb.co@gmail.com
- * Copyright (C) 2013-2017    Carlos García Gómez  neorazorx@gmail.com
+ * Copyright (C) 2013         Salvador Merino      <salvaweb.co@gmail.com>
+ * Copyright (C) 2013-2018    Carlos García Gómez  <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -147,7 +147,7 @@ class fs_log extends fs_model
 
     private function all_by_sql($sql, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
-        $lista = array();
+        $lista = [];
 
         $data = $this->db->select_limit($sql, $limit, $offset);
         if ($data) {

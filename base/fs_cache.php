@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once __DIR__ . '/php_file_cache.php';
 
 /**
@@ -27,7 +26,7 @@ class fs_cache
 {
 
     private static $memcache;
-    
+
     /**
      *
      * @var php_file_cache
@@ -106,7 +105,7 @@ class fs_cache
      */
     public function get_array($key)
     {
-        $aa = array();
+        $aa = [];
 
         if (self::$connected) {
             $a = self::$memcache->get(FS_CACHE_PREFIX . $key);
@@ -124,7 +123,7 @@ class fs_cache
     }
 
     /**
-     * Devuelve un array almacenado en cache, tal y como get_array(), pero con la direfencia
+     * Devuelve un array almacenado en cache, tal y como get_[], pero con la direfencia
      * de que si no se encuentra en cache, se pone $error a true.
      * @param string $key
      * @param boolean $error
@@ -132,7 +131,7 @@ class fs_cache
      */
     public function get_array2($key, &$error)
     {
-        $aa = array();
+        $aa = [];
         $error = TRUE;
 
         if (self::$connected) {

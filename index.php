@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/// Si estas leyendo esto es porque no tienes PHP instalado !!!!!!!!!!!!!!!!!!!!
-
 if ((float) substr(phpversion(), 0, 3) < 5.4) {
     /// comprobamos la versión de PHP
     die('FacturaScripts necesita PHP 5.4 o superior, y usted tiene PHP ' . phpversion());

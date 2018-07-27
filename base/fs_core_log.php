@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -20,7 +20,7 @@
 /**
  * Description of fs_core_log
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_core_log
 {

@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-if (!defined('FS_TMP_NAME')) {
-    define('FS_TMP_NAME', '');
+foreach (['FS_TMP_NAME', 'FS_PATH', 'FS_MYDOCS'] as $name) {
+    if (!defined($name)) {
+        define($name, '');
+    }
 }
 
-if (!defined('FS_PATH')) {
-    define('FS_PATH', '');
-}
-
-if (!defined('FS_MYDOCS')) {
-    define('FS_MYDOCS', '');
-}
-
-if (FS_TMP_NAME != '' && ! file_exists('tmp/' . FS_TMP_NAME)) {
+if (FS_TMP_NAME != '' && !file_exists('tmp/' . FS_TMP_NAME)) {
     if (!file_exists('tmp') && mkdir('tmp')) {
         file_put_contents('tmp/index.php', "<?php\necho 'ACCESO DENEGADO';");
     }
@@ -100,7 +93,7 @@ if (!file_exists('plugins')) {
 }
 
 /// Cargamos la lista de plugins activos
-$GLOBALS['plugins'] = array();
+$GLOBALS['plugins'] = [];
 if (file_exists('tmp/' . FS_TMP_NAME . 'enabled_plugins.list')) {
     $list = explode(',', file_get_contents('tmp/' . FS_TMP_NAME . 'enabled_plugins.list'));
     if (!empty($list)) {
