@@ -229,8 +229,8 @@ class fs_core_log
         self::$data_log[] = [
             'channel' => $channel,
             'context' => $context,
-            'date' => date('d-m-Y H:i:s'),
             'message' => $msg,
+            'time' => time(),
         ];
     }
 

@@ -43,7 +43,7 @@ class fs_log_manager
             $new_log->alerta = $data['context']['alert'];
             $new_log->controlador = $this->core_log->controller_name();
             $new_log->detalle = $data['message'];
-            $new_log->fecha = $data['date'];
+            $new_log->fecha = date('d-m-Y H:i:s', $data['time']);
             $new_log->ip = fs_get_ip();
             $new_log->tipo = $data['context']['type'];
             $new_log->usuario = $this->core_log->user_nick();
