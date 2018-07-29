@@ -42,7 +42,7 @@ class fs_login
     public function change_user_passwd()
     {
         $db_password = filter_input(INPUT_POST, 'db_password');
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $ip = fs_get_ip();
         $nick = filter_input(INPUT_POST, 'user');
         $new_password = filter_input(INPUT_POST, 'new_password');
         $new_password2 = filter_input(INPUT_POST, 'new_password2');
@@ -73,7 +73,7 @@ class fs_login
 
     public function log_in(&$controller_user)
     {
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $ip = fs_get_ip();
         $nick = filter_input(INPUT_POST, 'user');
         $password = filter_input(INPUT_POST, 'password');
 

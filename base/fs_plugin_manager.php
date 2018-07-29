@@ -66,7 +66,7 @@ class fs_plugin_manager
      *
      * @var float
      */
-    public $version = 2017.900;
+    public $version = 2017.901;
 
     public function __construct()
     {
@@ -109,6 +109,7 @@ class fs_plugin_manager
 
         if ($this->save()) {
             $this->core_log->new_message('Plugin <b>' . $plugin_name . '</b> desactivado correctamente.');
+            $this->core_log->save('Plugin ' . $plugin_name . ' desactivado correctamente.');
         } else {
             $this->core_log->new_error('Imposible desactivar el plugin <b>' . $plugin_name . '</b>.');
             return false;
@@ -304,6 +305,7 @@ class fs_plugin_manager
 
         $this->enable_plugin_controllers($name);
         $this->core_log->new_message('Plugin <b>' . $name . '</b> activado correctamente.');
+        $this->core_log->save('Plugin ' . $name . ' activado correctamente.');
         $this->clean_cache();
         return true;
     }
@@ -364,6 +366,7 @@ class fs_plugin_manager
 
         if (fs_file_manager::del_tree(FS_FOLDER . '/plugins/' . $plugin_name)) {
             $this->core_log->new_message('Plugin ' . $plugin_name . ' eliminado correctamente.');
+            $this->core_log->save('Plugin ' . $plugin_name . ' eliminado correctamente.');
             $this->clean_cache();
             return true;
         }

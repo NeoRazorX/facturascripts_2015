@@ -172,7 +172,7 @@ class fs_app
      */
     public function hour()
     {
-        return Date('H:i:s');
+        return date('H:i:s');
     }
 
     /**

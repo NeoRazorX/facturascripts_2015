@@ -68,10 +68,7 @@ if ($db->connect()) {
         $fsvar->array_save($cron_vars);
 
         /// indicamos el inicio en el log
-        $fslog = new fs_log();
-        $fslog->tipo = 'cron';
-        $fslog->detalle = 'Ejecutando el cron...';
-        $fslog->save();
+        $core_log->save('Ejecutando el cron...', 'cron');
 
         /// establecemos los elementos por defecto
         $fs_default_items = new fs_default_items();
@@ -97,10 +94,7 @@ if ($db->connect()) {
         }
 
         /// indicamos el fin en el log
-        $fslog2 = new fs_log();
-        $fslog2->tipo = 'cron';
-        $fslog2->detalle = 'Terminada la ejecución del cron.';
-        $fslog2->save();
+        $core_log->save('Terminada la ejecución del cron.', 'cron');
 
         /// Eliminamos la variable cron_lock puesto que ya hemos terminado
         $cron_vars['cron_lock'] = FALSE;

@@ -327,7 +327,7 @@ class fs_controller extends fs_app
         }
 
         if ($guardar) {
-            $this->new_log_msg($tipo, $msg, $alerta);
+            $this->core_log->save($msg, $tipo, $alerta);
         }
     }
 
@@ -346,7 +346,7 @@ class fs_controller extends fs_app
         }
 
         if ($save) {
-            $this->new_log_msg($tipo, $msg, $alerta);
+            $this->core_log->save($msg, $tipo, $alerta);
         }
     }
 
@@ -607,24 +607,11 @@ class fs_controller extends fs_app
     {
         $this->login_tools->log_in($this->user);
         if ($this->user->logged_on) {
+            $this->core_log->set_user_nick($this->user->nick);
             $this->load_menu();
         }
 
         return $this->user->logged_on;
-    }
-
-    private function new_log_msg($tipo, $detalle, $alerta = FALSE)
-    {
-        $fslog = new fs_log();
-        $fslog->tipo = $tipo;
-        $fslog->detalle = $detalle;
-        $fslog->ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-        $fslog->alerta = $alerta;
-        if ($this->user) {
-            $fslog->usuario = $this->user->nick;
-        }
-
-        $fslog->save();
     }
 
     private function pre_private_core()

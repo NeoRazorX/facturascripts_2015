@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 require_once 'base/fs_core_log.php';
 require_once 'base/fs_cache.php';
@@ -32,19 +32,6 @@ abstract class fs_model
 {
 
     /**
-     * Proporciona acceso directo a la base de datos.
-     * Implementa la clase fs_mysql o fs_postgresql.
-     * @var fs_db2
-     */
-    protected $db;
-
-    /**
-     * Nombre de la tabla en la base de datos.
-     * @var string 
-     */
-    protected $table_name;
-
-    /**
      * Directorio donde se encuentra el directorio table con
      * el XML con la estructura de la tabla.
      * @var string[] 
@@ -58,13 +45,6 @@ abstract class fs_model
     protected $cache;
 
     /**
-     * Clase que se utiliza para definir algunos valores por defecto:
-     * codejercicio, codserie, coddivisa, etc...
-     * @var fs_default_items
-     */
-    protected $default_items;
-
-    /**
      * Lista de tablas ya comprobadas.
      * @var array 
      */
@@ -75,6 +55,43 @@ abstract class fs_model
      * @var fs_core_log 
      */
     private static $core_log;
+
+    /**
+     * Proporciona acceso directo a la base de datos.
+     * Implementa la clase fs_mysql o fs_postgresql.
+     * @var fs_db2
+     */
+    protected $db;
+
+    /**
+     * Clase que se utiliza para definir algunos valores por defecto:
+     * codejercicio, codserie, coddivisa, etc...
+     * @var fs_default_items
+     */
+    protected $default_items;
+
+    /**
+     * Nombre de la tabla en la base de datos.
+     * @var string 
+     */
+    protected $table_name;
+
+    /**
+     * Esta función sirve para eliminar los datos del objeto de la base de datos
+     */
+    abstract public function delete();
+
+    /**
+     * Esta función devuelve TRUE si los datos del objeto se encuentran
+     * en la base de datos.
+     */
+    abstract public function exists();
+
+    /**
+     * Esta función sirve tanto para insertar como para actualizar
+     * los datos del objeto en la base de datos.
+     */
+    abstract public function save();
 
     /**
      * Constructor.
@@ -114,54 +131,6 @@ abstract class fs_model
     }
 
     /**
-     * buscamos el xml de la tabla en los plugins
-     * @param string $table_name
-     */
-    private function get_base_dir($table_name)
-    {
-        self::$base_dir[$table_name] = '';
-        foreach ($GLOBALS['plugins'] as $plugin) {
-            if (file_exists('plugins/' . $plugin . '/model/table/' . $table_name . '.xml')) {
-                self::$base_dir[$table_name] = 'plugins/' . $plugin . '/';
-                break;
-            }
-        }
-    }
-
-    public function table_name()
-    {
-        return $this->table_name;
-    }
-
-    /**
-     * Limpia la lista de tablas comprobadas.
-     */
-    protected function clean_checked_tables()
-    {
-        self::$checked_tables = [];
-        $this->cache->delete('fs_checked_tables');
-    }
-
-    /**
-     * Muestra al usuario un mensaje de error
-     * @param string $msg mensaje de error
-     */
-    protected function new_error_msg($msg)
-    {
-        self::$core_log->new_error($msg);
-        self::$core_log->save($msg);
-    }
-
-    /**
-     * Devuelve la lista de mensajes de error de los modelos.
-     * @return array lista de errores.
-     */
-    public function get_errors()
-    {
-        return self::$core_log->get_errors();
-    }
-
-    /**
      * Vacía la lista de errores de los modelos.
      */
     public function clean_errors()
@@ -170,156 +139,11 @@ abstract class fs_model
     }
 
     /**
-     * Muestra al usuario un mensaje.
-     * @param string $msg
-     */
-    protected function new_message($msg)
-    {
-        self::$core_log->new_message($msg);
-    }
-
-    /**
-     * Muestra al usuario un consejo.
-     * @param string $msg
-     */
-    protected function new_advice($msg)
-    {
-        self::$core_log->new_advice($msg);
-    }
-
-    /**
-     * Devuelve la lista de mensajes de los modelos.
-     * @return array
-     */
-    public function get_messages()
-    {
-        return self::$core_log->get_messages();
-    }
-
-    /**
      * Vacía la lista de mensajes de los modelos.
      */
     public function clean_messages()
     {
         self::$core_log->clean_messages();
-    }
-
-    /**
-     * Esta función es llamada al crear una tabla.
-     * Permite insertar valores en la tabla.
-     */
-    protected function install()
-    {
-        return '';
-    }
-
-    /**
-     * Esta función devuelve TRUE si los datos del objeto se encuentran
-     * en la base de datos.
-     */
-    abstract public function exists();
-
-    /**
-     * Esta función sirve tanto para insertar como para actualizar
-     * los datos del objeto en la base de datos.
-     */
-    abstract public function save();
-
-    /**
-     * Esta función sirve para eliminar los datos del objeto de la base de datos
-     */
-    abstract public function delete();
-
-    /**
-     * Escapa las comillas de una cadena de texto.
-     * @param string $str cadena de texto a escapar
-     * @return string cadena de texto resultante
-     */
-    protected function escape_string($str = '')
-    {
-        return $this->db->escape_string($str);
-    }
-
-    /**
-     * Transforma una variable en una cadena de texto válida para ser
-     * utilizada en una consulta SQL.
-     * @param mixed $val
-     * @return string
-     */
-    public function var2str($val)
-    {
-        if (is_null($val)) {
-            return 'NULL';
-        } else if (is_bool($val)) {
-            if ($val) {
-                return 'TRUE';
-            } else {
-                return 'FALSE';
-            }
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $val)) { /// es una fecha
-            return "'" . Date($this->db->date_style(), strtotime($val)) . "'";
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $val)) { /// es una fecha+hora
-            return "'" . Date($this->db->date_style() . ' H:i:s', strtotime($val)) . "'";
-        }
-
-        return "'" . $this->db->escape_string($val) . "'";
-    }
-
-    /**
-     * Convierte una variable con contenido binario a texto.
-     * Lo hace en base64.
-     * @param mixed $val
-     * @return string
-     */
-    protected function bin2str($val)
-    {
-        if (is_null($val)) {
-            return 'NULL';
-        }
-
-        return "'" . base64_encode($val) . "'";
-    }
-
-    /**
-     * Convierte un texto a binario.
-     * Lo hace con base64.
-     * @param string $val
-     * @return null|string
-     */
-    protected function str2bin($val)
-    {
-        if (is_null($val)) {
-            return NULL;
-        }
-
-        return base64_decode($val);
-    }
-
-    /**
-     * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
-     * Esta función devuelve TRUE si el valor se corresponde con
-     * alguno de los anteriores.
-     * @param string $val
-     * @return boolean
-     */
-    public function str2bool($val)
-    {
-        return ($val == 't' || $val == '1');
-    }
-
-    /**
-     * Devuelve el valor entero de la variable $s,
-     * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
-     * @param mixed $str
-     * @return integer
-     */
-    public function intval($str)
-    {
-        if ($str === NULL) {
-            return NULL;
-        }
-
-        return (int) $str;
     }
 
     /**
@@ -338,6 +162,176 @@ abstract class fs_model
         }
 
         return( bccomp((string) $f1, (string) $f2, $precision) == 0 );
+    }
+
+    /**
+     * Devuelve la lista de mensajes de error de los modelos.
+     * @return array lista de errores.
+     */
+    public function get_errors()
+    {
+        return self::$core_log->get_errors();
+    }
+
+    /**
+     * Devuelve la lista de mensajes de los modelos.
+     * @return array
+     */
+    public function get_messages()
+    {
+        return self::$core_log->get_messages();
+    }
+
+    /**
+     * Devuelve el valor entero de la variable $s,
+     * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
+     * @param mixed $str
+     * @return integer
+     */
+    public function intval($str)
+    {
+        return ($str === NULL) ? NULL : (int) $str;
+    }
+
+    /**
+     * Esta función convierte:
+     * < en &lt;
+     * > en &gt;
+     * " en &quot;
+     * ' en &#39;
+     * 
+     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
+     * porque te encontrarás con muchas sorpresas desagradables.
+     * @param string $txt
+     * @return string
+     */
+    public function no_html($txt)
+    {
+        $newt = str_replace(
+            array('<', '>', '"', "'"), array('&lt;', '&gt;', '&quot;', '&#39;'), $txt
+        );
+
+        return trim($newt);
+    }
+
+    /**
+     * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
+     * Esta función devuelve TRUE si el valor se corresponde con
+     * alguno de los anteriores.
+     * @param string $val
+     * @return boolean
+     */
+    public function str2bool($val)
+    {
+        return ($val == 't' || $val == '1');
+    }
+
+    /**
+     * Devuelve el nombre de la tabla de este modelo.
+     * @return string
+     */
+    public function table_name()
+    {
+        return $this->table_name;
+    }
+
+    /**
+     * Transforma una variable en una cadena de texto válida para ser
+     * utilizada en una consulta SQL.
+     * @param mixed $val
+     * @return string
+     */
+    public function var2str($val)
+    {
+        if (is_null($val)) {
+            return 'NULL';
+        } else if (is_bool($val)) {
+            return $val ? 'TRUE' : 'FALSE';
+        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $val)) {
+            /// es una fecha
+            return "'" . Date($this->db->date_style(), strtotime($val)) . "'";
+        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})$/i', $val)) {
+            /// es una fecha+hora
+            return "'" . Date($this->db->date_style() . ' H:i:s', strtotime($val)) . "'";
+        }
+
+        return "'" . $this->db->escape_string($val) . "'";
+    }
+
+    /**
+     * Convierte una variable con contenido binario a texto.
+     * Lo hace en base64.
+     * @param mixed $val
+     * @return string
+     */
+    protected function bin2str($val)
+    {
+        return is_null($val) ? 'NULL' : "'" . base64_encode($val) . "'";
+    }
+
+    /**
+     * Comprueba y actualiza la estructura de la tabla si es necesario
+     * @param string $table_name
+     * @return boolean
+     */
+    protected function check_table($table_name)
+    {
+        $sql = '';
+        $xml_cols = [];
+        $xml_cons = [];
+
+        if (!$this->get_xml_table($table_name, $xml_cols, $xml_cons)) {
+            $this->new_error_msg('Error con el xml.');
+            return FALSE;
+        }
+
+        if ($this->db->table_exists($table_name)) {
+            if (!$this->db->check_table_aux($table_name)) {
+                $this->new_error_msg('Error al convertir la tabla a InnoDB.');
+            }
+
+            /**
+             * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
+             * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
+             */
+            $db_cons = $this->db->get_constraints($table_name);
+            $sql2 = $this->db->compare_constraints($table_name, $xml_cons, $db_cons, TRUE);
+            if ($sql2 != '') {
+                if (!$this->db->exec($sql2)) {
+                    $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
+                }
+
+                /// leemos de nuevo las restricciones
+                $db_cons = $this->db->get_constraints($table_name);
+            }
+
+            /// comparamos las columnas
+            $db_cols = $this->db->get_columns($table_name);
+            $sql .= $this->db->compare_columns($table_name, $xml_cols, $db_cols);
+
+            /// comparamos las restricciones
+            $sql .= $this->db->compare_constraints($table_name, $xml_cons, $db_cons);
+        } else {
+            /// generamos el sql para crear la tabla
+            $sql .= $this->db->generate_table($table_name, $xml_cols, $xml_cons);
+            $sql .= $this->install();
+        }
+
+        if ($sql != '' && !$this->db->exec($sql)) {
+            $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * Limpia la lista de tablas comprobadas.
+     */
+    protected function clean_checked_tables()
+    {
+        self::$checked_tables = [];
+        $this->cache->delete('fs_checked_tables');
     }
 
     /**
@@ -363,24 +357,123 @@ abstract class fs_model
     }
 
     /**
-     * Esta función convierte:
-     * < en &lt;
-     * > en &gt;
-     * " en &quot;
-     * ' en &#39;
-     * 
-     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
-     * porque te encontrarás con muchas sorpresas desagradables.
-     * @param string $txt
-     * @return string
+     * Escapa las comillas de una cadena de texto.
+     * @param string $str cadena de texto a escapar
+     * @return string cadena de texto resultante
      */
-    public function no_html($txt)
+    protected function escape_string($str = '')
     {
-        $newt = str_replace(
-            array('<', '>', '"', "'"), array('&lt;', '&gt;', '&quot;', '&#39;'), $txt
-        );
+        return $this->db->escape_string($str);
+    }
 
-        return trim($newt);
+    /**
+     * buscamos el xml de la tabla en los plugins
+     * @param string $table_name
+     */
+    private function get_base_dir($table_name)
+    {
+        self::$base_dir[$table_name] = '';
+        foreach ($GLOBALS['plugins'] as $plugin) {
+            if (file_exists('plugins/' . $plugin . '/model/table/' . $table_name . '.xml')) {
+                self::$base_dir[$table_name] = 'plugins/' . $plugin . '/';
+                break;
+            }
+        }
+    }
+
+    /**
+     * Obtiene las columnas y restricciones del fichero xml para una tabla
+     * @param string $table_name
+     * @param array $columns
+     * @param array $constraints
+     * @return boolean
+     */
+    protected function get_xml_table($table_name, &$columns, &$constraints)
+    {
+        $filename = self::$base_dir[$table_name] . 'model/table/' . $table_name . '.xml';
+        if (!file_exists($filename)) {
+            $this->new_error_msg('Archivo ' . $filename . ' no encontrado.');
+            return FALSE;
+        }
+
+        $xml = simplexml_load_string(file_get_contents('./' . $filename, FILE_USE_INCLUDE_PATH));
+        if (!$xml) {
+            $this->new_error_msg('Error al leer el archivo ' . $filename);
+            return FALSE;
+        }
+
+        $return = FALSE;
+        if ($xml->columna) {
+            $i = 0;
+            foreach ($xml->columna as $col) {
+                $columns[$i]['nombre'] = (string) $col->nombre;
+                $columns[$i]['tipo'] = (string) $col->tipo;
+
+                $columns[$i]['nulo'] = 'YES';
+                if ($col->nulo && strtolower($col->nulo) == 'no') {
+                    $columns[$i]['nulo'] = 'NO';
+                }
+
+                if ($col->defecto == '') {
+                    $columns[$i]['defecto'] = NULL;
+                } else {
+                    $columns[$i]['defecto'] = (string) $col->defecto;
+                }
+
+                $i++;
+            }
+
+            /// debe de haber columnas, sino es un fallo
+            $return = TRUE;
+        }
+
+        if ($xml->restriccion) {
+            $i = 0;
+            foreach ($xml->restriccion as $col) {
+                $constraints[$i]['nombre'] = (string) $col->nombre;
+                $constraints[$i]['consulta'] = (string) $col->consulta;
+                $i++;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Esta función es llamada al crear una tabla.
+     * Permite insertar valores en la tabla.
+     */
+    protected function install()
+    {
+        return '';
+    }
+
+    /**
+     * Muestra al usuario un consejo.
+     * @param string $msg
+     */
+    protected function new_advice($msg)
+    {
+        self::$core_log->new_advice($msg);
+    }
+
+    /**
+     * Muestra al usuario un mensaje de error
+     * @param string $msg mensaje de error
+     */
+    protected function new_error_msg($msg)
+    {
+        self::$core_log->new_error($msg);
+        self::$core_log->save($msg);
+    }
+
+    /**
+     * Muestra al usuario un mensaje.
+     * @param string $msg
+     */
+    protected function new_message($msg)
+    {
+        self::$core_log->new_message($msg);
     }
 
     /**
@@ -394,117 +487,13 @@ abstract class fs_model
     }
 
     /**
-     * Comprueba y actualiza la estructura de la tabla si es necesario
-     * @param string $table_name
-     * @return boolean
+     * Convierte un texto a binario.
+     * Lo hace con base64.
+     * @param string $val
+     * @return null|string
      */
-    protected function check_table($table_name)
+    protected function str2bin($val)
     {
-        $sql = '';
-        $xml_cols = [];
-        $xml_cons = [];
-
-        if ($this->get_xml_table($table_name, $xml_cols, $xml_cons)) {
-            if ($this->db->table_exists($table_name)) {
-                if (!$this->db->check_table_aux($table_name)) {
-                    $this->new_error_msg('Error al convertir la tabla a InnoDB.');
-                }
-
-                /**
-                 * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
-                 * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
-                 */
-                $db_cons = $this->db->get_constraints($table_name);
-                $sql2 = $this->db->compare_constraints($table_name, $xml_cons, $db_cons, TRUE);
-                if ($sql2 != '') {
-                    if (!$this->db->exec($sql2)) {
-                        $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
-                    }
-
-                    /// leemos de nuevo las restricciones
-                    $db_cons = $this->db->get_constraints($table_name);
-                }
-
-                /// comparamos las columnas
-                $db_cols = $this->db->get_columns($table_name);
-                $sql .= $this->db->compare_columns($table_name, $xml_cols, $db_cols);
-
-                /// comparamos las restricciones
-                $sql .= $this->db->compare_constraints($table_name, $xml_cons, $db_cons);
-            } else {
-                /// generamos el sql para crear la tabla
-                $sql .= $this->db->generate_table($table_name, $xml_cols, $xml_cons);
-                $sql .= $this->install();
-            }
-
-            if ($sql != '' && !$this->db->exec($sql)) {
-                $this->new_error_msg('Error al comprobar la tabla ' . $table_name);
-                return FALSE;
-            }
-        } else {
-            $this->new_error_msg('Error con el xml.');
-            return FALSE;
-        }
-
-        return TRUE;
-    }
-
-    /**
-     * Obtiene las columnas y restricciones del fichero xml para una tabla
-     * @param string $table_name
-     * @param array $columns
-     * @param array $constraints
-     * @return boolean
-     */
-    protected function get_xml_table($table_name, &$columns, &$constraints)
-    {
-        $return = FALSE;
-        $filename = self::$base_dir[$table_name] . 'model/table/' . $table_name . '.xml';
-
-        if (file_exists($filename)) {
-            $xml = simplexml_load_string(file_get_contents('./' . $filename, FILE_USE_INCLUDE_PATH));
-            if ($xml) {
-                if ($xml->columna) {
-                    $i = 0;
-                    foreach ($xml->columna as $col) {
-                        $columns[$i]['nombre'] = (string) $col->nombre;
-                        $columns[$i]['tipo'] = (string) $col->tipo;
-
-                        $columns[$i]['nulo'] = 'YES';
-                        if ($col->nulo) {
-                            if (strtolower($col->nulo) == 'no') {
-                                $columns[$i]['nulo'] = 'NO';
-                            }
-                        }
-
-                        if ($col->defecto == '') {
-                            $columns[$i]['defecto'] = NULL;
-                        } else {
-                            $columns[$i]['defecto'] = (string) $col->defecto;
-                        }
-
-                        $i++;
-                    }
-
-                    /// debe de haber columnas, sino es un fallo
-                    $return = TRUE;
-                }
-
-                if ($xml->restriccion) {
-                    $i = 0;
-                    foreach ($xml->restriccion as $col) {
-                        $constraints[$i]['nombre'] = (string) $col->nombre;
-                        $constraints[$i]['consulta'] = (string) $col->consulta;
-                        $i++;
-                    }
-                }
-            } else {
-                $this->new_error_msg('Error al leer el archivo ' . $filename);
-            }
-        } else {
-            $this->new_error_msg('Archivo ' . $filename . ' no encontrado.');
-        }
-
-        return $return;
+        return is_null($val) ? NULL : base64_decode($val);
     }
 }

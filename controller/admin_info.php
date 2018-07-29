@@ -26,6 +26,7 @@ class admin_info extends fs_controller
 
     public $allow_delete;
     public $b_alerta;
+    public $b_controlador;
     public $b_desde;
     public $b_detalle;
     public $b_hasta;
@@ -93,6 +94,7 @@ class admin_info extends fs_controller
     private function ini_filters()
     {
         $this->b_alerta = fs_filter_input_req('b_alerta');
+        $this->b_controlador = '';
         $this->b_desde = '';
         $this->b_detalle = '';
         $this->b_hasta = '';
@@ -101,6 +103,7 @@ class admin_info extends fs_controller
         $this->b_usuario = '';
 
         if (fs_filter_input_req('b_desde') !== NULL) {
+            $this->b_controlador = fs_filter_input_req('b_controlador');
             $this->b_desde = fs_filter_input_req('b_desde');
             $this->b_detalle = fs_filter_input_req('b_detalle');
             $this->b_hasta = fs_filter_input_req('b_hasta');
@@ -169,6 +172,10 @@ class admin_info extends fs_controller
 
         if ($this->b_ip != '') {
             $sql .= " AND ip LIKE '" . $this->empresa->no_html($this->b_ip) . "%'";
+        }
+
+        if ($this->b_controlador != '') {
+            $sql .= " AND controlador LIKE '" . $this->empresa->no_html($this->b_controlador) . "%'";
         }
 
         if ($this->b_desde != '') {
