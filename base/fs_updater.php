@@ -40,12 +40,6 @@ class fs_updater extends fs_app
 
     /**
      *
-     * @var boolean
-     */
-    public $errores;
-
-    /**
-     *
      * @var fs_plugin_manager
      */
     public $plugin_manager;

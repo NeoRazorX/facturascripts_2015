@@ -106,7 +106,7 @@ class fs_log extends fs_model
      */
     public function get($id)
     {
-        $data = $this->db->select("SELECT * FROM fs_logs WHERE id =" . $this->var2str($id) . ";");
+        $data = $this->db->select("SELECT * FROM fs_logs WHERE id = " . $this->var2str($id) . ";");
         if ($data) {
             return new fs_log($data[0]);
         }
@@ -124,7 +124,7 @@ class fs_log extends fs_model
             return FALSE;
         }
 
-        return $this->db->select("SELECT * FROM fs_logs WHERE id =" . $this->var2str($this->id) . ";");
+        return (bool) $this->db->select("SELECT * FROM fs_logs WHERE id = " . $this->var2str($this->id) . ";");
     }
 
     /**
