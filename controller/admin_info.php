@@ -10,18 +10,18 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  * Controlador de admin -> información del sistema.
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class admin_info extends fs_controller
+class admin_info extends fs_list_controller
 {
 
     public $allow_delete;
@@ -43,8 +43,27 @@ class admin_info extends fs_controller
         parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
     }
 
+    protected function create_tabs()
+    {
+        $this->add_tab('logs', 'Historal', 'fs_logs', [
+            'fecha' => 'datetime',
+            'usuario' => 'text',
+            'tipo' => 'text',
+            'detalle' => 'text',
+            'ip' => 'text',
+            'controlador' => 'text',
+            ], 'fa-book');
+        $this->add_search_columns('logs', ['usuario', 'tipo', 'detalle', 'ip', 'controlador']);
+        $this->add_sort_option('logs', ['fecha'], 2);
+
+        /// cargamos una plantilla propia para la parte de arriba
+        $this->template_top = 'block/admin_info_top';
+    }
+
     protected function private_core()
     {
+        parent::private_core();
+
         /// ¿El usuario tiene permiso para eliminar en esta página?
         $this->allow_delete = $this->user->admin;
 
@@ -64,13 +83,7 @@ class admin_info extends fs_controller
             $cron_vars['cron_lock'] = FALSE;
             $this->fsvar->array_save($cron_vars);
         } else if (isset($_GET['clean_cache'])) {
-            /// borramos los archivos php del directorio tmp
-            foreach (scandir(getcwd() . '/tmp/' . FS_TMP_NAME) as $f) {
-                if (substr($f, -4) == '.php') {
-                    unlink('tmp/' . FS_TMP_NAME . $f);
-                }
-            }
-
+            fs_file_manager::clear_raintpl_cache();
             if ($this->cache->clean()) {
                 $this->new_message("Cache limpiada correctamente.");
             }
@@ -84,39 +97,6 @@ class admin_info extends fs_controller
         } else if ($cron_vars['cron_lock']) {
             $this->new_advice('Se está ejecutando el cron.');
         }
-
-        $this->ini_filters();
-        $this->buscar_en_log();
-        $this->get_db_tables();
-        $this->modulos_eneboo();
-    }
-
-    private function ini_filters()
-    {
-        $this->b_alerta = fs_filter_input_req('b_alerta');
-        $this->b_controlador = '';
-        $this->b_desde = '';
-        $this->b_detalle = '';
-        $this->b_hasta = '';
-        $this->b_ip = '';
-        $this->b_tipo = '';
-        $this->b_usuario = '';
-
-        if (fs_filter_input_req('b_desde') !== NULL) {
-            $this->b_controlador = fs_filter_input_req('b_controlador');
-            $this->b_desde = fs_filter_input_req('b_desde');
-            $this->b_detalle = fs_filter_input_req('b_detalle');
-            $this->b_hasta = fs_filter_input_req('b_hasta');
-            $this->b_tipo = fs_filter_input_req('b_tipo');
-            $this->b_usuario = fs_filter_input_req('b_usuario');
-        }
-
-        if (fs_filter_input_req('b_ip')) {
-            $this->b_ip = (string) fs_filter_input_req('b_ip');
-        }
-
-        /// forzamos la creación de la tabla, si todavía no existe
-        new fs_log();
     }
 
     public function php_version()
@@ -142,71 +122,5 @@ class admin_info extends fs_controller
     public function get_locks()
     {
         return $this->db->get_locks();
-    }
-
-    public function get_db_tables()
-    {
-        $this->db_tables = $this->db->list_tables();
-    }
-
-    private function buscar_en_log()
-    {
-        $this->resultados = [];
-        $sql = "SELECT * FROM fs_logs WHERE 1=1";
-
-        if ($this->b_usuario != '') {
-            $sql .= ' AND usuario = ' . $this->empresa->var2str($this->b_usuario);
-        }
-
-        if ($this->b_tipo != '') {
-            $sql .= ' AND tipo = ' . $this->empresa->var2str($this->b_tipo);
-        }
-
-        if ($this->b_alerta != '') {
-            $sql .= ' AND alerta';
-        }
-
-        if ($this->b_detalle != '') {
-            $sql .= " AND lower(detalle) LIKE '%" . $this->empresa->no_html(mb_strtolower($this->b_detalle, 'UTF8')) . "%'";
-        }
-
-        if ($this->b_ip != '') {
-            $sql .= " AND ip LIKE '" . $this->empresa->no_html($this->b_ip) . "%'";
-        }
-
-        if ($this->b_controlador != '') {
-            $sql .= " AND controlador LIKE '" . $this->empresa->no_html($this->b_controlador) . "%'";
-        }
-
-        if ($this->b_desde != '') {
-            $sql .= ' AND fecha >= ' . $this->empresa->var2str($this->b_desde);
-        }
-
-        if ($this->b_hasta != '') {
-            $sql .= ' AND fecha <= ' . $this->empresa->var2str($this->b_hasta);
-        }
-
-        $sql .= ' ORDER BY fecha DESC';
-
-        $data = $this->db->select_limit($sql, 500, 0);
-        if ($data) {
-            foreach ($data as $d) {
-                $this->resultados[] = new fs_log($d);
-            }
-        }
-    }
-
-    private function modulos_eneboo()
-    {
-        $this->modulos_eneboo = [];
-
-        if ($this->db->table_exists('flmodules')) {
-            $data = $this->db->select("SELECT * FROM flmodules ORDER BY idarea ASC, descripcion ASC;");
-            if ($data) {
-                foreach ($data as $d) {
-                    $this->modulos_eneboo[] = $d;
-                }
-            }
-        }
     }
 }

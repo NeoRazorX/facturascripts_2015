@@ -36,6 +36,7 @@ define('FS_FOLDER', __DIR__);
 require_once 'config.php';
 require_once 'base/config2.php';
 require_once 'base/fs_controller.php';
+require_once 'base/fs_list_controller.php';
 require_once 'base/fs_log_manager.php';
 require_once 'raintpl/rain.tpl.class.php';
 

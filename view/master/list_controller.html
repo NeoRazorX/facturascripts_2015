@@ -1,5 +1,8 @@
 {include="header"}
 
+{if="$fsc->template_top"}
+    {include="$fsc->template_top"}
+{else}
 <div class="container-fluid" style="margin-bottom: 10px;">
     <div class="row">
         <div class="col-sm-4">
@@ -30,6 +33,7 @@
         </div>
     </div>
 </div>
+{/if}
 
 <ul class="nav nav-tabs">
     {loop="$fsc->tabs"}

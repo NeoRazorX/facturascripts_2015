@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,6 +54,8 @@ abstract class fs_list_controller extends fs_controller
      * @var array
      */
     public $tabs = [];
+    
+    public $template_top = '';
 
     abstract protected function create_tabs();
 
@@ -68,6 +70,11 @@ abstract class fs_list_controller extends fs_controller
         switch ($col_type) {
             case 'date':
                 $final_value = date('d-m-Y', strtotime($final_value));
+                break;
+
+            case 'timestamp':
+            case 'datetime':
+                $final_value = date('d-m-Y H:i:s', strtotime($final_value));
                 break;
 
             case 'money':
