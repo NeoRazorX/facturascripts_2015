@@ -121,7 +121,7 @@ class fs_plugin_manager
         $this->disable_unnused_pages();
 
         /// desactivamos los plugins que dependan de este
-        foreach ($this->enabled() as $plug) {
+        foreach ($this->installed() as $plug) {
             /**
              * Si el plugin que hemos desactivado, es requerido por el plugin
              * que estamos comprobando, lo desativamos también.

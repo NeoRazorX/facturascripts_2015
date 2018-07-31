@@ -32,7 +32,7 @@ function guarda_config(&$errors, $nombre_archivo = 'config.php')
     if ($archivo) {
         fwrite($archivo, "<?php\n");
 
-        $fields = ['DB_TYPE', 'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'CACHE_HOST', 'CACHE_POR', 'CACHE_PREFIX'];
+        $fields = ['DB_TYPE', 'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'CACHE_HOST', 'CACHE_PORT', 'CACHE_PREFIX'];
         foreach ($fields as $name) {
             fwrite($archivo, "define('FS_" . $name . "', '" . filter_input(INPUT_POST, strtolower($name)) . "');\n");
         }
