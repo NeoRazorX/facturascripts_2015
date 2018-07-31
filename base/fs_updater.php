@@ -99,32 +99,33 @@ class fs_updater extends fs_app
 
     /**
      * Elimina la actualización de la lista de pendientes.
-     * @param string|bool $plugin
+     * @param string $plugin
      */
-    private function actualizacion_correcta($plugin = FALSE)
+    private function actualizacion_correcta($plugin = '')
     {
         if (!isset($this->updates)) {
-            /// comprobamos la lista de actualizaciones de cache
-            $this->updates = $this->cache->get('updater_lista');
+            $this->get_updates();
         }
 
-        if ($this->updates) {
-            if ($plugin) {
-                foreach ($this->updates['plugins'] as $i => $pl) {
-                    if ($pl['name'] == $plugin) {
-                        unset($this->updates['plugins'][$i]);
-                        break;
-                    }
-                }
-            } else {
-                /// hemos actualizado el core
-                $this->updates['core'] = FALSE;
-            }
+        if (!$this->updates) {
+            return;
+        }
 
-            /// guardamos la lista de actualizaciones en cache
-            if (count($this->updates['plugins']) > 0) {
-                $this->cache->set('updater_lista', $this->updates);
+        if (empty($plugin)) {
+            /// hemos actualizado el core
+            $this->updates['core'] = FALSE;
+        } else {
+            foreach ($this->updates['plugins'] as $i => $pl) {
+                if ($pl['name'] == $plugin) {
+                    unset($this->updates['plugins'][$i]);
+                    break;
+                }
             }
+        }
+
+        /// guardamos la lista de actualizaciones en cache
+        if (count($this->updates['plugins']) > 0) {
+            $this->cache->set('updater_lista', $this->updates);
         }
     }
 
@@ -149,7 +150,7 @@ class fs_updater extends fs_app
                 return false;
             }
 
-            $zip->extractTo('.');
+            $zip->extractTo(FS_FOLDER);
             $zip->close();
 
             /// eliminamos archivos antiguos y hacemos backup de los actuales
@@ -158,12 +159,12 @@ class fs_updater extends fs_app
                 rename(FS_FOLDER . '/' . $folder . '/', FS_FOLDER . '/' . $folder . '_old/');
             }
 
-            /// ahora hay que copiar todos los archivos de facturascripts-master a . y borrar
-            fs_file_manager::recurse_copy(FS_FOLDER . '/facturascripts_2015-master/', '.');
+            /// ahora hay que copiar todos los archivos de facturascripts-master a la raíz y borrar
+            fs_file_manager::recurse_copy(FS_FOLDER . '/facturascripts_2015-master/', FS_FOLDER);
             fs_file_manager::del_tree(FS_FOLDER . '/facturascripts_2015-master/');
 
             $this->core_log->new_message('Actualizado correctamente.');
-            $this->actualizacion_correcta();
+            $this->actualizacion_correcta('');
             return true;
         }
 
@@ -184,7 +185,7 @@ class fs_updater extends fs_app
             }
 
             $zip = new ZipArchive();
-            $zip_status = $zip->open('update.zip', ZipArchive::CHECKCONS);
+            $zip_status = $zip->open(FS_FOLDER . '/update.zip', ZipArchive::CHECKCONS);
             if ($zip_status !== TRUE) {
                 $this->core_log->new_error('Ha habido un error con el archivo update.zip. Código: ' . $zip_status
                     . '. Intente de nuevo en unos minutos.');
@@ -198,9 +199,9 @@ class fs_updater extends fs_app
             fs_file_manager::del_tree(FS_FOLDER . '/plugins/' . $plugin_name);
 
             /// descomprimimos
-            $zip->extractTo('plugins/');
+            $zip->extractTo(FS_FOLDER . '/plugins/');
             $zip->close();
-            unlink('update.zip');
+            unlink(FS_FOLDER . '/update.zip');
 
             /// renombramos si es necesario
             foreach (fs_file_manager::scan_folder(FS_FOLDER . '/plugins') as $f) {

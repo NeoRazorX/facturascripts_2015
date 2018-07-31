@@ -99,7 +99,7 @@ class fs_file_manager
     {
         $folder = opendir($src);
 
-        if (!@mkdir($dst)) {
+        if (!file_exists($dst) && !@mkdir($dst)) {
             return false;
         }
 
@@ -112,8 +112,8 @@ class fs_file_manager
                 copy($src . DIRECTORY_SEPARATOR . $file, $dst . DIRECTORY_SEPARATOR . $file);
             }
         }
-        closedir($folder);
 
+        closedir($folder);
         return true;
     }
 
