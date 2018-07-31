@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -111,7 +111,7 @@ class fs_relation extends fs_model
 
     public function all_for($table, $id)
     {
-        $rlist = array();
+        $rlist = [];
         $sql = "SELECT * FROM fs_relations WHERE (table1 = " . $this->var2str($table)
             . " AND id1 = " . $this->var2str($id) . ") OR (table2 = " . $this->var2str($table)
             . " AND id2 = " . $this->var2str($id) . ") ORDER BY id DESC;";

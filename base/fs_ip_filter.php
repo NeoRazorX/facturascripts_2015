@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 /**
  * Description of fs_ip_filter
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_ip_filter
 {
@@ -28,13 +28,22 @@ class fs_ip_filter
     const BAN_SECONDS = 600;
     const MAX_ATTEMPTS = 5;
 
+    /**
+     *
+     * @var string
+     */
     private $filePath;
+    
+    /**
+     *
+     * @var array
+     */
     private $ipList;
 
     public function __construct()
     {
         $this->filePath = 'tmp/' . FS_TMP_NAME . 'ip.log';
-        $this->ipList = array();
+        $this->ipList = [];
 
         if (file_exists($this->filePath)) {
             /// Read IP list file

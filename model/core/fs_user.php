@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\model;
 
@@ -129,37 +129,15 @@ class fs_user extends \fs_model
             $this->password = $data['password'];
             $this->email = $data['email'];
             $this->log_key = $data['log_key'];
-
-            $this->codagente = NULL;
-            if (isset($data['codagente'])) {
-                $this->codagente = $data['codagente'];
-            }
-
+            $this->codagente = isset($data['codagente']) ? $data['codagente'] : NULL;
             $this->admin = $this->str2bool($data['admin']);
-
-            $this->last_login = NULL;
-            if ($data['last_login']) {
-                $this->last_login = Date('d-m-Y', strtotime($data['last_login']));
-            }
-
-            $this->last_login_time = NULL;
-            if ($data['last_login_time']) {
-                $this->last_login_time = $data['last_login_time'];
-            }
-
+            $this->last_login = $data['last_login'] ? Date('d-m-Y', strtotime($data['last_login'])) : NULL;
+            $this->last_login_time = $data['last_login_time'] ? $data['last_login_time'] : NULL;
             $this->last_ip = $data['last_ip'];
             $this->last_browser = $data['last_browser'];
             $this->fs_page = $data['fs_page'];
-
-            $this->css = 'view/css/bootstrap-yeti.min.css';
-            if (isset($data['css'])) {
-                $this->css = $data['css'];
-            }
-
-            $this->enabled = TRUE;
-            if (isset($data['enabled'])) {
-                $this->enabled = $this->str2bool($data['enabled']);
-            }
+            $this->css = isset($data['css']) ? $data['css'] : 'view/css/bootstrap-yeti.min.css';
+            $this->enabled = isset($data['enabled']) ? $this->str2bool($data['enabled']) : TRUE;
         } else {
             $this->nick = NULL;
             $this->password = NULL;
@@ -263,7 +241,7 @@ class fs_user extends \fs_model
     public function get_menu($reload = FALSE)
     {
         if (!isset($this->menu) || $reload) {
-            $this->menu = array();
+            $this->menu = [];
             $page = new \fs_page();
 
             if ($this->admin || FS_DEMO) {
@@ -325,7 +303,7 @@ class fs_user extends \fs_model
 
     /**
      * Devuelve la lista de accesos permitidos del usuario.
-     * @return type
+     * @return array
      */
     public function get_accesses()
     {
@@ -364,13 +342,7 @@ class fs_user extends \fs_model
         if (time() - $ltime >= 300) {
             $this->last_login = Date('d-m-Y');
             $this->last_login_time = Date('H:i:s');
-
-            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                $this->last_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            } else {
-                $this->last_ip = $_SERVER['REMOTE_ADDR'];
-            }
-
+            $this->last_ip = fs_get_ip();
             $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
             $this->save();
         }
@@ -382,20 +354,14 @@ class fs_user extends \fs_model
      */
     public function new_logkey()
     {
-        if (is_null($this->log_key) || ! FS_DEMO) {
+        if (is_null($this->log_key) || !FS_DEMO) {
             $this->log_key = sha1(strval(rand()));
         }
 
         $this->logged_on = TRUE;
         $this->last_login = Date('d-m-Y');
         $this->last_login_time = Date('H:i:s');
-
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $this->last_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $this->last_ip = $_SERVER['REMOTE_ADDR'];
-        }
-
+        $this->last_ip = fs_get_ip();
         $this->last_browser = $_SERVER['HTTP_USER_AGENT'];
     }
 
@@ -521,7 +487,7 @@ class fs_user extends \fs_model
      */
     public function all_enabled()
     {
-        $userlist = array();
+        $userlist = [];
 
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE enabled = TRUE ORDER BY lower(nick) ASC;");
         if ($data) {

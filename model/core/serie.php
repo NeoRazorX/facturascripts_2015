@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -100,7 +100,7 @@ class serie extends \fs_model
 
     /**
      * Devuelve TRUE si la serie es la predeterminada de la empresa
-     * @return type
+     * @return bool
      */
     public function is_default()
     {
@@ -195,7 +195,7 @@ class serie extends \fs_model
 
     /**
      * Elimina la serie
-     * @return type
+     * @return bool
      */
     public function delete()
     {

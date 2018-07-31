@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017 Carlos García Gómez    <neorazorx at gmail.com>
+ * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
+ * Copyright (C) 2017-2018  Carlos García Gómez    <neorazorx at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -68,7 +68,7 @@ class fs_rol extends fs_model
 
     /**
      * Devuelve la lista de accesos permitidos del rol.
-     * @return type
+     * @return array
      */
     public function get_accesses()
     {
@@ -78,7 +78,7 @@ class fs_rol extends fs_model
 
     /**
      * Devuelve la lista de usuarios con este rol.
-     * @return type
+     * @return array
      */
     public function get_users()
     {
@@ -119,7 +119,7 @@ class fs_rol extends fs_model
 
     public function all()
     {
-        $lista = array();
+        $lista = [];
 
         $sql = "SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;";
         $data = $this->db->select($sql);
@@ -134,7 +134,7 @@ class fs_rol extends fs_model
 
     public function all_for_user($nick)
     {
-        $lista = array();
+        $lista = [];
 
         $sql = "SELECT * FROM " . $this->table_name . " WHERE codrol IN "
             . "(SELECT codrol FROM fs_roles_users WHERE fs_user = " . $this->var2str($nick) . ");";

@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-if (strtolower(FS_DB_TYPE) == 'mysql') {
-    require_once 'base/fs_mysql.php';
-} else {
-    require_once 'base/fs_postgresql.php';
-}
+require_once 'base/fs_mysql.php';
+require_once 'base/fs_postgresql.php';
 
 /**
  * Clase genérica de acceso a la base de datos, ya sea MySQL o PostgreSQL.

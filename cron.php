@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
@@ -10,13 +10,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 echo 'Iniciando cron de FacturaScripts...';
 
 /// establecemos el límite de ejecución de PHP en 50 minutos
@@ -24,6 +23,7 @@ echo 'Iniciando cron de FacturaScripts...';
 
 /// accedemos al directorio de FacturaScripts
 chdir(__DIR__);
+define('FS_FOLDER', __DIR__);
 
 /// cargamos las constantes de configuración
 require_once 'config.php';
@@ -68,10 +68,7 @@ if ($db->connect()) {
         $fsvar->array_save($cron_vars);
 
         /// indicamos el inicio en el log
-        $fslog = new fs_log();
-        $fslog->tipo = 'cron';
-        $fslog->detalle = 'Ejecutando el cron...';
-        $fslog->save();
+        $core_log->save('Ejecutando el cron...', 'cron');
 
         /// establecemos los elementos por defecto
         $fs_default_items = new fs_default_items();
@@ -97,10 +94,7 @@ if ($db->connect()) {
         }
 
         /// indicamos el fin en el log
-        $fslog2 = new fs_log();
-        $fslog2->tipo = 'cron';
-        $fslog2->detalle = 'Terminada la ejecución del cron.';
-        $fslog2->save();
+        $core_log->save('Terminada la ejecución del cron.', 'cron');
 
         /// Eliminamos la variable cron_lock puesto que ya hemos terminado
         $cron_vars['cron_lock'] = FALSE;

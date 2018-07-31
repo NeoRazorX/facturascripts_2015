@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -109,7 +109,7 @@ class admin_user extends fs_controller
 
     public function all_pages()
     {
-        $returnlist = array();
+        $returnlist = [];
 
         /// Obtenemos la lista de páginas. Todas
         foreach ($this->menu as $m) {
@@ -307,7 +307,7 @@ class admin_user extends fs_controller
                      * Si un usuario es administrador y deja de serlo, hay que darle acceso
                      * a algunas páginas, en caso contrario no podrá continuar
                      */
-                    if ($this->suser->admin && ! isset($_POST['sadmin'])) {
+                    if ($this->suser->admin && !isset($_POST['sadmin'])) {
                         $user_no_more_admin = TRUE;
                     }
                     $this->suser->admin = isset($_POST['sadmin']);

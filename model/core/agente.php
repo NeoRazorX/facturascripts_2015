@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -327,7 +327,7 @@ class agente extends \fs_model
     public function all($incluir_debaja = FALSE)
     {
         if ($incluir_debaja) {
-            $listagentes = array();
+            $listagentes = [];
             $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC, apellidos ASC;");
             if ($data) {
                 foreach ($data as $a) {

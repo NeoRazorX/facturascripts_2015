@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -104,7 +104,7 @@ class fs_access extends fs_model
      */
     public function all_from_nick($nick)
     {
-        $accesslist = array();
+        $accesslist = [];
 
         $access = $this->db->select("SELECT * FROM " . $this->table_name . " WHERE fs_user = " . $this->var2str($nick) . ";");
         if ($access) {

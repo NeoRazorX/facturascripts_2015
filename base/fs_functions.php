@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,6 +67,26 @@ function fatal_handler()
 }
 
 /**
+ * Devuelve la ruta del controlador solicitado.
+ * @param string $name
+ * @return string
+ */
+function find_controller($name)
+{
+    foreach ($GLOBALS['plugins'] as $plugin) {
+        if (file_exists(FS_FOLDER . '/plugins/' . $plugin . '/controller/' . $name . '.php')) {
+            return 'plugins/' . $plugin . '/controller/' . $name . '.php';
+        }
+    }
+
+    if (file_exists(FS_FOLDER . '/controller/' . $name . '.php')) {
+        return 'controller/' . $name . '.php';
+    }
+
+    return 'base/fs_controller.php';
+}
+
+/**
  * Función alternativa para cuando el followlocation falla.
  * @param resource $ch
  * @param integer $redirects
@@ -82,7 +102,7 @@ function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false)
 
     if ($http_code == 301 || $http_code == 302) {
         list($header) = explode("\r\n\r\n", $data, 2);
-        $matches = array();
+        $matches = [];
         preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
         $url = trim(str_replace($matches[1], "", $matches[0]));
         $url_parsed = parse_url($url);
@@ -176,7 +196,7 @@ function fs_file_get_contents($url, $timeout = 10)
 
             $core_log = new fs_core_log();
             $core_log->new_error($error);
-            $core_log->save($error);
+            $core_log->save($url . ' - ' . $error);
         }
 
         curl_close($ch);
@@ -223,6 +243,23 @@ function fs_fix_html($txt)
 }
 
 /**
+ * Devuelve la IP del usuario.
+ * @return string
+ */
+function fs_get_ip()
+{
+    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    return '';
+}
+
+/**
  * Devuelve el tamaño máximo de archivo que soporta el servidor para las subidas por formulario.
  * @return int
  */
@@ -258,16 +295,18 @@ function get_class_name($object = NULL)
 function require_all_models()
 {
     if (!isset($GLOBALS['models'])) {
-        $GLOBALS['models'] = array();
+        $GLOBALS['models'] = [];
     }
 
     foreach ($GLOBALS['plugins'] as $plugin) {
-        if (file_exists('plugins/' . $plugin . '/model')) {
-            foreach (scandir('plugins/' . $plugin . '/model') as $file_name) {
-                if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
-                    require_once 'plugins/' . $plugin . '/model/' . $file_name;
-                    $GLOBALS['models'][] = $file_name;
-                }
+        if (!file_exists('plugins/' . $plugin . '/model')) {
+            continue;
+        }
+
+        foreach (scandir('plugins/' . $plugin . '/model') as $file_name) {
+            if ($file_name != '.' && $file_name != '..' && substr($file_name, -4) == '.php' && !in_array($file_name, $GLOBALS['models'])) {
+                require_once 'plugins/' . $plugin . '/model/' . $file_name;
+                $GLOBALS['models'][] = $file_name;
             }
         }
     }

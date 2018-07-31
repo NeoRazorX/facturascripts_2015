@@ -521,8 +521,8 @@ class RainTPL {
 
    /**
     * Reduce a path, eg. www/library/../filepath//file => www/filepath/file
-    * @param type $path
-    * @return type
+    * @param string $path
+    * @return string
     */
    protected function reduce_path($path) {
       $path = str_replace("://", "@not_replace@", $path);

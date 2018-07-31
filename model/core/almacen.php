@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -100,7 +100,7 @@ class almacen extends \fs_model
 
     /**
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
-     * @return type
+     * @return bool
      */
     public function is_default()
     {
@@ -131,7 +131,7 @@ class almacen extends \fs_model
         if (is_null($this->codalmacen)) {
             return FALSE;
         }
-        
+
         return $this->db->select("SELECT * FROM " . $this->table_name . " WHERE codalmacen = " . $this->var2str($this->codalmacen) . ";");
     }
 
@@ -199,13 +199,13 @@ class almacen extends \fs_model
             }
             return $this->db->exec($sql);
         }
-        
+
         return FALSE;
     }
 
     /**
      * Elimina el almacén
-     * @return type
+     * @return bool
      */
     public function delete()
     {

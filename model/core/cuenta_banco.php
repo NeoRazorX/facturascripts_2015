@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -182,7 +182,7 @@ class cuenta_banco extends \fs_model
      */
     public function all_from_empresa()
     {
-        $clist = array();
+        $clist = [];
 
         $data = $this->db->select("SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;");
         if ($data) {

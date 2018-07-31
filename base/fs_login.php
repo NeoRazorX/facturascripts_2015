@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once 'base/fs_ip_filter.php';
 
 /**
  * Description of fs_login
  *
- * @author carlos
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class fs_login
 {
@@ -43,7 +42,7 @@ class fs_login
     public function change_user_passwd()
     {
         $db_password = filter_input(INPUT_POST, 'db_password');
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $ip = fs_get_ip();
         $nick = filter_input(INPUT_POST, 'user');
         $new_password = filter_input(INPUT_POST, 'new_password');
         $new_password2 = filter_input(INPUT_POST, 'new_password2');
@@ -74,7 +73,7 @@ class fs_login
 
     public function log_in(&$controller_user)
     {
-        $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $ip = fs_get_ip();
         $nick = filter_input(INPUT_POST, 'user');
         $password = filter_input(INPUT_POST, 'password');
 
@@ -83,7 +82,7 @@ class fs_login
             $this->core_log->save('Tu IP ha sido baneada. Tendrás que esperar 10 minutos antes de volver a intentar entrar.', 'login', TRUE);
             return FALSE;
         }
-        
+
         if ($nick && $password) {
             if (FS_DEMO) { /// en el modo demo nos olvidamos de la contraseña
                 $this->login_demo($controller_user, $nick);
@@ -98,7 +97,7 @@ class fs_login
                     if ($user->password == sha1($password) || $user->password == sha1(mb_strtolower($password, 'UTF8'))) {
                         $user->new_logkey();
 
-                        if (!$user->admin && ! $this->ip_filter->inWhiteList($ip)) {
+                        if (!$user->admin && !$this->ip_filter->inWhiteList($ip)) {
                             $this->core_log->new_error('No puedes acceder desde esta IP.');
                             $this->core_log->save('No puedes acceder desde esta IP.', 'login', TRUE);
                         } else if ($user->save()) {
@@ -116,7 +115,7 @@ class fs_login
                         $this->core_log->save('¡Contraseña incorrecta! (' . $nick . ')', 'login', TRUE);
                         $this->ip_filter->setAttempt($ip);
                     }
-                } else if ($user && ! $user->enabled) {
+                } else if ($user && !$user->enabled) {
                     $this->core_log->new_error('El usuario ' . $user->nick . ' está desactivado, habla con tu administrador!');
                     $this->core_log->save('El usuario ' . $user->nick . ' está desactivado, habla con tu administrador!', 'login', TRUE);
                     $this->user_model->clean_cache(TRUE);
