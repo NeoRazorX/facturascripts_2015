@@ -78,7 +78,7 @@ abstract class fs_list_controller extends fs_controller
      * @param string $col_name
      * @param string $col_type
      * @param array  $row
-     * @param string $css_class
+     * @param array  $css_class
      * @return string
      */
     public function get_decoration($col_name, $col_type, $row, $css_class = [])
@@ -115,7 +115,7 @@ abstract class fs_list_controller extends fs_controller
 
     /**
      * 
-     * @return string
+     * @return array
      */
     public function get_pagination()
     {
