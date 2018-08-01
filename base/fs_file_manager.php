@@ -25,6 +25,9 @@
 class fs_file_manager
 {
 
+    /**
+     * Check and copy .htaccess files
+     */
     public static function check_htaccess()
     {
         if (!file_exists(FS_FOLDER . '/.htaccess')) {
@@ -154,6 +157,7 @@ class fs_file_manager
         }
 
         $rootFolder = array_diff($scan, $exclude);
+        natcasesort($rootFolder);
         if (!$recursive) {
             return $rootFolder;
         }
