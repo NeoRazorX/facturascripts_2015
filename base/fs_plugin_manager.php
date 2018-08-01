@@ -31,37 +31,37 @@ class fs_plugin_manager
      * @var fs_cache
      */
     private $cache;
-    
+
     /**
      *
      * @var fs_core_log
      */
     private $core_log;
-    
+
     /**
      *
      * @var bool
      */
     public $disable_mod_plugins = false;
-    
+
     /**
      *
      * @var bool
      */
     public $disable_add_plugins = false;
-    
+
     /**
      *
      * @var bool
      */
     public $disable_rm_plugins = false;
-    
+
     /**
      *
      * @var array
      */
     private $download_list;
-    
+
     /**
      *
      * @var float
@@ -267,18 +267,20 @@ class fs_plugin_manager
 
             $wizard = $pitem['wizard'];
             foreach ($pitem['require'] as $req) {
-                if (!in_array($req, $GLOBALS['plugins'])) {
-                    $install = FALSE;
-                    $txt = 'Dependencias incumplidas: <b>' . $req . '</b>';
-                    foreach ($this->downloads() as $value) {
-                        if ($value['nombre'] == $req && !$this->disable_add_plugins) {
-                            $txt .= '. Puedes descargar este plugin desde la <b>pestaña descargas</b>.';
-                            break;
-                        }
-                    }
-
-                    $this->core_log->new_error($txt);
+                if (in_array($req, $GLOBALS['plugins'])) {
+                    continue;
                 }
+
+                $install = FALSE;
+                $txt = 'Dependencias incumplidas: <b>' . $req . '</b>';
+                foreach ($this->downloads() as $value) {
+                    if ($value['nombre'] == $req && !$this->disable_add_plugins) {
+                        $txt .= '. Puedes descargar este plugin desde la <b>pestaña descargas</b>.';
+                        break;
+                    }
+                }
+
+                $this->core_log->new_error($txt);
             }
             break;
         }
@@ -445,7 +447,7 @@ class fs_plugin_manager
             'enabled' => FALSE,
             'error_msg' => 'Falta archivo facturascripts.ini',
             'idplugin' => NULL,
-            'min_version' => 2017.000,
+            'min_version' => $this->version,
             'name' => $plugin_name,
             'prioridad' => '-',
             'require' => [],

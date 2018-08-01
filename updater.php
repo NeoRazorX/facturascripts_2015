@@ -26,6 +26,7 @@ define('FS_FOLDER', __DIR__);
 @set_time_limit(300);
 
 require_once 'config.php';
+require_once 'base/config2.php';
 require_once 'base/fs_updater.php';
 
 /**
