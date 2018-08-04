@@ -478,8 +478,8 @@ class fs_plugin_manager
             $plugin['error_msg'] = 'Requiere FacturaScripts ' . $plugin['min_version'];
         }
 
-        if (file_exists('plugins/' . $plugin_name . '/description')) {
-            $plugin['description'] = file_get_contents('plugins/' . $plugin_name . '/description');
+        if (file_exists(FS_FOLDER . '/plugins/' . $plugin_name . '/description')) {
+            $plugin['description'] = file_get_contents(FS_FOLDER . '/plugins/' . $plugin_name . '/description');
         }
 
         if (isset($ini_file['require']) && $ini_file['require'] != '') {

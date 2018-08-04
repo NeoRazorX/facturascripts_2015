@@ -43,6 +43,31 @@ class admin_info extends fs_list_controller
         parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
     }
 
+    public function cache_version()
+    {
+        return $this->cache->version();
+    }
+
+    public function fs_db_name()
+    {
+        return FS_DB_NAME;
+    }
+
+    public function fs_db_version()
+    {
+        return $this->db->version();
+    }
+
+    public function get_locks()
+    {
+        return $this->db->get_locks();
+    }
+
+    public function php_version()
+    {
+        return phpversion();
+    }
+
     protected function create_tabs()
     {
         $this->add_tab('logs', 'Historal', 'fs_logs', [
@@ -55,9 +80,21 @@ class admin_info extends fs_list_controller
             ], 'fa-book');
         $this->add_search_columns('logs', ['usuario', 'tipo', 'detalle', 'ip', 'controlador']);
         $this->add_sort_option('logs', ['fecha'], 2);
+        $this->add_button('logs', 'Borrar', $this->url() . '&action=remove-all', 'fa-trash', 'btn-danger');
 
         /// cargamos una plantilla propia para la parte de arriba
         $this->template_top = 'block/admin_info_top';
+    }
+
+    protected function exec_previous_action($action)
+    {
+        switch ($action) {
+            case 'remove-all':
+                return $this->remove_all_action();
+
+            default:
+                return parent::exec_previous_action($action);
+        }
     }
 
     protected function private_core()
@@ -72,10 +109,11 @@ class admin_info extends fs_list_controller
          */
         $this->fsvar = new fs_var();
         $cron_vars = $this->fsvar->array_get(
-            array(
+            [
                 'cron_exists' => FALSE,
                 'cron_lock' => FALSE,
-                'cron_error' => FALSE)
+                'cron_error' => FALSE
+            ]
         );
 
         if (isset($_GET['fix'])) {
@@ -99,28 +137,13 @@ class admin_info extends fs_list_controller
         }
     }
 
-    public function php_version()
+    protected function remove_all_action()
     {
-        return phpversion();
-    }
+        $sql = "DELETE FROM fs_logs;";
+        if ($this->db->exec($sql)) {
+            $this->new_message('Historial borrado correctamente.', true);
+        }
 
-    public function cache_version()
-    {
-        return $this->cache->version();
-    }
-
-    public function fs_db_name()
-    {
-        return FS_DB_NAME;
-    }
-
-    public function fs_db_version()
-    {
-        return $this->db->version();
-    }
-
-    public function get_locks()
-    {
-        return $this->db->get_locks();
+        return true;
     }
 }

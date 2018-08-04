@@ -59,6 +59,12 @@ abstract class fs_list_controller extends fs_controller
      *
      * @var string
      */
+    public $template_bottom = '';
+
+    /**
+     *
+     * @var string
+     */
     public $template_top = '';
 
     abstract protected function create_tabs();
@@ -152,6 +158,26 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      * @param string $tab_name
+     * @param string $label
+     * @param string $link
+     * @param string $icon
+     * @param string $class
+     * @param string $id
+     */
+    protected function add_button($tab_name, $label, $link = '#', $icon = '', $class = 'btn-default', $id = '')
+    {
+        $this->tabs[$tab_name]['buttons'][] = [
+            'class' => $class,
+            'icon' => $icon,
+            'id' => $id,
+            'label' => $label,
+            'link' => $link,
+        ];
+    }
+
+    /**
+     * 
+     * @param string $tab_name
      * @param array  $cols
      */
     protected function add_search_columns($tab_name, $cols = [])
@@ -204,6 +230,7 @@ abstract class fs_list_controller extends fs_controller
     protected function add_tab($tab_name, $title, $table, $columns = [], $icon = 'fa-files-o')
     {
         $this->tabs[$tab_name] = [
+            'buttons' => [],
             'columns' => $columns,
             'count' => 0,
             'cursor' => [],
@@ -215,6 +242,26 @@ abstract class fs_list_controller extends fs_controller
             'table' => $table,
             'title' => $title
         ];
+    }
+
+    /**
+     * 
+     * @param string $action
+     */
+    protected function exec_after_action($action)
+    {
+        
+    }
+
+    /**
+     * 
+     * @param string $action
+     *
+     * @return boolean
+     */
+    protected function exec_previous_action($action)
+    {
+        return true;
     }
 
     /**
@@ -314,9 +361,16 @@ abstract class fs_list_controller extends fs_controller
         $this->set_active_tab();
         $this->set_sort_option();
 
+        $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+        if (!$this->exec_previous_action($action)) {
+            return;
+        }
+
         foreach ($this->tabs as $tab) {
             $this->load_data($tab['name']);
         }
+
+        $this->exec_after_action($action);
     }
 
     /**

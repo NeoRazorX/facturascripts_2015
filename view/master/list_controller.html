@@ -1,7 +1,7 @@
 {include="header"}
 
 {if="$fsc->template_top"}
-    {include="$fsc->template_top"}
+{include="$fsc->template_top"}
 {else}
 <div class="container-fluid" style="margin-bottom: 10px;">
     <div class="row">
@@ -61,6 +61,14 @@
     <input type="hidden" name="offset" value="{$fsc->offset}"/>
     <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
         <div class="row">
+            <div class="col-sm-8">
+                <div class="btn-group">
+                    {loop="$fsc->get_current_tab('buttons')"}
+                    <!--{$icon=''}{if="$value.icon"}{$icon='<i class="fa ' . $value.icon . '" aria-hidden="true"></i>&nbsp; '}{/if}-->
+                    <a href="{$value.link}" id="{$value.id}" class="btn btn-sm {$value.class}">{$icon}{$value.label}</a>
+                    {/loop}
+                </div>
+            </div>
             <div class="col-sm-2">
                 <div class="input-group">
                     <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" autofocus="" placeholder="Buscar"/>
@@ -131,5 +139,9 @@
         </div>
     </div>
 </div>
+
+{if="$fsc->template_bottom"}
+{include="$fsc->template_bottom"}
+{/if}
 
 {include="footer"}
