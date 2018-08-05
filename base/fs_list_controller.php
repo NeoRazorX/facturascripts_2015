@@ -18,6 +18,7 @@
  */
 require_once 'base/fs_list_decoration.php';
 require_once 'base/fs_list_filter_checkbox.php';
+require_once 'base/fs_list_filter_select.php';
 
 /**
  * Controlador específico para listados.
@@ -143,14 +144,38 @@ abstract class fs_list_controller extends fs_controller
         ];
     }
 
+    /**
+     * 
+     * @param string    $tab_name
+     * @param fs_filter $filter
+     */
     protected function add_filter($tab_name, $filter)
     {
         $this->tabs[$tab_name]['filters'][] = $filter;
     }
 
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $col_name
+     * @param string $label
+     */
     protected function add_filter_checkbox($tab_name, $col_name, $label)
     {
         $filter = new fs_list_filter_checkbox($col_name, $label);
+        $this->add_filter($tab_name, $filter);
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $col_name
+     * @param string $label
+     * @param array  $values
+     */
+    protected function add_filter_select($tab_name, $col_name, $label, $values)
+    {
+        $filter = new fs_list_filter_select($col_name, $label, $values);
         $this->add_filter($tab_name, $filter);
     }
 
@@ -379,6 +404,9 @@ abstract class fs_list_controller extends fs_controller
         }
     }
 
+    /**
+     * 
+     */
     protected function set_filter_values()
     {
         foreach ($this->tabs[$this->active_tab]['filters'] as $key => $filter) {
@@ -402,5 +430,33 @@ abstract class fs_list_controller extends fs_controller
                 $this->sort_option = $option;
             }
         }
+    }
+
+    /**
+     * 
+     * @param string $tabla
+     * @param string $columna
+     *
+     * @return array
+     */
+    protected function sql_distinct($tabla, $columna)
+    {
+        if (!$this->db->table_exists($tabla)) {
+            return [];
+        }
+
+        $final = [];
+        $sql = "SELECT DISTINCT " . $columna . " FROM " . $tabla . " ORDER BY " . $columna . " ASC;";
+        $data = $this->db->select($sql);
+        if ($data) {
+            foreach ($data as $d) {
+                if ($d[$columna] != '') {
+                    /// usamos las minúsculas para filtrar
+                    $final[mb_strtolower($d[$columna], 'UTF8')] = $d[$columna];
+                }
+            }
+        }
+
+        return $final;
     }
 }

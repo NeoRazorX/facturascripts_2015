@@ -33,6 +33,12 @@ abstract class fs_list_filter
 
     /**
      *
+     * @var string
+     */
+    public $label;
+
+    /**
+     *
      * @var mixed
      */
     public $value;
@@ -44,10 +50,12 @@ abstract class fs_list_filter
     /**
      * 
      * @param string $col_name
+     * @param string $label
      */
-    public function __construct($col_name)
+    public function __construct($col_name, $label)
     {
         $this->col_name = $col_name;
+        $this->label = $label;
     }
 
     /**

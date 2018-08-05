@@ -84,6 +84,8 @@ class admin_info extends fs_list_controller
         $this->add_button('logs', 'Borrar', $this->url() . '&action=remove-all', 'fa-trash', 'btn-danger');
 
         /// filtros
+        $tipos = $this->sql_distinct('fs_logs', 'tipo');
+        $this->add_filter_select('logs', 'tipo', 'tipo', $tipos);
         $this->add_filter_checkbox('logs', 'alerta', 'alerta');
 
         /// cargamos una plantilla propia para la parte de arriba

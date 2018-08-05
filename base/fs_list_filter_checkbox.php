@@ -27,22 +27,18 @@ class fs_list_filter_checkbox extends fs_list_filter
 {
 
     /**
-     *
-     * @var string
+     * 
+     * @return string
      */
-    public $label;
-
-    public function __construct($col_name, $label)
-    {
-        parent::__construct($col_name);
-        $this->label = $label;
-    }
-
     public function get_where()
     {
         return $this->value ? ' AND ' . $this->col_name . ' = true' : '';
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function show()
     {
         $checked = $this->value ? ' checked=""' : '';
