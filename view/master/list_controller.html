@@ -115,7 +115,7 @@
         {loop="$fsc->get_current_tab('cursor')"}
         <tr>
             {loop="$fsc->get_current_tab('columns')"}
-            {$fsc->get_decoration($key2, $value2, $value1)}
+            {$fsc->decoration->show($key2, $value2, $value1)}
             {/loop}
         </tr>
         {else}

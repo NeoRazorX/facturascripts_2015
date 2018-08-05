@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+require_once 'base/fs_list_decoration.php';
 
 /**
  * Controlador específico para listados.
@@ -30,6 +31,12 @@ abstract class fs_list_controller extends fs_controller
      * @var string
      */
     public $active_tab = '';
+
+    /**
+     *
+     * @var fs_list_decoration
+     */
+    public $decoration;
 
     /**
      *
@@ -77,46 +84,6 @@ abstract class fs_list_controller extends fs_controller
     public function get_current_tab($col_name)
     {
         return $this->tabs[$this->active_tab][$col_name];
-    }
-
-    /**
-     * 
-     * @param string $col_name
-     * @param string $col_type
-     * @param array  $row
-     * @param array  $css_class
-     * @return string
-     */
-    public function get_decoration($col_name, $col_type, $row, $css_class = [])
-    {
-        $final_value = $row[$col_name];
-        switch ($col_type) {
-            case 'date':
-                $final_value = date('d-m-Y', strtotime($final_value));
-                break;
-
-            case 'timestamp':
-            case 'datetime':
-                $final_value = date('d-m-Y H:i:s', strtotime($final_value));
-                break;
-
-            case 'money':
-                $final_value = $this->show_precio($final_value);
-                break;
-
-            case 'number':
-                $final_value = $this->show_numero($final_value);
-                break;
-        }
-
-        if (in_array($col_type, ['money', 'number'])) {
-            $css_class[] = 'text-right';
-            if ($final_value <= 0) {
-                $css_class[] = 'warning';
-            }
-        }
-
-        return '<td class="' . implode(' ', $css_class) . '">' . $final_value . '</td>';
     }
 
     /**
@@ -355,6 +322,7 @@ abstract class fs_list_controller extends fs_controller
      */
     protected function private_core()
     {
+        $this->decoration = new fs_list_decoration();
         $this->template = 'master/list_controller';
         $this->offset = isset($_REQUEST['offset']) ? (int) $_REQUEST['offset'] : 0;
         $this->create_tabs();

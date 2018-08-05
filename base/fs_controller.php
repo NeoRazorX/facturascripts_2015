@@ -142,7 +142,7 @@ class fs_controller extends fs_app
             $this->empresa = new empresa();
             $this->default_items = new fs_default_items();
             $this->login_tools = new fs_login();
-            $this->divisa_tools = new fs_divisa_tools($this->empresa);
+            $this->divisa_tools = new fs_divisa_tools($this->empresa->coddivisa);
             $this->load_extensions();
 
             if (filter_input(INPUT_GET, 'logout')) {

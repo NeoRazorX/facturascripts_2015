@@ -25,15 +25,25 @@
 class fs_divisa_tools
 {
 
-    private $divisa_model;
-    private $divisas;
-    private $empresa;
+    /**
+     *
+     * @var string
+     */
+    private static $coddivisa;
 
-    public function __construct(&$empresa)
+    /**
+     *
+     * @var array
+     */
+    private static $divisas;
+
+    public function __construct($coddivisa = '')
     {
-        $this->divisa_model = new divisa();
-        $this->divisas = $this->divisa_model->all();
-        $this->empresa = $empresa;
+        if (!isset(self::$divisa_model)) {
+            $divisa_model = new divisa();
+            self::$divisas = $divisa_model->all();
+            self::$coddivisa = $coddivisa;
+        }
     }
 
     /**
@@ -45,10 +55,10 @@ class fs_divisa_tools
     public function simbolo_divisa($coddivisa = FALSE)
     {
         if ($coddivisa === FALSE) {
-            $coddivisa = $this->empresa->coddivisa;
+            $coddivisa = self::$coddivisa;
         }
 
-        foreach ($this->divisas as $divisa) {
+        foreach (self::$divisas as $divisa) {
             if ($divisa->coddivisa == $coddivisa) {
                 return $divisa->simbolo;
             }
@@ -69,7 +79,7 @@ class fs_divisa_tools
     public function show_precio($precio = 0, $coddivisa = FALSE, $simbolo = TRUE, $dec = FS_NF0)
     {
         if ($coddivisa === FALSE) {
-            $coddivisa = $this->empresa->coddivisa;
+            $coddivisa = self::$coddivisa;
         }
 
         if (FS_POS_DIVISA == 'right') {
@@ -114,20 +124,20 @@ class fs_divisa_tools
      */
     public function euro_convert($precio, $coddivisa = NULL, $tasaconv = NULL)
     {
-        if ($this->empresa->coddivisa == 'EUR') {
+        if (self::$coddivisa == 'EUR') {
             return $precio;
         }
 
         if ($coddivisa !== NULL && $tasaconv !== NULL) {
-            if ($this->empresa->coddivisa == $coddivisa) {
+            if (self::$coddivisa == $coddivisa) {
                 return $precio * $tasaconv;
             }
 
             $original = $precio * $tasaconv;
-            return $this->divisa_convert($original, $coddivisa, $this->empresa->coddivisa);
+            return $this->divisa_convert($original, $coddivisa, self::$coddivisa);
         }
 
-        return $this->divisa_convert($precio, 'EUR', $this->empresa->coddivisa);
+        return $this->divisa_convert($precio, 'EUR', self::$coddivisa);
     }
 
     /**
@@ -143,7 +153,7 @@ class fs_divisa_tools
             $divisa = $divisa_desde = FALSE;
 
             /// buscamos las divisas en la lista
-            foreach ($this->divisas as $div) {
+            foreach (self::$divisas as $div) {
                 if ($div->coddivisa == $coddivisa) {
                     $divisa = $div;
                 } else if ($div->coddivisa == $coddivisa_desde) {
