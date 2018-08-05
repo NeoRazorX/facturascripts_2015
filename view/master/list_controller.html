@@ -61,7 +61,8 @@
     <input type="hidden" name="offset" value="{$fsc->offset}"/>
     <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
         <div class="row">
-            <div class="col-sm-8">
+            {if="count($fsc->get_current_tab('buttons')) > 0"}
+            <div class="col-sm-2">
                 <div class="btn-group">
                     {loop="$fsc->get_current_tab('buttons')"}
                     <!--{$icon=''}{if="$value.icon"}{$icon='<i class="fa ' . $value.icon . '" aria-hidden="true"></i>&nbsp; '}{/if}-->
@@ -69,6 +70,7 @@
                     {/loop}
                 </div>
             </div>
+            {/if}
             <div class="col-sm-2">
                 <div class="input-group">
                     <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" autofocus="" placeholder="Buscar"/>
@@ -79,6 +81,11 @@
                     </span>
                 </div>
             </div>
+            {loop="$fsc->get_current_tab('filters')"}
+            <div class="col-sm-2">
+                {$value->show()}
+            </div>
+            {/loop}
             <div class="col-sm-2">
                 <div class="input-group">
                     <div class="input-group-addon">

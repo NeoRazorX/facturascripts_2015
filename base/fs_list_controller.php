@@ -17,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 require_once 'base/fs_list_decoration.php';
+require_once 'base/fs_list_filter_checkbox.php';
 
 /**
  * Controlador específico para listados.
@@ -142,6 +143,17 @@ abstract class fs_list_controller extends fs_controller
         ];
     }
 
+    protected function add_filter($tab_name, $filter)
+    {
+        $this->tabs[$tab_name]['filters'][] = $filter;
+    }
+
+    protected function add_filter_checkbox($tab_name, $col_name, $label)
+    {
+        $filter = new fs_list_filter_checkbox($col_name, $label);
+        $this->add_filter($tab_name, $filter);
+    }
+
     /**
      * 
      * @param string $tab_name
@@ -202,6 +214,7 @@ abstract class fs_list_controller extends fs_controller
             'count' => 0,
             'cursor' => [],
             'default_sort' => '',
+            'filters' => [],
             'icon' => $icon,
             'name' => $tab_name,
             'search_columns' => [],
@@ -273,10 +286,8 @@ abstract class fs_list_controller extends fs_controller
         }
 
         /// cursor
-        if ($tab_name == $this->active_tab) {
-            $sql2 = "SELECT * " . $this->load_data_from_where($tab_name) . $this->load_data_order_by();
-            $this->tabs[$tab_name]['cursor'] = $this->db->select_limit($sql2, FS_ITEM_LIMIT, $this->offset);
-        }
+        $sql2 = "SELECT * " . $this->load_data_from_where($tab_name) . $this->load_data_order_by();
+        $this->tabs[$tab_name]['cursor'] = $this->db->select_limit($sql2, FS_ITEM_LIMIT, $this->offset);
 
         return true;
     }
@@ -288,14 +299,24 @@ abstract class fs_list_controller extends fs_controller
      */
     protected function load_data_from_where($tab_name)
     {
-        $query = mb_strtolower($this->empresa->no_html($this->query), 'UTF8');
         $sql = "FROM " . $this->tabs[$tab_name]['table'];
+        if ($tab_name != $this->active_tab) {
+            return $sql;
+        }
 
-        if ($tab_name == $this->active_tab && !empty($query)) {
-            $sql .= " WHERE 1 != 1";
+        $sql .= " WHERE 1 = 1";
+        $query = mb_strtolower($this->empresa->no_html($this->query), 'UTF8');
+        if (!empty($query)) {
+            $sql .= ' AND (1 != 1';
             foreach ($this->tabs[$tab_name]['search_columns'] as $col) {
                 $sql .= " OR LOWER(" . $col . ") LIKE '%" . $query . "%'";
             }
+            $sql .= ')';
+        }
+
+        /// filtros
+        foreach ($this->tabs[$tab_name]['filters'] as $filter) {
+            $sql .= $filter->get_where();
         }
 
         return $sql;
@@ -327,6 +348,7 @@ abstract class fs_list_controller extends fs_controller
         $this->offset = isset($_REQUEST['offset']) ? (int) $_REQUEST['offset'] : 0;
         $this->create_tabs();
         $this->set_active_tab();
+        $this->set_filter_values();
         $this->set_sort_option();
 
         $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
@@ -354,6 +376,14 @@ abstract class fs_list_controller extends fs_controller
             if (isset($_REQUEST['tab']) && $key === $_REQUEST['tab']) {
                 $this->active_tab = $key;
             }
+        }
+    }
+
+    protected function set_filter_values()
+    {
+        foreach ($this->tabs[$this->active_tab]['filters'] as $key => $filter) {
+            $value = isset($_POST[$filter->name()]) ? $_POST[$filter->name()] : $filter->value;
+            $this->tabs[$this->active_tab]['filters'][$key]->value = $value;
         }
     }
 

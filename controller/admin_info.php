@@ -70,6 +70,7 @@ class admin_info extends fs_list_controller
 
     protected function create_tabs()
     {
+        /// pestaña historial
         $this->add_tab('logs', 'Historal', 'fs_logs', [
             'fecha' => 'datetime',
             'usuario' => 'text',
@@ -81,6 +82,9 @@ class admin_info extends fs_list_controller
         $this->add_search_columns('logs', ['usuario', 'tipo', 'detalle', 'ip', 'controlador']);
         $this->add_sort_option('logs', ['fecha'], 2);
         $this->add_button('logs', 'Borrar', $this->url() . '&action=remove-all', 'fa-trash', 'btn-danger');
+
+        /// filtros
+        $this->add_filter_checkbox('logs', 'alerta', 'alerta');
 
         /// cargamos una plantilla propia para la parte de arriba
         $this->template_top = 'block/admin_info_top';
