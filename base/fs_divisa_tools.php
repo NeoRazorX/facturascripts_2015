@@ -39,17 +39,20 @@ class fs_divisa_tools
 
     public function __construct($coddivisa = '')
     {
-        if (!isset(self::$divisa_model)) {
+        if (!isset(self::$coddivisa)) {
+            self::$coddivisa = $coddivisa;
+
             $divisa_model = new divisa();
             self::$divisas = $divisa_model->all();
-            self::$coddivisa = $coddivisa;
         }
     }
 
     /**
      * Devuelve el símbolo de divisa predeterminado
      * o bien el símbolo de la divisa seleccionada.
+     * 
      * @param string $coddivisa
+     * 
      * @return string
      */
     public function simbolo_divisa($coddivisa = FALSE)
@@ -70,10 +73,12 @@ class fs_divisa_tools
     /**
      * Devuelve un string con el precio en el formato predefinido y con la
      * divisa seleccionada (o la predeterminada).
-     * @param float $precio
+     * 
+     * @param float  $precio
      * @param string $coddivisa
      * @param string $simbolo
-     * @param integer $dec nº de decimales
+     * @param int    $dec nº de decimales
+     * 
      * @return string
      */
     public function show_precio($precio = 0, $coddivisa = FALSE, $simbolo = TRUE, $dec = FS_NF0)
@@ -99,9 +104,11 @@ class fs_divisa_tools
 
     /**
      * Devuelve un string con el número en el formato de número predeterminado.
-     * @param float $num
-     * @param integer $decimales
+     * 
+     * @param float   $num
+     * @param int     $decimales
      * @param boolean $js
+     * 
      * @return string
      */
     public function show_numero($num = 0, $decimales = FS_NF0, $js = FALSE)
@@ -117,9 +124,11 @@ class fs_divisa_tools
      * Convierte el precio en euros a la divisa preterminada de la empresa.
      * Por defecto usa las tasas de conversión actuales, pero si se especifica
      * coddivisa y tasaconv las usará.
-     * @param float $precio
+     * 
+     * @param float  $precio
      * @param string $coddivisa
-     * @param float $tasaconv
+     * @param float  $tasaconv
+     * 
      * @return float
      */
     public function euro_convert($precio, $coddivisa = NULL, $tasaconv = NULL)
@@ -142,9 +151,11 @@ class fs_divisa_tools
 
     /**
      * Convierte un precio de la divisa_desde a la divisa especificada
-     * @param float $precio
+     * 
+     * @param float  $precio
      * @param string $coddivisa_desde
      * @param string $coddivisa
+     * 
      * @return float
      */
     public function divisa_convert($precio, $coddivisa_desde, $coddivisa)

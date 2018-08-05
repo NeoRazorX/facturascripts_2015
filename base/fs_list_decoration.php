@@ -31,6 +31,12 @@ class fs_list_decoration
      */
     protected $divisa_tools;
 
+    /**
+     *
+     * @var array
+     */
+    private $model_objects = [];
+
     public function __construct()
     {
         $this->divisa_tools = new fs_divisa_tools();
@@ -46,7 +52,7 @@ class fs_list_decoration
      */
     public function show($col_name, $col_type, $row, $css_class = [])
     {
-        $final_value = $row[$col_name];
+        $final_value = isset($row[$col_name]) ? $row[$col_name] : '';
         switch ($col_type) {
             case 'date':
                 $final_value = date('d-m-Y', strtotime($final_value));
@@ -58,11 +64,11 @@ class fs_list_decoration
                 break;
 
             case 'money':
-                $final_value = $this->divisa_tools->show_precio($final_value);
+                $final_value = $this->divisa_tools->show_precio((float) $final_value);
                 break;
 
             case 'number':
-                $final_value = $this->divisa_tools->show_numero($final_value);
+                $final_value = $this->divisa_tools->show_numero((float) $final_value);
                 break;
         }
 
@@ -74,5 +80,28 @@ class fs_list_decoration
         }
 
         return '<td class="' . implode(' ', $css_class) . '">' . $final_value . '</td>';
+    }
+
+    /**
+     * 
+     * @param string $model_class_name
+     * @param string $code
+     * 
+     * @return mixed
+     */
+    protected function get_model_object($model_class_name, $code)
+    {
+        if (isset($this->model_objects[$model_class_name][$code])) {
+            return $this->model_objects[$model_class_name][$code];
+        }
+
+        $model = new $model_class_name();
+        $object = $model->get($code);
+        if ($object) {
+            $this->model_objects[$model_class_name][$code] = $object;
+            return $object;
+        }
+
+        return $model;
     }
 }

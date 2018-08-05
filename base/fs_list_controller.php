@@ -42,12 +42,6 @@ abstract class fs_list_controller extends fs_controller
 
     /**
      *
-     * @var array
-     */
-    private $model_objects = [];
-
-    /**
-     *
      * @var int
      */
     public $offset = 0;
@@ -271,28 +265,6 @@ abstract class fs_list_controller extends fs_controller
 
     /**
      * 
-     * @param string $model_class_name
-     * @param string $code
-     * @return mixed
-     */
-    protected function get_model_object($model_class_name, $code)
-    {
-        if (isset($this->model_objects[$model_class_name][$code])) {
-            return $this->model_objects[$model_class_name][$code];
-        }
-
-        $model = new $model_class_name();
-        $object = $model->get($code);
-        if ($object) {
-            $this->model_objects[$model_class_name][$code] = $object;
-            return $object;
-        }
-
-        return $model;
-    }
-
-    /**
-     * 
      * @param string $tab_name
      * @return bool
      */
@@ -311,8 +283,10 @@ abstract class fs_list_controller extends fs_controller
         }
 
         /// cursor
-        $sql2 = "SELECT * " . $this->load_data_from_where($tab_name) . $this->load_data_order_by();
-        $this->tabs[$tab_name]['cursor'] = $this->db->select_limit($sql2, FS_ITEM_LIMIT, $this->offset);
+        if ($tab_name === $this->active_tab) {
+            $sql2 = "SELECT * " . $this->load_data_from_where($tab_name) . $this->load_data_order_by();
+            $this->tabs[$tab_name]['cursor'] = $this->db->select_limit($sql2, FS_ITEM_LIMIT, $this->offset);
+        }
 
         return true;
     }
