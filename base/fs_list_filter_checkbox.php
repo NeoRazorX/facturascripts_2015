@@ -27,12 +27,33 @@ class fs_list_filter_checkbox extends fs_list_filter
 {
 
     /**
+     *
+     * @var bool
+     */
+    protected $match_value;
+
+    /**
+     *
+     * @var string
+     */
+    protected $operation;
+
+    public function __construct($col_name, $label, $operation = '=', $match_value = true)
+    {
+        parent::__construct($col_name, $label);
+        $this->match_value = $match_value;
+        $this->operation = $operation;
+    }
+
+    /**
      * 
      * @return string
      */
     public function get_where()
     {
-        return $this->value ? ' AND ' . $this->col_name . ' = true' : '';
+        /// necesitamos un modelo, el que sea, para llamar a su función var2str()
+        $fs_log = new fs_log();
+        return $this->value ? ' AND ' . $this->col_name . ' ' . $this->operation . ' ' . $fs_log->var2str($this->match_value) : '';
     }
 
     /**

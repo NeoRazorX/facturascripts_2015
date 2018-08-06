@@ -153,10 +153,12 @@ abstract class fs_list_controller extends fs_controller
      * @param string $tab_name
      * @param string $col_name
      * @param string $label
+     * @param string $operation
+     * @param mixed  $match_value
      */
-    protected function add_filter_checkbox($tab_name, $col_name, $label)
+    protected function add_filter_checkbox($tab_name, $col_name, $label, $operation = '=', $match_value = true)
     {
-        $filter = new fs_list_filter_checkbox($col_name, $label);
+        $filter = new fs_list_filter_checkbox($col_name, $label, $operation, $match_value);
         $this->add_filter($tab_name, $filter);
     }
 
