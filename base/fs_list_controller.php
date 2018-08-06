@@ -18,6 +18,7 @@
  */
 require_once 'base/fs_list_decoration.php';
 require_once 'base/fs_list_filter_checkbox.php';
+require_once 'base/fs_list_filter_date.php';
 require_once 'base/fs_list_filter_select.php';
 
 /**
@@ -159,6 +160,19 @@ abstract class fs_list_controller extends fs_controller
     protected function add_filter_checkbox($tab_name, $col_name, $label, $operation = '=', $match_value = true)
     {
         $filter = new fs_list_filter_checkbox($col_name, $label, $operation, $match_value);
+        $this->add_filter($tab_name, $filter);
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $col_name
+     * @param string $label
+     * @param string $operation
+     */
+    protected function add_filter_date($tab_name, $col_name, $label, $operation = '>=')
+    {
+        $filter = new fs_list_filter_date($col_name, $label, $operation);
         $this->add_filter($tab_name, $filter);
     }
 
