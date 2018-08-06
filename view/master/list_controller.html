@@ -66,7 +66,7 @@
                 <div class="btn-group">
                     {loop="$fsc->get_current_tab('buttons')"}
                     <!--{$icon=''}{if="$value.icon"}{$icon='<i class="fa ' . $value.icon . '" aria-hidden="true"></i>&nbsp; '}{/if}-->
-                    <a href="{$value.link}" id="{$value.id}" class="btn btn-sm {$value.class}">{$icon}{$value.label}</a>
+                    <a href="{$value.link}" target="{$value.target}" id="{$value.id}" class="btn btn-sm {$value.class}">{$icon}{$value.label}</a>
                     {/loop}
                 </div>
             </div>

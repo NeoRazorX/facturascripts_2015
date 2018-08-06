@@ -127,8 +127,9 @@ abstract class fs_list_controller extends fs_controller
      * @param string $icon
      * @param string $class
      * @param string $id
+     * @param string $target
      */
-    protected function add_button($tab_name, $label, $link = '#', $icon = '', $class = 'btn-default', $id = '')
+    protected function add_button($tab_name, $label, $link = '#', $icon = '', $class = 'btn-default', $id = '', $target = '')
     {
         $this->tabs[$tab_name]['buttons'][] = [
             'class' => $class,
@@ -136,6 +137,7 @@ abstract class fs_list_controller extends fs_controller
             'id' => $id,
             'label' => $label,
             'link' => $link,
+            'target' => $target,
         ];
     }
 
