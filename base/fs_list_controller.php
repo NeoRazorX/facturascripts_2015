@@ -170,7 +170,7 @@ abstract class fs_list_controller extends fs_controller
      * @param string $label
      * @param string $operation
      */
-    protected function add_filter_date($tab_name, $col_name, $label, $operation = '>=')
+    protected function add_filter_date($tab_name, $col_name, $label, $operation)
     {
         $filter = new fs_list_filter_date($col_name, $label, $operation);
         $this->add_filter($tab_name, $filter);
@@ -425,24 +425,25 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      * @param string $tabla
-     * @param string $columna
+     * @param string $columna1
+     * @param string $columna2
      *
      * @return array
      */
-    protected function sql_distinct($tabla, $columna)
+    protected function sql_distinct($tabla, $columna1, $columna2 = '')
     {
         if (!$this->db->table_exists($tabla)) {
             return [];
         }
 
+        $columna2 = empty($columna2) ? $columna1 : $columna2;
         $final = [];
-        $sql = "SELECT DISTINCT " . $columna . " FROM " . $tabla . " ORDER BY " . $columna . " ASC;";
+        $sql = "SELECT DISTINCT " . $columna1 . ", " . $columna2 . " FROM " . $tabla . " ORDER BY " . $columna2 . " ASC;";
         $data = $this->db->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                if ($d[$columna] != '') {
-                    /// usamos las minúsculas para filtrar
-                    $final[mb_strtolower($d[$columna], 'UTF8')] = $d[$columna];
+                if ($d[$columna1] != '') {
+                    $final[$d[$columna1]] = $d[$columna2];
                 }
             }
         }

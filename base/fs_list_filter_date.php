@@ -32,7 +32,13 @@ class fs_list_filter_date extends fs_list_filter
      */
     protected $operation;
 
-    public function __construct($col_name, $label, $operation = '>=')
+    /**
+     * 
+     * @param string $col_name
+     * @param string $label
+     * @param string $operation
+     */
+    public function __construct($col_name, $label, $operation)
     {
         parent::__construct($col_name, $label);
         $this->operation = $operation;
@@ -49,6 +55,10 @@ class fs_list_filter_date extends fs_list_filter
         return $this->value ? ' AND ' . $this->col_name . ' ' . $this->operation . ' ' . $fs_log->var2str($this->value) : '';
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function name()
     {
         switch ($this->operation) {

@@ -86,6 +86,8 @@ class admin_info extends fs_list_controller
         /// filtros
         $tipos = $this->sql_distinct('fs_logs', 'tipo');
         $this->add_filter_select('logs', 'tipo', 'tipo', $tipos);
+        $this->add_filter_date('logs', 'fecha', 'desde', '>=');
+        $this->add_filter_date('logs', 'fecha', 'hasta', '<=');
         $this->add_filter_checkbox('logs', 'alerta', 'alerta');
 
         /// decoración
