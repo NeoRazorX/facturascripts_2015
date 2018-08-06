@@ -37,9 +37,54 @@ class fs_list_decoration
      */
     private $model_objects = [];
 
+    /**
+     *
+     * @var array
+     */
+    protected $options = [];
+
     public function __construct()
     {
         $this->divisa_tools = new fs_divisa_tools();
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $col_name
+     * @param mixed  $value
+     * @param string $class
+     */
+    public function add_row_option($tab_name, $col_name, $value, $class)
+    {
+        $this->options[$tab_name][] = [
+            'class' => $class,
+            'col_name' => $col_name,
+            'value' => $value,
+        ];
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param array  $row
+     * 
+     * @return string
+     */
+    public function row_class($tab_name, $row)
+    {
+        if (!isset($this->options[$tab_name])) {
+            return '';
+        }
+
+        foreach ($this->options[$tab_name] as $option) {
+            $col_name = $option['col_name'];
+            if ($row[$col_name] == $option['value']) {
+                return $option['class'];
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -48,6 +93,7 @@ class fs_list_decoration
      * @param string $col_type
      * @param array  $row
      * @param array  $css_class
+     *
      * @return string
      */
     public function show($col_name, $col_type, $row, $css_class = [])

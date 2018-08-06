@@ -88,6 +88,10 @@ class admin_info extends fs_list_controller
         $this->add_filter_select('logs', 'tipo', 'tipo', $tipos);
         $this->add_filter_checkbox('logs', 'alerta', 'alerta');
 
+        /// decoración
+        $this->decoration->add_row_option('logs', 'tipo', 'error', 'danger');
+        $this->decoration->add_row_option('logs', 'tipo', 'msg', 'success');
+
         /// cargamos una plantilla propia para la parte de arriba
         $this->template_top = 'block/admin_info_top';
     }

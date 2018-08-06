@@ -120,7 +120,7 @@
             </tr>
         </thead>
         {loop="$fsc->get_current_tab('cursor')"}
-        <tr>
+        <tr class="{$fsc->decoration->row_class($fsc->active_tab, $value1)}">
             {loop="$fsc->get_current_tab('columns')"}
             {$fsc->decoration->show($key2, $value2, $value1)}
             {/loop}
