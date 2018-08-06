@@ -141,8 +141,8 @@ abstract class fs_list_controller extends fs_controller
 
     /**
      * 
-     * @param string    $tab_name
-     * @param fs_filter $filter
+     * @param string         $tab_name
+     * @param fs_list_filter $filter
      */
     protected function add_filter($tab_name, $filter)
     {
@@ -438,7 +438,7 @@ abstract class fs_list_controller extends fs_controller
         $final = [];
         $sql = "SELECT DISTINCT " . $columna . " FROM " . $tabla . " ORDER BY " . $columna . " ASC;";
         $data = $this->db->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 if ($d[$columna] != '') {
                     /// usamos las minúsculas para filtrar
