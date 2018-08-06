@@ -109,7 +109,7 @@ class fs_plugin_manager
 
         if ($this->save()) {
             $this->core_log->new_message('Plugin <b>' . $plugin_name . '</b> desactivado correctamente.');
-            $this->core_log->save('Plugin ' . $plugin_name . ' desactivado correctamente.');
+            $this->core_log->save('Plugin ' . $plugin_name . ' desactivado correctamente.', 'msg');
         } else {
             $this->core_log->new_error('Imposible desactivar el plugin <b>' . $plugin_name . '</b>.');
             return false;
@@ -307,7 +307,7 @@ class fs_plugin_manager
 
         $this->enable_plugin_controllers($name);
         $this->core_log->new_message('Plugin <b>' . $name . '</b> activado correctamente.');
-        $this->core_log->save('Plugin ' . $name . ' activado correctamente.');
+        $this->core_log->save('Plugin ' . $name . ' activado correctamente.', 'msg');
         $this->clean_cache();
         return true;
     }
