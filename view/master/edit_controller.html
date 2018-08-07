@@ -1,0 +1,73 @@
+{include="header"}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="btn-group">
+                <a href="{$fsc->model->url('list')}" class="btn btn-sm btn-default">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>&nbsp; Todos
+                </a>
+                <a class="btn btn-sm btn-default" href="{$fsc->model->url()}" title="Recargar la página">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-6 text-right">
+            <span class="h2 text-capitalize">
+                {$fsc->page->folder} / {$fsc->page->title} / {$fsc->model->primary_column_value()}
+            </span>
+        </div>
+    </div>
+</div>
+
+<br/>
+
+<div class="container-fluid">
+    <form action="{$fsc->model->url()}" method="post" class="form">
+        <input type="hidden" name="action" value="edit"/>
+        <div class="row">
+            {loop="$fsc->columns"}
+            <div class="col-sm-{$value.num_cols}">
+                {$fsc->decoration->show($key, $value, $fsc->model)}
+            </div>
+            {/loop}
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <a href="#" id="btn_delete_model" class="btn btn-sm btn-danger">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                    <span class="hidden-xs hidden-sm">&nbsp;Eliminar</span>
+                </a>
+            </div>
+            <div class="col-xs-8 text-right">
+                <a class="btn btn-sm btn-default" href="{$fsc->model->url()}" title="Recargar la página">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                    <span class="hidden-xs hidden-sm">&nbsp;Deshacer</span>
+                </a>
+                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true;this.form.submit();">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                    <span class="hidden-xs">&nbsp;Guardar</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btn_delete_model").click(function (event) {
+            event.preventDefault();
+            bootbox.confirm({
+                message: '¿Realmente desea eliminar? Esta acción no se puede deshacer',
+                title: '<b>Atención</b>',
+                callback: function (result) {
+                    if (result) {
+                        window.location.href = '{$fsc->model->url()}&action=delete';
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+{include="footer"}
