@@ -265,9 +265,9 @@ abstract class fs_list_controller extends fs_controller
      */
     protected function add_tab($tab_name, $title, $table, $columns = [], $icon = 'fa-files-o')
     {
+        $this->decoration->add_columns($tab_name, $columns);
         $this->tabs[$tab_name] = [
             'buttons' => [],
-            'columns' => $columns,
             'count' => 0,
             'cursor' => [],
             'default_sort' => '',
@@ -287,7 +287,7 @@ abstract class fs_list_controller extends fs_controller
      */
     protected function exec_after_action($action)
     {
-        
+        ;
     }
 
     /**

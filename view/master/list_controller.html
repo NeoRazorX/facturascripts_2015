@@ -110,7 +110,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                {loop="$fsc->get_current_tab('columns')"}
+                {loop="$fsc->decoration->get_columns($fsc->active_tab)"}
                 {if="in_array($value, ['money', 'number'])"}
                 <th class="text-right">{$key}</th>
                 {else}
@@ -121,7 +121,7 @@
         </thead>
         {loop="$fsc->get_current_tab('cursor')"}
         <tr class="{$fsc->decoration->row_class($fsc->active_tab, $value1)}">
-            {loop="$fsc->get_current_tab('columns')"}
+            {loop="$fsc->decoration->get_columns($fsc->active_tab)"}
             {$fsc->decoration->show($key2, $value2, $value1)}
             {/loop}
         </tr>

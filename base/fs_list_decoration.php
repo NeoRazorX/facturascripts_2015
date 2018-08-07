@@ -27,6 +27,12 @@ class fs_list_decoration
 
     /**
      *
+     * @var array
+     */
+    public $columns = [];
+
+    /**
+     *
      * @var fs_divisa_tools
      */
     protected $divisa_tools;
@@ -41,17 +47,36 @@ class fs_list_decoration
      *
      * @var array
      */
-    protected $options = [];
+    public $options = [];
 
     /**
      *
      * @var array
      */
-    protected $urls = [];
+    public $urls = [];
 
-    public function __construct()
+    /**
+     * 
+     * @param fs_list_decoration $old_decoration
+     */
+    public function __construct($old_decoration = null)
     {
         $this->divisa_tools = new fs_divisa_tools();
+        if (!is_null($old_decoration)) {
+            $this->columns = $old_decoration->columns;
+            $this->options = $old_decoration->options;
+            $this->urls = $old_decoration->urls;
+        }
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param array  $columns
+     */
+    public function add_columns($tab_name, $columns = [])
+    {
+        $this->columns[$tab_name] = $columns;
     }
 
     /**
@@ -82,6 +107,17 @@ class fs_list_decoration
             'col_name' => $col_name,
             'base_url' => $base_url,
         ];
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     *
+     * @return array
+     */
+    public function get_columns($tab_name)
+    {
+        return isset($this->columns[$tab_name]) ? $this->columns[$tab_name] : [];
     }
 
     /**
