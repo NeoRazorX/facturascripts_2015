@@ -36,6 +36,13 @@ abstract class fs_list_controller extends fs_controller
     public $active_tab = '';
 
     /**
+     * TRUE si el usuario tiene permisos para eliminar en la página.
+     *
+     * @var boolean 
+     */
+    public $allow_delete;
+
+    /**
      *
      * @var fs_list_decoration
      */
@@ -76,10 +83,15 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      * @param string $col_name
+     *
      * @return array
      */
     public function get_current_tab($col_name)
     {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return [];
+        }
+
         return $this->tabs[$this->active_tab][$col_name];
     }
 
@@ -89,9 +101,14 @@ abstract class fs_list_controller extends fs_controller
      */
     public function get_pagination()
     {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return [];
+        }
+
         $pages = [];
         $i = $num = 0;
         $current = 1;
+
         /// añadimos todas la página
         while ($num < $this->tabs[$this->active_tab]['count']) {
             $pages[$i] = [
@@ -105,6 +122,7 @@ abstract class fs_list_controller extends fs_controller
             $i++;
             $num += FS_ITEM_LIMIT;
         }
+
         /// ahora descartamos
         foreach (array_keys($pages) as $j) {
             $enmedio = intval($i / 2);
@@ -116,6 +134,7 @@ abstract class fs_list_controller extends fs_controller
                 unset($pages[$j]);
             }
         }
+
         return (count($pages) > 1) ? $pages : [];
     }
 
@@ -208,6 +227,7 @@ abstract class fs_list_controller extends fs_controller
      * @param string $tab_name
      * @param array  $cols
      * @param int    $default
+     *
      * @return bool
      */
     protected function add_sort_option($tab_name, $cols, $default = 0)
@@ -284,6 +304,7 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      * @param string $tab_name
+     *
      * @return bool
      */
     protected function load_data($tab_name)
@@ -312,6 +333,7 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      * @param string $tab_name
+     *
      * @return string
      */
     protected function load_data_from_where($tab_name)
@@ -360,6 +382,9 @@ abstract class fs_list_controller extends fs_controller
      */
     protected function private_core()
     {
+        /// ¿El usuario tiene permiso para eliminar en esta página?
+        $this->allow_delete = $this->user->allow_delete_on($this->class_name);
+
         $this->decoration = new fs_list_decoration();
         $this->template = 'master/list_controller';
         $this->offset = isset($_REQUEST['offset']) ? (int) $_REQUEST['offset'] : 0;
@@ -401,6 +426,10 @@ abstract class fs_list_controller extends fs_controller
      */
     protected function set_filter_values()
     {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return;
+        }
+
         foreach ($this->tabs[$this->active_tab]['filters'] as $key => $filter) {
             $value = isset($_POST[$filter->name()]) ? $_POST[$filter->name()] : $filter->value;
             $this->tabs[$this->active_tab]['filters'][$key]->value = $value;
@@ -412,6 +441,10 @@ abstract class fs_list_controller extends fs_controller
      */
     private function set_sort_option()
     {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return;
+        }
+
         foreach (array_keys($this->tabs[$this->active_tab]['sort_options']) as $option) {
             if (empty($this->sort_option)) {
                 $default = $this->tabs[$this->active_tab]['default_sort'];

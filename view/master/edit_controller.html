@@ -25,6 +25,7 @@
 <div class="container-fluid">
     <form action="{$fsc->model->url()}" method="post" class="form">
         <input type="hidden" name="action" value="edit"/>
+        <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
         <div class="row">
             {loop="$fsc->columns"}
             <div class="col-sm-{$value.num_cols}">
@@ -44,7 +45,7 @@
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                     <span class="hidden-xs hidden-sm">&nbsp;Deshacer</span>
                 </a>
-                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true;this.form.submit();">
+                <button class="btn btn-sm btn-primary" type="submit">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;Guardar</span>
                 </button>

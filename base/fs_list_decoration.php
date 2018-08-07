@@ -43,6 +43,12 @@ class fs_list_decoration
      */
     protected $options = [];
 
+    /**
+     *
+     * @var array
+     */
+    protected $urls = [];
+
     public function __construct()
     {
         $this->divisa_tools = new fs_divisa_tools();
@@ -67,24 +73,44 @@ class fs_list_decoration
     /**
      * 
      * @param string $tab_name
+     * @param string $base_url
+     * @param string $col_name
+     */
+    public function add_row_url($tab_name, $base_url, $col_name)
+    {
+        $this->urls[$tab_name] = [
+            'col_name' => $col_name,
+            'base_url' => $base_url,
+        ];
+    }
+
+    /**
+     * 
+     * @param string $tab_name
      * @param array  $row
      * 
      * @return string
      */
     public function row_class($tab_name, $row)
     {
+        $extra = '';
+        if (isset($this->urls[$tab_name])) {
+            $col_name = $this->urls[$tab_name]['col_name'];
+            $extra .= ' clickableRow" href="' . $this->urls[$tab_name]['base_url'] . $row[$col_name] . '"';
+        }
+
         if (!isset($this->options[$tab_name])) {
-            return '';
+            return $extra;
         }
 
         foreach ($this->options[$tab_name] as $option) {
             $col_name = $option['col_name'];
             if ($row[$col_name] == $option['value']) {
-                return $option['class'];
+                return $option['class'] . $extra;
             }
         }
 
-        return '';
+        return $extra;
     }
 
     /**
@@ -101,7 +127,7 @@ class fs_list_decoration
         $final_value = isset($row[$col_name]) ? $row[$col_name] : '';
         switch ($col_type) {
             case 'date':
-                $final_value = date('d-m-Y', strtotime($final_value));
+                $final_value = empty($final_value) ? '-' : date('d-m-Y', strtotime($final_value));
                 break;
 
             case 'timestamp':

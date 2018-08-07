@@ -28,6 +28,7 @@ abstract class fs_edit_controller extends fs_controller
 
     /**
      * TRUE si el usuario tiene permisos para eliminar en la página.
+     *
      * @var boolean 
      */
     public $allow_delete;
@@ -54,11 +55,25 @@ abstract class fs_edit_controller extends fs_controller
 
     abstract protected function set_edit_columns();
 
+    /**
+     * 
+     * @param string $name
+     * @param string $title
+     * @param string $folder
+     */
     public function __construct($name = __CLASS__, $title = 'home', $folder = '')
     {
         parent::__construct($name, $title, $folder, FALSE, FALSE, FALSE);
     }
 
+    /**
+     * 
+     * @param string $col_name
+     * @param string $label
+     * @param string $type
+     * @param int    $num_cols
+     * @param bool   $required
+     */
     protected function add_edit_column($col_name, $label, $type, $num_cols = 2, $required = false)
     {
         $this->columns[$col_name] = [
@@ -69,22 +84,40 @@ abstract class fs_edit_controller extends fs_controller
         ];
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     protected function delete_action()
     {
         if (!$this->allow_delete) {
             $this->new_error_msg('No tienes permiso para eliminar en esta página.');
+            return false;
         }
 
         if ($this->model->delete()) {
             $this->new_message('Datos eliminados correctamente.');
             $this->model->clear();
-        } else {
-            $this->new_error_msg('Error al eliminar los datos.');
+            return true;
         }
+
+        $this->new_error_msg('Error al eliminar los datos.');
+        return false;
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     protected function edit_action()
     {
+        if (isset($_POST['petition_id']) && $this->duplicated_petition($_POST['petition_id'])) {
+            $this->new_error_msg('Petición duplicada. Has hecho doble clic sobre el botón y se han'
+                . ' enviado dos peticiones. O tienes el ratón roto.');
+            return false;
+        }
+
+        /// asignamos valores
         foreach (array_keys($this->columns) as $key) {
             if (isset($_POST[$key])) {
                 $this->model->{$key} = $_POST[$key];
@@ -93,9 +126,11 @@ abstract class fs_edit_controller extends fs_controller
 
         if ($this->model->save()) {
             $this->new_message('Datos guardados correctamente.');
-        } else {
-            $this->new_error_msg('Error al guardar los datos.');
+            return true;
         }
+
+        $this->new_error_msg('Error al guardar los datos.');
+        return false;
     }
 
     protected function private_core()
@@ -106,7 +141,7 @@ abstract class fs_edit_controller extends fs_controller
         $this->decoration = new fs_edit_decoration();
         $this->template = 'master/edit_controller';
 
-        /// load model
+        /// cargamos el modelo
         $model_class = $this->get_model_class_name();
         $this->model = new $model_class();
         if (isset($_REQUEST['code'])) {
@@ -115,13 +150,16 @@ abstract class fs_edit_controller extends fs_controller
 
         $this->set_edit_columns();
 
+        /// acciones
         $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
         switch ($action) {
             case 'delete':
-                return $this->delete_action();
+                $this->delete_action();
+                break;
 
             case 'edit':
-                return $this->edit_action();
+                $this->edit_action();
+                break;
         }
     }
 }
