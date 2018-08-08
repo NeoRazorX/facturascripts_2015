@@ -109,6 +109,17 @@ class fs_edit_decoration
         $required = $col_config['required'] ? ' required=""' : '';
 
         switch ($col_config['type']) {
+            case 'bool':
+                $checked = $model->{$col_name} ? ' checked=""' : '';
+                $html = '<div class="checkbox"><label><input type="checkbox" name="' . $col_name
+                    . '" value="TRUE"' . $checked . '/> ' . $col_config['label'] . '</label>';
+                break;
+
+            case 'date':
+                $html .= '<input class="form-control datepicker" type="text" name="' . $col_name
+                    . '" value="' . $model->{$col_name} . '" autocomplete="off"' . $required . '/>';
+                break;
+
             case 'money':
             case 'number':
                 $html .= '<input class="form-control" type="number" step="any" name="' . $col_name

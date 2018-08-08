@@ -172,7 +172,6 @@ class fs_list_decoration
         $value = isset($row[$col_name]) ? $row[$col_name] : '';
         switch ($col_config['type']) {
             case 'bool':
-            case 'checkbox':
                 $final_value = $value ? 'Si' : '';
                 break;
 

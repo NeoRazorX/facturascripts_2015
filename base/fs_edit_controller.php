@@ -94,10 +94,8 @@ abstract class fs_edit_controller extends fs_controller
         }
 
         /// asignamos valores
-        foreach (array_keys($this->decoration->columns) as $key) {
-            if (isset($_POST[$key])) {
-                $this->model->{$key} = $_POST[$key];
-            }
+        foreach ($this->decoration->columns as $key => $col_config) {
+            $this->process_form_value($key, $col_config['type']);
         }
 
         if ($this->model->save()) {
@@ -136,6 +134,27 @@ abstract class fs_edit_controller extends fs_controller
             case 'edit':
                 $this->edit_action();
                 break;
+        }
+    }
+
+    /**
+     * 
+     * @param string $col_name
+     * @param string $type
+     */
+    protected function process_form_value($col_name, $type)
+    {
+        switch ($type) {
+            case 'bool':
+                $this->model->{$col_name} = isset($_POST[$col_name]);
+                break;
+
+            case 'date':
+                $this->model->{$col_name} = empty($_POST[$col_name]) ? null : $_POST[$col_name];
+                break;
+
+            default:
+                $this->model->{$col_name} = isset($_POST[$col_name]) ? $_POST[$col_name] : $this->model->{$col_name};
         }
     }
 
