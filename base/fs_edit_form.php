@@ -18,11 +18,11 @@
  */
 
 /**
- * Description of fs_edit_decoration
+ * Description of fs_edit_form
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class fs_edit_decoration
+class fs_edit_form
 {
 
     /**
@@ -33,32 +33,18 @@ class fs_edit_decoration
 
     /**
      *
-     * @var fs_divisa_tools
-     */
-    protected $divisa_tools;
-
-    /**
-     *
      * @var array
      */
     private $model_objects = [];
 
     /**
-     *
-     * @var array
-     */
-    public $options = [];
-
-    /**
      * 
-     * @param fs_edit_decoration $old_decoration
+     * @param fs_edit_form $old_decoration
      */
     public function __construct($old_decoration = null)
     {
-        $this->divisa_tools = new fs_divisa_tools();
         if ($old_decoration) {
             $this->columns = $old_decoration->columns;
-            $this->options = $old_decoration->options;
         }
     }
 

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-require_once 'base/fs_edit_decoration.php';
+require_once 'base/fs_edit_form.php';
 
 /**
  * Description of fs_edit_controller
@@ -35,9 +35,9 @@ abstract class fs_edit_controller extends fs_controller
 
     /**
      *
-     * @var fs_edit_decoration
+     * @var fs_edit_form
      */
-    public $decoration;
+    public $form;
 
     /**
      *
@@ -94,7 +94,7 @@ abstract class fs_edit_controller extends fs_controller
         }
 
         /// asignamos valores
-        foreach ($this->decoration->columns as $key => $col_config) {
+        foreach ($this->form->columns as $key => $col_config) {
             $this->process_form_value($key, $col_config['type']);
         }
 
@@ -112,7 +112,7 @@ abstract class fs_edit_controller extends fs_controller
         /// ¿El usuario tiene permiso para eliminar en esta página?
         $this->allow_delete = $this->user->allow_delete_on($this->class_name);
 
-        $this->decoration = new fs_edit_decoration();
+        $this->form = new fs_edit_form();
         $this->template = 'master/edit_controller';
 
         /// cargamos el modelo
