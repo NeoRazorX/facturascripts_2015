@@ -69,15 +69,30 @@ class fs_edit_decoration
      * @param string $label
      * @param int    $num_cols
      * @param bool   $required
+     * @param array  $values
      */
-    public function add_column($col_name, $type = 'string', $label = '', $num_cols = 2, $required = false)
+    public function add_column($col_name, $type = 'string', $label = '', $num_cols = 2, $required = false, $values = [])
     {
         $this->columns[$col_name] = [
             'label' => empty($label) ? $col_name : $label,
             'num_cols' => $num_cols,
             'required' => $required,
             'type' => $type,
+            'values' => $values,
         ];
+    }
+
+    /**
+     * 
+     * @param string $col_name
+     * @param array  $values
+     * @param string $label
+     * @param int    $num_cols
+     * @param bool   $required
+     */
+    public function add_column_select($col_name, $values, $label = '', $num_cols = 2, $required = false)
+    {
+        $this->add_column($col_name, 'select', $label, $num_cols, $required, $values);
     }
 
     /**
@@ -100,6 +115,10 @@ class fs_edit_decoration
                     . '" value="' . $model->{$col_name} . '" autocomplete="off"' . $required . '/>';
                 break;
 
+            case 'select':
+                $html .= $this->show_select($col_name, $col_config, $model);
+                break;
+
             case 'textarea':
                 $html .= '<textarea class="form-control" name="' . $col_name . '"' . $required . '>'
                     . $model->{$col_name} . '</textarea>';
@@ -111,6 +130,31 @@ class fs_edit_decoration
         }
 
         $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * 
+     * @param string            $col_name
+     * @param array             $col_config
+     * @param fs_model_extended $model
+     *
+     * @return string
+     */
+    protected function show_select($col_name, $col_config, $model)
+    {
+        $required = $col_config['required'] ? ' required=""' : '';
+        $html = '<select name="codproveedor" class="form-control"' . $required . '>';
+
+        foreach ($col_config['values'] as $key => $value) {
+            if ($model->{$col_name} == $key) {
+                $html .= '<option value="' . $key . '" selected="">' . $value . '</option>';
+            } else {
+                $html .= '<option value="' . $key . '">' . $value . '</option>';
+            }
+        }
+
+        $html .= '</select>';
         return $html;
     }
 

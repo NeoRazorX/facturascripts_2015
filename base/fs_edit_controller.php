@@ -138,4 +138,33 @@ abstract class fs_edit_controller extends fs_controller
                 break;
         }
     }
+
+    /**
+     * 
+     * @param string $tabla
+     * @param string $columna1
+     * @param string $columna2
+     *
+     * @return array
+     */
+    protected function sql_distinct($tabla, $columna1, $columna2 = '')
+    {
+        if (!$this->db->table_exists($tabla)) {
+            return [];
+        }
+
+        $columna2 = empty($columna2) ? $columna1 : $columna2;
+        $final = [];
+        $sql = "SELECT DISTINCT " . $columna1 . ", " . $columna2 . " FROM " . $tabla . " ORDER BY " . $columna2 . " ASC;";
+        $data = $this->db->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                if ($d[$columna1] != '') {
+                    $final[$d[$columna1]] = $d[$columna2];
+                }
+            }
+        }
+
+        return $final;
+    }
 }
