@@ -172,7 +172,7 @@ class fs_list_decoration
         $value = isset($row[$col_name]) ? $row[$col_name] : '';
         switch ($col_config['type']) {
             case 'bool':
-                $final_value = $value ? 'Si' : '';
+                $final_value = $this->str2bool($value) ? 'Si' : '';
                 break;
 
             case 'date':
@@ -200,6 +200,12 @@ class fs_list_decoration
             $css_class[] = $col_config['class'];
         }
 
+        if ('bool' === $col_config['type']) {
+            $css_class[] = $this->str2bool($value) ? 'success' : 'warning';
+        } elseif (in_array($col_config['type'], ['money', 'number']) && $value <= 0) {
+            $css_class[] = 'warning';
+        }
+
         if (!empty($col_config['base_url'])) {
             $final_value = '<a href="' . $col_config['base_url'] . $value . '" class="cancel_clickable">'
                 . $final_value . '</a>';
@@ -218,7 +224,7 @@ class fs_list_decoration
     protected function compare_values($value1, $value2)
     {
         if (is_bool($value2)) {
-            return $value2 === ($value1 == 't' || $value1 == '1');
+            return $value2 === $this->str2bool($value1);
         }
 
         return $value1 == $value2;
@@ -245,5 +251,16 @@ class fs_list_decoration
         }
 
         return $model;
+    }
+
+    /**
+     * 
+     * @param string $val
+     * 
+     * @return bool
+     */
+    private function str2bool($val)
+    {
+        return ($val == 't' || $val == '1');
     }
 }
