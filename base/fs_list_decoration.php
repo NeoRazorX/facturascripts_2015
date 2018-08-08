@@ -149,8 +149,8 @@ class fs_list_decoration
         }
 
         foreach ($this->options[$tab_name] as $option) {
-            $col_name = $option['col_name'];
-            if ($row[$col_name] == $option['value']) {
+            $col2_name = $option['col_name'];
+            if ($this->compare_values($row[$col2_name], $option['value'])) {
                 return $option['class'] . $extra;
             }
         }
@@ -206,6 +206,22 @@ class fs_list_decoration
         }
 
         return '<td class="' . implode(' ', $css_class) . '">' . $final_value . '</td>';
+    }
+
+    /**
+     * 
+     * @param mixed $value1
+     * @param mixed $value2
+     *
+     * @return boolean
+     */
+    protected function compare_values($value1, $value2)
+    {
+        if (is_bool($value2)) {
+            return $value2 === ($value1 == 't' || $value1 == '1');
+        }
+
+        return $value1 == $value2;
     }
 
     /**
