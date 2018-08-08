@@ -71,14 +71,7 @@ class admin_info extends fs_list_controller
     protected function create_tabs()
     {
         /// pestaña historial
-        $this->add_tab('logs', 'Historal', 'fs_logs', [
-            'fecha' => 'datetime',
-            'usuario' => 'text',
-            'tipo' => 'text',
-            'detalle' => 'text',
-            'ip' => 'text',
-            'controlador' => 'text',
-            ], 'fa-book');
+        $this->add_tab('logs', 'Historal', 'fs_logs', 'fa-book');
         $this->add_search_columns('logs', ['usuario', 'tipo', 'detalle', 'ip', 'controlador']);
         $this->add_sort_option('logs', ['fecha'], 2);
         $this->add_button('logs', 'Borrar', $this->url() . '&action=remove-all', 'fa-trash', 'btn-danger');
@@ -91,6 +84,14 @@ class admin_info extends fs_list_controller
         $this->add_filter_checkbox('logs', 'alerta', 'alerta');
 
         /// decoración
+        $this->decoration->add_column('logs', 'fecha', 'date');
+        $this->decoration->add_column('logs', 'alerta', 'bool');
+        $this->decoration->add_column('logs', 'usuario', 'string');
+        $this->decoration->add_column('logs', 'tipo', 'string');
+        $this->decoration->add_column('logs', 'detalle', 'string');
+        $this->decoration->add_column('logs', 'ip', 'string');
+        $this->decoration->add_column('logs', 'controlador', 'string', 'página', 'text-right', 'index.php?page=');
+        $this->decoration->add_row_option('logs', 'alerta', true, 'danger');
         $this->decoration->add_row_option('logs', 'tipo', 'error', 'danger');
         $this->decoration->add_row_option('logs', 'tipo', 'msg', 'success');
 

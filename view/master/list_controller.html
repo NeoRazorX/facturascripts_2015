@@ -111,11 +111,7 @@
         <thead>
             <tr>
                 {loop="$fsc->decoration->get_columns($fsc->active_tab)"}
-                {if="in_array($value, ['money', 'number'])"}
-                <th class="text-right">{$key}</th>
-                {else}
-                <th>{$key}</th>
-                {/if}
+                <th class="{$value.class}">{$value.title}</th>
                 {/loop}
             </tr>
         </thead>
@@ -138,8 +134,8 @@
         <div class="col-sm-12 text-center">
             <ul class="pagination">
                 {loop="$fsc->get_pagination()"}
-                <li{if="$value['active']"} class="active"{/if}>
-                    <a href="#" onclick="document.f_custom_search.offset.value = '{$value['offset']}';document.f_custom_search.submit();">{$value['num']}</a>
+                <li{if="$value.active"} class="active"{/if}>
+                    <a href="#" onclick="document.f_custom_search.offset.value = '{$value.offset}';document.f_custom_search.submit();">{$value.num}</a>
                 </li>
                 {/loop}
             </ul>

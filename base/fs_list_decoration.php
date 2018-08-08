@@ -72,11 +72,20 @@ class fs_list_decoration
     /**
      * 
      * @param string $tab_name
-     * @param array  $columns
+     * @param string $col_name
+     * @param string $type
+     * @param string $title
+     * @param string $class
+     * @param string $base_url
      */
-    public function add_columns($tab_name, $columns = [])
+    public function add_column($tab_name, $col_name, $type, $title = '', $class = '', $base_url = '')
     {
-        $this->columns[$tab_name] = $columns;
+        $this->columns[$tab_name][$col_name] = [
+            'base_url' => $base_url,
+            'class' => $class,
+            'type' => $type,
+            'title' => empty($title) ? $col_name : $title,
+        ];
     }
 
     /**
@@ -152,39 +161,49 @@ class fs_list_decoration
     /**
      * 
      * @param string $col_name
-     * @param string $col_type
+     * @param string $col_config
      * @param array  $row
      * @param array  $css_class
      *
      * @return string
      */
-    public function show($col_name, $col_type, $row, $css_class = [])
+    public function show($col_name, $col_config, $row, $css_class = [])
     {
-        $final_value = isset($row[$col_name]) ? $row[$col_name] : '';
-        switch ($col_type) {
+        $value = isset($row[$col_name]) ? $row[$col_name] : '';
+        switch ($col_config['type']) {
+            case 'bool':
+            case 'checkbox':
+                $final_value = $value ? 'Si' : '';
+                break;
+
             case 'date':
-                $final_value = empty($final_value) ? '-' : date('d-m-Y', strtotime($final_value));
+                $final_value = empty($value) ? '-' : date('d-m-Y', strtotime($value));
                 break;
 
             case 'timestamp':
             case 'datetime':
-                $final_value = date('d-m-Y H:i:s', strtotime($final_value));
+                $final_value = date('d-m-Y H:i:s', strtotime($value));
                 break;
 
             case 'money':
-                $final_value = $this->divisa_tools->show_precio((float) $final_value);
+                $final_value = $this->divisa_tools->show_precio((float) $value);
                 break;
 
             case 'number':
-                $final_value = $this->divisa_tools->show_numero((float) $final_value);
+                $final_value = $this->divisa_tools->show_numero((float) $value);
                 break;
+
+            default:
+                $final_value = $value;
         }
 
-        if (in_array($col_type, ['money', 'number'])) {
-            $css_class[] = 'text-right';
-            if ($final_value <= 0) {
-                $css_class[] = 'warning';
-            }
+        if (!empty($col_config['class'])) {
+            $css_class[] = $col_config['class'];
+        }
+
+        if (!empty($col_config['base_url'])) {
+            $final_value = '<a href="' . $col_config['base_url'] . $value . '" class="cancel_clickable">'
+                . $final_value . '</a>';
         }
 
         return '<td class="' . implode(' ', $css_class) . '">' . $final_value . '</td>';

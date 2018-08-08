@@ -98,19 +98,23 @@ class fs_edit_decoration
     public function show($col_name, $col_config, $model)
     {
         $html = '<div class="form-group">' . $col_config['label'] . ':';
+        $required = $col_config['required'] ? ' required=""' : '';
 
         switch ($col_config['type']) {
             case 'money':
             case 'number':
-                $html .= '<input class="form-control" type="number" step="any" name="' . $col_name . '" value="' . $model->{$col_name} . '" autocomplete="off">';
+                $html .= '<input class="form-control" type="number" step="any" name="' . $col_name
+                    . '" value="' . $model->{$col_name} . '" autocomplete="off"' . $required . '/>';
                 break;
 
             case 'textarea':
-                $html .= '<textarea class="form-control" name="' . $col_name . '">' . $model->{$col_name} . '</textarea>';
+                $html .= '<textarea class="form-control" name="' . $col_name . '"' . $required . '>'
+                    . $model->{$col_name} . '</textarea>';
                 break;
 
             default:
-                $html .= '<input class="form-control" type="text" name="' . $col_name . '" value="' . $model->{$col_name} . '" autocomplete="off">';
+                $html .= '<input class="form-control" type="text" name="' . $col_name
+                    . '" value="' . $model->{$col_name} . '" autocomplete="off"' . $required . '/>';
         }
 
         $html .= '</div>';

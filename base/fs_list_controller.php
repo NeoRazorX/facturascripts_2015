@@ -260,12 +260,10 @@ abstract class fs_list_controller extends fs_controller
      * @param string $tab_name
      * @param string $title
      * @param string $table
-     * @param array  $columns
      * @param string $icon
      */
-    protected function add_tab($tab_name, $title, $table, $columns = [], $icon = 'fa-files-o')
+    protected function add_tab($tab_name, $title, $table, $icon = 'fa-files-o')
     {
-        $this->decoration->add_columns($tab_name, $columns);
         $this->tabs[$tab_name] = [
             'buttons' => [],
             'count' => 0,
