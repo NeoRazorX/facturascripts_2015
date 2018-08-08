@@ -25,7 +25,7 @@ require_once 'base/fs_core_log.php';
 require_once 'base/fs_db2.php';
 $db = new fs_db2();
 
-require_once 'base/fs_model_extended.php';
+require_once 'base/fs_extended_model.php';
 require_once 'base/fs_log_manager.php';
 require_all_models();
 

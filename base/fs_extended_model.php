@@ -19,11 +19,11 @@
 require_once 'base/fs_model.php';
 
 /**
- * Description of fs_model_extended
+ * Description of fs_extended_model
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-abstract class fs_model_extended extends fs_model
+abstract class fs_extended_model extends fs_model
 {
 
     abstract public function model_class_name();
@@ -80,7 +80,7 @@ abstract class fs_model_extended extends fs_model
      * @param string $code
      * @param string $col_name
      * 
-     * @return fs_model_extended|boolean
+     * @return fs_extended_model|boolean
      */
     public function get($code, $col_name = '')
     {
@@ -189,14 +189,16 @@ abstract class fs_model_extended extends fs_model
      */
     protected function save_insert()
     {
-        $sql = 'INSERT INTO ' . $this->table_name() . ' (' . implode(',', $this->get_model_fields()) . ') VALUES (';
-        $coma = '';
+        $columns = [];
+        $values = [];
         foreach ($this->get_model_fields() as $field) {
-            $sql .= $coma . $this->var2str($this->{$field});
-            $coma = ',';
+            if ($field != $this->primary_column()) {
+                $columns[] = $field;
+                $values[] = $this->var2str($this->{$field});
+            }
         }
-        $sql .= ');';
 
+        $sql = 'INSERT INTO ' . $this->table_name() . ' (' . implode(',', $columns) . ') VALUES (' . implode(',', $values) . ');';
         if ($this->db->exec($sql)) {
             if (null === $this->primary_column_value()) {
                 $this->{$this->primary_column()} = $this->db->lastval();

@@ -41,7 +41,7 @@ abstract class fs_edit_controller extends fs_controller
 
     /**
      *
-     * @var fs_model_extended
+     * @var fs_extended_model
      */
     public $model;
 

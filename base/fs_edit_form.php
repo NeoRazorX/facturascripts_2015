@@ -85,7 +85,7 @@ class fs_edit_form
      * 
      * @param string            $col_name
      * @param array             $col_config
-     * @param fs_model_extended $model
+     * @param fs_extended_model $model
      *
      * @return string
      */
@@ -134,7 +134,7 @@ class fs_edit_form
      * 
      * @param string            $col_name
      * @param array             $col_config
-     * @param fs_model_extended $model
+     * @param fs_extended_model $model
      *
      * @return string
      */
