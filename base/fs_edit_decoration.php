@@ -27,6 +27,12 @@ class fs_edit_decoration
 
     /**
      *
+     * @var array
+     */
+    public $columns = [];
+
+    /**
+     *
      * @var fs_divisa_tools
      */
     protected $divisa_tools;
@@ -41,50 +47,37 @@ class fs_edit_decoration
      *
      * @var array
      */
-    protected $options = [];
+    public $options = [];
 
-    public function __construct()
+    /**
+     * 
+     * @param fs_edit_decoration $old_decoration
+     */
+    public function __construct($old_decoration = null)
     {
         $this->divisa_tools = new fs_divisa_tools();
+        if ($old_decoration) {
+            $this->columns = $old_decoration->columns;
+            $this->options = $old_decoration->options;
+        }
     }
 
     /**
      * 
-     * @param string $tab_name
      * @param string $col_name
-     * @param mixed  $value
-     * @param string $class
+     * @param string $type
+     * @param string $label
+     * @param int    $num_cols
+     * @param bool   $required
      */
-    public function add_row_option($tab_name, $col_name, $value, $class)
+    public function add_column($col_name, $type = 'string', $label = '', $num_cols = 2, $required = false)
     {
-        $this->options[$tab_name][] = [
-            'class' => $class,
-            'col_name' => $col_name,
-            'value' => $value,
+        $this->columns[$col_name] = [
+            'label' => empty($label) ? $col_name : $label,
+            'num_cols' => $num_cols,
+            'required' => $required,
+            'type' => $type,
         ];
-    }
-
-    /**
-     * 
-     * @param string $tab_name
-     * @param array  $row
-     * 
-     * @return string
-     */
-    public function row_class($tab_name, $row)
-    {
-        if (!isset($this->options[$tab_name])) {
-            return '';
-        }
-
-        foreach ($this->options[$tab_name] as $option) {
-            $col_name = $option['col_name'];
-            if ($row[$col_name] == $option['value']) {
-                return $option['class'];
-            }
-        }
-
-        return '';
     }
 
     /**

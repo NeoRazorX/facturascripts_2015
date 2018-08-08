@@ -35,12 +35,6 @@ abstract class fs_edit_controller extends fs_controller
 
     /**
      *
-     * @var array
-     */
-    public $columns = [];
-
-    /**
-     *
      * @var fs_edit_decoration
      */
     public $decoration;
@@ -64,24 +58,6 @@ abstract class fs_edit_controller extends fs_controller
     public function __construct($name = __CLASS__, $title = 'home', $folder = '')
     {
         parent::__construct($name, $title, $folder, FALSE, FALSE, FALSE);
-    }
-
-    /**
-     * 
-     * @param string $col_name
-     * @param string $label
-     * @param string $type
-     * @param int    $num_cols
-     * @param bool   $required
-     */
-    protected function add_edit_column($col_name, $label, $type, $num_cols = 2, $required = false)
-    {
-        $this->columns[$col_name] = [
-            'label' => $label,
-            'num_cols' => $num_cols,
-            'required' => $required,
-            'type' => $type,
-        ];
     }
 
     /**
@@ -118,7 +94,7 @@ abstract class fs_edit_controller extends fs_controller
         }
 
         /// asignamos valores
-        foreach (array_keys($this->columns) as $key) {
+        foreach (array_keys($this->decoration->columns) as $key) {
             if (isset($_POST[$key])) {
                 $this->model->{$key} = $_POST[$key];
             }

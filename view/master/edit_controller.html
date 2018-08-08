@@ -23,11 +23,11 @@
 <br/>
 
 <div class="container-fluid">
-    <form action="{$fsc->model->url()}" method="post" class="form">
+    <form action="{$fsc->model->url('edit')}" method="post" class="form">
         <input type="hidden" name="action" value="edit"/>
         <input type="hidden" name="petition_id" value="{$fsc->random_string()}"/>
         <div class="row">
-            {loop="$fsc->columns"}
+            {loop="$fsc->decoration->columns"}
             <div class="col-sm-{$value.num_cols}">
                 {$fsc->decoration->show($key, $value, $fsc->model)}
             </div>
