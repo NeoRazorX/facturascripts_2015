@@ -78,7 +78,7 @@ class fs_list_decoration
      * @param string $class
      * @param string $base_url
      */
-    public function add_column($tab_name, $col_name, $type, $title = '', $class = '', $base_url = '')
+    public function add_column($tab_name, $col_name, $type = 'string', $title = '', $class = '', $base_url = '')
     {
         $this->columns[$tab_name][$col_name] = [
             'base_url' => $base_url,

@@ -86,10 +86,10 @@ class admin_info extends fs_list_controller
         /// decoración
         $this->decoration->add_column('logs', 'fecha', 'date');
         $this->decoration->add_column('logs', 'alerta', 'bool');
-        $this->decoration->add_column('logs', 'usuario', 'string');
-        $this->decoration->add_column('logs', 'tipo', 'string');
-        $this->decoration->add_column('logs', 'detalle', 'string');
-        $this->decoration->add_column('logs', 'ip', 'string');
+        $this->decoration->add_column('logs', 'usuario');
+        $this->decoration->add_column('logs', 'tipo');
+        $this->decoration->add_column('logs', 'detalle');
+        $this->decoration->add_column('logs', 'ip');
         $this->decoration->add_column('logs', 'controlador', 'string', 'página', 'text-right', 'index.php?page=');
         $this->decoration->add_row_option('logs', 'alerta', true, 'danger');
         $this->decoration->add_row_option('logs', 'tipo', 'error', 'danger');
