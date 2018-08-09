@@ -233,6 +233,7 @@ class fs_postgresql extends fs_db_engine
                 $result = TRUE;
             } else {
                 self::$core_log->new_error(pg_last_error(self::$link) . '. La secuencia ocupa la posición ' . count(self::$core_log->get_sql_history()));
+                self::$core_log->save(pg_last_error(self::$link) . '. La secuencia ocupa la posición ' . count(self::$core_log->get_sql_history()));
             }
 
             if ($transaction) {
@@ -475,6 +476,7 @@ class fs_postgresql extends fs_db_engine
             } else {
                 /// añadimos el error a la lista de errores
                 self::$core_log->new_error(pg_last_error(self::$link));
+                self::$core_log->save(pg_last_error(self::$link));
             }
 
             /// aumentamos el contador de selects realizados

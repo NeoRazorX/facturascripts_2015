@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 require_once 'base/fs_mysql.php';
 require_once 'base/fs_postgresql.php';
@@ -60,22 +60,65 @@ class fs_db2
     }
 
     /**
-     * Devuelve el valor de auto_transacions, para saber si las transacciones
-     * automáticas están activadas o no.
+     * Inicia una transacción SQL.
      * @return boolean
      */
-    public function get_auto_transactions()
+    public function begin_transaction()
     {
-        return self::$auto_transactions;
+        return self::$engine->begin_transaction();
     }
 
     /**
-     * Activa/desactiva las transacciones automáticas en la función exec()
-     * @param boolean $value
+     * Realiza comprobaciones extra a la tabla.
+     * @param string $table_name
+     * @return boolean
      */
-    public function set_auto_transactions($value)
+    public function check_table_aux($table_name)
     {
-        self::$auto_transactions = $value;
+        return self::$engine->check_table_aux($table_name);
+    }
+
+    /**
+     * Desconecta de la base de datos.
+     * @return boolean
+     */
+    public function close()
+    {
+        return self::$engine->close();
+    }
+
+    /**
+     * Guarda los cambios de una transacción SQL.
+     * @return boolean
+     */
+    public function commit()
+    {
+        return self::$engine->commit();
+    }
+
+    /**
+     * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
+     * @param string $table_name
+     * @param array $xml_cols
+     * @param array $db_cols
+     * @return string
+     */
+    public function compare_columns($table_name, $xml_cols, $db_cols)
+    {
+        return self::$engine->compare_columns($table_name, $xml_cols, $db_cols);
+    }
+
+    /**
+     * Compara dos arrays de restricciones, devuelve una sentencia sql en caso de encontrar diferencias.
+     * @param string $table_name
+     * @param array $xml_cons
+     * @param array $db_cons
+     * @param boolean $delete_only
+     * @return string
+     */
+    public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE)
+    {
+        return self::$engine->compare_constraints($table_name, $xml_cons, $db_cons, $delete_only);
     }
 
     /**
@@ -97,48 +140,68 @@ class fs_db2
     }
 
     /**
-     * Desconecta de la base de datos.
-     * @return boolean
-     */
-    public function close()
-    {
-        return self::$engine->close();
-    }
-
-    /**
-     * Devuelve el motor de base de datos usado y la versión.
+     * Devuelve el estilo de fecha del motor de base de datos.
      * @return string
      */
-    public function version()
+    public function date_style()
     {
-        return self::$engine->version();
+        return self::$engine->date_style();
     }
 
     /**
-     * Devuelve el nº de selects a la base de datos.
-     * @return integer
+     * Escapa las comillas de la cadena de texto.
+     * @param string $str
+     * @return string
      */
-    public function get_selects()
+    public function escape_string($str)
     {
-        return self::$engine->get_selects();
+        return self::$engine->escape_string($str);
     }
 
     /**
-     * Devuelve el nº de transacciones con la base de datos.
-     * @return integer
+     * Ejecuta sentencias SQL sobre la base de datos (inserts, updates o deletes).
+     * Para hacer selects, mejor usar select() o selec_limit().
+     * Por defecto se inicia una transacción, se ejecutan las consultas, y si todo
+     * sale bien, se guarda, sino se deshace.
+     * Se puede evitar este modo de transacción si se pone false
+     * en el parametro transaction, o con la función set_auto_transactions(FALSE)
+     * @param string $sql
+     * @param boolean $transaction
+     * @return boolean
      */
-    public function get_transactions()
+    public function exec($sql, $transaction = NULL)
     {
-        return self::$engine->get_transactions();
+        /// usamos self::$auto_transactions como valor por defecto para la función
+        if (is_null($transaction)) {
+            $transaction = self::$auto_transactions;
+        }
+
+        /// limpiamos la lista de tablas, ya que podría haber cambios al ejecutar este sql.
+        self::$table_list = FALSE;
+
+        return self::$engine->exec($sql, $transaction);
     }
 
     /**
-     * Devuelve el historial SQL.
-     * @return array
+     * Devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada.
+     * @param string $table_name
+     * @param array $xml_cols
+     * @param array $xml_cons
+     * @return string
      */
-    public function get_history()
+    public function generate_table($table_name, $xml_cols, $xml_cons)
     {
-        return self::$engine->get_history();
+        return self::$engine->generate_table($table_name, $xml_cols, $xml_cons);
+    }
+
+    /**
+     * Devuelve el valor de auto_transacions, para saber si las transacciones
+     * automáticas están activadas o no.
+     * @return boolean
+     */
+    public function get_auto_transactions()
+    {
+        return self::$auto_transactions;
     }
 
     /**
@@ -167,6 +230,15 @@ class fs_db2
     }
 
     /**
+     * Devuelve el historial SQL.
+     * @return array
+     */
+    public function get_history()
+    {
+        return self::$engine->get_history();
+    }
+
+    /**
      * Devuelve una array con los indices de una tabla dada.
      * @param string $table_name
      * @return array
@@ -186,6 +258,33 @@ class fs_db2
     }
 
     /**
+     * Devuelve el nº de selects a la base de datos.
+     * @return integer
+     */
+    public function get_selects()
+    {
+        return self::$engine->get_selects();
+    }
+
+    /**
+     * Devuelve el nº de transacciones con la base de datos.
+     * @return integer
+     */
+    public function get_transactions()
+    {
+        return self::$engine->get_transactions();
+    }
+
+    /**
+     * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
+     * @return integer
+     */
+    public function lastval()
+    {
+        return self::$engine->lastval();
+    }
+
+    /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
      * @return array
      */
@@ -199,27 +298,12 @@ class fs_db2
     }
 
     /**
-     * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
-     * @param string $name
-     * @param array $list
+     * Deshace los cambios de una transacción SQL.
      * @return boolean
      */
-    public function table_exists($name, $list = FALSE)
+    public function rollback()
     {
-        $result = FALSE;
-
-        if ($list === FALSE) {
-            $list = $this->list_tables();
-        }
-
-        foreach ($list as $table) {
-            if ($table['name'] == $name) {
-                $result = TRUE;
-                break;
-            }
-        }
-
-        return $result;
+        return self::$engine->rollback();
     }
 
     /**
@@ -249,82 +333,12 @@ class fs_db2
     }
 
     /**
-     * Ejecuta sentencias SQL sobre la base de datos (inserts, updates o deletes).
-     * Para hacer selects, mejor usar select() o selec_limit().
-     * Por defecto se inicia una transacción, se ejecutan las consultas, y si todo
-     * sale bien, se guarda, sino se deshace.
-     * Se puede evitar este modo de transacción si se pone false
-     * en el parametro transaction, o con la función set_auto_transactions(FALSE)
-     * @param string $sql
-     * @param boolean $transaction
-     * @return boolean
+     * Activa/desactiva las transacciones automáticas en la función exec()
+     * @param boolean $value
      */
-    public function exec($sql, $transaction = NULL)
+    public function set_auto_transactions($value)
     {
-        /// usamos self::$auto_transactions como valor por defecto para la función
-        if (is_null($transaction)) {
-            $transaction = self::$auto_transactions;
-        }
-
-        /// limpiamos la lista de tablas, ya que podría haber cambios al ejecutar este sql.
-        self::$table_list = FALSE;
-
-        return self::$engine->exec($sql, $transaction);
-    }
-
-    /**
-     * Devuleve el último ID asignado al hacer un INSERT en la base de datos.
-     * @return integer
-     */
-    public function lastval()
-    {
-        return self::$engine->lastval();
-    }
-
-    /**
-     * Inicia una transacción SQL.
-     * @return boolean
-     */
-    public function begin_transaction()
-    {
-        return self::$engine->begin_transaction();
-    }
-
-    /**
-     * Guarda los cambios de una transacción SQL.
-     * @return boolean
-     */
-    public function commit()
-    {
-        return self::$engine->commit();
-    }
-
-    /**
-     * Deshace los cambios de una transacción SQL.
-     * @return boolean
-     */
-    public function rollback()
-    {
-        return self::$engine->rollback();
-    }
-
-    /**
-     * Escapa las comillas de la cadena de texto.
-     * @param string $str
-     * @return string
-     */
-    public function escape_string($str)
-    {
-        return self::$engine->escape_string($str);
-    }
-
-    /**
-     * Devuelve el estilo de fecha del motor de base de datos.
-     * @return string
-     */
-    public function date_style()
-    {
-        return self::$engine->date_style();
+        self::$auto_transactions = $value;
     }
 
     /**
@@ -338,49 +352,35 @@ class fs_db2
     }
 
     /**
-     * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
-     * @param string $table_name
-     * @param array $xml_cols
-     * @param array $db_cols
-     * @return string
-     */
-    public function compare_columns($table_name, $xml_cols, $db_cols)
-    {
-        return self::$engine->compare_columns($table_name, $xml_cols, $db_cols);
-    }
-
-    /**
-     * Compara dos arrays de restricciones, devuelve una sentencia sql en caso de encontrar diferencias.
-     * @param string $table_name
-     * @param array $xml_cons
-     * @param array $db_cons
-     * @param boolean $delete_only
-     * @return string
-     */
-    public function compare_constraints($table_name, $xml_cons, $db_cons, $delete_only = FALSE)
-    {
-        return self::$engine->compare_constraints($table_name, $xml_cons, $db_cons, $delete_only);
-    }
-
-    /**
-     * Devuelve la sentencia sql necesaria para crear una tabla con la estructura proporcionada.
-     * @param string $table_name
-     * @param array $xml_cols
-     * @param array $xml_cons
-     * @return string
-     */
-    public function generate_table($table_name, $xml_cols, $xml_cons)
-    {
-        return self::$engine->generate_table($table_name, $xml_cols, $xml_cons);
-    }
-
-    /**
-     * Realiza comprobaciones extra a la tabla.
-     * @param string $table_name
+     * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
+     * @param string $name
+     * @param array $list
      * @return boolean
      */
-    public function check_table_aux($table_name)
+    public function table_exists($name, $list = FALSE)
     {
-        return self::$engine->check_table_aux($table_name);
+        $result = FALSE;
+
+        if ($list === FALSE) {
+            $list = $this->list_tables();
+        }
+
+        foreach ($list as $table) {
+            if ($table['name'] == $name) {
+                $result = TRUE;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Devuelve el motor de base de datos usado y la versión.
+     * @return string
+     */
+    public function version()
+    {
+        return self::$engine->version();
     }
 }

@@ -317,8 +317,10 @@ class fs_mysql extends fs_db_engine
             }
 
             if (self::$link->errno) {
-                self::$core_log->new_error('Error al ejecutar la consulta ' . $i . ': ' . self::$link->error .
-                    '. La secuencia ocupa la posición ' . count(self::$core_log->get_sql_history()));
+                $error = 'Error al ejecutar la consulta ' . $i . ': ' . self::$link->error .
+                    '. La secuencia ocupa la posición ' . count(self::$core_log->get_sql_history());
+                self::$core_log->new_error($error);
+                self::$core_log->save($error);
             } else {
                 $result = TRUE;
             }
@@ -556,6 +558,7 @@ class fs_mysql extends fs_db_engine
             } else {
                 /// añadimos el error a la lista de errores
                 self::$core_log->new_error(self::$link->error);
+                self::$core_log->save(self::$link->error);
             }
 
             /// aumentamos el contador de selects realizados
