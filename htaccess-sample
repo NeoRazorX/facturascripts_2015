@@ -11,3 +11,9 @@ Options -Indexes
    php_value post_max_size 99M
    php_value upload_max_filesize 99M
 </IfModule>
+
+<ifModule mod_headers.c>
+   Header always set X-Frame-Options DENY
+   Header always set X-Frame-Options SAMEORIGIN
+   Header always set X-Content-Type-Options nosniff
+</ifModule>

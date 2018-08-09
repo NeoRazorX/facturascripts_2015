@@ -22,12 +22,12 @@ foreach (['FS_TMP_NAME', 'FS_PATH', 'FS_MYDOCS'] as $name) {
     }
 }
 
-if (FS_TMP_NAME != '' && !file_exists('tmp/' . FS_TMP_NAME)) {
-    if (!file_exists('tmp') && mkdir('tmp')) {
-        file_put_contents('tmp/index.php', "<?php\necho 'ACCESO DENEGADO';");
+if (FS_TMP_NAME != '' && !file_exists(FS_FOLDER . '/tmp/' . FS_TMP_NAME)) {
+    if (!file_exists(FS_FOLDER . '/tmp') && mkdir(FS_FOLDER . '/tmp')) {
+        file_put_contents(FS_FOLDER . '/tmp/index.php', "<?php\necho 'ACCESO DENEGADO';");
     }
 
-    mkdir('tmp/' . FS_TMP_NAME);
+    mkdir(FS_FOLDER . '/tmp/' . FS_TMP_NAME);
 }
 
 if (!defined('FS_COMMUNITY_URL')) {
@@ -72,8 +72,8 @@ $GLOBALS['config2'] = array(
     'db_integer' => 'INTEGER'
 );
 
-if (file_exists('tmp/' . FS_TMP_NAME . 'config2.ini')) {
-    $ini_data = parse_ini_file('tmp/' . FS_TMP_NAME . 'config2.ini');
+if (file_exists(FS_FOLDER . '/tmp/' . FS_TMP_NAME . 'config2.ini')) {
+    $ini_data = parse_ini_file(FS_FOLDER . '/tmp/' . FS_TMP_NAME . 'config2.ini');
     foreach ($ini_data as $i => $value) {
         $GLOBALS['config2'][$i] = $value;
     }
@@ -94,8 +94,8 @@ if (!file_exists('plugins')) {
 
 /// Cargamos la lista de plugins activos
 $GLOBALS['plugins'] = [];
-if (file_exists('tmp/' . FS_TMP_NAME . 'enabled_plugins.list')) {
-    $list = explode(',', file_get_contents('tmp/' . FS_TMP_NAME . 'enabled_plugins.list'));
+if (file_exists(FS_FOLDER . '/tmp/' . FS_TMP_NAME . 'enabled_plugins.list')) {
+    $list = explode(',', file_get_contents(FS_FOLDER . '/tmp/' . FS_TMP_NAME . 'enabled_plugins.list'));
     if (!empty($list)) {
         foreach ($list as $f) {
             if (file_exists('plugins/' . $f)) {
@@ -107,7 +107,7 @@ if (file_exists('tmp/' . FS_TMP_NAME . 'enabled_plugins.list')) {
 
 /// cargamos las funciones de los plugins
 foreach ($GLOBALS['plugins'] as $plug) {
-    if (file_exists('plugins/' . $plug . '/functions.php')) {
+    if (file_exists(FS_FOLDER . '/plugins/' . $plug . '/functions.php')) {
         require_once 'plugins/' . $plug . '/functions.php';
     }
 }

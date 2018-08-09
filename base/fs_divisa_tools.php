@@ -25,30 +25,43 @@
 class fs_divisa_tools
 {
 
-    private $divisa_model;
-    private $divisas;
-    private $empresa;
+    /**
+     *
+     * @var string
+     */
+    private static $coddivisa;
 
-    public function __construct(&$empresa)
+    /**
+     *
+     * @var array
+     */
+    private static $divisas;
+
+    public function __construct($coddivisa = '')
     {
-        $this->divisa_model = new divisa();
-        $this->divisas = $this->divisa_model->all();
-        $this->empresa = $empresa;
+        if (!isset(self::$coddivisa)) {
+            self::$coddivisa = $coddivisa;
+
+            $divisa_model = new divisa();
+            self::$divisas = $divisa_model->all();
+        }
     }
 
     /**
      * Devuelve el símbolo de divisa predeterminado
      * o bien el símbolo de la divisa seleccionada.
+     * 
      * @param string $coddivisa
+     * 
      * @return string
      */
     public function simbolo_divisa($coddivisa = FALSE)
     {
         if ($coddivisa === FALSE) {
-            $coddivisa = $this->empresa->coddivisa;
+            $coddivisa = self::$coddivisa;
         }
 
-        foreach ($this->divisas as $divisa) {
+        foreach (self::$divisas as $divisa) {
             if ($divisa->coddivisa == $coddivisa) {
                 return $divisa->simbolo;
             }
@@ -60,16 +73,18 @@ class fs_divisa_tools
     /**
      * Devuelve un string con el precio en el formato predefinido y con la
      * divisa seleccionada (o la predeterminada).
-     * @param float $precio
+     * 
+     * @param float  $precio
      * @param string $coddivisa
      * @param string $simbolo
-     * @param integer $dec nº de decimales
+     * @param int    $dec nº de decimales
+     * 
      * @return string
      */
     public function show_precio($precio = 0, $coddivisa = FALSE, $simbolo = TRUE, $dec = FS_NF0)
     {
         if ($coddivisa === FALSE) {
-            $coddivisa = $this->empresa->coddivisa;
+            $coddivisa = self::$coddivisa;
         }
 
         if (FS_POS_DIVISA == 'right') {
@@ -89,9 +104,11 @@ class fs_divisa_tools
 
     /**
      * Devuelve un string con el número en el formato de número predeterminado.
-     * @param float $num
-     * @param integer $decimales
+     * 
+     * @param float   $num
+     * @param int     $decimales
      * @param boolean $js
+     * 
      * @return string
      */
     public function show_numero($num = 0, $decimales = FS_NF0, $js = FALSE)
@@ -107,34 +124,38 @@ class fs_divisa_tools
      * Convierte el precio en euros a la divisa preterminada de la empresa.
      * Por defecto usa las tasas de conversión actuales, pero si se especifica
      * coddivisa y tasaconv las usará.
-     * @param float $precio
+     * 
+     * @param float  $precio
      * @param string $coddivisa
-     * @param float $tasaconv
+     * @param float  $tasaconv
+     * 
      * @return float
      */
     public function euro_convert($precio, $coddivisa = NULL, $tasaconv = NULL)
     {
-        if ($this->empresa->coddivisa == 'EUR') {
+        if (self::$coddivisa == 'EUR') {
             return $precio;
         }
 
         if ($coddivisa !== NULL && $tasaconv !== NULL) {
-            if ($this->empresa->coddivisa == $coddivisa) {
+            if (self::$coddivisa == $coddivisa) {
                 return $precio * $tasaconv;
             }
 
             $original = $precio * $tasaconv;
-            return $this->divisa_convert($original, $coddivisa, $this->empresa->coddivisa);
+            return $this->divisa_convert($original, $coddivisa, self::$coddivisa);
         }
 
-        return $this->divisa_convert($precio, 'EUR', $this->empresa->coddivisa);
+        return $this->divisa_convert($precio, 'EUR', self::$coddivisa);
     }
 
     /**
      * Convierte un precio de la divisa_desde a la divisa especificada
-     * @param float $precio
+     * 
+     * @param float  $precio
      * @param string $coddivisa_desde
      * @param string $coddivisa
+     * 
      * @return float
      */
     public function divisa_convert($precio, $coddivisa_desde, $coddivisa)
@@ -143,7 +164,7 @@ class fs_divisa_tools
             $divisa = $divisa_desde = FALSE;
 
             /// buscamos las divisas en la lista
-            foreach ($this->divisas as $div) {
+            foreach (self::$divisas as $div) {
                 if ($div->coddivisa == $coddivisa) {
                     $divisa = $div;
                 } else if ($div->coddivisa == $coddivisa_desde) {

@@ -39,7 +39,7 @@ $db = new fs_db2();
 
 require_once 'base/fs_default_items.php';
 
-require_once 'base/fs_model.php';
+require_once 'base/fs_extended_model.php';
 require_once 'base/fs_log_manager.php';
 require_all_models();
 

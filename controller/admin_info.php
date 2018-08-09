@@ -43,21 +43,71 @@ class admin_info extends fs_list_controller
         parent::__construct(__CLASS__, 'Información del sistema', 'admin', TRUE, TRUE);
     }
 
+    public function cache_version()
+    {
+        return $this->cache->version();
+    }
+
+    public function fs_db_name()
+    {
+        return FS_DB_NAME;
+    }
+
+    public function fs_db_version()
+    {
+        return $this->db->version();
+    }
+
+    public function get_locks()
+    {
+        return $this->db->get_locks();
+    }
+
+    public function php_version()
+    {
+        return phpversion();
+    }
+
     protected function create_tabs()
     {
-        $this->add_tab('logs', 'Historal', 'fs_logs', [
-            'fecha' => 'datetime',
-            'usuario' => 'text',
-            'tipo' => 'text',
-            'detalle' => 'text',
-            'ip' => 'text',
-            'controlador' => 'text',
-            ], 'fa-book');
+        /// pestaña historial
+        $this->add_tab('logs', 'Historal', 'fs_logs', 'fa-book');
         $this->add_search_columns('logs', ['usuario', 'tipo', 'detalle', 'ip', 'controlador']);
         $this->add_sort_option('logs', ['fecha'], 2);
+        $this->add_button('logs', 'Borrar', $this->url() . '&action=remove-all', 'fa-trash', 'btn-danger');
+
+        /// filtros
+        $tipos = $this->sql_distinct('fs_logs', 'tipo');
+        $this->add_filter_select('logs', 'tipo', 'tipo', $tipos);
+        $this->add_filter_date('logs', 'fecha', 'desde', '>=');
+        $this->add_filter_date('logs', 'fecha', 'hasta', '<=');
+        $this->add_filter_checkbox('logs', 'alerta', 'alerta');
+
+        /// decoración
+        $this->decoration->add_column('logs', 'fecha', 'date');
+        $this->decoration->add_column('logs', 'alerta', 'bool');
+        $this->decoration->add_column('logs', 'usuario');
+        $this->decoration->add_column('logs', 'tipo');
+        $this->decoration->add_column('logs', 'detalle');
+        $this->decoration->add_column('logs', 'ip');
+        $this->decoration->add_column('logs', 'controlador', 'string', 'página', 'text-right', 'index.php?page=');
+        $this->decoration->add_row_option('logs', 'alerta', true, 'danger');
+        $this->decoration->add_row_option('logs', 'tipo', 'error', 'danger');
+        $this->decoration->add_row_option('logs', 'tipo', 'msg', 'success');
 
         /// cargamos una plantilla propia para la parte de arriba
         $this->template_top = 'block/admin_info_top';
+    }
+
+    protected function exec_previous_action($action)
+    {
+        switch ($action) {
+            case 'remove-all':
+                return $this->remove_all_action();
+
+            default:
+                return parent::exec_previous_action($action);
+        }
     }
 
     protected function private_core()
@@ -72,10 +122,11 @@ class admin_info extends fs_list_controller
          */
         $this->fsvar = new fs_var();
         $cron_vars = $this->fsvar->array_get(
-            array(
+            [
                 'cron_exists' => FALSE,
                 'cron_lock' => FALSE,
-                'cron_error' => FALSE)
+                'cron_error' => FALSE
+            ]
         );
 
         if (isset($_GET['fix'])) {
@@ -99,28 +150,13 @@ class admin_info extends fs_list_controller
         }
     }
 
-    public function php_version()
+    protected function remove_all_action()
     {
-        return phpversion();
-    }
+        $sql = "DELETE FROM fs_logs;";
+        if ($this->db->exec($sql)) {
+            $this->new_message('Historial borrado correctamente.', true);
+        }
 
-    public function cache_version()
-    {
-        return $this->cache->version();
-    }
-
-    public function fs_db_name()
-    {
-        return FS_DB_NAME;
-    }
-
-    public function fs_db_version()
-    {
-        return $this->db->version();
-    }
-
-    public function get_locks()
-    {
-        return $this->db->get_locks();
+        return true;
     }
 }

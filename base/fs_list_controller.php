@@ -16,6 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+require_once 'base/fs_list_decoration.php';
+require_once 'base/fs_list_filter_checkbox.php';
+require_once 'base/fs_list_filter_date.php';
+require_once 'base/fs_list_filter_select.php';
 
 /**
  * Controlador específico para listados.
@@ -32,10 +36,17 @@ abstract class fs_list_controller extends fs_controller
     public $active_tab = '';
 
     /**
+     * TRUE si el usuario tiene permisos para eliminar en la página.
      *
-     * @var array
+     * @var boolean 
      */
-    private $model_objects = [];
+    public $allow_delete;
+
+    /**
+     *
+     * @var fs_list_decoration
+     */
+    public $decoration;
 
     /**
      *
@@ -59,6 +70,12 @@ abstract class fs_list_controller extends fs_controller
      *
      * @var string
      */
+    public $template_bottom = '';
+
+    /**
+     *
+     * @var string
+     */
     public $template_top = '';
 
     abstract protected function create_tabs();
@@ -66,51 +83,16 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      * @param string $col_name
+     *
      * @return array
      */
     public function get_current_tab($col_name)
     {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return [];
+        }
+
         return $this->tabs[$this->active_tab][$col_name];
-    }
-
-    /**
-     * 
-     * @param string $col_name
-     * @param string $col_type
-     * @param array  $row
-     * @param array  $css_class
-     * @return string
-     */
-    public function get_decoration($col_name, $col_type, $row, $css_class = [])
-    {
-        $final_value = $row[$col_name];
-        switch ($col_type) {
-            case 'date':
-                $final_value = date('d-m-Y', strtotime($final_value));
-                break;
-
-            case 'timestamp':
-            case 'datetime':
-                $final_value = date('d-m-Y H:i:s', strtotime($final_value));
-                break;
-
-            case 'money':
-                $final_value = $this->show_precio($final_value);
-                break;
-
-            case 'number':
-                $final_value = $this->show_numero($final_value);
-                break;
-        }
-
-        if (in_array($col_type, ['money', 'number'])) {
-            $css_class[] = 'text-right';
-            if ($final_value <= 0) {
-                $css_class[] = 'warning';
-            }
-        }
-
-        return '<td class="' . implode(' ', $css_class) . '">' . $final_value . '</td>';
     }
 
     /**
@@ -119,9 +101,14 @@ abstract class fs_list_controller extends fs_controller
      */
     public function get_pagination()
     {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return [];
+        }
+
         $pages = [];
         $i = $num = 0;
         $current = 1;
+
         /// añadimos todas la página
         while ($num < $this->tabs[$this->active_tab]['count']) {
             $pages[$i] = [
@@ -135,6 +122,7 @@ abstract class fs_list_controller extends fs_controller
             $i++;
             $num += FS_ITEM_LIMIT;
         }
+
         /// ahora descartamos
         foreach (array_keys($pages) as $j) {
             $enmedio = intval($i / 2);
@@ -146,7 +134,80 @@ abstract class fs_list_controller extends fs_controller
                 unset($pages[$j]);
             }
         }
+
         return (count($pages) > 1) ? $pages : [];
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $label
+     * @param string $link
+     * @param string $icon
+     * @param string $class
+     * @param string $id
+     * @param string $target
+     */
+    protected function add_button($tab_name, $label, $link = '#', $icon = '', $class = 'btn-default', $id = '', $target = '')
+    {
+        $this->tabs[$tab_name]['buttons'][] = [
+            'class' => $class,
+            'icon' => $icon,
+            'id' => $id,
+            'label' => $label,
+            'link' => $link,
+            'target' => $target,
+        ];
+    }
+
+    /**
+     * 
+     * @param string         $tab_name
+     * @param fs_list_filter $filter
+     */
+    protected function add_filter($tab_name, $filter)
+    {
+        $this->tabs[$tab_name]['filters'][] = $filter;
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $col_name
+     * @param string $label
+     * @param string $operation
+     * @param mixed  $match_value
+     */
+    protected function add_filter_checkbox($tab_name, $col_name, $label, $operation = '=', $match_value = true)
+    {
+        $filter = new fs_list_filter_checkbox($col_name, $label, $operation, $match_value);
+        $this->add_filter($tab_name, $filter);
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $col_name
+     * @param string $label
+     * @param string $operation
+     */
+    protected function add_filter_date($tab_name, $col_name, $label, $operation)
+    {
+        $filter = new fs_list_filter_date($col_name, $label, $operation);
+        $this->add_filter($tab_name, $filter);
+    }
+
+    /**
+     * 
+     * @param string $tab_name
+     * @param string $col_name
+     * @param string $label
+     * @param array  $values
+     */
+    protected function add_filter_select($tab_name, $col_name, $label, $values)
+    {
+        $filter = new fs_list_filter_select($col_name, $label, $values);
+        $this->add_filter($tab_name, $filter);
     }
 
     /**
@@ -166,6 +227,7 @@ abstract class fs_list_controller extends fs_controller
      * @param string $tab_name
      * @param array  $cols
      * @param int    $default
+     *
      * @return bool
      */
     protected function add_sort_option($tab_name, $cols, $default = 0)
@@ -198,16 +260,16 @@ abstract class fs_list_controller extends fs_controller
      * @param string $tab_name
      * @param string $title
      * @param string $table
-     * @param array  $columns
      * @param string $icon
      */
-    protected function add_tab($tab_name, $title, $table, $columns = [], $icon = 'fa-files-o')
+    protected function add_tab($tab_name, $title, $table, $icon = 'fa-files-o')
     {
         $this->tabs[$tab_name] = [
-            'columns' => $columns,
+            'buttons' => [],
             'count' => 0,
             'cursor' => [],
             'default_sort' => '',
+            'filters' => [],
             'icon' => $icon,
             'name' => $tab_name,
             'search_columns' => [],
@@ -219,29 +281,28 @@ abstract class fs_list_controller extends fs_controller
 
     /**
      * 
-     * @param string $model_class_name
-     * @param string $code
-     * @return mixed
+     * @param string $action
      */
-    protected function get_model_object($model_class_name, $code)
+    protected function exec_after_action($action)
     {
-        if (isset($this->model_objects[$model_class_name][$code])) {
-            return $this->model_objects[$model_class_name][$code];
-        }
+        ;
+    }
 
-        $model = new $model_class_name();
-        $object = $model->get($code);
-        if ($object) {
-            $this->model_objects[$model_class_name][$code] = $object;
-            return $object;
-        }
-
-        return $model;
+    /**
+     * 
+     * @param string $action
+     *
+     * @return boolean
+     */
+    protected function exec_previous_action($action)
+    {
+        return true;
     }
 
     /**
      * 
      * @param string $tab_name
+     *
      * @return bool
      */
     protected function load_data($tab_name)
@@ -259,7 +320,7 @@ abstract class fs_list_controller extends fs_controller
         }
 
         /// cursor
-        if ($tab_name == $this->active_tab) {
+        if ($tab_name === $this->active_tab) {
             $sql2 = "SELECT * " . $this->load_data_from_where($tab_name) . $this->load_data_order_by();
             $this->tabs[$tab_name]['cursor'] = $this->db->select_limit($sql2, FS_ITEM_LIMIT, $this->offset);
         }
@@ -270,18 +331,29 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      * @param string $tab_name
+     *
      * @return string
      */
     protected function load_data_from_where($tab_name)
     {
-        $query = mb_strtolower($this->empresa->no_html($this->query), 'UTF8');
         $sql = "FROM " . $this->tabs[$tab_name]['table'];
+        if ($tab_name != $this->active_tab) {
+            return $sql;
+        }
 
-        if ($tab_name == $this->active_tab && !empty($query)) {
-            $sql .= " WHERE 1 != 1";
+        $sql .= " WHERE 1 = 1";
+        $query = mb_strtolower($this->empresa->no_html($this->query), 'UTF8');
+        if (!empty($query)) {
+            $sql .= ' AND (1 != 1';
             foreach ($this->tabs[$tab_name]['search_columns'] as $col) {
                 $sql .= " OR LOWER(" . $col . ") LIKE '%" . $query . "%'";
             }
+            $sql .= ')';
+        }
+
+        /// filtros
+        foreach ($this->tabs[$tab_name]['filters'] as $filter) {
+            $sql .= $filter->get_where();
         }
 
         return $sql;
@@ -308,15 +380,27 @@ abstract class fs_list_controller extends fs_controller
      */
     protected function private_core()
     {
+        /// ¿El usuario tiene permiso para eliminar en esta página?
+        $this->allow_delete = $this->user->allow_delete_on($this->class_name);
+
+        $this->decoration = new fs_list_decoration();
         $this->template = 'master/list_controller';
         $this->offset = isset($_REQUEST['offset']) ? (int) $_REQUEST['offset'] : 0;
         $this->create_tabs();
         $this->set_active_tab();
+        $this->set_filter_values();
         $this->set_sort_option();
+
+        $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+        if (!$this->exec_previous_action($action)) {
+            return;
+        }
 
         foreach ($this->tabs as $tab) {
             $this->load_data($tab['name']);
         }
+
+        $this->exec_after_action($action);
     }
 
     /**
@@ -338,8 +422,27 @@ abstract class fs_list_controller extends fs_controller
     /**
      * 
      */
+    protected function set_filter_values()
+    {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return;
+        }
+
+        foreach ($this->tabs[$this->active_tab]['filters'] as $key => $filter) {
+            $value = isset($_POST[$filter->name()]) ? $_POST[$filter->name()] : $filter->value;
+            $this->tabs[$this->active_tab]['filters'][$key]->value = $value;
+        }
+    }
+
+    /**
+     * 
+     */
     private function set_sort_option()
     {
+        if (!isset($this->tabs[$this->active_tab])) {
+            return;
+        }
+
         foreach (array_keys($this->tabs[$this->active_tab]['sort_options']) as $option) {
             if (empty($this->sort_option)) {
                 $default = $this->tabs[$this->active_tab]['default_sort'];
@@ -350,5 +453,34 @@ abstract class fs_list_controller extends fs_controller
                 $this->sort_option = $option;
             }
         }
+    }
+
+    /**
+     * 
+     * @param string $tabla
+     * @param string $columna1
+     * @param string $columna2
+     *
+     * @return array
+     */
+    protected function sql_distinct($tabla, $columna1, $columna2 = '')
+    {
+        if (!$this->db->table_exists($tabla)) {
+            return [];
+        }
+
+        $columna2 = empty($columna2) ? $columna1 : $columna2;
+        $final = [];
+        $sql = "SELECT DISTINCT " . $columna1 . ", " . $columna2 . " FROM " . $tabla . " ORDER BY " . $columna2 . " ASC;";
+        $data = $this->db->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                if ($d[$columna1] != '') {
+                    $final[$d[$columna1]] = $d[$columna2];
+                }
+            }
+        }
+
+        return $final;
     }
 }

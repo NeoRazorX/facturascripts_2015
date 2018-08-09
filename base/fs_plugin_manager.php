@@ -109,7 +109,7 @@ class fs_plugin_manager
 
         if ($this->save()) {
             $this->core_log->new_message('Plugin <b>' . $plugin_name . '</b> desactivado correctamente.');
-            $this->core_log->save('Plugin ' . $plugin_name . ' desactivado correctamente.');
+            $this->core_log->save('Plugin ' . $plugin_name . ' desactivado correctamente.', 'msg');
         } else {
             $this->core_log->new_error('Imposible desactivar el plugin <b>' . $plugin_name . '</b>.');
             return false;
@@ -307,7 +307,7 @@ class fs_plugin_manager
 
         $this->enable_plugin_controllers($name);
         $this->core_log->new_message('Plugin <b>' . $name . '</b> activado correctamente.');
-        $this->core_log->save('Plugin ' . $name . ' activado correctamente.');
+        $this->core_log->save('Plugin ' . $name . ' activado correctamente.', 'msg');
         $this->clean_cache();
         return true;
     }
@@ -478,8 +478,8 @@ class fs_plugin_manager
             $plugin['error_msg'] = 'Requiere FacturaScripts ' . $plugin['min_version'];
         }
 
-        if (file_exists('plugins/' . $plugin_name . '/description')) {
-            $plugin['description'] = file_get_contents('plugins/' . $plugin_name . '/description');
+        if (file_exists(FS_FOLDER . '/plugins/' . $plugin_name . '/description')) {
+            $plugin['description'] = file_get_contents(FS_FOLDER . '/plugins/' . $plugin_name . '/description');
         }
 
         if (isset($ini_file['require']) && $ini_file['require'] != '') {

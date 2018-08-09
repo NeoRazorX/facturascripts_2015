@@ -1,7 +1,7 @@
 {include="header"}
 
 {if="$fsc->template_top"}
-    {include="$fsc->template_top"}
+{include="$fsc->template_top"}
 {else}
 <div class="container-fluid" style="margin-bottom: 10px;">
     <div class="row">
@@ -61,6 +61,16 @@
     <input type="hidden" name="offset" value="{$fsc->offset}"/>
     <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
         <div class="row">
+            {if="count($fsc->get_current_tab('buttons')) > 0"}
+            <div class="col-sm-2">
+                <div class="btn-group">
+                    {loop="$fsc->get_current_tab('buttons')"}
+                    <!--{$icon=''}{if="$value.icon"}{$icon='<i class="fa ' . $value.icon . '" aria-hidden="true"></i>&nbsp; '}{/if}-->
+                    <a href="{$value.link}" target="{$value.target}" id="{$value.id}" class="btn btn-sm {$value.class}">{$icon}{$value.label}</a>
+                    {/loop}
+                </div>
+            </div>
+            {/if}
             <div class="col-sm-2">
                 <div class="input-group">
                     <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" autofocus="" placeholder="Buscar"/>
@@ -71,6 +81,11 @@
                     </span>
                 </div>
             </div>
+            {loop="$fsc->get_current_tab('filters')"}
+            <div class="col-sm-2">
+                {$value->show()}
+            </div>
+            {/loop}
             <div class="col-sm-2">
                 <div class="input-group">
                     <div class="input-group-addon">
@@ -95,19 +110,15 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                {loop="$fsc->get_current_tab('columns')"}
-                {if="in_array($value, ['money', 'number'])"}
-                <th class="text-right">{$key}</th>
-                {else}
-                <th>{$key}</th>
-                {/if}
+                {loop="$fsc->decoration->get_columns($fsc->active_tab)"}
+                <th class="{$value.class}">{$value.title}</th>
                 {/loop}
             </tr>
         </thead>
         {loop="$fsc->get_current_tab('cursor')"}
-        <tr>
-            {loop="$fsc->get_current_tab('columns')"}
-            {$fsc->get_decoration($key2, $value2, $value1)}
+        <tr class="{$fsc->decoration->row_class($fsc->active_tab, $value1)}">
+            {loop="$fsc->decoration->get_columns($fsc->active_tab)"}
+            {$fsc->decoration->show($key2, $value2, $value1)}
             {/loop}
         </tr>
         {else}
@@ -123,13 +134,17 @@
         <div class="col-sm-12 text-center">
             <ul class="pagination">
                 {loop="$fsc->get_pagination()"}
-                <li{if="$value['active']"} class="active"{/if}>
-                    <a href="#" onclick="document.f_custom_search.offset.value = '{$value['offset']}';document.f_custom_search.submit();">{$value['num']}</a>
+                <li{if="$value.active"} class="active"{/if}>
+                    <a href="#" onclick="document.f_custom_search.offset.value = '{$value.offset}';document.f_custom_search.submit();">{$value.num}</a>
                 </li>
                 {/loop}
             </ul>
         </div>
     </div>
 </div>
+
+{if="$fsc->template_bottom"}
+{include="$fsc->template_bottom"}
+{/if}
 
 {include="footer"}
