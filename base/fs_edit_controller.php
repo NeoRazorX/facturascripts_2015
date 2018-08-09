@@ -118,7 +118,7 @@ abstract class fs_edit_controller extends fs_controller
         /// cargamos el modelo
         $model_class = $this->get_model_class_name();
         $this->model = new $model_class();
-        if (isset($_REQUEST['code'])) {
+        if (isset($_REQUEST['code']) && !empty($_REQUEST['code'])) {
             $this->model->load_from_code($_REQUEST['code']);
         }
 

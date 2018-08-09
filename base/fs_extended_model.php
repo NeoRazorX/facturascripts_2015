@@ -26,6 +26,12 @@ require_once 'base/fs_model.php';
 abstract class fs_extended_model extends fs_model
 {
 
+    /**
+     *
+     * @var array
+     */
+    private static $model_fields = [];
+
     abstract public function model_class_name();
 
     abstract public function primary_column();
@@ -50,7 +56,7 @@ abstract class fs_extended_model extends fs_model
      */
     public function clear()
     {
-        foreach ($this->get_model_fields() as $field) {
+        foreach (array_keys($this->get_model_fields()) as $field) {
             $this->{$field} = null;
         }
     }
@@ -101,12 +107,15 @@ abstract class fs_extended_model extends fs_model
      */
     public function get_model_fields()
     {
-        $fields = [];
-        foreach ($this->db->get_columns($this->table_name()) as $column) {
-            $fields[] = $column['name'];
+        $table_name = $this->table_name();
+        if (!isset(self::$model_fields[$table_name])) {
+            self::$model_fields[$table_name] = [];
+            foreach ($this->db->get_columns($table_name) as $column) {
+                self::$model_fields[$table_name][$column['name']] = $column['type'];
+            }
         }
 
-        return $fields;
+        return self::$model_fields[$table_name];
     }
 
     /**
@@ -133,8 +142,39 @@ abstract class fs_extended_model extends fs_model
      */
     public function load_from_data($data)
     {
-        foreach ($this->get_model_fields() as $field) {
-            $this->{$field} = isset($data[$field]) ? $data[$field] : null;
+        $fields = $this->get_model_fields();
+        foreach ($data as $key => $value) {
+            if (!isset($fields[$key])) {
+                $this->{$key} = $value;
+                continue;
+            }
+
+            $field_type = $fields[$key];
+            $type = (strpos($field_type, '(') === false) ? $field_type : substr($field_type, 0, strpos($field_type, '('));
+            switch ($type) {
+                case 'tinyint':
+                case 'boolean':
+                    $this->{$key} = $this->str2bool($value);
+                    break;
+
+                case 'integer':
+                case 'int':
+                    $this->{$key} = $this->intval($value);
+                    break;
+
+                case 'double':
+                case 'double precision':
+                case 'float':
+                    $this->{$key} = empty($value) ? 0.00 : (float) $value;
+                    break;
+
+                case 'date':
+                    $this->{$key} = empty($value) ? null : date('d-m-Y', strtotime($value));
+                    break;
+
+                default:
+                    $this->{$key} = $value;
+            }
         }
     }
 
@@ -178,6 +218,9 @@ abstract class fs_extended_model extends fs_model
             case 'list':
                 return $list_url;
 
+            case 'new':
+                return 'index.php?page=edit_' . $this->model_class_name();
+
             default:
                 return is_null($this->primary_column_value()) ? $list_url : $edit_url;
         }
@@ -191,7 +234,7 @@ abstract class fs_extended_model extends fs_model
     {
         $columns = [];
         $values = [];
-        foreach ($this->get_model_fields() as $field) {
+        foreach (array_keys($this->get_model_fields()) as $field) {
             if ($field != $this->primary_column()) {
                 $columns[] = $field;
                 $values[] = $this->var2str($this->{$field});
@@ -218,7 +261,7 @@ abstract class fs_extended_model extends fs_model
     {
         $sql = 'UPDATE ' . $this->table_name();
         $coma = ' SET ';
-        foreach ($this->get_model_fields() as $field) {
+        foreach (array_keys($this->get_model_fields()) as $field) {
             if ($field == $this->primary_column()) {
                 continue;
             }
