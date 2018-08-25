@@ -70,7 +70,7 @@ class fs_login
         $ip = fs_get_ip();
         $nick = filter_input(INPUT_POST, 'user');
         if ($this->ip_filter->is_banned($ip)) {
-            $this->ip_filter->setAttempt($ip);
+            $this->ip_filter->set_attempt($ip);
             $this->core_log->new_error('Tu IP ha sido baneada, ' . $nick . '. ' . $this->ban_message);
             $this->core_log->save('Tu IP ha sido baneada, ' . $nick . '. ' . $this->ban_message);
             return FALSE;
