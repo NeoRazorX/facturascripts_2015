@@ -107,6 +107,21 @@ abstract class fs_edit_controller extends fs_controller
         return false;
     }
 
+    private function load_model()
+    {
+        $model_class = $this->get_model_class_name();
+
+        if (!is_subclass_of($model_class, 'fs_extended_model')) {
+            $this->new_error_msg('El modelo ' . $model_class . ' debe heredar de fs_extended_model para poder usar este controlador.');
+            return;
+        }
+
+        $this->model = new $model_class();
+        if (isset($_REQUEST['code']) && !empty($_REQUEST['code'])) {
+            $this->model->load_from_code($_REQUEST['code']);
+        }
+    }
+
     protected function private_core()
     {
         /// ¿El usuario tiene permiso para eliminar en esta página?
@@ -116,11 +131,7 @@ abstract class fs_edit_controller extends fs_controller
         $this->template = 'master/edit_controller';
 
         /// cargamos el modelo
-        $model_class = $this->get_model_class_name();
-        $this->model = new $model_class();
-        if (isset($_REQUEST['code']) && !empty($_REQUEST['code'])) {
-            $this->model->load_from_code($_REQUEST['code']);
-        }
+        $this->load_model();
 
         $this->set_edit_columns();
 
