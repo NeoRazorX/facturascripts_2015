@@ -28,25 +28,25 @@ class admin_home extends fs_controller
 
     /**
      *
-     * @var fs_var
+     * @var \fs_var
      */
     private $fs_var;
 
     /**
      *
-     * @var fs_page[]
+     * @var \fs_page[]
      */
     public $paginas;
 
     /**
      *
-     * @var fs_plugin_manager
+     * @var \fs_plugin_manager
      */
     public $plugin_manager;
 
     /**
      *
-     * @var fs_settings
+     * @var \fs_settings
      */
     public $settings;
 
@@ -63,6 +63,7 @@ class admin_home extends fs_controller
 
     /**
      * Comprueba actualizaciones de los plugins y del núcleo.
+     *
      * @return boolean
      */
     public function check_for_updates2()
@@ -127,7 +128,7 @@ class admin_home extends fs_controller
         $this->fs_var = new fs_var();
         $this->plugin_manager = new fs_plugin_manager();
         $this->settings = new fs_settings();
-        $this->step = $this->fs_var->simple_get('install_step');
+        $this->step = (string) $this->fs_var->simple_get('install_step');
 
         $this->exec_actions();
 
@@ -219,7 +220,8 @@ class admin_home extends fs_controller
 
     /**
      * Devuelve las páginas/controladore de los plugins activos.
-     * @return \fs_page
+     *
+     * @return \fs_page[]
      */
     private function all_pages()
     {
@@ -295,7 +297,8 @@ class admin_home extends fs_controller
     }
 
     /**
-     * Elimina el plugin del directorio
+     * Elimina el plugin del directorio.
+     * 
      * @param string $name
      */
     private function delete_plugin($name)
@@ -305,6 +308,7 @@ class admin_home extends fs_controller
 
     /**
      * Desactiva una página/controlador.
+     * 
      * @param fs_page $page
      */
     private function disable_page($page)
@@ -321,7 +325,8 @@ class admin_home extends fs_controller
     }
 
     /**
-     * Desactiva un plugin
+     * Desactiva un plugin.
+     *
      * @param string $name
      */
     private function disable_plugin($name)
@@ -339,7 +344,8 @@ class admin_home extends fs_controller
 
     /**
      * Activa una página/controlador.
-     * @param fs_page $page
+     * 
+     * @param \fs_page $page
      */
     private function enable_page($page)
     {
@@ -391,7 +397,8 @@ class admin_home extends fs_controller
     }
 
     /**
-     * Activa un plugin
+     * Activa un plugin.
+     *
      * @param string $name
      */
     private function enable_plugin($name)

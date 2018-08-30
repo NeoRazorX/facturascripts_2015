@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,12 +27,14 @@ class fs_var extends fs_model
 
     /**
      * Clave primaria. Varchar(35).
+     *
      * @var string 
      */
     public $name;
 
     /**
      * Valor almacenado. Text.
+     *
      * @var string 
      */
     public $varchar;
@@ -47,11 +49,6 @@ class fs_var extends fs_model
             $this->name = NULL;
             $this->varchar = NULL;
         }
-    }
-
-    protected function install()
-    {
-        return '';
     }
 
     public function exists()
@@ -90,7 +87,8 @@ class fs_var extends fs_model
 
     /**
      * Devuelve un array con todos los elementos de la tabla.
-     * @return \fs_var
+     *
+     * @return \fs_var[]
      */
     public function all()
     {
@@ -108,8 +106,10 @@ class fs_var extends fs_model
 
     /**
      * Devuelve el valor de una clave dada.
+     * 
      * @param string $name
-     * @return boolean
+     * 
+     * @return string|boolean
      */
     public function simple_get($name)
     {
@@ -123,8 +123,10 @@ class fs_var extends fs_model
 
     /**
      * Almacena el par clave/valor proporcionado.
+     * 
      * @param string $name
      * @param string $value
+     * 
      * @return boolean
      */
     public function simple_save($name, $value)
@@ -147,7 +149,9 @@ class fs_var extends fs_model
 
     /**
      * Elimina de la base de datos la tupla con ese nombre.
+     * 
      * @param string $name
+     * 
      * @return boolean
      */
     public function simple_delete($name)
