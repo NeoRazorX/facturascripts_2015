@@ -193,7 +193,7 @@ class fs_controller extends fs_app
                 $this->fs_updated = FALSE;
             } else {
                 $fsvar = new fs_var();
-                $this->fs_updated = $fsvar->simple_get('updates');
+                $this->fs_updated = (bool) $fsvar->simple_get('updates');
             }
         }
 
