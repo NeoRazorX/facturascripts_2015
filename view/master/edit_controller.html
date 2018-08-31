@@ -20,7 +20,12 @@
         </div>
         <div class="col-sm-6 text-right">
             <span class="h2 text-capitalize">
-                {$fsc->page->folder} / {$fsc->page->title} / {$fsc->model->primary_column_value()}
+                {$fsc->page->folder} / {$fsc->page->title} /
+                {if="empty($fsc->model->primary_column_value())"}
+                <b>Nuevo</b>
+                {else}
+                {$fsc->model->primary_column_value()}
+                {/if}
             </span>
         </div>
     </div>
