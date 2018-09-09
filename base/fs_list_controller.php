@@ -319,6 +319,11 @@ abstract class fs_list_controller extends fs_controller
             $this->tabs[$tab_name]['count'] = (int) $data[0]['num'];
         }
 
+        /// ¿bad offset?
+        if ($tab_name === $this->active_tab && $this->offset > $this->tabs[$tab_name]['count']) {
+            $this->offset = 0;
+        }
+
         /// cursor
         if ($tab_name === $this->active_tab) {
             $sql2 = "SELECT * " . $this->load_data_from_where($tab_name) . $this->load_data_order_by();
