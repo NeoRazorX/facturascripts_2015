@@ -33,12 +33,14 @@ class fs_settings
     {
         $zones_array = [];
         $timestamp = time();
+        $timezone = date_default_timezone_get();
         foreach (timezone_identifiers_list() as $key => $zone) {
             date_default_timezone_set($zone);
             $zones_array[$key]['zone'] = $zone;
             $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
         }
 
+        date_default_timezone_set($timezone);
         return $zones_array;
     }
 
