@@ -71,6 +71,8 @@
                 </div>
             </div>
             {/if}
+            <!--{$search_columns=$fsc->get_current_tab('search_columns')}-->
+            {if="count($search_columns) > 0"}
             <div class="col-sm-2">
                 <div class="input-group">
                     <input class="form-control" type="text" name="query" value="{$fsc->query}" autocomplete="off" autofocus="" placeholder="Buscar"/>
@@ -81,18 +83,21 @@
                     </span>
                 </div>
             </div>
+            {/if}
             {loop="$fsc->get_current_tab('filters')"}
             <div class="col-sm-2">
                 {$value->show()}
             </div>
             {/loop}
+            <!--{$sort_options=$fsc->get_current_tab('sort_options')}-->
+            {if="count($sort_options) > 0"}
             <div class="col-sm-2">
                 <div class="input-group">
                     <div class="input-group-addon">
                         <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
                     </div>
                     <select name="sort" class="form-control" onchange="this.form.submit();">
-                        {loop="$fsc->get_current_tab('sort_options')"}
+                        {loop="$sort_options"}
                         {if="$key==$fsc->sort_option"}
                         <option value="{$key}" selected="">{$value}</option>
                         {else}
@@ -102,6 +107,7 @@
                     </select>
                 </div>
             </div>
+            {/if}
         </div>
     </div>
 </form>

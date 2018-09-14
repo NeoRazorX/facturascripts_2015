@@ -24,19 +24,7 @@
 class admin_info extends fs_list_controller
 {
 
-    public $allow_delete;
-    public $b_alerta;
-    public $b_controlador;
-    public $b_desde;
-    public $b_detalle;
-    public $b_hasta;
-    public $b_ip;
-    public $b_tipo;
-    public $b_usuario;
-    public $db_tables;
     private $fsvar;
-    public $modulos_eneboo;
-    public $resultados;
 
     public function __construct()
     {
@@ -84,7 +72,7 @@ class admin_info extends fs_list_controller
         $this->add_filter_checkbox('logs', 'alerta', 'alerta');
 
         /// decoración
-        $this->decoration->add_column('logs', 'fecha', 'date');
+        $this->decoration->add_column('logs', 'fecha', 'datetime');
         $this->decoration->add_column('logs', 'alerta', 'bool');
         $this->decoration->add_column('logs', 'usuario');
         $this->decoration->add_column('logs', 'tipo');
@@ -113,9 +101,6 @@ class admin_info extends fs_list_controller
     protected function private_core()
     {
         parent::private_core();
-
-        /// ¿El usuario tiene permiso para eliminar en esta página?
-        $this->allow_delete = $this->user->admin;
 
         /**
          * Cargamos las variables del cron

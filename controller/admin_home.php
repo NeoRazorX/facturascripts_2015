@@ -26,10 +26,34 @@ require_once 'base/fs_settings.php';
 class admin_home extends fs_controller
 {
 
+    /**
+     *
+     * @var \fs_var
+     */
     private $fs_var;
+
+    /**
+     *
+     * @var \fs_page[]
+     */
     public $paginas;
+
+    /**
+     *
+     * @var \fs_plugin_manager
+     */
     public $plugin_manager;
+
+    /**
+     *
+     * @var \fs_settings
+     */
     public $settings;
+
+    /**
+     *
+     * @var string
+     */
     public $step;
 
     public function __construct()
@@ -37,12 +61,74 @@ class admin_home extends fs_controller
         parent::__construct(__CLASS__, 'Panel de control', 'admin');
     }
 
+    /**
+     * Comprueba actualizaciones de los plugins y del núcleo.
+     *
+     * @return boolean
+     */
+    public function check_for_updates2()
+    {
+        if (!$this->user->admin) {
+            return FALSE;
+        }
+
+        /// comprobamos actualizaciones en los plugins
+        $updates = FALSE;
+        foreach ($this->plugin_manager->installed() as $plugin) {
+            if ($plugin['version_url'] != '' && $plugin['update_url'] != '') {
+                /// plugin con descarga gratuita
+                $internet_ini = @parse_ini_string(@fs_file_get_contents($plugin['version_url']));
+                if ($internet_ini && $plugin['version'] < intval($internet_ini['version'])) {
+                    $updates = TRUE;
+                    break;
+                }
+            } else if ($plugin['idplugin'] && $plugin['download2_url'] != '') {
+                /// plugin de pago/oculto
+                /// download2_url implica que hay actualización
+                $updates = TRUE;
+                break;
+            }
+        }
+
+        if (!$updates) {
+            /// comprobamos actualizaciones del núcleo
+            $version = file_get_contents('VERSION');
+            $internet_version = @fs_file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
+            if (floatval($version) < floatval($internet_version)) {
+                $updates = TRUE;
+            }
+        }
+
+        if ($updates) {
+            $this->fs_var->simple_save('updates', 'true');
+            return TRUE;
+        }
+
+        $this->fs_var->name = 'updates';
+        $this->fs_var->delete();
+        return FALSE;
+    }
+
+    public function plugin_advanced_list()
+    {
+        /**
+         * Si se produce alguna llamada a esta función, desactivamos todos los plugins,
+         * porque debe haber alguno que está desactualizado, y un problema al cargar
+         * está página será muy difícil de resolver para un novato.
+         */
+        foreach ($this->plugin_manager->enabled() as $plug) {
+            $this->plugin_manager->disable($plug);
+        }
+
+        return [];
+    }
+
     protected function private_core()
     {
         $this->fs_var = new fs_var();
         $this->plugin_manager = new fs_plugin_manager();
         $this->settings = new fs_settings();
-        $this->step = $this->fs_var->simple_get('install_step');
+        $this->step = (string) $this->fs_var->simple_get('install_step');
 
         $this->exec_actions();
 
@@ -134,7 +220,8 @@ class admin_home extends fs_controller
 
     /**
      * Devuelve las páginas/controladore de los plugins activos.
-     * @return \fs_page
+     *
+     * @return \fs_page[]
      */
     private function all_pages()
     {
@@ -203,56 +290,6 @@ class admin_home extends fs_controller
         return $pages;
     }
 
-    /**
-     * Comprueba actualizaciones de los plugins y del núcleo.
-     * @return boolean
-     */
-    public function check_for_updates2()
-    {
-        if (!$this->user->admin) {
-            return FALSE;
-        }
-
-        /// comprobamos actualizaciones en los plugins
-        $updates = FALSE;
-        foreach ($this->plugin_manager->installed() as $plugin) {
-            if ($plugin['version_url'] != '' && $plugin['update_url'] != '') {
-                /// plugin con descarga gratuita
-                $internet_ini = @parse_ini_string(@fs_file_get_contents($plugin['version_url']));
-                if ($internet_ini && $plugin['version'] < intval($internet_ini['version'])) {
-                    $updates = TRUE;
-                    break;
-                }
-            } else if ($plugin['idplugin']) {
-                /// plugin de pago/oculto
-
-                if ($plugin['download2_url'] != '') {
-                    /// download2_url implica que hay actualización
-                    $updates = TRUE;
-                    break;
-                }
-            }
-        }
-
-        if (!$updates) {
-            /// comprobamos actualizaciones del núcleo
-            $version = file_get_contents('VERSION');
-            $internet_version = @fs_file_get_contents('https://raw.githubusercontent.com/NeoRazorX/facturascripts_2015/master/VERSION');
-            if (floatval($version) < floatval($internet_version)) {
-                $updates = TRUE;
-            }
-        }
-
-        if ($updates) {
-            $this->fs_var->simple_save('updates', 'true');
-            return TRUE;
-        }
-
-        $this->fs_var->name = 'updates';
-        $this->fs_var->delete();
-        return FALSE;
-    }
-
     private function clean_cache()
     {
         $this->cache->clean();
@@ -260,7 +297,8 @@ class admin_home extends fs_controller
     }
 
     /**
-     * Elimina el plugin del directorio
+     * Elimina el plugin del directorio.
+     * 
      * @param string $name
      */
     private function delete_plugin($name)
@@ -270,6 +308,7 @@ class admin_home extends fs_controller
 
     /**
      * Desactiva una página/controlador.
+     * 
      * @param fs_page $page
      */
     private function disable_page($page)
@@ -286,7 +325,8 @@ class admin_home extends fs_controller
     }
 
     /**
-     * Desactiva un plugin
+     * Desactiva un plugin.
+     *
      * @param string $name
      */
     private function disable_plugin($name)
@@ -304,7 +344,8 @@ class admin_home extends fs_controller
 
     /**
      * Activa una página/controlador.
-     * @param fs_page $page
+     * 
+     * @param \fs_page $page
      */
     private function enable_page($page)
     {
@@ -356,7 +397,8 @@ class admin_home extends fs_controller
     }
 
     /**
-     * Activa un plugin
+     * Activa un plugin.
+     *
      * @param string $name
      */
     private function enable_plugin($name)
