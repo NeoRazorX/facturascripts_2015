@@ -60,6 +60,15 @@ class fs_ip_filter
     }
 
     /**
+     * Clear IP list.
+     */
+    public function clear()
+    {
+        $this->ipList = [];
+        $this->save();
+    }
+
+    /**
      * 
      * @param string $ip
      *

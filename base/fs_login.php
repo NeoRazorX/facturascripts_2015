@@ -314,6 +314,9 @@ class fs_login
             /// añadimos el mensaje al log
             $this->core_log->save('Login correcto.', 'login');
 
+            /// limpiamos la lista de IPs
+            $this->ip_filter->clear();
+
             $controller_user = $user;
             return $controller_user->logged_on;
         }

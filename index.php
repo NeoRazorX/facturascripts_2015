@@ -80,8 +80,12 @@ if ($pagename == '') {
     }
 }
 
+/// guardamos los errores en el log
+$log_manager = new fs_log_manager();
+$log_manager->save();
+
+/// redireccionamos a la página definida por el usuario
 if (is_null(filter_input(INPUT_GET, 'page'))) {
-    /// redireccionamos a la página definida por el usuario
     $fsc->select_default_page();
 }
 
@@ -119,10 +123,6 @@ if ($fsc->template) {
 
     $tpl->draw($fsc->template);
 }
-
-/// guardamos los errores en el log
-$log_manager = new fs_log_manager();
-$log_manager->save();
 
 /// cerramos las conexiones
 $fsc->close();
