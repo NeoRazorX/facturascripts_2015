@@ -61,6 +61,10 @@ abstract class fs_extended_model extends fs_model
         }
     }
 
+    /**
+     * 
+     * @return bool
+     */
     public function delete()
     {
         $sql = "DELETE FROM " . $this->table_name() . " WHERE " . $this->primary_column() . " = " . $this->var2str($this->primary_column_value());
@@ -69,7 +73,7 @@ abstract class fs_extended_model extends fs_model
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     public function exists()
     {
@@ -122,7 +126,7 @@ abstract class fs_extended_model extends fs_model
      * 
      * @param string $code
      * 
-     * @return boolean
+     * @return bool
      */
     public function load_from_code($code)
     {
@@ -228,7 +232,7 @@ abstract class fs_extended_model extends fs_model
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     protected function save_insert()
     {
