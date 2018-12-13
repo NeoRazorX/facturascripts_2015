@@ -176,12 +176,14 @@ class fs_login
         }
 
         /// ¿Eliminamos la cookie del usuario?
-        if ($rmuser && filter_input(INPUT_COOKIE, 'user')) {
+        $user = filter_input(INPUT_COOKIE, 'user');
+        if ($rmuser && $user) {
             setcookie('user', '', time() - FS_COOKIES_EXPIRE);
             setcookie('user', '', time() - FS_COOKIES_EXPIRE, $path);
         }
 
         /// guardamos el evento en el log
+        $this->core_log->set_user_nick($user);
         $this->core_log->save('El usuario ha cerrado la sesión.', 'login');
     }
 

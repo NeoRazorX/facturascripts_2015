@@ -49,5 +49,7 @@ class fs_log_manager
             $new_log->usuario = $this->core_log->user_nick();
             $new_log->save();
         }
+        
+        $this->core_log->clean_to_save();
     }
 }

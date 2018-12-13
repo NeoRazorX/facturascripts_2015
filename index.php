@@ -124,5 +124,8 @@ if ($fsc->template) {
     $tpl->draw($fsc->template);
 }
 
+/// guardamos los errores en el log (los producidos durante la carga del template)
+$log_manager->save();
+
 /// cerramos las conexiones
 $fsc->close();

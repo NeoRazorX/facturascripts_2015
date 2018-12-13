@@ -22,7 +22,6 @@
     <columna>
         <nombre>fecha</nombre>
         <tipo>timestamp</tipo>
-        <nulo>NO</nulo>
     </columna>
     <columna>
         <nombre>id</nombre>
