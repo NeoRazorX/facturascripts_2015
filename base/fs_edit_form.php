@@ -141,7 +141,7 @@ class fs_edit_form
     protected function show_select($col_name, $col_config, $model)
     {
         $required = $col_config['required'] ? ' required=""' : '';
-        $html = '<select name="codproveedor" class="form-control"' . $required . '>';
+        $html = '<select name="' . $col_name . '" class="form-control"' . $required . '>';
 
         foreach ($col_config['values'] as $key => $value) {
             if ($model->{$col_name} == $key) {
