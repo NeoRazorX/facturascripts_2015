@@ -221,7 +221,7 @@ class fs_updater extends fs_app
 
     private function actualizar_plugin_pago($idplugin, $name, $key)
     {
-        $url = 'https://www.facturascripts.com/comm3/index.php?page=community_edit_plugin&id=' .
+        $url = FS_COMMUNITY_URL . '/index.php?page=community_edit_plugin&id=' .
             $idplugin . '&xid=' . $this->xid . '&key=' . $key;
 
         /// descargamos el zip
@@ -315,7 +315,7 @@ class fs_updater extends fs_app
                 . '<td><b>Núcleo</b></td>'
                 . '<td>Núcleo de FacturaScripts.</td>'
                 . '<td class="text-right">' . $this->plugin_manager->version . '</td>'
-                . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                . '<td class="text-right"><a href="' . FS_COMMUNITY_URL . '/index.php?page=community_changelog&version='
                 . $this->updates['core'] . '" target="_blank">' . $this->updates['core'] . '</a></td>'
                 . '<td class="text-right">
                     <a class="btn btn-sm btn-primary" href="updater.php?update=TRUE" role="button">
@@ -327,7 +327,7 @@ class fs_updater extends fs_app
                 . '<td><b>Núcleo</b></td>'
                 . '<td>Núcleo de FacturaScripts.</td>'
                 . '<td class="text-right">' . $this->plugin_manager->version . '</td>'
-                . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                . '<td class="text-right"><a href="' . FS_COMMUNITY_URL . '/index.php?page=community_changelog&version='
                 . $this->plugin_manager->version . '" target="_blank">' . $this->plugin_manager->version . '</a></td>'
                 . '<td class="text-right">
                     <a class="btn btn-xs btn-default" href="updater.php?reinstall=TRUE" role="button">
@@ -341,7 +341,7 @@ class fs_updater extends fs_app
                         . '<td>' . $plugin['name'] . '</td>'
                         . '<td>' . $plugin['description'] . '</td>'
                         . '<td class="text-right">' . $plugin['version'] . '</td>'
-                        . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                        . '<td class="text-right"><a href="' . FS_COMMUNITY_URL . '/index.php?page=community_changelog&version='
                         . $plugin['new_version'] . '&plugin=' . $plugin['name'] . '" target="_blank">' . $plugin['new_version'] . '</a></td>'
                         . '<td class="text-right">'
                         . '<a href="updater.php?plugin=' . $plugin['name'] . '" class="btn btn-xs btn-primary">'
@@ -361,7 +361,7 @@ class fs_updater extends fs_app
                         . '<td>' . $plugin['name'] . '</td>'
                         . '<td>' . $plugin['description'] . '</td>'
                         . '<td class="text-right">' . $plugin['version'] . '</td>'
-                        . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                        . '<td class="text-right"><a href="' . FS_COMMUNITY_URL . '/index.php?page=community_changelog&version='
                         . $plugin['new_version'] . '&plugin=' . $plugin['name'] . '" target="_blank">' . $plugin['new_version'] . '</a></td>'
                         . '<td class="text-right">'
                         . '<div class="btn-group">'
@@ -377,7 +377,7 @@ class fs_updater extends fs_app
                     . '<td>' . $plugin['name'] . '</td>'
                     . '<td>' . $plugin['description'] . '</td>'
                     . '<td class="text-right">' . $plugin['version'] . '</td>'
-                    . '<td class="text-right"><a href="https://www.facturascripts.com/comm3/index.php?page=community_changelog&version='
+                    . '<td class="text-right"><a href="' . FS_COMMUNITY_URL . '/index.php?page=community_changelog&version='
                     . $plugin['new_version'] . '&plugin=' . $plugin['name'] . '" target="_blank">' . $plugin['new_version'] . '</a></td>'
                     . '<td class="text-center">'
                     . '<div class="btn-group">'
@@ -412,7 +412,7 @@ class fs_updater extends fs_app
             return $this->download_list2;
         }
 
-        $json = @fs_file_get_contents('https://www.facturascripts.com/plugins?json2=TRUE', 10);
+        $json = @fs_file_get_contents(FS_COMMUNITY_URL . '/plugins?json2=TRUE', 10);
         if ($json && $json != 'ERROR') {
             $this->download_list2 = json_decode($json);
             $this->cache->set('download_list2', $this->download_list2);

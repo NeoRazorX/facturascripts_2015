@@ -61,7 +61,7 @@ $updater = new fs_updater();
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
                         <span class="hidden-xs">&nbsp;Panel de control</span>
                     </a>
-                    <a href="https://www.facturascripts.com/comm3/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-default">
+                    <a href="<?php echo FS_COMMUNITY_URL; ?>/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-default">
                         <i class="fa fa-key" aria-hidden="true"></i>
                         <span class="hidden-xs">&nbsp;Claves</span>
                     </a>
@@ -152,28 +152,7 @@ $updater = new fs_updater();
                     </div>
                 </div>
                 <div class="col-sm-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Financiación</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
-                                    <span class="sr-only">25% Complete</span>
-                                </div>
-                            </div>
-                            <p class="help-block">
-                                Hemos activado la financiación colectiva de FacturaScripts
-                                para que podáis colaborar en financiar la documentación,
-                                planificación, diseño, programación y mantenimiento de
-                                todo el proyecto, de forma que podamos desarrollar cada
-                                vez más plugins y actualizaciones.
-                            </p>
-                            <a href="https://www.facturascripts.com/store/producto/patrocinar-facturascripts/" target="_blank" class="btn btn-success">
-                                Aportar 5 €
-                            </a>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -213,7 +192,7 @@ $updater = new fs_updater();
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-6">
-                                                <a href="https://www.facturascripts.com/comm3/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-warning">
+                                                <a href="<?php echo FS_COMMUNITY_URL; ?>/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-warning">
                                                     <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                                     <span class="hidden-xs">&nbsp;Ver mis claves</span>
                                                 </a>
@@ -246,7 +225,7 @@ $updater = new fs_updater();
             <div class="row">
                 <div class="col-xs-6">
                     <small>
-                        Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>.
+                        Creado con <a target="_blank" href="https://beta.facturascripts.com">FacturaScripts</a>.
                     </small>
                 </div>
                 <div class="col-xs-6 text-right">
@@ -259,7 +238,7 @@ $updater = new fs_updater();
         </div>
         <?php
         if (!FS_DEMO) {
-            $url = 'https://www.facturascripts.com/comm3/index.php?page=community_stats'
+            $url = FS_COMMUNITY_URL . '/index.php?page=community_stats'
                 . '&add=TRUE&version=' . $updater->plugin_manager->version . '&plugins=' . implode(',', $updater->plugins);
 
             ?>

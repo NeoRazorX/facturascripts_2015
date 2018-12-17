@@ -101,7 +101,7 @@ class admin_empresa extends fs_controller
                             . '<a href="https://support.google.com/accounts/answer/185833?hl=es" '
                             . 'target="_blank">contraseña de aplicación</a>');
                     } else {
-                        $this->new_error_msg("¿<a href='https://www.facturascripts.com/comm3/index.php?page=community_item&id=74'"
+                        $this->new_error_msg("¿<a href='" . FS_COMMUNITY_URL . "/contacto'"
                             . " target='_blank'>Necesitas ayuda</a>?");
                     }
                 }
