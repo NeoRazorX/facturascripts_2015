@@ -31,7 +31,7 @@ if (FS_TMP_NAME != '' && !file_exists(FS_FOLDER . '/tmp/' . FS_TMP_NAME)) {
 }
 
 if (!defined('FS_COMMUNITY_URL')) {
-    define('FS_COMMUNITY_URL', 'https://www.facturascripts.com/comm3');
+    define('FS_COMMUNITY_URL', 'https://beta.facturascripts.com/comm3');
 }
 
 $GLOBALS['config2'] = array(
