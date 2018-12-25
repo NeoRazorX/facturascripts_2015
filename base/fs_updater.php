@@ -34,12 +34,6 @@ class fs_updater extends fs_app
 
     /**
      *
-     * @var array
-     */
-    private $download_list2;
-
-    /**
-     *
      * @var fs_plugin_manager
      */
     public $plugin_manager;
