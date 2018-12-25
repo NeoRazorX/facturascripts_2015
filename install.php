@@ -18,6 +18,8 @@
  */
 error_reporting(E_ALL);
 
+define('FS_COMMUNITY_URL', 'https://www.facturascripts.com');
+
 $errors = [];
 $errors2 = [];
 $db_type = 'MYSQL';
@@ -240,18 +242,13 @@ $system_info = str_replace('"', "'", $system_info);
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="https://www.facturascripts.com/documentacion" target="_blank">
+                                    <a href="<?php echo FS_COMMUNITY_URL; ?>/doc/2" target="_blank">
                                         <i class="fa fa-book fa-fw" aria-hidden="true"></i> Documentación
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.facturascripts.com/contacto" target="_blank">
+                                    <a href="<?php echo FS_COMMUNITY_URL; ?>/contacto" target="_blank">
                                         <i class="fa fa-shield fa-fw" aria-hidden="true"></i> Soporte oficial
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facturascripts.com/errores" target="_blank">
-                                        <i class="fa fa-bug fa-fw" aria-hidden="true"></i> Errores
                                     </a>
                                 </li>
                                 <li class="divider"></li>
@@ -266,8 +263,7 @@ $system_info = str_replace('"', "'", $system_info);
                 </div>
             </div>
         </nav>
-
-        <form name="f_feedback" action="https://www.facturascripts.com/feedback" method="post" target="_blank" class="form" role="form">
+        <form name="f_feedback" action="<?php echo FS_COMMUNITY_URL; ?>/feedback" method="post" target="_blank" class="form" role="form">
             <input type="hidden" name="feedback_info" value="<?php echo $system_info; ?>"/>
             <input type="hidden" name="feedback_type" value="error"/>
             <div class="modal" id="modal_feedback">
@@ -306,7 +302,6 @@ $system_info = str_replace('"', "'", $system_info);
                 </div>
             </div>
         </form>
-
         <script type="text/javascript">
             function change_db_type() {
                 if (document.f_configuracion_inicial.db_type.value == 'POSTGRESQL') {
@@ -363,7 +358,6 @@ $system_info = str_replace('"', "'", $system_info);
                 });
             });
         </script>
-
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -376,7 +370,6 @@ $system_info = str_replace('"', "'", $system_info);
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-sm-12">
                     <?php
@@ -444,7 +437,7 @@ $system_info = str_replace('"', "'", $system_info);
                                         <li>
                                             <p class="help-block">
                                                 Busca un proveedor de hosting más completo, que son la mayoría. Mira en nuestra sección de
-                                                <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                                <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
                                             </p>
                                         </li>
                                     </ul>
@@ -476,14 +469,14 @@ $system_info = str_replace('"', "'", $system_info);
                                         Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                                         Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
                                         Mira en nuestra sección de
-                                        <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
                                     </p>
                                 </div>
                             </div>
-                            <?php
-                        } else if ($err == 'openssl') {
+        <?php
+    } else if ($err == 'openssl') {
 
-                            ?>
+        ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     No se encuentra la extensión OpenSSL:
@@ -500,7 +493,7 @@ $system_info = str_replace('"', "'", $system_info);
                                         Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                                         Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
                                         Mira en nuestra sección de
-                                        <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
                                     </p>
                                     <h3>
                                         <i class="fa fa-windows" aria-hidden="true"></i> Windows
@@ -508,7 +501,7 @@ $system_info = str_replace('"', "'", $system_info);
                                     <p class="help-block">
                                         Ofrecemos una versión de FacturaScripts para Windows <b>con todo</b> el software necesario
                                         (como OpenSSL) ya incluido de serie. Puedes encontrala en nuestra sección de
-                                        <a href="https://www.facturascripts.com/descargar?windows=TRUE" target="_blank">descargas</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?windows=TRUE" target="_blank">descargas</a>.
                                         Si decides utilizar <b>un empaquetado distinto</b>, y este no incluye lo necesario, deberás
                                         buscar ayuda en los foros o el soporte de los creadores de ese empaquetado.
                                     </p>
@@ -527,14 +520,14 @@ $system_info = str_replace('"', "'", $system_info);
                                     <p class="help-block">
                                         Es raro que un empaquetado Apache+PHP+MySQL para Mac no incluya OpenSSL.
                                         Nosotros ofrecemos varios empaquetados con todo lo necesario en nuestra sección de
-                                        <a href="https://www.facturascripts.com/descargar?mac=TRUE" target="_blank">descargas</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?mac=TRUE" target="_blank">descargas</a>.
                                     </p>
                                 </div>
                             </div>
-                            <?php
-                        } else if ($err == 'ziparchive') {
+        <?php
+    } else if ($err == 'ziparchive') {
 
-                            ?>
+        ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     No se encuentra la extensión ZipArchive:
@@ -555,50 +548,50 @@ $system_info = str_replace('"', "'", $system_info);
                                         Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                                         Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
                                         Mira en nuestra sección de
-                                        <a href="https://www.facturascripts.com/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
                                     </p>
                                 </div>
                             </div>
-                            <?php
-                        } else if ($err == 'db_mysql') {
+        <?php
+    } else if ($err == 'db_mysql') {
 
-                            ?>
+        ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     Acceso a base de datos MySQL:
                                 </div>
                                 <div class="panel-body">
                                     <ul>
-                                        <?php
-                                        foreach ($errors2 as $err2)
-                                            echo "<li>" . $err2 . "</li>";
+        <?php
+        foreach ($errors2 as $err2)
+            echo "<li>" . $err2 . "</li>";
 
-                                        ?>
+        ?>
                                     </ul>
                                 </div>
                             </div>
-                            <?php
-                        } else if ($err == 'db_postgresql') {
+        <?php
+    } else if ($err == 'db_postgresql') {
 
-                            ?>
+        ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     Acceso a base de datos PostgreSQL:
                                 </div>
                                 <div class="panel-body">
                                     <ul>
-                                        <?php
-                                        foreach ($errors2 as $err2)
-                                            echo "<li>" . $err2 . "</li>";
+                            <?php
+                            foreach ($errors2 as $err2)
+                                echo "<li>" . $err2 . "</li>";
 
-                                        ?>
+                            ?>
                                     </ul>
                                 </div>
                             </div>
-                            <?php
-                        } else {
+        <?php
+    } else {
 
-                            ?>
+        ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     Error:
@@ -618,14 +611,13 @@ $system_info = str_replace('"', "'", $system_info);
                                     </ul>
                                 </div>
                             </div>
-                            <?php
-                        }
-                    }
+        <?php
+    }
+}
 
-                    ?>
+?>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-sm-12">
                     <b>Antes de empezar...</b>
@@ -637,14 +629,13 @@ $system_info = str_replace('"', "'", $system_info);
                         Y recuerda que tienes una sección especialmente dedicada a la <b>instalación</b> en nuestra
                         documentación oficial:
                     </p>
-                    <a href="https://www.facturascripts.com/documentacion/instalacion" target="_blank" class="btn btn-sm btn-info">
+                    <a href="<?php echo FS_COMMUNITY_URL; ?>/doc/2/instalacion" target="_blank" class="btn btn-sm btn-info">
                         <i class="fa fa-book"></i>&nbsp; Documentación
                     </a>
                     <br/>
                     <br/>
                 </div>
             </div>
-
             <form name="f_configuracion_inicial" id="f_configuracion_inicial" action="install.php" class="form" role="form" method="post">
                 <div class="row">
                     <div class="col-sm-12">
@@ -678,18 +669,8 @@ $system_info = str_replace('"', "'", $system_info);
                                 <div class="form-group">
                                     Tipo de servidor SQL:
                                     <select name="db_type" class="form-control" onchange="change_db_type()">
-                                        <option value="MYSQL"<?php
-                    if ($db_type == 'MYSQL') {
-                        echo ' selected=""';
-                    }
-
-                    ?>>MySQL</option>
-                                        <option value="POSTGRESQL"<?php
-                                        if ($db_type == 'POSTGRESQL') {
-                                            echo ' selected=""';
-                                        }
-
-                    ?>>PostgreSQL</option>
+                                        <option value="MYSQL"<?php echo ($db_type == 'MYSQL') ? ' selected=""' : ''; ?>>MySQL</option>
+                                        <option value="POSTGRESQL"<?php echo ($db_type == 'POSTGRESQL') ? ' selected=""' : ''; ?>>PostgreSQL</option>
                                     </select>
                                 </div>
                             </div>
@@ -856,12 +837,11 @@ $system_info = str_replace('"', "'", $system_info);
                     </div>
                 </div>
             </form>
-
             <div class="row" style="margin-bottom: 20px;">
                 <div class="col-sm-12 text-center">
                     <hr/>
                     <small>
-                        &COPY; 2013-2018 <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
+                        &COPY; 2013-<?php echo date('Y'); ?> <a target="_blank" href="<?php echo FS_COMMUNITY_URL; ?>">FacturaScripts</a>
                     </small>
                 </div>
             </div>

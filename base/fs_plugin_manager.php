@@ -207,7 +207,7 @@ class fs_plugin_manager
         }
 
         /// lista de plugins de la comunidad, se descarga de Internet.
-        $json = @fs_file_get_contents('https://www.facturascripts.com/plugins?json=TRUE', 10);
+        $json = @fs_file_get_contents('https://www.facturascripts.com/DownloadBuild2017', 10);
         if ($json && $json != 'ERROR') {
             $this->download_list = json_decode($json, true);
             foreach ($this->download_list as $key => $value) {
@@ -229,7 +229,7 @@ class fs_plugin_manager
                 'descripcion' => "Plugin con las funciones básicas de facturación, contabilidad e informes simples.",
                 'link' => "https://github.com/NeoRazorX/facturacion_base",
                 'zip_link' => "https://github.com/NeoRazorX/facturacion_base/archive/master.zip",
-                'imagen' => "https://www.facturascripts.com/comm3/plugins/community3/view/img/laptop.png",
+                'imagen' => "",
                 'estable' => true,
                 'version' => 140,
                 'creado' => "14-07-2016",
@@ -239,7 +239,7 @@ class fs_plugin_manager
                 'caducidad' => null,
                 'licencia' => "LGPL",
                 'youtube_id' => "",
-                'demo_url' => "https://www.facturascripts.com/demos/e/demo1",
+                'demo_url' => "",
                 'precio' => 0,
                 'instalado' => file_exists(FS_FOLDER . '/plugins/facturacion_base')
             ]

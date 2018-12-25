@@ -11,6 +11,8 @@
         <!--{$tr_class=''}-->
         {if="$value.instalado"}
         <!--{$tr_class=' class="warning"'}-->
+        {elseif="$value.tipo=='oculto'"}
+        <!--{$tr_class=' class="hidden"'}-->
         {elseif="!$value.estable"}
         <!--{$tr_class=' class="danger"'}-->
         {elseif="$value.tipo=='gratis'"}
@@ -35,7 +37,7 @@
                 <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
                     <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp; Instalado
                 </a>
-                {elseif="!$value.zip_link"}
+                {elseif="$value.tipo=='pago'"}
                 <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-xs btn-info">
                     <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp; Comprar
                 </a>
