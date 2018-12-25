@@ -226,7 +226,7 @@ class empresa extends \fs_model
         return "INSERT INTO " . $this->table_name . " (stockpedidos,contintegrada,recequivalencia,codserie,"
             . "codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,"
             . "ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)"
-            . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://beta.facturascripts.com',"
+            . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
             . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z','Empresa " . $num . " S.L.',"
             . "'E-" . $num . "','','');";
     }

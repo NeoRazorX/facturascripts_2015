@@ -18,7 +18,7 @@
  */
 error_reporting(E_ALL);
 
-define('FS_COMMUNITY_URL', 'https://beta.facturascripts.com');
+define('FS_COMMUNITY_URL', 'https://www.facturascripts.com');
 
 $errors = [];
 $errors2 = [];

@@ -221,8 +221,7 @@ class fs_updater extends fs_app
 
     private function actualizar_plugin_pago($idplugin, $name, $key)
     {
-        $url = FS_COMMUNITY_URL . '/index.php?page=community_edit_plugin&id=' .
-            $idplugin . '&xid=' . $this->xid . '&key=' . $key;
+        $url = FS_COMMUNITY_URL . '/DownloadBuild2017/' .$idplugin . '/stable?xid=' . $this->xid . '&key=' . $key;
 
         /// descargamos el zip
         if (!@fs_file_download($url, FS_FOLDER . '/update-pay.zip')) {
@@ -412,7 +411,7 @@ class fs_updater extends fs_app
             return $this->download_list2;
         }
 
-        $json = @fs_file_get_contents(FS_COMMUNITY_URL . '/plugins?json2=TRUE', 10);
+        $json = @fs_file_get_contents(FS_COMMUNITY_URL . '/DownloadBuild2017', 10);
         if ($json && $json != 'ERROR') {
             $this->download_list2 = json_decode($json);
             $this->cache->set('download_list2', $this->download_list2);

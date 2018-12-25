@@ -867,7 +867,7 @@ class RainTpl_NotFoundException extends RainTpl_Exception {
       <h1>$message</h1>
       <p>
          Si necesitas ayuda, recuerda que
-         <a target="_blank" href="https://beta.facturascripts.com">la comunidad FacturaScripts</a>
+         <a target="_blank" href="https://www.facturascripts.com">la comunidad FacturaScripts</a>
          está para ayudarte.
       </p>
    </body>

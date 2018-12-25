@@ -1,4 +1,4 @@
 source: [base, model]
 destination: doc/
 title: "Documentación FacturaScripts"
-baseUrl: "https://beta.facturascripts.com/doc"
+baseUrl: "https://www.facturascripts.com/doc"

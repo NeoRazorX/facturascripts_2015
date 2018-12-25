@@ -11,6 +11,8 @@
         <!--{$tr_class=''}-->
         {if="$value.instalado"}
         <!--{$tr_class=' class="warning"'}-->
+        {elseif="$value.tipo=='oculto'"}
+        <!--{$tr_class=' class="hidden"'}-->
         {elseif="!$value.estable"}
         <!--{$tr_class=' class="danger"'}-->
         {elseif="$value.tipo=='gratis'"}
@@ -19,11 +21,11 @@
         <tr{$tr_class}>
             <td class="text-center">
                 {if="$value.imagen"}
-                <a href="https://beta.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="thumbnail">
+                <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="thumbnail">
                     <img src="{$value.imagen}" alt="{$value.nombre}" width="80"/>
                 </a>
                 {else}
-                <a href="https://beta.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-block btn-default">
+                <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-block btn-default">
                     <i class="fa fa-plug fa-3x" aria-hidden="true"></i>
                 </a>
                 {/if}
@@ -35,8 +37,8 @@
                 <a href="{$fsc->url()}&caca={$fsc->random_string(4)}#plugins" class="btn btn-xs btn-default">
                     <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp; Instalado
                 </a>
-                {elseif="!$value.zip_link"}
-                <a href="https://beta.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-xs btn-info">
+                {elseif="$value.tipo=='pago'"}
+                <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-xs btn-info">
                     <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp; Comprar
                 </a>
                 {elseif="$value.estable"}
@@ -60,7 +62,7 @@
         {/loop}
         <tr>
             <td colspan="3">
-                <a href="https://beta.facturascripts.com/plugins" target="_blank" class="btn btn-block btn-info">
+                <a href="https://www.facturascripts.com/plugins" target="_blank" class="btn btn-block btn-info">
                     <i class="fa fa-plug"></i>&nbsp; Más plugins...
                 </a>
             </td>

@@ -225,7 +225,7 @@ $updater = new fs_updater();
             <div class="row">
                 <div class="col-xs-6">
                     <small>
-                        Creado con <a target="_blank" href="https://beta.facturascripts.com">FacturaScripts</a>.
+                        Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>.
                     </small>
                 </div>
                 <div class="col-xs-6 text-right">
