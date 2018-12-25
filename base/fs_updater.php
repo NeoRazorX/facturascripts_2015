@@ -221,7 +221,7 @@ class fs_updater extends fs_app
 
     private function actualizar_plugin_pago($idplugin, $name, $key)
     {
-        $url = FS_COMMUNITY_URL . '/DownloadBuild2017/' .$idplugin . '/stable?xid=' . $this->xid . '&key=' . $key;
+        $url = 'https://www.facturascripts.com/DownloadBuild2017/' . $idplugin . '/stable?xid=' . $this->xid . '&key=' . $key;
 
         /// descargamos el zip
         if (!@fs_file_download($url, FS_FOLDER . '/update-pay.zip')) {
@@ -277,7 +277,7 @@ class fs_updater extends fs_app
                 }
             } else if ($plugin['idplugin']) {
                 /// plugin de pago/oculto
-                foreach ($this->download_list2() as $ditem) {
+                foreach ($this->plugin_manager->downloads() as $ditem) {
                     if ($ditem->id != $plugin['idplugin']) {
                         continue;
                     }
@@ -397,29 +397,6 @@ class fs_updater extends fs_app
                 $this->btn_fin = TRUE;
             }
         }
-    }
-
-    private function download_list2()
-    {
-        if (isset($this->download_list2)) {
-            return $this->download_list2;
-        }
-
-        /// Download_list2 es la lista de plugins de la comunidad, se descarga de Internet.
-        $this->download_list2 = $this->cache->get('download_list2');
-        if ($this->download_list2) {
-            return $this->download_list2;
-        }
-
-        $json = @fs_file_get_contents(FS_COMMUNITY_URL . '/DownloadBuild2017', 10);
-        if ($json && $json != 'ERROR') {
-            $this->download_list2 = json_decode($json);
-            $this->cache->set('download_list2', $this->download_list2);
-            return $this->download_list2;
-        }
-
-        $this->download_list2 = [];
-        return $this->download_list2;
     }
 
     private function get_updates()
