@@ -47,7 +47,7 @@ class fs_api
 
     /**
      * 
-     * @return int
+     * @return string
      */
     private function get_last_activity()
     {
