@@ -272,12 +272,12 @@ class fs_updater extends fs_app
             } else if ($plugin['idplugin']) {
                 /// plugin de pago/oculto
                 foreach ($this->plugin_manager->downloads() as $ditem) {
-                    if ($ditem->id != $plugin['idplugin']) {
+                    if ($ditem['id'] != $plugin['idplugin']) {
                         continue;
                     }
 
-                    if (intval($ditem->version) > $plugin['version']) {
-                        $plugin['new_version'] = intval($ditem->version);
+                    if (intval($ditem['version']) > $plugin['version']) {
+                        $plugin['new_version'] = intval($ditem['version']);
                         $plugin['depago'] = TRUE;
                         $plugin['private_key'] = '';
 
