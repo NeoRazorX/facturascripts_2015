@@ -15,7 +15,7 @@
         <!--{$tr_class=' class="hidden"'}-->
         {elseif="!$value.estable"}
         <!--{$tr_class=' class="danger"'}-->
-        {elseif="$value.tipo=='gratis'"}
+        {elseif="$value.tipo=='gratis' || $value.tipo=='regalo'"}
         <!--{$tr_class=' class="success"'}-->
         {/if}
         <tr{$tr_class}>
@@ -40,6 +40,10 @@
                 {elseif="$value.tipo=='pago'"}
                 <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-xs btn-info">
                     <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp; Comprar
+                </a>
+                {elseif="$value.tipo=='regalo'"}
+                <a href="https://www.facturascripts.com/plugin/{$value.nombre}" target="_blank" class="btn btn-xs btn-info">
+                    <span class="glyphicon glyphicon-gift" aria-hidden="true"></span>&nbsp; Obtener
                 </a>
                 {elseif="$value.estable"}
                 <a href="{$fsc->url()}&caca={$fsc->random_string(4)}&download={$value.id}#plugins" class="btn btn-xs btn-primary">

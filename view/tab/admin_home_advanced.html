@@ -137,8 +137,8 @@
                     &nbsp; Desarrollo:
                 </h2>
                 <p class='help-block'>
-                    Estos son parametros de configuración sensibles de FacturaScripts. No
-                    los modifiques si no sabes lo que haces.
+                    Estos son parametros de configuración sensibles de FacturaScripts.
+                    <b>No los modifiques si no sabes lo que haces</b>.
                 </p>
             </div>
         </div>
@@ -184,7 +184,7 @@
                     </select>
                     <p class="help-block">
                         {if="strtolower(FS_DB_TYPE)=='mysql'"}
-                        Peligro: no tocar si no sabes lo que haces.
+                        <b>Peligro: no tocar si no sabes lo que haces</b>.
                         {else}
                         Sólo se puede desactivar en MySQL.
                         {/if}
@@ -226,6 +226,9 @@
                         {/if}
                         {/loop}
                     </select>
+                    <p class="help-block">
+                        <b>Peligro: no modificar si ya tienes facturas.</b>
+                    </p>
                 </div>
             </div>
         </div>
