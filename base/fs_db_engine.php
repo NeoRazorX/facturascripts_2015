@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -151,6 +151,10 @@ abstract class fs_db_engine
      */
     protected function search_in_array($items, $index, $value)
     {
+        if (empty($items)) {
+            return [];
+        }
+
         foreach ($items as $column) {
             if ($column[$index] === $value) {
                 return $column;
