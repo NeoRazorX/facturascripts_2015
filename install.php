@@ -30,7 +30,7 @@ $db_user = '';
 
 function guarda_config(&$errors, $nombre_archivo = 'config.php')
 {
-    $archivo = fopen($nombre_archivo, "w");
+    $archivo = fopen(__DIR__ . '/' . $nombre_archivo, "w");
     if ($archivo) {
         fwrite($archivo, "<?php\n");
 
@@ -473,10 +473,10 @@ $system_info = str_replace('"', "'", $system_info);
                                     </p>
                                 </div>
                             </div>
-        <?php
-    } else if ($err == 'openssl') {
+                            <?php
+                        } else if ($err == 'openssl') {
 
-        ?>
+                            ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     No se encuentra la extensión OpenSSL:
@@ -524,10 +524,10 @@ $system_info = str_replace('"', "'", $system_info);
                                     </p>
                                 </div>
                             </div>
-        <?php
-    } else if ($err == 'ziparchive') {
+                            <?php
+                        } else if ($err == 'ziparchive') {
 
-        ?>
+                            ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     No se encuentra la extensión ZipArchive:
@@ -552,46 +552,46 @@ $system_info = str_replace('"', "'", $system_info);
                                     </p>
                                 </div>
                             </div>
-        <?php
-    } else if ($err == 'db_mysql') {
+                            <?php
+                        } else if ($err == 'db_mysql') {
 
-        ?>
+                            ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     Acceso a base de datos MySQL:
                                 </div>
                                 <div class="panel-body">
                                     <ul>
-        <?php
-        foreach ($errors2 as $err2)
-            echo "<li>" . $err2 . "</li>";
+                                        <?php
+                                        foreach ($errors2 as $err2)
+                                            echo "<li>" . $err2 . "</li>";
 
-        ?>
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
-        <?php
-    } else if ($err == 'db_postgresql') {
+                            <?php
+                        } else if ($err == 'db_postgresql') {
 
-        ?>
+                            ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     Acceso a base de datos PostgreSQL:
                                 </div>
                                 <div class="panel-body">
                                     <ul>
-                            <?php
-                            foreach ($errors2 as $err2)
-                                echo "<li>" . $err2 . "</li>";
+                                        <?php
+                                        foreach ($errors2 as $err2)
+                                            echo "<li>" . $err2 . "</li>";
 
-                            ?>
+                                        ?>
                                     </ul>
                                 </div>
                             </div>
-        <?php
-    } else {
+                            <?php
+                        } else {
 
-        ?>
+                            ?>
                             <div class="panel panel-danger">
                                 <div class="panel-heading">
                                     Error:
@@ -611,11 +611,11 @@ $system_info = str_replace('"', "'", $system_info);
                                     </ul>
                                 </div>
                             </div>
-        <?php
-    }
-}
+                            <?php
+                        }
+                    }
 
-?>
+                    ?>
                 </div>
             </div>
             <div class="row">
