@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -102,7 +102,11 @@ class fs_edit_form
                 break;
 
             case 'date':
-                $html .= '<div class="input-group"><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span><input class="form-control datepicker" type="text" name="' . $col_name
+                $html .= '<div class="input-group">'
+                    . '<span class="input-group-addon">'
+                    . '<span class="glyphicon glyphicon-calendar"></span>'
+                    . '</span>'
+                    . '<input class="form-control datepicker" type="text" name="' . $col_name
                     . '" value="' . $model->{$col_name} . '" autocomplete="off"' . $required . '/></div>';
                 break;
 

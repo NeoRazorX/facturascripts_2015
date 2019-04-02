@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -81,8 +81,14 @@ class fs_list_filter_date extends fs_list_filter
      */
     public function show()
     {
-        return '<div class="form-group"><div class="input-group"><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span><input type="text" name="' . $this->name()
-            . '" value="' . $this->value . '" class="form-control datepicker" placeholder="' . $this->label . '" autocomplete="off" onchange="this.form.submit()">'
-            . '</div></div>';
+        return '<div class="form-group">'
+            . '<div class="input-group">'
+            . '<span class="input-group-addon">'
+            . '<span class="glyphicon glyphicon-calendar"></span>'
+            . '</span>'
+            . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control datepicker" placeholder="'
+            . $this->label . '" autocomplete="off" onchange="this.form.submit()">'
+            . '</div>'
+            . '</div>';
     }
 }
