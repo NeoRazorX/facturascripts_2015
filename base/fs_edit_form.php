@@ -102,8 +102,8 @@ class fs_edit_form
                 break;
 
             case 'date':
-                $html .= '<input class="form-control datepicker" type="text" name="' . $col_name
-                    . '" value="' . $model->{$col_name} . '" autocomplete="off"' . $required . '/>';
+                $html .= '<div class="input-group"><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span><input class="form-control datepicker" type="text" name="' . $col_name
+                    . '" value="' . $model->{$col_name} . '" autocomplete="off"' . $required . '/></div>';
                 break;
 
             case 'money':
