@@ -81,8 +81,8 @@ class fs_list_filter_date extends fs_list_filter
      */
     public function show()
     {
-        return '<div class="form-group"><input type="text" name="' . $this->name()
+        return '<div class="form-group"><div class="input-group"><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span><input type="text" name="' . $this->name()
             . '" value="' . $this->value . '" class="form-control datepicker" placeholder="' . $this->label . '" autocomplete="off" onchange="this.form.submit()">'
-            . '</div>';
+            . '</div></div>';
     }
 }
