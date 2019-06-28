@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,7 +62,7 @@ class fs_settings
      */
     public function nf0()
     {
-        return array(0, 1, 2, 3, 4, 5);
+        return array(0, 1, 2, 3, 4, 5, 6);
     }
 
     /**
