@@ -12,7 +12,7 @@
         "phpmailer/phpmailer": "v5.*",
         "components/jquery": "v3.*",
         "components/font-awesome": "v4.*",
-        "mk-j/php_xlsxwriter": "v0.37",
+        "mk-j/php_xlsxwriter": "v0.*",
         "twbs/bootstrap": "v3.*",
         "thomaspark/bootswatch": "v3.*",
         "makeusabrew/bootbox": "v4.x-dev"
