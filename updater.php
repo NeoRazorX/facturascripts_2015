@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ define('FS_FOLDER', __DIR__);
 
 /// ampliamos el límite de ejecución de PHP a 5 minutos
 @set_time_limit(300);
+ignore_user_abort(true);
 
 require_once 'config.php';
 require_once 'base/config2.php';
@@ -61,7 +62,7 @@ $updater = new fs_updater();
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
                         <span class="hidden-xs">&nbsp;Panel de control</span>
                     </a>
-                    <a href="<?php echo FS_COMMUNITY_URL; ?>/index.php?page=community_tus_plugins" target="_blank" class="btn btn-sm btn-default">
+                    <a href="https://www.facturascripts.com/plugins?activetab=ListPluginKey2017" target="_blank" class="btn btn-sm btn-default">
                         <i class="fa fa-key" aria-hidden="true"></i>
                         <span class="hidden-xs">&nbsp;Claves</span>
                     </a>
@@ -97,7 +98,7 @@ $updater = new fs_updater();
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-9">
+                <div class="col-sm-12">
                     <p class="help-block">
                         Este actualizador permite actualizar <b>tanto el núcleo</b> de FacturaScripts
                         <b>como sus plugins</b>, incluso los de pago y los privados.
@@ -151,8 +152,28 @@ $updater = new fs_updater();
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3">
-
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <br/>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">FacturaScripts 2018</h3>
+                        </div>
+                        <div class="panel-body">
+                            FacturaScripts 2018 es un <b>rediseño</b> desde cero y <b>los plugins no son compatibles</b> con los que tienes.
+                            Estamos lanzando nuevas versiones de los plugins de pago. Pronto estarán la mayoría.
+                            <br/>
+                            No encantaría que probases <b>FacturaScripts online</b> y <b>nos dieses tus impresiones</b>.
+                            <br/>
+                            <br/>
+                            <a href="https://www.facturascripts.com/probar-online" target="_blank" class="btn btn-default">Probar online</a>
+                            &nbsp;
+                            <a href="https://forms.gle/fqvYakhNRLkjQMcu6" target="_blank" class="btn btn-default">Envíar impresiones</a>
+                            &nbsp;
+                            <a href="https://www.facturascripts.com/doc/1/actualizar-desde-facturascripts-2017" target="_blank" class="btn btn-default">Guía de migración</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
