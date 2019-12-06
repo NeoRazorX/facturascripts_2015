@@ -239,7 +239,7 @@ abstract class fs_extended_model extends fs_model
         $columns = [];
         $values = [];
         foreach (array_keys($this->get_model_fields()) as $field) {
-            if ($field != $this->primary_column()) {
+            if (null !== $this->{$field}) {
                 $columns[] = $field;
                 $values[] = $this->var2str($this->{$field});
             }
