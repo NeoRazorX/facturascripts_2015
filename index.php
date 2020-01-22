@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -105,9 +105,9 @@ if ($fsc->template) {
     } else {
         echo '<center>'
         . '<h1>No se puede escribir sobre la carpeta tmp de FacturaScripts</h1>'
-        . '<p>Consulta la <a target="_blank" href="//www.facturascripts.com/comm3/index.php?page=community_item&id=351">documentaci&oacute;n</a>.</p>'
+        . '<p>Consulta la <a target="_blank" href="//facturascripts.com/comm3/index.php?page=community_item&id=351">documentaci&oacute;n</a>.</p>'
         . '</center>';
-        die('<center><iframe src="//www.facturascripts.com/comm3/index.php?page=community_item&id=351" width="90%" height="800"></iframe></center>');
+        die('<center><iframe src="//facturascripts.com/comm3/index.php?page=community_item&id=351" width="90%" height="800"></iframe></center>');
     }
 
     $tpl = new RainTPL();

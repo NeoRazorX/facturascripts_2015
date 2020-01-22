@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,7 +62,7 @@ $updater = new fs_updater();
                         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
                         <span class="hidden-xs">&nbsp;Panel de control</span>
                     </a>
-                    <a href="https://www.facturascripts.com/plugins?activetab=ListPluginKey2017" target="_blank" class="btn btn-sm btn-default">
+                    <a href="https://facturascripts.com/plugins?activetab=ListPluginKey2017" target="_blank" class="btn btn-sm btn-default">
                         <i class="fa fa-key" aria-hidden="true"></i>
                         <span class="hidden-xs">&nbsp;Claves</span>
                     </a>
@@ -167,11 +167,11 @@ $updater = new fs_updater();
                             No encantaría que probases <b>FacturaScripts online</b> y <b>nos dieses tus impresiones</b>.
                             <br/>
                             <br/>
-                            <a href="https://www.facturascripts.com/probar-online" target="_blank" class="btn btn-default">Probar online</a>
+                            <a href="https://facturascripts.com/probar-online" target="_blank" class="btn btn-default">Probar online</a>
                             &nbsp;
                             <a href="https://forms.gle/fqvYakhNRLkjQMcu6" target="_blank" class="btn btn-default">Envíar impresiones</a>
                             &nbsp;
-                            <a href="https://www.facturascripts.com/doc/1/actualizar-desde-facturascripts-2017" target="_blank" class="btn btn-default">Guía de migración</a>
+                            <a href="https://facturascripts.com/doc/1/actualizar-desde-facturascripts-2017" target="_blank" class="btn btn-default">Guía de migración</a>
                         </div>
                     </div>
                 </div>
@@ -246,7 +246,7 @@ $updater = new fs_updater();
             <div class="row">
                 <div class="col-xs-6">
                     <small>
-                        Creado con <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>.
+                        Creado con <a target="_blank" href="https://facturascripts.com">FacturaScripts</a>.
                     </small>
                 </div>
                 <div class="col-xs-6 text-right">

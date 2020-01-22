@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 foreach (['FS_TMP_NAME', 'FS_PATH', 'FS_MYDOCS'] as $name) {
     if (!defined($name)) {
@@ -31,7 +31,7 @@ if (FS_TMP_NAME != '' && !file_exists(FS_FOLDER . '/tmp/' . FS_TMP_NAME)) {
 }
 
 if (!defined('FS_COMMUNITY_URL')) {
-    define('FS_COMMUNITY_URL', 'https://www.facturascripts.com/comm3');
+    define('FS_COMMUNITY_URL', 'https://facturascripts.com/comm3');
 }
 
 $GLOBALS['config2'] = array(

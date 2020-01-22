@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
  */
 error_reporting(E_ALL);
 
-define('FS_COMMUNITY_URL', 'https://www.facturascripts.com');
+define('FS_COMMUNITY_URL', 'https://facturascripts.com');
 
 $errors = [];
 $errors2 = [];

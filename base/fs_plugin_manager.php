@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -207,7 +207,7 @@ class fs_plugin_manager
         }
 
         /// lista de plugins de la comunidad, se descarga de Internet.
-        $json = @fs_file_get_contents('https://www.facturascripts.com/DownloadBuild2017', 10);
+        $json = @fs_file_get_contents('https://facturascripts.com/DownloadBuild2017', 10);
         if ($json && $json != 'ERROR') {
             $this->download_list = json_decode($json, true);
             foreach ($this->download_list as $key => $value) {

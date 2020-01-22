@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -10,11 +10,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 require_once __DIR__ . '/php_file_cache.php';
 
@@ -55,7 +55,7 @@ class fs_cache
                 self::$connected = FALSE;
                 self::$error = TRUE;
                 self::$error_msg = 'Clase Memcache no encontrada. Debes
-               <a target="_blank" href="//www.facturascripts.com/comm3/index.php?page=community_item&id=553">
+               <a target="_blank" href="//facturascripts.com/comm3/index.php?page=community_item&id=553">
                instalar Memcache</a> y activarlo en el php.ini';
             }
         }
