@@ -103,7 +103,7 @@ function fs_curl_redirect_exec($ch, &$redirects, $curlopt_header = false)
     if ($http_code == 301 || $http_code == 302) {
         list($header) = explode("\r\n\r\n", $data, 2);
         $matches = [];
-        preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
+        preg_match("/(Location:|URI:)[^(\n)]*/i", $header, $matches);
         $url = trim(str_replace($matches[1], "", $matches[0]));
         $url_parsed = parse_url($url);
         if (isset($url_parsed)) {
