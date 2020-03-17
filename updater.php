@@ -36,11 +36,6 @@ require_once 'base/fs_updater.php';
  */
 register_shutdown_function("fatal_handler");
 
-/// desactivamos la caché del navegador
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-
 $updater = new fs_updater();
 
 ?>
