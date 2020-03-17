@@ -285,7 +285,7 @@ class forma_pago extends \fs_model
 
         if ($tmp_dia > $dia_de_pago) {
             /// calculamos el dia de cobro para el mes siguiente
-            $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
+            $fecha = date('d-m-Y', strtotime($fecha . ' first day of next month'));
             $tmp_mes = date('m', strtotime($fecha));
             $tmp_anyo = date('Y', strtotime($fecha));
         }
