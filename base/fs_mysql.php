@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -622,7 +622,7 @@ class fs_mysql extends fs_db_engine
             return TRUE;
         } else if ($db_type == 'tinyint(1)' && $xml_type == 'boolean') {
             return TRUE;
-        } else if (substr($db_type, 0, 4) == 'int(' && $xml_type == 'INTEGER') {
+        } else if (substr($db_type, 0, 3) == 'int' && strtolower($xml_type) == 'integer') {
             return TRUE;
         } else if (substr($db_type, 0, 6) == 'double' && $xml_type == 'double precision') {
             return TRUE;
