@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 error_reporting(E_ALL);
-
+date_default_timezone_set('Europe/Madrid');
 define('FS_COMMUNITY_URL', 'https://facturascripts.com');
 
 $errors = [];
@@ -153,7 +153,7 @@ function random_string($length = 20)
  */
 if (file_exists('config.php')) {
     header('Location: index.php');
-} else if (floatval(substr(phpversion(), 0, 3)) < 5.4) {
+} else if (floatval(substr(phpversion(), 0, 3)) < 5.6) {
     $errors[] = 'php';
 } else if (floatval('3,1') >= floatval('3.1')) {
     $errors[] = "floatval";
@@ -423,7 +423,7 @@ $system_info = str_replace('"', "'", $system_info);
                                 </div>
                                 <div class="panel-body">
                                     <p>
-                                        FacturaScripts necesita PHP <b>5.4</b> o superior.
+                                        FacturaScripts necesita PHP <b>5.6</b> o superior.
                                         Tú estás usando la versión <b><?php echo phpversion() ?></b>.
                                     </p>
                                     <h3>Soluciones:</h3>
