@@ -1,0 +1,31 @@
+{
+  "name": "facturascripts_2015",
+  "version": "1.0.0",
+  "description": "Software de facturación y contabilidad para pymes, fácil, libre y con actualizaciones constantes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NeoRazorX/facturascripts_2015.git"
+  },
+  "keywords": [
+    "facturacion",
+    "contabilidad",
+    "erp"
+  ],
+  "author": "Carlos García Gómez",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://facturascripts.com/contacto"
+  },
+  "homepage": "https://facturascripts.com",
+  "dependencies": {
+    "bootbox": "4.*",
+    "bootstrap": "3.*",
+    "bootswatch": "3.*",
+    "font-awesome": "4.*",
+    "jquery": "3.*"
+  }
+}

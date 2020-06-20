@@ -9,12 +9,7 @@
     ],
     "require": {
         "php": ">=5.6",
-        "phpmailer/phpmailer": "v5.*",
-        "components/jquery": "v3.*",
-        "components/font-awesome": "v4.*",
-        "mk-j/php_xlsxwriter": "v0.*",
-        "twbs/bootstrap": "v3.*",
-        "thomaspark/bootswatch": "v3.*",
-        "makeusabrew/bootbox": "v4.x-dev"
+        "phpmailer/phpmailer": "5.*",
+        "mk-j/php_xlsxwriter": "0.*"
     }
 }

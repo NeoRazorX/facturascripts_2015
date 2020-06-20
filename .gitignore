@@ -9,3 +9,4 @@
 .vscode
 config.php
 *.lock
+package-lock.json
