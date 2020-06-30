@@ -1,6 +1,7 @@
 /.idea/
 /doc/
 /nbproject/
+/node_modules/
 /plugins/
 /tmp/
 /vendor/
