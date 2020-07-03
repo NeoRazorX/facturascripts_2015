@@ -248,12 +248,10 @@ function fs_fix_html($txt)
  */
 function fs_get_ip()
 {
-    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
-    }
-
-    if (isset($_SERVER['REMOTE_ADDR'])) {
-        return $_SERVER['REMOTE_ADDR'];
+    foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
+        if (isset($_SERVER[$field])) {
+            return $_SERVER[$field];
+        }
     }
 
     return '';
