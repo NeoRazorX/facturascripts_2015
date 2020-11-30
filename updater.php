@@ -156,22 +156,20 @@ $updater = new fs_updater();
             <div class="row">
                 <div class="col-sm-12">
                     <br/>
-                    <div class="panel panel-default">
+                    <div class="panel panel-warning">
                         <div class="panel-heading">
-                            <h3 class="panel-title">FacturaScripts 2018</h3>
+                            <h3 class="panel-title">FacturaScripts 2020</h3>
                         </div>
                         <div class="panel-body">
-                            FacturaScripts 2018 es un <b>rediseño</b> desde cero y <b>los plugins no son compatibles</b> con los que tienes.
-                            Estamos lanzando nuevas versiones de los plugins de pago. Pronto estarán la mayoría.
-                            <br/>
-                            No encantaría que probases <b>FacturaScripts online</b> y <b>nos dieses tus impresiones</b>.
+                            FacturaScripts 2020 es un <b>rediseño desde cero</b> y para actualizar es necesario que hagas
+                            una <b>copia de seguridad</b>, instales FacturaScripts 2020 y ejecutes el <b>proceso de migración</b>.
                             <br/>
                             <br/>
-                            <a href="https://facturascripts.com/probar-online" target="_blank" class="btn btn-default">Probar online</a>
+                            <a href="https://facturascripts.com/plugin/backups" target="_blank" class="btn btn-default">Copia de seguridad</a>
                             &nbsp;
-                            <a href="https://forms.gle/fqvYakhNRLkjQMcu6" target="_blank" class="btn btn-default">Envíar impresiones</a>
+                            <a href="https://facturascripts.com/descargar" target="_blank" class="btn btn-default">Instalar FacturaScripts 2020</a>
                             &nbsp;
-                            <a href="https://facturascripts.com/doc/1/actualizar-desde-facturascripts-2017" target="_blank" class="btn btn-default">Guía de migración</a>
+                            <a href="https://facturascripts.com/publicaciones/actualizar-desde-facturascripts-2017-292" target="_blank" class="btn btn-default">Guía de migración</a>
                         </div>
                     </div>
                 </div>
