@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,12 +72,15 @@ class cuenta_banco extends \fs_model
     public function iban($espacios = FALSE)
     {
         if ($espacios) {
-            $txt = '';
+            $bloques = [];
             $iban = str_replace(' ', '', $this->iban);
             for ($i = 0; $i < strlen($iban); $i += 4) {
-                $txt .= substr($iban, $i, 4) . ' ';
+                $aux = substr($iban, $i, 4);
+                if (!empty($aux)) {
+                    $bloques[] = $aux;
+                }
             }
-            return $txt;
+            return implode(' ', $bloques);
         }
 
         return str_replace(' ', '', $this->iban);
