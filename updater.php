@@ -47,6 +47,7 @@ $updater = new fs_updater();
         <meta name="description" content="Script de actualización de FacturaScripts." />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="FacturaScripts" />
+        <meta name="robots" content="noindex" />
         <link rel="shortcut icon" href="view/img/favicon.ico" />
         <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
         <link rel="stylesheet" href="view/css/font-awesome.min.css" />

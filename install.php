@@ -207,6 +207,7 @@ $system_info = str_replace('"', "'", $system_info);
         <title>FacturaScripts</title>
         <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex" />
         <link rel="shortcut icon" href="view/img/favicon.ico" />
         <link rel="stylesheet" href="view/css/bootstrap-yeti.min.css" />
         <link rel="stylesheet" href="view/css/font-awesome.min.css" />
