@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <neorazorx@gmail.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <neorazorx@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -243,12 +243,12 @@ $system_info = str_replace('"', "'", $system_info);
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="<?php echo FS_COMMUNITY_URL; ?>/doc/2" target="_blank">
+                                    <a href="<?php echo FS_COMMUNITY_URL; ?>/ayuda" rel="nofollow" target="_blank">
                                         <i class="fa fa-book fa-fw" aria-hidden="true"></i> Documentación
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo FS_COMMUNITY_URL; ?>/contacto" target="_blank">
+                                    <a href="<?php echo FS_COMMUNITY_URL; ?>/contacto" rel="nofollow" target="_blank">
                                         <i class="fa fa-shield fa-fw" aria-hidden="true"></i> Soporte oficial
                                     </a>
                                 </li>
@@ -438,7 +438,7 @@ $system_info = str_replace('"', "'", $system_info);
                                         <li>
                                             <p class="help-block">
                                                 Busca un proveedor de hosting más completo, que son la mayoría. Mira en nuestra sección de
-                                                <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                                <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar" rel="nofollow" target="_blank">Hostings recomendados</a>.
                                             </p>
                                         </li>
                                     </ul>
@@ -470,7 +470,7 @@ $system_info = str_replace('"', "'", $system_info);
                                         Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                                         Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
                                         Mira en nuestra sección de
-                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar" rel="nofollow" target="_blank">Hostings recomendados</a>.
                                     </p>
                                 </div>
                             </div>
@@ -494,7 +494,7 @@ $system_info = str_replace('"', "'", $system_info);
                                         Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                                         Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
                                         Mira en nuestra sección de
-                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar" rel="nofollow" target="_blank">Hostings recomendados</a>.
                                     </p>
                                     <h3>
                                         <i class="fa fa-windows" aria-hidden="true"></i> Windows
@@ -502,7 +502,7 @@ $system_info = str_replace('"', "'", $system_info);
                                     <p class="help-block">
                                         Ofrecemos una versión de FacturaScripts para Windows <b>con todo</b> el software necesario
                                         (como OpenSSL) ya incluido de serie. Puedes encontrala en nuestra sección de
-                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?windows=TRUE" target="_blank">descargas</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar" rel="nofollow" target="_blank">descargas</a>.
                                         Si decides utilizar <b>un empaquetado distinto</b>, y este no incluye lo necesario, deberás
                                         buscar ayuda en los foros o el soporte de los creadores de ese empaquetado.
                                     </p>
@@ -521,7 +521,7 @@ $system_info = str_replace('"', "'", $system_info);
                                     <p class="help-block">
                                         Es raro que un empaquetado Apache+PHP+MySQL para Mac no incluya OpenSSL.
                                         Nosotros ofrecemos varios empaquetados con todo lo necesario en nuestra sección de
-                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?mac=TRUE" target="_blank">descargas</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar" rel="nofollow" target="_blank">descargas</a>.
                                     </p>
                                 </div>
                             </div>
@@ -549,7 +549,7 @@ $system_info = str_replace('"', "'", $system_info);
                                         Algunos proveedores de hosting ofrecen versiones de PHP demasiado recortadas.
                                         Es mejor que busques un proveedor de hosting más completo, que son la mayoría.
                                         Mira en nuestra sección de
-                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar?nube=TRUE" target="_blank">Hostings recomendados</a>.
+                                        <a href="<?php echo FS_COMMUNITY_URL; ?>/descargar" rel="nofollow" target="_blank">Hostings recomendados</a>.
                                     </p>
                                 </div>
                             </div>
@@ -630,8 +630,8 @@ $system_info = str_replace('"', "'", $system_info);
                         Y recuerda que tienes una sección especialmente dedicada a la <b>instalación</b> en nuestra
                         documentación oficial:
                     </p>
-                    <a href="<?php echo FS_COMMUNITY_URL; ?>/doc/2/instalacion" target="_blank" class="btn btn-sm btn-info">
-                        <i class="fa fa-book"></i>&nbsp; Documentación
+                    <a href="<?php echo FS_COMMUNITY_URL; ?>/ayuda" rel="nofollow" target="_blank" class="btn btn-sm btn-info">
+                        <i class="fa fa-book"></i>&nbsp; Ayuda
                     </a>
                     <br/>
                     <br/>
@@ -842,7 +842,8 @@ $system_info = str_replace('"', "'", $system_info);
                 <div class="col-sm-12 text-center">
                     <hr/>
                     <small>
-                        &COPY; 2013-<?php echo date('Y'); ?> <a target="_blank" href="<?php echo FS_COMMUNITY_URL; ?>">FacturaScripts</a>
+                        &COPY; 2013-<?php echo date('Y'); ?>
+                        <a target="_blank" href="<?php echo FS_COMMUNITY_URL; ?>" rel="nofollow">FacturaScripts</a>
                     </small>
                 </div>
             </div>
